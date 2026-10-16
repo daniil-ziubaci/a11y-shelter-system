@@ -12,7 +12,7 @@ function plural(n: number, one: string, few: string, many: string): string {
   return many;
 }
 
-export function formatAge(months: number, isApproximate: boolean): string {
+function buildAge(months: number, isApproximate: boolean): string {
   if (months < 12) {
     return `${months} ${plural(months, "месяц", "месяца", "месяцев")}`;
   }
@@ -31,4 +31,12 @@ export function formatAge(months: number, isApproximate: boolean): string {
     return `1 год и ${additionalMonths} ${plural(additionalMonths, "месяц", "месяца", "месяцев")}`;
   }
   return `${fullYears} ${plural(fullYears, "год", "года", "лет")}`;
+}
+
+export function formatAge(months: number, isApproximate: boolean): string {
+  const text = buildAge(months, isApproximate);
+  if (isApproximate) {
+    return `≈${text}`;
+  }
+  return text;
 }
