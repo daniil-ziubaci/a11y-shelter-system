@@ -1,5 +1,9 @@
 export type Pet = {
   name: string;
+  photo: {
+    url: string;
+    alt: string;
+  };
   species: "собака" | "кошка";
   sex: "самец" | "самка";
   ageInMonths: number;
