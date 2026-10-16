@@ -5,7 +5,7 @@ export type Pet = {
     alt: string;
   };
   species: "собака" | "кошка";
-  sex: "самец" | "самка";
+  sex: "мальчик" | "девочка";
   ageInMonths: number;
   isAgeApproximate: boolean;
   weight: number; // кг, может быть дробным (0.8)
