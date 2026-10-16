@@ -10,7 +10,7 @@ export function PetCard({ pet }: { pet: Pet }) {
         <dt>Пол</dt>
         <dd>{pet.sex}</dd>
         <dt>Возраст</dt>
-        <dd>{formatAge(pet.ageInMonths)}</dd>
+        <dd>{formatAge(pet.ageInMonths, pet.isAgeApproximate)}</dd>
         <dt>Вес</dt>
         <dd>{pet.weight} кг</dd>
         <dt>Питание</dt>

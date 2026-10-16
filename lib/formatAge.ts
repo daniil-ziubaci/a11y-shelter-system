@@ -12,7 +12,7 @@ function plural(n: number, one: string, few: string, many: string): string {
   return many;
 }
 
-export function formatAge(months: number): string {
+export function formatAge(months: number, isApproximate: boolean): string {
   if (months < 12) {
     return `${months} ${plural(months, "месяц", "месяца", "месяцев")}`;
   }
