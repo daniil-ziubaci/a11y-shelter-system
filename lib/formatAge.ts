@@ -18,6 +18,12 @@ export function formatAge(months: number, isApproximate: boolean): string {
   }
   const fullYears = Math.floor(months / 12);
   const additionalMonths = months % 12;
+  if (!isApproximate) {
+    if (additionalMonths === 0) {
+      return `${fullYears} ${plural(fullYears, "год", "года", "лет")}`;
+    }
+    return `${fullYears} ${plural(fullYears, "год", "года", "лет")} и ${additionalMonths} ${plural(additionalMonths, "месяц", "месяца", "месяцев")}`;
+  }
   if (months < 24) {
     if (additionalMonths === 0) {
       return "1 год";
