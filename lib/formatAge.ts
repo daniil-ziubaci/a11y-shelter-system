@@ -11,3 +11,18 @@ function plural(n: number, one: string, few: string, many: string): string {
   }
   return many;
 }
+
+export function formatAge(months: number): string {
+  if (months < 12) {
+    return `${months} ${plural(months, "месяц", "месяца", "месяцев")}`;
+  }
+  const fullYears = Math.floor(months / 12);
+  const additionalMonths = months % 12;
+  if (months < 24) {
+    if (additionalMonths === 0) {
+      return "1 год";
+    }
+    return `1 год и ${additionalMonths} ${plural(additionalMonths, "месяц", "месяца", "месяцев")}`;
+  }
+  return `${fullYears} ${plural(fullYears, "год", "года", "лет")}`;
+}
