@@ -3,7 +3,7 @@ import { formatAge } from "@/lib/formatAge";
 
 export function PetCard({ pet }: { pet: Pet }) {
   return (
-    <article>
+    <article className="p-4 border rounded-lg">
       <h2>{pet.name}</h2>
       <p>{pet.status}</p>
       <img src={pet.photo.url} alt={pet.photo.alt} className="w-full h-48 object-cover"/>
