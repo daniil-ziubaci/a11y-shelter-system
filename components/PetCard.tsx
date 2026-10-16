@@ -6,6 +6,7 @@ export function PetCard({ pet }: { pet: Pet }) {
     <article>
       <h2>{pet.name}</h2>
       <p>{pet.status}</p>
+      <img src={pet.photo.url} alt={pet.photo.alt} />
       <dl>
         <dt>Пол</dt>
         <dd>{pet.sex}</dd>
