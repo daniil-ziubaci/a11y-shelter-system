@@ -1,4 +1,5 @@
 import type { Pet } from "@/types/pet";
+import { formatAge } from "@/lib/formatAge";
 
 export function PetCard({ pet }: { pet: Pet }) {
   return (
@@ -8,6 +9,8 @@ export function PetCard({ pet }: { pet: Pet }) {
       <dl>
         <dt>Пол</dt>
         <dd>{pet.sex}</dd>
+        <dt>Возраст</dt>
+        <dd>{formatAge(pet.ageInMonths)}</dd>
         <dt>Вес</dt>
         <dd>{pet.weight} кг</dd>
         <dt>Питание</dt>
