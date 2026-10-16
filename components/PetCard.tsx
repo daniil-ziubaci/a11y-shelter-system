@@ -3,10 +3,10 @@ import { formatAge } from "@/lib/formatAge";
 
 export function PetCard({ pet }: { pet: Pet }) {
   return (
-    <article className="p-4 border rounded-lg">
+    <article className="p-4 border rounded-lg flex flex-col gap-4 w-[208px] shrink-0">
       <h2>{pet.name}</h2>
       <p>{pet.status}</p>
-      <img src={pet.photo.url} alt={pet.photo.alt} className="w-full h-48 object-cover"/>
+      <img src={pet.photo.url} alt={pet.photo.alt} className="w-full aspect-[3/4] object-cover bg-gray-100"/>
       <dl>
         <dt>Пол</dt>
         <dd>{pet.sex}</dd>

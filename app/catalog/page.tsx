@@ -94,9 +94,11 @@ export default function Catalog() {
   return (
     <main>
       <h1>Ищу дом</h1>
-      {testPets.map((pet) => (
-        <PetCard key={pet.name} pet={pet} />
-      ))}
+      <div className="flex flex-wrap justify-center gap-4">
+        {testPets.map((pet) => (
+          <PetCard key={pet.name} pet={pet} />
+        ))}
+      </div>
     </main>
   );
 }
