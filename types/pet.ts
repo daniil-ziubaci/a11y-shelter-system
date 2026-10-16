@@ -1,5 +1,6 @@
 export type Pet = {
   name: string;
+  species: "собака" | "кошка";
   sex: "самец" | "самка";
   ageInMonths: number;
   weight: number; // кг, может быть дробным (0.8)

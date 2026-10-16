@@ -4,6 +4,7 @@ import type { Pet } from "@/types/pet";
 const testPets: Pet[] = [
   {
     name: "Марс",
+    species: "собака",
     sex: "самец",
     ageInMonths: 24,
     weight: 22.5,
@@ -15,6 +16,7 @@ const testPets: Pet[] = [
   },
   {
     name: "Мила",
+    species: "кошка",
     sex: "самка",
     ageInMonths: 3,
     weight: 1.2,
@@ -26,6 +28,7 @@ const testPets: Pet[] = [
   },
   {
     name: "Рекс",
+    species: "собака",
     sex: "самец",
     ageInMonths: 60,
     weight: 14.0,
