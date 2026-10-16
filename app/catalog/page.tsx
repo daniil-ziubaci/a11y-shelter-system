@@ -92,9 +92,9 @@ const testPets: Pet[] = [
 
 export default function Catalog() {
   return (
-    <main>
-      <h1>Ищу дом</h1>
-      <div className="flex flex-wrap justify-center gap-4">
+    <main className="flex flex-col gap-6 p-4 max-w-5xl mx-auto">
+      <h1 className="text-3xl font-bold text-center">Ищу дом</h1>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {testPets.map((pet) => (
           <PetCard key={pet.name} pet={pet} />
         ))}
