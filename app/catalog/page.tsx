@@ -47,11 +47,15 @@ export default async function Catalog({
   return (
     <main className="flex flex-col gap-6 p-4 max-w-5xl mx-auto">
       <h1 className="text-3xl font-bold text-center">Ищут дом</h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {pets.map((pet) => (
-          <PetCard key={pet.id} pet={pet} />
-        ))}
-      </div>
+      {pets.length === 0 ? (
+        <p role="status">Подходящих питомцев нет.</p>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {pets.map((pet) => (
+            <PetCard key={pet.id} pet={pet} />
+          ))}
+        </div>
+      )}
     </main>
   );
 }
