@@ -5,9 +5,9 @@ import { toPet } from "@/lib/toPet";
 export default async function Catalog({
   searchParams,
 }: {
-  searchParams: Promise<{ species?: string }>;
+  searchParams: Promise<{ species?: string; sex?: string }>;
 }) {
-  const { species } = await searchParams;
+  const { species, sex } = await searchParams;
   const supabase = await createClient();
   let query = supabase
     .from("pets")
@@ -18,6 +18,12 @@ export default async function Catalog({
   }
   if (species === "dog") {
     query = query.eq("species", "собака");
+  }
+  if (sex === "male") {
+    query = query.eq("sex", "мальчик");
+  }
+  if (sex === "female") {
+    query = query.eq("sex", "девочка");
   }
   const { data, error } = await query;
   if (error) {
