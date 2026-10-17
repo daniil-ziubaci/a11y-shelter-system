@@ -1,6 +1,7 @@
 import { PetCard } from "@/components/PetCard";
 import { createClient } from "@/lib/supabase/server";
 import { toPet } from "@/lib/toPet";
+import Link from "next/link";
 
 export default async function Catalog({
   searchParams,
@@ -44,9 +45,52 @@ export default async function Catalog({
     throw new Error("Не удалось загрузить питомцев из базы.");
   }
   const pets = (data ?? []).map(toPet);
+  function buildHref(newSpecies: string | undefined) {
+    const params = new URLSearchParams();
+    if (newSpecies) {
+      params.set("species", newSpecies);
+    }
+    if (sex) {
+      params.set("sex", sex);
+    }
+    if (age) {
+      params.set("age", age);
+    }
+    const queryString = params.toString();
+    if (queryString) {
+      return "/catalog?" + queryString;
+    }
+    return "/catalog";
+  }
   return (
     <main className="flex flex-col gap-6 p-4 max-w-5xl mx-auto">
       <h1 className="text-3xl font-bold text-center">Ищут дом</h1>
+      <nav aria-label="Фильтры каталога">
+        <fieldset>
+          <legend>Вид</legend>
+          <Link
+            href={buildHref(undefined)}
+            aria-current={species === undefined ? "true" : undefined}
+            className={species === undefined ? "font-bold" : ""}
+          >
+            Все
+          </Link>
+          <Link
+            href={buildHref("cat")}
+            aria-current={species === "cat" ? "true" : undefined}
+            className={species === "cat" ? "font-bold" : ""}
+          >
+            Кошки
+          </Link>
+          <Link
+            href={buildHref("dog")}
+            aria-current={species === "dog" ? "true" : undefined}
+            className={species === "dog" ? "font-bold" : ""}
+          >
+            Собаки
+          </Link>
+        </fieldset>
+      </nav>
       {pets.length === 0 ? (
         <p role="status">Подходящих питомцев нет.</p>
       ) : (
