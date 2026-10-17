@@ -5,9 +5,13 @@ import { toPet } from "@/lib/toPet";
 export default async function Catalog({
   searchParams,
 }: {
-  searchParams: Promise<{ species?: string; sex?: string }>;
+  searchParams: Promise<{ species?: string; sex?: string; age?: string }>;
 }) {
-  const { species, sex } = await searchParams;
+  const { species, sex, age } = await searchParams;
+  const twelveMonthsAgo = new Date();
+  twelveMonthsAgo.setMonth(twelveMonthsAgo.getMonth() - 12);
+  const sevenYearsAgo = new Date();
+  sevenYearsAgo.setMonth(sevenYearsAgo.getMonth() - 84);
   const supabase = await createClient();
   let query = supabase
     .from("pets")
@@ -24,6 +28,16 @@ export default async function Catalog({
   }
   if (sex === "female") {
     query = query.eq("sex", "девочка");
+  }
+  if (age === "young") {
+    query = query.gt("birth_date", twelveMonthsAgo.toISOString().slice(0, 10));
+  }
+  if (age === "adult") {
+    query = query.lte("birth_date", twelveMonthsAgo.toISOString().slice(0, 10));
+    query = query.gt("birth_date", sevenYearsAgo.toISOString().slice(0, 10));
+  }
+  if (age === "senior") {
+    query = query.lte("birth_date", sevenYearsAgo.toISOString().slice(0, 10));
   }
   const { data, error } = await query;
   if (error) {
