@@ -6,6 +6,7 @@ type PetRow = Database["public"]["Tables"]["pets"]["Row"];
 
 export function toPet(row: PetRow): Pet {
   return {
+    id: row.id,
     name: row.name,
     photo: {
       url: row.photo_url,

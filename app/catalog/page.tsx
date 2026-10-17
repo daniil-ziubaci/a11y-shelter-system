@@ -11,7 +11,7 @@ export default async function Catalog() {
       <h1 className="text-3xl font-bold text-center">Ищу дом</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {pets.map((pet) => (
-          <PetCard key={pet.name} pet={pet} />
+          <PetCard key={pet.id} pet={pet} />
         ))}
       </div>
     </main>
