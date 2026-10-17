@@ -4,7 +4,13 @@ import { toPet } from "@/lib/toPet";
 
 export default async function Catalog() {
   const supabase = await createClient();
-  const { data, error } = await supabase.from("pets").select("*").in("status", ["ищет дом", "в процессе"]);;
+  const { data, error } = await supabase
+    .from("pets")
+    .select("*")
+    .in("status", ["ищет дом", "в процессе"]);
+  if (error) {
+    throw new Error("Не удалось загрузить питомцев из базы.");
+  }
   const pets = (data ?? []).map(toPet);
   return (
     <main className="flex flex-col gap-6 p-4 max-w-5xl mx-auto">
