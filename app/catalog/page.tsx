@@ -118,6 +118,37 @@ export default async function Catalog({
             Девочки
           </Link>
         </fieldset>
+        <fieldset>
+          <legend>Возраст</legend>
+          <Link
+            href={buildHref(species, sex, undefined)}
+            aria-current={age === undefined ? "true" : undefined}
+            className={age === undefined ? "font-bold" : ""}
+          >
+            Все
+          </Link>
+          <Link
+            href={buildHref(species, sex, "young")}
+            aria-current={age === "young" ? "true" : undefined}
+            className={age === "young" ? "font-bold" : ""}
+          >
+            До 1 года
+          </Link>
+          <Link
+            href={buildHref(species, sex, "adult")}
+            aria-current={age === "adult" ? "true" : undefined}
+            className={age === "adult" ? "font-bold" : ""}
+          >
+            От 1 до 7 лет
+          </Link>
+          <Link
+            href={buildHref(species, sex, "senior")}
+            aria-current={age === "senior" ? "true" : undefined}
+            className={age === "senior" ? "font-bold" : ""}
+          >
+            От 7 лет
+          </Link>
+        </fieldset>
       </nav>
       {pets.length === 0 ? (
         <p role="status">Подходящих питомцев нет.</p>
