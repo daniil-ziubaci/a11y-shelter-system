@@ -36,10 +36,6 @@ export function PetCard({ pet }: { pet: Pet }) {
         <dd>{pet.health}</dd>
       </dl>
       <p>{pet.description}</p>
-      <details>
-        <summary>Прозрачность содержания</summary>
-        <p>Расчёт появится позже</p>
-      </details>
     </article>
   );
 }
