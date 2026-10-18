@@ -1,10 +1,11 @@
 import type { Pet } from "@/types/pet";
 import { formatAge } from "@/lib/formatAge";
 import Image from "next/image";
+import Link from "next/link";
 
 export function PetCard({ pet }: { pet: Pet }) {
   return (
-    <article className="p-4 border rounded-lg flex flex-col gap-4">
+    <article className="p-4 border rounded-lg flex flex-col gap-4 relative focus-within:outline-2 focus-within:outline-offset-2 hover:bg-gray-900">
       <div className="relative aspect-3/4">
         <p className="absolute top-2 left-2 bg-white text-black px-2 py-1 rounded text-sm font-medium">
           {pet.status}
@@ -17,7 +18,14 @@ export function PetCard({ pet }: { pet: Pet }) {
           className="object-cover bg-gray-100"
         />
       </div>
-      <h2 className="text-xl font-bold">{pet.name}</h2>
+      <h2 className="text-xl font-bold">
+        <Link
+          href={`/catalog/${pet.id}`}
+          className="after:absolute after:inset-0"
+        >
+          {pet.name}
+        </Link>
+      </h2>
       <dl className="flex flex-wrap gap-x-4">
         <div className="flex gap-1">
           <dt className="sr-only">Пол</dt>
@@ -32,13 +40,7 @@ export function PetCard({ pet }: { pet: Pet }) {
           <dd>{pet.weight} кг</dd>
         </div>
       </dl>
-      <dl>
-        <dt className="font-medium">Питание</dt>
-        <dd>{pet.diet}</dd>
-        <dt className="font-medium">Здоровье</dt>
-        <dd>{pet.health}</dd>
-      </dl>
-      <p>{pet.description}</p>
+      <p className="line-clamp-2">{pet.description}</p>
     </article>
   );
 }
