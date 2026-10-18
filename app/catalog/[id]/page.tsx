@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { toPet } from "@/lib/toPet";
 import { formatAge } from "@/lib/formatAge";
 import Image from "next/image";
+import { notFound } from "next/navigation";
 
 export default async function PetPage({
   params,
@@ -15,6 +16,9 @@ export default async function PetPage({
     .select("*")
     .eq("id", id)
     .single();
+  if (error?.code === "PGRST116" || error?.code === "22P02") {
+    notFound();
+  }
   if (error) {
     throw new Error("Не удалось загрузить питомца из базы.");
   }
