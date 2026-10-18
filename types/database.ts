@@ -42,6 +42,7 @@ export type Database = {
       pets: {
         Row: {
           birth_date: string
+          created_at: string
           description: string
           diet: string
           health: string
@@ -58,6 +59,7 @@ export type Database = {
         }
         Insert: {
           birth_date: string
+          created_at?: string
           description: string
           diet: string
           health: string
@@ -74,6 +76,7 @@ export type Database = {
         }
         Update: {
           birth_date?: string
+          created_at?: string
           description?: string
           diet?: string
           health?: string
