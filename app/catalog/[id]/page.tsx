@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { toPet } from "@/lib/toPet";
 import { formatAge } from "@/lib/formatAge";
+import Image from "next/image";
 
 export default async function PetPage({
   params,
@@ -21,11 +22,16 @@ export default async function PetPage({
   return (
     <main className="flex flex-col gap-6 p-4 max-w-5xl mx-auto">
       <h1 className="text-3xl font-bold">{pet.name}</h1>
-      <img
-        src={pet.photo.url}
-        alt={pet.photo.alt}
-        className="w-full max-w-md aspect-[3/4] object-cover"
-      />
+      <div className="relative w-full max-w-md aspect-3/4">
+        <Image
+          src={pet.photo.url}
+          alt={pet.photo.alt}
+          fill
+          sizes="(min-width: 448px) 448px, 100vw"
+          className="object-cover"
+        />
+      </div>
+
       <dl className="flex flex-wrap gap-x-4">
         <div className="flex gap-1">
           <dt className="sr-only">Пол</dt>

@@ -1,17 +1,20 @@
 import type { Pet } from "@/types/pet";
 import { formatAge } from "@/lib/formatAge";
+import Image from "next/image";
 
 export function PetCard({ pet }: { pet: Pet }) {
   return (
     <article className="p-4 border rounded-lg flex flex-col gap-4">
-      <div className="relative">
+      <div className="relative aspect-3/4">
         <p className="absolute top-2 left-2 bg-white text-black px-2 py-1 rounded text-sm font-medium">
           {pet.status}
         </p>
-        <img
+        <Image
           src={pet.photo.url}
           alt={pet.photo.alt}
-          className="w-full aspect-[3/4] object-cover bg-gray-100"
+          fill
+          sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+          className="object-cover bg-gray-100"
         />
       </div>
       <h2 className="text-xl font-bold">{pet.name}</h2>
