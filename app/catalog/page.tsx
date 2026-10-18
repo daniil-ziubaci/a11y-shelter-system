@@ -72,82 +72,88 @@ export default async function Catalog({
       <nav aria-label="Фильтры каталога">
         <fieldset>
           <legend>Вид</legend>
-          <Link
-            href={buildHref(undefined, sex, age)}
-            aria-current={species === undefined ? "true" : undefined}
-            className={species === undefined ? "font-bold" : ""}
-          >
-            Все
-          </Link>
-          <Link
-            href={buildHref("cat", sex, age)}
-            aria-current={species === "cat" ? "true" : undefined}
-            className={species === "cat" ? "font-bold" : ""}
-          >
-            Кошки
-          </Link>
-          <Link
-            href={buildHref("dog", sex, age)}
-            aria-current={species === "dog" ? "true" : undefined}
-            className={species === "dog" ? "font-bold" : ""}
-          >
-            Собаки
-          </Link>
+          <div className="flex flex-wrap gap-2">
+            <Link
+              href={buildHref(undefined, sex, age)}
+              aria-current={species === undefined ? "true" : undefined}
+              className={`px-3 py-2 ${species === undefined ? "font-bold" : ""}`}
+            >
+              Все
+            </Link>
+            <Link
+              href={buildHref("cat", sex, age)}
+              aria-current={species === "cat" ? "true" : undefined}
+              className={`px-3 py-2 ${species === "cat" ? "font-bold" : ""}`}
+            >
+              Кошки
+            </Link>
+            <Link
+              href={buildHref("dog", sex, age)}
+              aria-current={species === "dog" ? "true" : undefined}
+              className={`px-3 py-2 ${species === "dog" ? "font-bold" : ""}`}
+            >
+              Собаки
+            </Link>
+          </div>
         </fieldset>
         <fieldset>
           <legend>Пол</legend>
-          <Link
-            href={buildHref(species, undefined, age)}
-            aria-current={sex === undefined ? "true" : undefined}
-            className={sex === undefined ? "font-bold" : ""}
-          >
-            Все
-          </Link>
-          <Link
-            href={buildHref(species, "male", age)}
-            aria-current={sex === "male" ? "true" : undefined}
-            className={sex === "male" ? "font-bold" : ""}
-          >
-            Мальчики
-          </Link>
-          <Link
-            href={buildHref(species, "female", age)}
-            aria-current={sex === "female" ? "true" : undefined}
-            className={sex === "female" ? "font-bold" : ""}
-          >
-            Девочки
-          </Link>
+          <div className="flex flex-wrap gap-2">
+            <Link
+              href={buildHref(species, undefined, age)}
+              aria-current={sex === undefined ? "true" : undefined}
+              className={`px-3 py-2 ${sex === undefined ? "font-bold" : ""}`}
+            >
+              Все
+            </Link>
+            <Link
+              href={buildHref(species, "male", age)}
+              aria-current={sex === "male" ? "true" : undefined}
+              className={`px-3 py-2 ${sex === "male" ? "font-bold" : ""}`}
+            >
+              Мальчики
+            </Link>
+            <Link
+              href={buildHref(species, "female", age)}
+              aria-current={sex === "female" ? "true" : undefined}
+              className={`px-3 py-2 ${sex === "female" ? "font-bold" : ""}`}
+            >
+              Девочки
+            </Link>
+          </div>
         </fieldset>
         <fieldset>
           <legend>Возраст</legend>
-          <Link
-            href={buildHref(species, sex, undefined)}
-            aria-current={age === undefined ? "true" : undefined}
-            className={age === undefined ? "font-bold" : ""}
-          >
-            Все
-          </Link>
-          <Link
-            href={buildHref(species, sex, "young")}
-            aria-current={age === "young" ? "true" : undefined}
-            className={age === "young" ? "font-bold" : ""}
-          >
-            До 1 года
-          </Link>
-          <Link
-            href={buildHref(species, sex, "adult")}
-            aria-current={age === "adult" ? "true" : undefined}
-            className={age === "adult" ? "font-bold" : ""}
-          >
-            От 1 до 7 лет
-          </Link>
-          <Link
-            href={buildHref(species, sex, "senior")}
-            aria-current={age === "senior" ? "true" : undefined}
-            className={age === "senior" ? "font-bold" : ""}
-          >
-            От 7 лет
-          </Link>
+          <div className="flex flex-wrap gap-2">
+            <Link
+              href={buildHref(species, sex, undefined)}
+              aria-current={age === undefined ? "true" : undefined}
+              className={`px-3 py-2 ${age === undefined ? "font-bold" : ""}`}
+            >
+              Все
+            </Link>
+            <Link
+              href={buildHref(species, sex, "young")}
+              aria-current={age === "young" ? "true" : undefined}
+              className={`px-3 py-2 ${age === "young" ? "font-bold" : ""}`}
+            >
+              До 1 года
+            </Link>
+            <Link
+              href={buildHref(species, sex, "adult")}
+              aria-current={age === "adult" ? "true" : undefined}
+              className={`px-3 py-2 ${age === "adult" ? "font-bold" : ""}`}
+            >
+              От 1 до 7 лет
+            </Link>
+            <Link
+              href={buildHref(species, sex, "senior")}
+              aria-current={age === "senior" ? "true" : undefined}
+              className={`px-3 py-2 ${age === "senior" ? "font-bold" : ""}`}
+            >
+              От 7 лет
+            </Link>
+          </div>
         </fieldset>
       </nav>
       {pets.length === 0 ? (
