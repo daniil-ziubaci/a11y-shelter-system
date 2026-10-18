@@ -45,16 +45,20 @@ export default async function Catalog({
     throw new Error("Не удалось загрузить питомцев из базы.");
   }
   const pets = (data ?? []).map(toPet);
-  function buildHref(newSpecies: string | undefined) {
+  function buildHref(
+    newSpecies: string | undefined,
+    newSex: string | undefined,
+    newAge: string | undefined,
+  ) {
     const params = new URLSearchParams();
     if (newSpecies) {
       params.set("species", newSpecies);
     }
-    if (sex) {
-      params.set("sex", sex);
+    if (newSex) {
+      params.set("sex", newSex);
     }
-    if (age) {
-      params.set("age", age);
+    if (newAge) {
+      params.set("age", newAge);
     }
     const queryString = params.toString();
     if (queryString) {
@@ -69,21 +73,21 @@ export default async function Catalog({
         <fieldset>
           <legend>Вид</legend>
           <Link
-            href={buildHref(undefined)}
+            href={buildHref(undefined, sex, age)}
             aria-current={species === undefined ? "true" : undefined}
             className={species === undefined ? "font-bold" : ""}
           >
             Все
           </Link>
           <Link
-            href={buildHref("cat")}
+            href={buildHref("cat", sex, age)}
             aria-current={species === "cat" ? "true" : undefined}
             className={species === "cat" ? "font-bold" : ""}
           >
             Кошки
           </Link>
           <Link
-            href={buildHref("dog")}
+            href={buildHref("dog", sex, age)}
             aria-current={species === "dog" ? "true" : undefined}
             className={species === "dog" ? "font-bold" : ""}
           >
