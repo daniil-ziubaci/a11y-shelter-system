@@ -17,7 +17,9 @@ export default async function Catalog({
   let query = supabase
     .from("pets")
     .select("*")
-    .in("status", ["ищет дом", "в процессе"]);
+    .in("status", ["ищет дом", "в процессе"])
+    .order("created_at", { ascending: false })
+    .order("name");
   if (species === "cat") {
     query = query.eq("species", "кошка");
   }
