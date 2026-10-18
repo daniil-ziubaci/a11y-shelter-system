@@ -3,6 +3,7 @@ import { toPet } from "@/lib/toPet";
 import { formatAge } from "@/lib/formatAge";
 import Image from "next/image";
 import { notFound } from "next/navigation";
+import Link from "next/link";
 
 export default async function PetPage({
   params,
@@ -25,6 +26,9 @@ export default async function PetPage({
   const pet = toPet(data);
   return (
     <main className="flex flex-col gap-6 p-4 max-w-5xl mx-auto">
+      <Link href="/catalog" className="inline-block py-2 underline">
+        ← Все питомцы
+      </Link>
       <h1 className="text-3xl font-bold">{pet.name}</h1>
       <div className="relative w-full max-w-md aspect-3/4">
         <Image
