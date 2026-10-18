@@ -94,6 +94,30 @@ export default async function Catalog({
             Собаки
           </Link>
         </fieldset>
+        <fieldset>
+          <legend>Пол</legend>
+          <Link
+            href={buildHref(species, undefined, age)}
+            aria-current={sex === undefined ? "true" : undefined}
+            className={sex === undefined ? "font-bold" : ""}
+          >
+            Все
+          </Link>
+          <Link
+            href={buildHref(species, "male", age)}
+            aria-current={sex === "male" ? "true" : undefined}
+            className={sex === "male" ? "font-bold" : ""}
+          >
+            Мальчики
+          </Link>
+          <Link
+            href={buildHref(species, "female", age)}
+            aria-current={sex === "female" ? "true" : undefined}
+            className={sex === "female" ? "font-bold" : ""}
+          >
+            Девочки
+          </Link>
+        </fieldset>
       </nav>
       {pets.length === 0 ? (
         <p role="status">Подходящих питомцев нет.</p>
