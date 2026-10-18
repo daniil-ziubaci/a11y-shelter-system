@@ -83,18 +83,18 @@ export default async function Catalog({
               Все
             </Link>
             <Link
-              href={buildHref("cat", sex, age)}
-              aria-current={species === "cat" ? "true" : undefined}
-              className={`px-3 py-2 ${species === "cat" ? "font-bold" : ""}`}
-            >
-              Кошки
-            </Link>
-            <Link
               href={buildHref("dog", sex, age)}
               aria-current={species === "dog" ? "true" : undefined}
               className={`px-3 py-2 ${species === "dog" ? "font-bold" : ""}`}
             >
               Собаки
+            </Link>
+            <Link
+              href={buildHref("cat", sex, age)}
+              aria-current={species === "cat" ? "true" : undefined}
+              className={`px-3 py-2 ${species === "cat" ? "font-bold" : ""}`}
+            >
+              Кошки
             </Link>
           </div>
         </fieldset>
