@@ -1,12 +1,11 @@
-import { createClient } from "@/lib/supabase/server";
 import { toPet } from "@/lib/toPet";
 import { formatAge } from "@/lib/formatAge";
 import Image from "next/image";
-import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getAnimalWord } from "@/lib/animalWord";
 import { getLifeStage } from "@/lib/lifeStage";
 import { truncateText } from "@/lib/truncateText";
+import { getPet } from "@/lib/getPet";
 
 export async function generateMetadata({
   params,
@@ -14,15 +13,7 @@ export async function generateMetadata({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const supabase = await createClient();
-  const { data } = await supabase
-    .from("pets")
-    .select("*, shelters(name)")
-    .eq("id", id)
-    .single();
-  if (!data) {
-    return { title: "Животное не найдено" };
-  }
+  const data = await getPet(id);
   const pet = toPet(data);
   const word = getAnimalWord(
     pet.species,
@@ -52,19 +43,9 @@ export default async function PetPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const supabase = await createClient();
-  const { data, error } = await supabase
-    .from("pets")
-    .select("*")
-    .eq("id", id)
-    .single();
-  if (error?.code === "PGRST116" || error?.code === "22P02") {
-    notFound();
-  }
-  if (error) {
-    throw new Error("Не удалось загрузить питомца из базы.");
-  }
+  const data = await getPet(id);
   const pet = toPet(data);
+
   return (
     <main className="flex flex-col gap-6 p-4 max-w-5xl mx-auto">
       <Link href="/catalog" className="inline-block py-2 underline">
