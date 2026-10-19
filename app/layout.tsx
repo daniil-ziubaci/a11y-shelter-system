@@ -12,8 +12,13 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const siteUrl = process.env.SITE_URL;
+if (!siteUrl) {
+  throw new Error("Не задана переменная окружения SITE_URL");
+}
+
 export const metadata: Metadata = {
-  metadataBase: new URL("http://localhost:3000"),
+  metadataBase: new URL(siteUrl),
   title: "Приют для животных",
   description: "Каталог животных, которые ищут дом, и помощь приюту.",
 };
