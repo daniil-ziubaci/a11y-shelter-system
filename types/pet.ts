@@ -12,7 +12,6 @@ export type Pet = {
   weight: number; // кг, может быть дробным (0.8)
   diet: string;
   description: string;
-  shortDescription: string;
   health: string;
   status: "ищет дом" | "в процессе" | "пристроен";
 };

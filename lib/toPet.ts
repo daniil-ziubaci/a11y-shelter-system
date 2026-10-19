@@ -20,7 +20,6 @@ export function toPet(row: PetRow): Pet {
     diet: row.diet,
     health: row.health,
     description: row.description,
-    shortDescription: row.short_description,
     status: row.status as Pet["status"],
   };
 }
