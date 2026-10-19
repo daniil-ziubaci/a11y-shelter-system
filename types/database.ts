@@ -53,6 +53,7 @@ export type Database = {
           photo_url: string
           sex: string
           shelter_id: string
+          short_description: string
           species: string
           status: string
           weight: number
@@ -70,6 +71,7 @@ export type Database = {
           photo_url: string
           sex: string
           shelter_id: string
+          short_description?: string
           species: string
           status?: string
           weight: number
@@ -87,6 +89,7 @@ export type Database = {
           photo_url?: string
           sex?: string
           shelter_id?: string
+          short_description?: string
           species?: string
           status?: string
           weight?: number
