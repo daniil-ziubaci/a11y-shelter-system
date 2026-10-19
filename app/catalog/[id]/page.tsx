@@ -4,6 +4,9 @@ import { formatAge } from "@/lib/formatAge";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { getAnimalWord } from "@/lib/animalWord";
+import { getLifeStage } from "@/lib/lifeStage";
+
 export async function generateMetadata({
   params,
 }: {
@@ -20,11 +23,17 @@ export async function generateMetadata({
     return { title: "Животное не найдено" };
   }
   const pet = toPet(data);
+  const word = getAnimalWord(
+    pet.species,
+    pet.sex,
+    getLifeStage(pet.ageInMonths),
+  );
   return {
-    title: `${pet.name} ищет дом`,
+    title: `${pet.name}, ${word} ищет дом`,
     description: pet.description,
   };
 }
+
 export default async function PetPage({
   params,
 }: {
