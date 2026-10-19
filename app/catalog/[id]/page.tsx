@@ -16,7 +16,7 @@ export async function generateMetadata({
   const supabase = await createClient();
   const { data } = await supabase
     .from("pets")
-    .select("*")
+    .select("*, shelters(name)")
     .eq("id", id)
     .single();
   if (!data) {
@@ -28,6 +28,14 @@ export async function generateMetadata({
     pet.sex,
     getLifeStage(pet.ageInMonths),
   );
+
+  const shelterName = data.shelters?.name;
+  if (shelterName) {
+    return {
+      title: `${pet.name}, ${word} ищет дом — ${shelterName}`,
+      description: pet.description,
+    };
+  }
   return {
     title: `${pet.name}, ${word} ищет дом`,
     description: pet.description,
