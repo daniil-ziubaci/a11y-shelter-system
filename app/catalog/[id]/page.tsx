@@ -31,15 +31,18 @@ export async function generateMetadata({
   );
 
   const shelterName = data.shelters?.name;
-  if (shelterName) {
-    return {
-      title: `${pet.name}, ${word} ищет дом — ${shelterName}`,
-      description: truncateText(pet.description, 155),
-    };
-  }
+  const title = shelterName
+    ? `${pet.name}, ${word} ищет дом — ${shelterName}`
+    : `${pet.name}, ${word} ищет дом`;
+  const description = truncateText(pet.description, 155);
   return {
-    title: `${pet.name}, ${word} ищет дом`,
-    description: truncateText(pet.description, 155),
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      images: [{ url: pet.photo.url, alt: pet.photo.alt }],
+    },
   };
 }
 
