@@ -4,7 +4,27 @@ import { formatAge } from "@/lib/formatAge";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("pets")
+    .select("*")
+    .eq("id", id)
+    .single();
+  if (!data) {
+    return { title: "Животное не найдено" };
+  }
+  const pet = toPet(data);
+  return {
+    title: `${pet.name} ищет дом`,
+    description: pet.description,
+  };
+}
 export default async function PetPage({
   params,
 }: {
