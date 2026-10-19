@@ -6,6 +6,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getAnimalWord } from "@/lib/animalWord";
 import { getLifeStage } from "@/lib/lifeStage";
+import { truncateText } from "@/lib/truncateText";
 
 export async function generateMetadata({
   params,
@@ -33,12 +34,12 @@ export async function generateMetadata({
   if (shelterName) {
     return {
       title: `${pet.name}, ${word} ищет дом — ${shelterName}`,
-      description: pet.description,
+      description: truncateText(pet.description, 155),
     };
   }
   return {
     title: `${pet.name}, ${word} ищет дом`,
-    description: pet.description,
+    description: truncateText(pet.description, 155),
   };
 }
 
