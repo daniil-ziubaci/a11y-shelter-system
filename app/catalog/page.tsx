@@ -2,7 +2,11 @@ import { PetCard } from "@/components/PetCard";
 import { createClient } from "@/lib/supabase/server";
 import { toPet } from "@/lib/toPet";
 import Link from "next/link";
-
+export const metadata = {
+  title: "Каталог животных, которые ищут дом",
+  description:
+    "Собаки и кошки из приюта ищут дом. Фильтры по виду, полу и возрасту.",
+};
 export default async function Catalog({
   searchParams,
 }: {
@@ -70,7 +74,7 @@ export default async function Catalog({
   }
   return (
     <main className="flex flex-col gap-6 p-4 max-w-5xl mx-auto">
-      <h1 className="text-3xl font-bold text-center">Ищут дом</h1>
+      <h1 className="text-3xl font-bold text-center">Животные ищут дом</h1>
       <nav aria-label="Фильтры каталога">
         <fieldset>
           <legend>Вид</legend>
