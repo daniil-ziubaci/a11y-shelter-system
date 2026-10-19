@@ -162,9 +162,12 @@ export default async function Catalog({
           </div>
         </fieldset>
       </nav>
-      {pets.length === 0 ? (
-        <p role="status">Подходящих питомцев нет.</p>
-      ) : (
+      <p role="status">
+        {pets.length === 0
+          ? "Подходящих животных нет."
+          : `Найдено животных: ${pets.length}`}
+      </p>
+      {pets.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {pets.map((pet) => (
             <PetCard key={pet.id} pet={pet} />
