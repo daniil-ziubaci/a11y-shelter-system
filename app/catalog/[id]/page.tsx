@@ -58,6 +58,7 @@ export default async function PetPage({
           alt={pet.photo.alt}
           fill
           sizes="(min-width: 448px) 448px, 100vw"
+          loading="eager"
           className="object-cover"
         />
       </div>
