@@ -3,7 +3,7 @@ import { formatAge } from "@/lib/formatAge";
 import Image from "next/image";
 import Link from "next/link";
 
-export function PetCard({ pet }: { pet: Pet }) {
+export function PetCard({ pet, eager = false }: { pet: Pet; eager?: boolean }) {
   return (
     <article className="p-4 border rounded-lg flex flex-col gap-4 relative focus-within:outline-2 focus-within:outline-offset-2 hover:bg-gray-900">
       <div className="relative aspect-3/4">
@@ -15,6 +15,7 @@ export function PetCard({ pet }: { pet: Pet }) {
           alt={pet.photo.alt}
           fill
           sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+          loading={eager ? "eager" : "lazy"}
           className="object-cover bg-gray-100"
         />
       </div>
