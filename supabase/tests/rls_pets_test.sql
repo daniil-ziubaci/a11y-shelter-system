@@ -1,6 +1,6 @@
 begin;
 
-select plan(12);
+select plan(13);
 
 select has_table('public', 'pets', 'pets table exists');
 
@@ -161,6 +161,18 @@ select is(
   (select count(*) from public.pets where name = 'Renamed'),
   1::bigint,
   'member can rename pet of own shelter'
+);
+
+set local request.jwt.claims to '{"sub": "33333333-3333-3333-3333-333333333333"}';
+
+update public.pets
+set name = 'Hacked2'
+where name = 'Renamed';
+
+select is(
+  (select count(*) from public.pets where name = 'Renamed'),
+  1::bigint,
+  'non-member cannot rename pet'
 );
 
 select * from finish();
