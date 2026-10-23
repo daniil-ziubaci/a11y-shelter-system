@@ -1,6 +1,6 @@
 begin;
 
-select plan(13);
+select plan(14);
 
 select has_table('public', 'pets', 'pets table exists');
 
@@ -173,6 +173,21 @@ select is(
   (select count(*) from public.pets where name = 'Renamed'),
   1::bigint,
   'non-member cannot rename pet'
+);
+
+set local role anon;
+
+set local request.jwt.claims to '{}';
+
+select throws_ok(
+  $$
+    update public.pets
+    set name = 'Hacked3'
+    where name = 'Renamed'
+  $$,
+  '42501',
+  'permission denied for table pets',
+  'guest cannot update pet'
 );
 
 select * from finish();
