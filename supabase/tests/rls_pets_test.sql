@@ -1,6 +1,6 @@
 begin;
 
-select plan(19);
+select plan(20);
 
 select has_table('public', 'pets', 'pets table exists');
 
@@ -243,6 +243,16 @@ select is(
   (select count(*) from public.shelters),
   2::bigint,
   'guest can read shelters'
+);
+
+select throws_ok(
+  $$
+    insert into public.shelters (slug, name, currency)
+    values ('shelter-c', 'Shelter C', 'MDL')
+  $$,
+  '42501',
+  'permission denied for table shelters',
+  'guest cannot add shelter'
 );
 
 select * from finish();
