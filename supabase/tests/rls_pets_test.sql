@@ -1,12 +1,13 @@
 begin;
 
-select plan(7);
+select plan(8);
 
 select has_table('public', 'pets', 'pets table exists');
 
 insert into auth.users (id) values
   ('11111111-1111-1111-1111-111111111111'),
-  ('22222222-2222-2222-2222-222222222222');
+  ('22222222-2222-2222-2222-222222222222'),
+  ('33333333-3333-3333-3333-333333333333');
 
 insert into public.shelters (id, slug, name, currency) values
   ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'shelter-a', 'Shelter A', 'MDL'),
@@ -87,6 +88,24 @@ select is(
   (select name from public.pets where id = 'cccccccc-cccc-cccc-cccc-cccccccccccc'),
   'Other',
   'member cannot rename pet of other shelter'
+);
+
+set local request.jwt.claims to '{"sub": "33333333-3333-3333-3333-333333333333"}';
+
+select throws_ok(
+  $$
+    insert into public.pets (
+      shelter_id, name, species, sex, birth_date, is_age_approximate,
+      weight, diet, health, description, photo_url, photo_alt
+    ) values (
+      'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'Test2', 'кошка', 'мальчик',
+      '2024-01-01', false, 4, 'сухой корм', 'здоров', 'тест',
+      '/test.jpg', 'тест'
+    )
+  $$,
+  '42501',
+  'new row violates row-level security policy for table "pets"',
+  'logged-in non-member cannot add pet'
 );
 
 select * from finish();
