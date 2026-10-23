@@ -1,6 +1,6 @@
 begin;
 
-select plan(18);
+select plan(19);
 
 select has_table('public', 'pets', 'pets table exists');
 
@@ -233,6 +233,16 @@ select throws_ok(
   '23514',
   'new row for relation "pets" violates check constraint "pets_status_check"',
   'unknown status is rejected'
+);
+
+set local role anon;
+
+set local request.jwt.claims to '{}';
+
+select is(
+  (select count(*) from public.shelters),
+  2::bigint,
+  'guest can read shelters'
 );
 
 select * from finish();
