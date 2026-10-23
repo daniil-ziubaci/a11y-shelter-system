@@ -1,6 +1,6 @@
 begin;
 
-select plan(16);
+select plan(17);
 
 select has_table('public', 'pets', 'pets table exists');
 
@@ -212,6 +212,16 @@ select throws_ok(
   '42501',
   'permission denied for table pets',
   'member cannot delete pet'
+);
+
+update public.pets
+set status = 'снят с учёта'
+where name = 'Renamed';
+
+select is(
+  (select count(*) from public.pets where status = 'снят с учёта'),
+  1::bigint,
+  'member can set removed-from-records status'
 );
 
 select * from finish();
