@@ -1,6 +1,6 @@
 begin;
 
-select plan(3);
+select plan(5);
 
 select has_table('public', 'pets', 'pets table exists');
 
@@ -26,6 +26,36 @@ select is(
   (select count(*) from public.shelter_members),
   1::bigint,
   'member sees only own membership'
+);
+
+select lives_ok(
+  $$
+    insert into public.pets (
+      shelter_id, name, species, sex, birth_date, is_age_approximate,
+      weight, diet, health, description, photo_url, photo_alt
+    ) values (
+      'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'Test', 'кошка', 'мальчик',
+      '2024-01-01', false, 4, 'сухой корм', 'здоров', 'тест',
+      '/test.jpg', 'тест'
+    )
+  $$,
+  'member can add pet to own shelter'
+);
+
+select throws_ok(
+  $$
+    insert into public.pets (
+      shelter_id, name, species, sex, birth_date, is_age_approximate,
+      weight, diet, health, description, photo_url, photo_alt
+    ) values (
+      'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'Test', 'кошка', 'мальчик',
+      '2024-01-01', false, 4, 'сухой корм', 'здоров', 'тест',
+      '/test.jpg', 'тест'
+    )
+  $$,
+  '42501',
+  'new row violates row-level security policy for table "pets"',
+  'member cannot add pet to other shelter'
 );
 
 select * from finish();
