@@ -47,7 +47,7 @@ export default async function PetPage({
   const pet = toPet(data);
 
   return (
-    <main className="flex flex-col gap-6 p-4 max-w-5xl mx-auto">
+    <main className="w-full flex flex-col gap-6 p-4 max-w-5xl mx-auto">
       <Link href="/catalog" className="inline-block py-2 underline">
         ← Все питомцы
       </Link>

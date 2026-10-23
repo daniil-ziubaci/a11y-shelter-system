@@ -73,7 +73,7 @@ export default async function Catalog({
     return "/catalog";
   }
   return (
-    <main className="flex flex-col gap-6 p-4 max-w-5xl mx-auto">
+    <main className="w-full flex flex-col gap-6 p-4 max-w-5xl mx-auto">
       <h1 className="text-3xl font-bold text-center">Животные ищут дом</h1>
       <nav aria-label="Фильтры каталога">
         <fieldset>
