@@ -1,6 +1,6 @@
 begin;
 
-select plan(9);
+select plan(10);
 
 select has_table('public', 'pets', 'pets table exists');
 
@@ -126,6 +126,12 @@ select throws_ok(
   '42501',
   'permission denied for table pets',
   'guest cannot add pet'
+);
+
+select is(
+  (select count(*) from public.pets),
+  2::bigint,
+  'guest can read pets'
 );
 
 select * from finish();
