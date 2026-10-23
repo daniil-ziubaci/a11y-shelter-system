@@ -1,6 +1,6 @@
 begin;
 
-select plan(11);
+select plan(12);
 
 select has_table('public', 'pets', 'pets table exists');
 
@@ -149,6 +149,18 @@ select throws_ok(
   '42501',
   'permission denied for table shelter_members',
   'logged-in user cannot make himself a member'
+);
+
+set local request.jwt.claims to '{"sub": "11111111-1111-1111-1111-111111111111"}';
+
+update public.pets
+set name = 'Renamed'
+where name = 'Test';
+
+select is(
+  (select count(*) from public.pets where name = 'Renamed'),
+  1::bigint,
+  'member can rename pet of own shelter'
 );
 
 select * from finish();
