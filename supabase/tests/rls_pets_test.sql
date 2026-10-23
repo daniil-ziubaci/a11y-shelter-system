@@ -1,6 +1,6 @@
 begin;
 
-select plan(15);
+select plan(16);
 
 select has_table('public', 'pets', 'pets table exists');
 
@@ -198,6 +198,20 @@ select throws_ok(
   '42501',
   'permission denied for table pets',
   'guest cannot delete pet'
+);
+
+set local role authenticated;
+
+set local request.jwt.claims to '{"sub": "11111111-1111-1111-1111-111111111111"}';
+
+select throws_ok(
+  $$
+    delete from public.pets
+    where name = 'Renamed'
+  $$,
+  '42501',
+  'permission denied for table pets',
+  'member cannot delete pet'
 );
 
 select * from finish();
