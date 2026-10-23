@@ -1,6 +1,6 @@
 begin;
 
-select plan(8);
+select plan(9);
 
 select has_table('public', 'pets', 'pets table exists');
 
@@ -106,6 +106,26 @@ select throws_ok(
   '42501',
   'new row violates row-level security policy for table "pets"',
   'logged-in non-member cannot add pet'
+);
+
+set local role anon;
+
+set local request.jwt.claims to '{}';
+
+select throws_ok(
+  $$
+    insert into public.pets (
+      shelter_id, name, species, sex, birth_date, is_age_approximate,
+      weight, diet, health, description, photo_url, photo_alt
+    ) values (
+      'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'Test3', 'кошка', 'мальчик',
+      '2024-01-01', false, 4, 'сухой корм', 'здоров', 'тест',
+      '/test.jpg', 'тест'
+    )
+  $$,
+  '42501',
+  'permission denied for table pets',
+  'guest cannot add pet'
 );
 
 select * from finish();
