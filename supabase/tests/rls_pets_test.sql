@@ -1,6 +1,6 @@
 begin;
 
-select plan(17);
+select plan(18);
 
 select has_table('public', 'pets', 'pets table exists');
 
@@ -222,6 +222,17 @@ select is(
   (select count(*) from public.pets where status = 'снят с учёта'),
   1::bigint,
   'member can set removed-from-records status'
+);
+
+select throws_ok(
+  $$
+    update public.pets
+    set status = 'умер'
+    where name = 'Renamed'
+  $$,
+  '23514',
+  'new row for relation "pets" violates check constraint "pets_status_check"',
+  'unknown status is rejected'
 );
 
 select * from finish();
