@@ -1,6 +1,6 @@
 begin;
 
-select plan(10);
+select plan(11);
 
 select has_table('public', 'pets', 'pets table exists');
 
@@ -132,6 +132,23 @@ select is(
   (select count(*) from public.pets),
   2::bigint,
   'guest can read pets'
+);
+
+set local role authenticated;
+
+set local request.jwt.claims to '{"sub": "33333333-3333-3333-3333-333333333333"}';
+
+select throws_ok(
+  $$
+    insert into public.shelter_members (user_id, shelter_id)
+    values (
+      '33333333-3333-3333-3333-333333333333',
+      'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'
+    )
+  $$,
+  '42501',
+  'permission denied for table shelter_members',
+  'logged-in user cannot make himself a member'
 );
 
 select * from finish();
