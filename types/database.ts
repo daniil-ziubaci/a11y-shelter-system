@@ -101,6 +101,29 @@ export type Database = {
           },
         ]
       }
+      shelter_members: {
+        Row: {
+          shelter_id: string
+          user_id: string
+        }
+        Insert: {
+          shelter_id: string
+          user_id: string
+        }
+        Update: {
+          shelter_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shelter_members_shelter_id_fkey"
+            columns: ["shelter_id"]
+            isOneToOne: false
+            referencedRelation: "shelters"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       shelters: {
         Row: {
           created_at: string
