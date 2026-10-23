@@ -1,6 +1,6 @@
 begin;
 
-select plan(5);
+select plan(6);
 
 select has_table('public', 'pets', 'pets table exists');
 
@@ -56,6 +56,17 @@ select throws_ok(
   '42501',
   'new row violates row-level security policy for table "pets"',
   'member cannot add pet to other shelter'
+);
+
+select throws_ok(
+  $$
+    update public.pets
+    set shelter_id = 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'
+    where name = 'Test'
+  $$,
+  '42501',
+  'new row violates row-level security policy for table "pets"',
+  'member cannot move pet to other shelter'
 );
 
 select * from finish();
