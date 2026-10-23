@@ -1,0 +1,2 @@
+--Откат возвращает полные права ролям anon и authenticated, как их выдаёт платформа по умолчанию на новых версиях CLI; на старых версиях состояние до миграции было уже, поэтому откат не 1:1, но данные не затрагиваются. Применять только на песочнице.
+grant all on public.shelters, public.pets, public.shelter_members to anon, authenticated;
