@@ -51,5 +51,15 @@ export async function updateSession(request: NextRequest) {
     return redirectTo("/login");
   }
 
+  if (data.claims.aal !== "aal2") {
+    const path = request.nextUrl.pathname;
+    if (path === "/volunteer/2fa" || path === "/volunteer/2fa/verify") {
+      return supabaseResponse;
+    }
+    const { data: factors } = await supabase.auth.mfa.listFactors();
+    const hasFactor = (factors?.totp.length ?? 0) > 0;
+    return redirectTo(hasFactor ? "/volunteer/2fa/verify" : "/volunteer/2fa");
+  }
+
   return supabaseResponse;
 }
