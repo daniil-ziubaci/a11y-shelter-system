@@ -1,6 +1,6 @@
 begin;
 
-select plan(24);
+select plan(27);
 
 select has_table('public', 'pets', 'pets table exists');
 
@@ -305,6 +305,44 @@ select throws_ok(
   '42501',
   'permission denied for table shelters',
   'guest cannot add shelter'
+);
+
+set local role authenticated;
+
+set local request.jwt.claims to '{"sub": "11111111-1111-1111-1111-111111111111", "aal": "aal2"}';
+
+select throws_ok(
+  $$
+    insert into public.shelters (slug, name, currency)
+    values ('shelter-d', 'Shelter D', 'MDL')
+  $$,
+  '42501',
+  'permission denied for table shelters',
+  'member cannot add shelter'
+);
+
+select throws_ok(
+  $$
+    update public.shelters
+    set about = 'Hacked'
+    where id = 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'
+  $$,
+  '42501',
+  'permission denied for table shelters',
+  'member cannot change shelter profile'
+);
+
+set local request.jwt.claims to '{"sub": "33333333-3333-3333-3333-333333333333", "aal": "aal2"}';
+
+select throws_ok(
+  $$
+    update public.shelters
+    set about = 'Hacked'
+    where id = 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'
+  $$,
+  '42501',
+  'permission denied for table shelters',
+  'non-member cannot change shelter profile'
 );
 
 select * from finish();
