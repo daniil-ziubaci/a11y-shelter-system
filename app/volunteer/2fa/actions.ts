@@ -10,6 +10,13 @@ export type EnrollResult =
 export async function startEnrollment(): Promise<EnrollResult> {
   const supabase = await createClient();
 
+  const { data: factors } = await supabase.auth.mfa.listFactors();
+  for (const factor of factors?.all ?? []) {
+    if (factor.status === "unverified") {
+      await supabase.auth.mfa.unenroll({ factorId: factor.id });
+    }
+  }
+
   const { data, error } = await supabase.auth.mfa.enroll({
     factorType: "totp",
   });
