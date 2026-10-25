@@ -1,4 +1,4 @@
-import { login } from "./actions";
+import { LoginForm } from "@/app/login/login-form";
 
 export const metadata = {
   title: "Вход для волонтёров",
@@ -9,27 +9,7 @@ export default function LoginPage() {
   return (
     <main>
       <h1>Вход для волонтёров</h1>
-      <form action={login}>
-        <label htmlFor="email">Почта</label>
-        <input
-          id="email"
-          name="email"
-          type="email"
-          autoComplete="email"
-          required
-        />
-
-        <label htmlFor="password">Пароль</label>
-        <input
-          id="password"
-          name="password"
-          type="password"
-          autoComplete="current-password"
-          required
-        />
-
-        <button type="submit">Войти</button>
-      </form>
+      <LoginForm />
     </main>
   );
 }

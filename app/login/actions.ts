@@ -3,12 +3,17 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 
-export async function login(formData: FormData) {
+type LoginState = { error: string } | undefined;
+
+export async function login(
+  _prevState: LoginState,
+  formData: FormData,
+): Promise<LoginState> {
   const email = formData.get("email");
   const password = formData.get("password");
 
   if (typeof email !== "string" || typeof password !== "string") {
-    redirect("/login?error=1");
+    return { error: "Введите почту и пароль." };
   }
 
   const supabase = await createClient();
@@ -18,7 +23,7 @@ export async function login(formData: FormData) {
   });
 
   if (error) {
-    redirect("/login?error=1");
+    return { error: "Неверная почта или пароль." };
   }
 
   redirect("/volunteer");
