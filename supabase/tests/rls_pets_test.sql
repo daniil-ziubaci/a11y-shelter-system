@@ -1,6 +1,6 @@
 begin;
 
-select plan(20);
+select plan(24);
 
 select has_table('public', 'pets', 'pets table exists');
 
@@ -29,7 +29,7 @@ insert into public.pets (
 
 set local role authenticated;
 
-set local request.jwt.claims to '{"sub": "11111111-1111-1111-1111-111111111111"}';
+set local request.jwt.claims to '{"sub": "11111111-1111-1111-1111-111111111111", "aal": "aal2"}';
 
 select is((select auth.uid()), '11111111-1111-1111-1111-111111111111'::uuid, 'auth.uid returns the test user');
 
@@ -90,7 +90,7 @@ select is(
   'member cannot rename pet of other shelter'
 );
 
-set local request.jwt.claims to '{"sub": "33333333-3333-3333-3333-333333333333"}';
+set local request.jwt.claims to '{"sub": "33333333-3333-3333-3333-333333333333", "aal": "aal2"}';
 
 select throws_ok(
   $$
@@ -136,7 +136,7 @@ select is(
 
 set local role authenticated;
 
-set local request.jwt.claims to '{"sub": "33333333-3333-3333-3333-333333333333"}';
+set local request.jwt.claims to '{"sub": "33333333-3333-3333-3333-333333333333", "aal": "aal2"}';
 
 select throws_ok(
   $$
@@ -151,7 +151,7 @@ select throws_ok(
   'logged-in user cannot make himself a member'
 );
 
-set local request.jwt.claims to '{"sub": "11111111-1111-1111-1111-111111111111"}';
+set local request.jwt.claims to '{"sub": "11111111-1111-1111-1111-111111111111", "aal": "aal2"}';
 
 update public.pets
 set name = 'Renamed'
@@ -163,7 +163,7 @@ select is(
   'member can rename pet of own shelter'
 );
 
-set local request.jwt.claims to '{"sub": "33333333-3333-3333-3333-333333333333"}';
+set local request.jwt.claims to '{"sub": "33333333-3333-3333-3333-333333333333", "aal": "aal2"}';
 
 update public.pets
 set name = 'Hacked2'
@@ -202,7 +202,7 @@ select throws_ok(
 
 set local role authenticated;
 
-set local request.jwt.claims to '{"sub": "11111111-1111-1111-1111-111111111111"}';
+set local request.jwt.claims to '{"sub": "11111111-1111-1111-1111-111111111111", "aal": "aal2"}';
 
 select throws_ok(
   $$
@@ -233,6 +233,58 @@ select throws_ok(
   '23514',
   'new row for relation "pets" violates check constraint "pets_status_check"',
   'unknown status is rejected'
+);
+
+set local request.jwt.claims to '{"sub": "11111111-1111-1111-1111-111111111111", "aal": "aal1"}';
+
+select throws_ok(
+  $$
+    insert into public.pets (
+      shelter_id, name, species, sex, birth_date, is_age_approximate,
+      weight, diet, health, description, photo_url, photo_alt
+    ) values (
+      'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'Test4', 'кошка', 'мальчик',
+      '2024-01-01', false, 4, 'сухой корм', 'здоров', 'тест',
+      '/test.jpg', 'тест'
+    )
+  $$,
+  '42501',
+  'new row violates row-level security policy "Pet inserts require second factor" for table "pets"',
+  'member without second factor cannot add pet'
+);
+
+update public.pets
+set name = 'Hacked4'
+where name = 'Renamed';
+
+select is(
+  (select count(*) from public.pets where name = 'Renamed'),
+  1::bigint,
+  'member without second factor cannot rename pet'
+);
+
+select is(
+  (select count(*) from public.pets),
+  2::bigint,
+  'member without second factor can still read pets'
+);
+
+set local request.jwt.claims to '{"sub": "11111111-1111-1111-1111-111111111111"}';
+
+select throws_ok(
+  $$
+    insert into public.pets (
+      shelter_id, name, species, sex, birth_date, is_age_approximate,
+      weight, diet, health, description, photo_url, photo_alt
+    ) values (
+      'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'Test5', 'кошка', 'мальчик',
+      '2024-01-01', false, 4, 'сухой корм', 'здоров', 'тест',
+      '/test.jpg', 'тест'
+    )
+  $$,
+  '42501',
+  'new row violates row-level security policy "Pet inserts require second factor" for table "pets"',
+  'member with no aal claim cannot add pet'
 );
 
 set local role anon;
