@@ -126,24 +126,51 @@ export type Database = {
       }
       shelters: {
         Row: {
+          about: string | null
+          address: string | null
+          city: string | null
+          contact_hours: string | null
+          contact_messenger: string | null
+          contact_phone: string | null
           created_at: string
           currency: string
+          founded_year: number | null
           id: string
+          legal_info: string | null
           name: string
+          public_channel_url: string | null
           slug: string
         }
         Insert: {
+          about?: string | null
+          address?: string | null
+          city?: string | null
+          contact_hours?: string | null
+          contact_messenger?: string | null
+          contact_phone?: string | null
           created_at?: string
           currency: string
+          founded_year?: number | null
           id?: string
+          legal_info?: string | null
           name: string
+          public_channel_url?: string | null
           slug: string
         }
         Update: {
+          about?: string | null
+          address?: string | null
+          city?: string | null
+          contact_hours?: string | null
+          contact_messenger?: string | null
+          contact_phone?: string | null
           created_at?: string
           currency?: string
+          founded_year?: number | null
           id?: string
+          legal_info?: string | null
           name?: string
+          public_channel_url?: string | null
           slug?: string
         }
         Relationships: []
