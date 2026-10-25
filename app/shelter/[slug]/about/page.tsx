@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { getShelter } from "@/lib/getShelter";
 import { truncateText } from "@/lib/truncateText";
 
@@ -52,7 +53,53 @@ export default async function ShelterAboutPage({
             <dd>{shelter.contact_hours}</dd>
           </div>
         )}
+        {shelter.legal_info && (
+          <div className="flex gap-1">
+            <dt>Юридическая информация:</dt>
+            <dd>{shelter.legal_info}</dd>
+          </div>
+        )}
       </dl>
+      <section
+        aria-labelledby="contact-heading"
+        className="flex flex-col gap-2"
+      >
+        <h2 id="contact-heading" className="text-xl font-bold">
+          Связаться с приютом
+        </h2>
+        {shelter.contact_phone && (
+          <a
+            href={`tel:${shelter.contact_phone.replace(/[^\d+]/g, "")}`}
+            className="underline inline-block py-2"
+          >
+            Позвонить: {shelter.contact_phone}
+          </a>
+        )}
+        {shelter.contact_messenger && (
+          <a
+            href={shelter.contact_messenger}
+            className="underline inline-block py-2"
+            rel="noopener noreferrer"
+          >
+            Написать приюту в мессенджере
+          </a>
+        )}
+        {!shelter.contact_phone && !shelter.contact_messenger && (
+          <p>Контакт приюта пока не указан.</p>
+        )}
+        {shelter.public_channel_url && (
+          <a
+            href={shelter.public_channel_url}
+            className="underline inline-block py-2"
+            rel="noopener noreferrer"
+          >
+            Новости приюта
+          </a>
+        )}
+        <Link href="/catalog" className="underline inline-block py-2">
+          Найти друга в каталоге
+        </Link>
+      </section>
     </main>
   );
 }
