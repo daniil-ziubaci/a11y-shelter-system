@@ -1,3 +1,5 @@
+import { login } from "./actions";
+
 export const metadata = {
   title: "Вход для волонтёров",
   robots: { index: false },
@@ -7,7 +9,7 @@ export default function LoginPage() {
   return (
     <main>
       <h1>Вход для волонтёров</h1>
-      <form>
+      <form action={login}>
         <label htmlFor="email">Почта</label>
         <input
           id="email"
