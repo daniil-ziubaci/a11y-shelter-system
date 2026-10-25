@@ -14,17 +14,13 @@ export async function updateSession(request: NextRequest) {
           return request.cookies.getAll();
         },
         setAll(cookiesToSet, headers) {
-          // 1. записываем новые cookie в запрос
           cookiesToSet.forEach(({ name, value }) =>
             request.cookies.set(name, value),
           );
-          // 2. создаём ответ заново, уже с обновлённым запросом
           supabaseResponse = NextResponse.next({ request });
-          // 3. записываем те же cookie в ответ
           cookiesToSet.forEach(({ name, value, options }) =>
             supabaseResponse.cookies.set(name, value, options),
           );
-          // 4. добавляем в ответ заголовки про запрет кэша
           Object.entries(headers).forEach(([key, value]) =>
             supabaseResponse.headers.set(key, value),
           );
@@ -33,7 +29,23 @@ export async function updateSession(request: NextRequest) {
     },
   );
 
-  await supabase.auth.getClaims();
+  const { data } = await supabase.auth.getClaims();
+
+  if (!data?.claims) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/login";
+    url.search = "";
+
+    const redirectResponse = NextResponse.redirect(url);
+    supabaseResponse.cookies
+      .getAll()
+      .forEach((cookie) => redirectResponse.cookies.set(cookie));
+    for (const header of ["cache-control", "expires", "pragma"]) {
+      const value = supabaseResponse.headers.get(header);
+      if (value) redirectResponse.headers.set(header, value);
+    }
+    return redirectResponse;
+  }
 
   return supabaseResponse;
 }
