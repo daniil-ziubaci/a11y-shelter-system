@@ -31,9 +31,9 @@ export async function updateSession(request: NextRequest) {
 
   const { data } = await supabase.auth.getClaims();
 
-  if (!data?.claims) {
+  function redirectTo(pathname: string) {
     const url = request.nextUrl.clone();
-    url.pathname = "/login";
+    url.pathname = pathname;
     url.search = "";
 
     const redirectResponse = NextResponse.redirect(url);
@@ -45,6 +45,10 @@ export async function updateSession(request: NextRequest) {
       if (value) redirectResponse.headers.set(header, value);
     }
     return redirectResponse;
+  }
+
+  if (!data?.claims) {
+    return redirectTo("/login");
   }
 
   return supabaseResponse;
