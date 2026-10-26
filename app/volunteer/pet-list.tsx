@@ -18,7 +18,7 @@ export async function PetList({ shelterId }: { shelterId: string }) {
   return (
     <ul>
       {pets.map((pet) => (
-        <li key={pet.id}>{pet.name}</li>
+        <li key={pet.id}>{pet.name}, {pet.status}</li>
       ))}
     </ul>
   );
