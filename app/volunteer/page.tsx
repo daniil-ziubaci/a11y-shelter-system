@@ -1,5 +1,6 @@
 import { logout } from "@/app/volunteer/actions";
 import { createClient } from "@/lib/supabase/server";
+import { PetList } from "@/app/volunteer/pet-list";
 
 export const metadata = {
   title: "Панель волонтёра",
@@ -18,7 +19,10 @@ export default async function VolunteerPage() {
     <main>
       <h1>Панель волонтёра</h1>
       {membership ? (
-        <p>Приют: {membership.shelters?.name}</p>
+        <>
+          <p>Приют: {membership.shelters?.name}</p>
+          <PetList />
+        </>
       ) : (
         <p>Вы пока не состоите ни в одном приюте. Обратитесь к координатору.</p>
       )}
