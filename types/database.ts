@@ -49,6 +49,7 @@ export type Database = {
           id: string
           is_age_approximate: boolean
           name: string
+          needs_treatment_since: string | null
           photo_alt: string
           photo_url: string
           sex: string
@@ -66,6 +67,7 @@ export type Database = {
           id?: string
           is_age_approximate: boolean
           name: string
+          needs_treatment_since?: string | null
           photo_alt: string
           photo_url: string
           sex: string
@@ -83,6 +85,7 @@ export type Database = {
           id?: string
           is_age_approximate?: boolean
           name?: string
+          needs_treatment_since?: string | null
           photo_alt?: string
           photo_url?: string
           sex?: string
