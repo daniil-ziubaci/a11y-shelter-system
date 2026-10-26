@@ -8,6 +8,7 @@ export const getPet = cache(async (id: string) => {
     .from("pets")
     .select("*, shelters(name)")
     .eq("id", id)
+    .neq("status", "снят с учёта")
     .single();
   if (error?.code === "PGRST116" || error?.code === "22P02") {
     notFound();
