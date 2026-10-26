@@ -13,5 +13,5 @@ export type Pet = {
   diet: string;
   description: string;
   health: string;
-  status: "ищет дом" | "в процессе" | "пристроен";
+  status: "ищет дом" | "в процессе" | "пристроен" | "снят с учёта";
 };
