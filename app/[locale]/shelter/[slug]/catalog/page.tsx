@@ -3,18 +3,20 @@ import { getShelter } from "@/lib/getShelter";
 import { createClient } from "@/lib/supabase/server";
 import { toPet } from "@/lib/toPet";
 import { Link } from "@/i18n/navigation";
+import { getTranslations } from "next-intl/server";
 
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ slug: string; locale: string }>;
 }) {
-  const { slug } = await params;
+  const { slug, locale } = await params;
   const shelter = await getShelter(slug);
+  const t = await getTranslations({ locale, namespace: "Catalog" });
 
   return {
-    title: `Животные ищут дом — ${shelter.name}`,
-    description: `Собаки и кошки из приюта «${shelter.name}» ищут дом. Фильтры по виду, полу и возрасту.`,
+    title: t("title", { shelter: shelter.name }),
+    description: t("description", { shelter: shelter.name }),
   };
 }
 
@@ -28,6 +30,7 @@ export default async function Catalog({
   const { slug } = await params;
   const { species, sex, age } = await searchParams;
   const shelter = await getShelter(slug);
+  const t = await getTranslations("Catalog");
 
   const twelveMonthsAgo = new Date();
   twelveMonthsAgo.setMonth(twelveMonthsAgo.getMonth() - 12);
@@ -98,98 +101,96 @@ export default async function Catalog({
 
   return (
     <main className="w-full flex flex-col gap-6 p-4 max-w-5xl mx-auto">
-      <h1 className="text-3xl font-bold text-center">Животные ищут дом</h1>
-      <nav aria-label="Фильтры каталога">
+      <h1 className="text-3xl font-bold text-center">{t("heading")}</h1>
+      <nav aria-label={t("filtersLabel")}>
         <fieldset>
-          <legend>Вид</legend>
+          <legend>{t("species")}</legend>
           <div className="flex flex-wrap gap-2">
             <Link
               href={buildHref(undefined, sex, age)}
               aria-current={species === undefined ? "true" : undefined}
               className={`px-3 py-2 ${species === undefined ? "font-bold" : ""}`}
             >
-              Все
+              {t("all")}
             </Link>
             <Link
               href={buildHref("dog", sex, age)}
               aria-current={species === "dog" ? "true" : undefined}
               className={`px-3 py-2 ${species === "dog" ? "font-bold" : ""}`}
             >
-              Собаки
+              {t("dogs")}
             </Link>
             <Link
               href={buildHref("cat", sex, age)}
               aria-current={species === "cat" ? "true" : undefined}
               className={`px-3 py-2 ${species === "cat" ? "font-bold" : ""}`}
             >
-              Кошки
+              {t("cats")}
             </Link>
           </div>
         </fieldset>
         <fieldset>
-          <legend>Пол</legend>
+          <legend>{t("sex")}</legend>
           <div className="flex flex-wrap gap-2">
             <Link
               href={buildHref(species, undefined, age)}
               aria-current={sex === undefined ? "true" : undefined}
               className={`px-3 py-2 ${sex === undefined ? "font-bold" : ""}`}
             >
-              Все
+              {t("all")}
             </Link>
             <Link
               href={buildHref(species, "male", age)}
               aria-current={sex === "male" ? "true" : undefined}
               className={`px-3 py-2 ${sex === "male" ? "font-bold" : ""}`}
             >
-              Мальчики
+              {t("males")}
             </Link>
             <Link
               href={buildHref(species, "female", age)}
               aria-current={sex === "female" ? "true" : undefined}
               className={`px-3 py-2 ${sex === "female" ? "font-bold" : ""}`}
             >
-              Девочки
+              {t("females")}
             </Link>
           </div>
         </fieldset>
         <fieldset>
-          <legend>Возраст</legend>
+          <legend>{t("age")}</legend>
           <div className="flex flex-wrap gap-2">
             <Link
               href={buildHref(species, sex, undefined)}
               aria-current={age === undefined ? "true" : undefined}
               className={`px-3 py-2 ${age === undefined ? "font-bold" : ""}`}
             >
-              Все
+              {t("all")}
             </Link>
             <Link
               href={buildHref(species, sex, "young")}
               aria-current={age === "young" ? "true" : undefined}
               className={`px-3 py-2 ${age === "young" ? "font-bold" : ""}`}
             >
-              До 1 года
+              {t("young")}
             </Link>
             <Link
               href={buildHref(species, sex, "adult")}
               aria-current={age === "adult" ? "true" : undefined}
               className={`px-3 py-2 ${age === "adult" ? "font-bold" : ""}`}
             >
-              От 1 до 7 лет
+              {t("adult")}
             </Link>
             <Link
               href={buildHref(species, sex, "senior")}
               aria-current={age === "senior" ? "true" : undefined}
               className={`px-3 py-2 ${age === "senior" ? "font-bold" : ""}`}
             >
-              От 7 лет
+              {t("senior")}
             </Link>
           </div>
         </fieldset>
       </nav>
       <p role="status">
-        {pets.length === 0
-          ? "Подходящих животных нет."
-          : `Найдено животных: ${pets.length}`}
+        {pets.length === 0 ? t("none") : t("found", { count: pets.length })}
       </p>
       {pets.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">

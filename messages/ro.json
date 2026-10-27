@@ -4,5 +4,24 @@
     "catalog": "Animale care caută o casă",
     "treatment": "Ajutor pentru tratament",
     "about": "Despre adăpost"
+  },
+  "Catalog": {
+    "title": "Animale care caută o casă — {shelter}",
+    "description": "Câini și pisici din adăpostul „{shelter}” caută o casă. Filtre după specie, sex și vârstă.",
+    "heading": "Animale care caută o casă",
+    "filtersLabel": "Filtre catalog",
+    "all": "Toate",
+    "species": "Specie",
+    "dogs": "Câini",
+    "cats": "Pisici",
+    "sex": "Sex",
+    "males": "Masculi",
+    "females": "Femele",
+    "age": "Vârstă",
+    "young": "Sub 1 an",
+    "adult": "De la 1 la 7 ani",
+    "senior": "Peste 7 ani",
+    "none": "Nu există animale potrivite.",
+    "found": "Animale găsite: {count}"
   }
 }
