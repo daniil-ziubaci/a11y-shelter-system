@@ -2,6 +2,7 @@ import { ShelterNav } from "@/app/[locale]/shelter/[slug]/shelter-nav";
 import { getShelter } from "@/lib/getShelter";
 import { Link } from "@/i18n/navigation";
 import { getTranslations } from "next-intl/server";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 
 export default async function ShelterLayout({
   children,
@@ -16,8 +17,9 @@ export default async function ShelterLayout({
 
   return (
     <>
-      <header className="w-full max-w-5xl mx-auto p-4">
+      <header className="w-full max-w-5xl mx-auto p-4 flex flex-wrap items-center justify-between gap-4">
         <ShelterNav slug={slug} />
+        <LanguageSwitcher />
       </header>
       {children}
       <footer className="w-full max-w-5xl mx-auto p-4 mt-auto">

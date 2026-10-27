@@ -3,7 +3,8 @@
     "label": "Navigare principală",
     "catalog": "Animale care caută o casă",
     "treatment": "Ajutor pentru tratament",
-    "about": "Despre adăpost"
+    "about": "Despre adăpost",
+    "language": "Limba"
   },
   "Catalog": {
     "title": "Animale care caută o casă — {shelter}",

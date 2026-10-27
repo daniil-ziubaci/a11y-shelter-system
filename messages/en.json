@@ -3,7 +3,8 @@
     "label": "Main navigation",
     "catalog": "Animals looking for a home",
     "treatment": "Help with treatment",
-    "about": "About the shelter"
+    "about": "About the shelter",
+    "language": "Language"
   },
   "Catalog": {
     "title": "Animals looking for a home — {shelter}",
