@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { setPetStatus, setPetTreatment } from "@/app/volunteer/actions";
 import { PET_STATUSES } from "@/lib/petStatuses";
 import Link from "next/link";
+import { isTreatmentStale } from "@/lib/treatmentReview";
 
 export async function PetList({ shelterId }: { shelterId: string }) {
   const supabase = await createClient();
@@ -55,6 +56,9 @@ export async function PetList({ shelterId }: { shelterId: string }) {
                 month: "long",
               })}
             </p>
+          )}
+          {isTreatmentStale(pet.needs_treatment_since) && (
+            <p>Отметка стоит давно: проверьте, актуально ли.</p>
           )}
           <form action={setPetTreatment}>
             <input type="hidden" name="petId" value={pet.id} />
