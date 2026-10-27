@@ -55,5 +55,30 @@
     "dogMale": "dog",
     "dogFemale": "dog",
     "other": "animal"
+  },
+  "About": {
+    "titleWithCity": "{name}, {city} — about the shelter",
+    "title": "{name} — about the shelter",
+    "descriptionFallback": "Contacts and information about the “{name}” shelter.",
+    "founded": "Founded:",
+    "city": "City:",
+    "address": "Address:",
+    "addressByAppointment": "Visits by appointment",
+    "hours": "Contact hours:",
+    "legal": "Legal information:",
+    "contactHeading": "Contact the shelter",
+    "call": "Call: {phone}",
+    "messenger": "Message the shelter on a messenger",
+    "noContact": "No contact has been provided for the shelter yet.",
+    "news": "Shelter news",
+    "findFriend": "Find a friend in the catalog"
+  },
+  "Treatment": {
+    "title": "Help with treatment — {shelter}",
+    "description": "Animals from the “{shelter}” shelter that currently need help with treatment.",
+    "heading": "Help with treatment",
+    "loadError": "Could not load the list of animals.",
+    "empty": "No animal needs help with treatment right now.",
+    "since": "Urgently needs help with treatment — since {date}"
   }
 }

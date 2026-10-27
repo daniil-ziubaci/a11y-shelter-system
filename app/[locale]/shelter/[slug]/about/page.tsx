@@ -1,20 +1,22 @@
 import { Link } from "@/i18n/navigation";
 import { getShelter } from "@/lib/getShelter";
 import { truncateText } from "@/lib/truncateText";
+import { getTranslations } from "next-intl/server";
 
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ slug: string; locale: string }>;
 }) {
-  const { slug } = await params;
+  const { slug, locale } = await params;
   const shelter = await getShelter(slug);
+  const t = await getTranslations({ locale, namespace: "About" });
   const title = shelter.city
-    ? `${shelter.name}, ${shelter.city} — о приюте`
-    : `${shelter.name} — о приюте`;
+    ? t("titleWithCity", { name: shelter.name, city: shelter.city })
+    : t("title", { name: shelter.name });
   const description = shelter.about
     ? truncateText(shelter.about, 155)
-    : `Контакты и информация о приюте «${shelter.name}».`;
+    : t("descriptionFallback", { name: shelter.name });
   return { title, description };
 }
 
@@ -25,6 +27,7 @@ export default async function ShelterAboutPage({
 }) {
   const { slug } = await params;
   const shelter = await getShelter(slug);
+  const t = await getTranslations("About");
 
   return (
     <main className="w-full flex flex-col gap-6 p-4 max-w-5xl mx-auto">
@@ -33,29 +36,29 @@ export default async function ShelterAboutPage({
       <dl className="flex flex-col gap-2">
         {shelter.founded_year && (
           <div className="flex gap-1">
-            <dt>Год основания:</dt>
+            <dt>{t("founded")}</dt>
             <dd>{shelter.founded_year}</dd>
           </div>
         )}
         {shelter.city && (
           <div className="flex gap-1">
-            <dt>Город:</dt>
+            <dt>{t("city")}</dt>
             <dd>{shelter.city}</dd>
           </div>
         )}
         <div className="flex gap-1">
-          <dt>Адрес:</dt>
-          <dd>{shelter.address ?? "Посещение по договорённости"}</dd>
+          <dt>{t("address")}</dt>
+          <dd>{shelter.address ?? t("addressByAppointment")}</dd>
         </div>
         {shelter.contact_hours && (
           <div className="flex gap-1">
-            <dt>Часы связи:</dt>
+            <dt>{t("hours")}</dt>
             <dd>{shelter.contact_hours}</dd>
           </div>
         )}
         {shelter.legal_info && (
           <div className="flex gap-1">
-            <dt>Юридическая информация:</dt>
+            <dt>{t("legal")}</dt>
             <dd>{shelter.legal_info}</dd>
           </div>
         )}
@@ -65,14 +68,14 @@ export default async function ShelterAboutPage({
         className="flex flex-col gap-2"
       >
         <h2 id="contact-heading" className="text-xl font-bold">
-          Связаться с приютом
+          {t("contactHeading")}
         </h2>
         {shelter.contact_phone && (
           <a
             href={`tel:${shelter.contact_phone.replace(/[^\d+]/g, "")}`}
             className="underline inline-block py-2"
           >
-            Позвонить: {shelter.contact_phone}
+            {t("call", { phone: shelter.contact_phone })}
           </a>
         )}
         {shelter.contact_messenger && (
@@ -81,11 +84,11 @@ export default async function ShelterAboutPage({
             className="underline inline-block py-2"
             rel="noopener noreferrer"
           >
-            Написать приюту в мессенджере
+            {t("messenger")}
           </a>
         )}
         {!shelter.contact_phone && !shelter.contact_messenger && (
-          <p>Контакт приюта пока не указан.</p>
+          <p>{t("noContact")}</p>
         )}
         {shelter.public_channel_url && (
           <a
@@ -93,14 +96,14 @@ export default async function ShelterAboutPage({
             className="underline inline-block py-2"
             rel="noopener noreferrer"
           >
-            Новости приюта
+            {t("news")}
           </a>
         )}
         <Link
           href={`/shelter/${slug}/catalog`}
           className="underline inline-block py-2"
         >
-          Найти друга в каталоге
+          {t("findFriend")}
         </Link>
       </section>
     </main>

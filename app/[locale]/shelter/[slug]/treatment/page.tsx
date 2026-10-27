@@ -1,17 +1,19 @@
 import { getShelter } from "@/lib/getShelter";
 import { createClient } from "@/lib/supabase/server";
 import { Link } from "@/i18n/navigation";
+import { getFormatter, getTranslations } from "next-intl/server";
 
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ slug: string; locale: string }>;
 }) {
-  const { slug } = await params;
+  const { slug, locale } = await params;
   const shelter = await getShelter(slug);
+  const t = await getTranslations({ locale, namespace: "Treatment" });
   return {
-    title: `Нужна помощь с лечением — ${shelter.name}`,
-    description: `Животные приюта «${shelter.name}», которым сейчас нужна помощь с лечением.`,
+    title: t("title", { shelter: shelter.name }),
+    description: t("description", { shelter: shelter.name }),
   };
 }
 
@@ -22,6 +24,8 @@ export default async function ShelterTreatmentPage({
 }) {
   const { slug } = await params;
   const shelter = await getShelter(slug);
+  const t = await getTranslations("Treatment");
+  const format = await getFormatter();
   const supabase = await createClient();
   const { data: pets, error } = await supabase
     .from("pets")
@@ -34,15 +38,15 @@ export default async function ShelterTreatmentPage({
   if (error) {
     return (
       <main className="w-full flex flex-col gap-6 p-4 max-w-5xl mx-auto">
-        <p role="alert">Не удалось загрузить список животных.</p>
+        <p role="alert">{t("loadError")}</p>
       </main>
     );
   }
   return (
     <main className="w-full flex flex-col gap-6 p-4 max-w-5xl mx-auto">
-      <h1>Нужна помощь с лечением</h1>
+      <h1>{t("heading")}</h1>
       {!pets || pets.length === 0 ? (
-        <p>Сейчас никому из животных не нужна помощь с лечением.</p>
+        <p>{t("empty")}</p>
       ) : (
         <ul>
           {pets.map((pet) => (
@@ -52,11 +56,12 @@ export default async function ShelterTreatmentPage({
               </Link>
               {pet.needs_treatment_since && (
                 <p>
-                  Срочно нужна помощь с лечением — с{" "}
-                  {new Date(pet.needs_treatment_since).toLocaleDateString(
-                    "ru-RU",
-                    { day: "numeric", month: "long" },
-                  )}
+                  {t("since", {
+                    date: format.dateTime(new Date(pet.needs_treatment_since), {
+                      day: "numeric",
+                      month: "long",
+                    }),
+                  })}
                 </p>
               )}
             </li>

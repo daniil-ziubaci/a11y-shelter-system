@@ -55,5 +55,30 @@
     "dogMale": "câine",
     "dogFemale": "cățea",
     "other": "animal"
+  },
+  "About": {
+    "titleWithCity": "{name}, {city} — despre adăpost",
+    "title": "{name} — despre adăpost",
+    "descriptionFallback": "Contacte și informații despre adăpostul „{name}”.",
+    "founded": "Anul înființării:",
+    "city": "Oraș:",
+    "address": "Adresă:",
+    "addressByAppointment": "Vizite cu programare",
+    "hours": "Program de contact:",
+    "legal": "Informații juridice:",
+    "contactHeading": "Contactați adăpostul",
+    "call": "Sunați: {phone}",
+    "messenger": "Scrieți adăpostului pe messenger",
+    "noContact": "Contactul adăpostului nu este încă indicat.",
+    "news": "Noutățile adăpostului",
+    "findFriend": "Găsiți un prieten în catalog"
+  },
+  "Treatment": {
+    "title": "Ajutor pentru tratament — {shelter}",
+    "description": "Animalele din adăpostul „{shelter}” care au nevoie acum de ajutor pentru tratament.",
+    "heading": "Ajutor pentru tratament",
+    "loadError": "Nu s-a putut încărca lista animalelor.",
+    "empty": "Momentan niciun animal nu are nevoie de ajutor pentru tratament.",
+    "since": "Este nevoie urgentă de ajutor pentru tratament — din {date}"
   }
 }
