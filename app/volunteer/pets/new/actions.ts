@@ -2,8 +2,8 @@
 
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { birthDateFromAge } from "@/lib/birthDateFromAge";
 import { processPhoto } from "@/lib/processPhoto";
+import { parsePetFields } from "@/lib/parsePetFields";
 
 type CreatePetState =
   | { error: string; values: Record<string, string> }
@@ -38,72 +38,22 @@ export async function createPet(
     return fail("Вы не состоите ни в одном приюте.");
   }
 
-  const text = (field: string) => {
-    const value = formData.get(field);
-    return typeof value === "string" ? value.trim() : "";
-  };
-
-  const name = text("name");
-  const species = text("species");
-  const sex = text("sex");
-  const diet = text("diet");
-  const health = text("health");
-  const description = text("description");
-  const photoAlt = text("photoAlt");
-
-  if (!name || !diet || !health || !description || !photoAlt) {
-    return fail("Заполните все обязательные поля.");
+  const parsed = parsePetFields(formData);
+  if (!parsed.ok) {
+    return fail(parsed.error);
   }
-
-  if (!["собака", "кошка"].includes(species)) {
-    return fail("Выберите вид животного.");
-  }
-
-  if (!["мальчик", "девочка"].includes(sex)) {
-    return fail("Выберите пол животного.");
-  }
-
-  const weight = Number(text("weight").replace(",", "."));
-  if (!Number.isFinite(weight) || weight <= 0 || weight > 100) {
-    return fail("Введите вес в килограммах, например 0,8.");
-  }
-
-  const birthDateInput = text("birthDate");
-  const ageYearsInput = text("ageYears");
-  const ageMonthsInput = text("ageMonths");
-  let birthDate: string;
-  let isAgeApproximate: boolean;
-
-  if (birthDateInput) {
-    const today = birthDateFromAge(0, 0);
-    if (
-      !/^\d{4}-\d{2}-\d{2}$/.test(birthDateInput) ||
-      birthDateInput > today ||
-      birthDateInput < "1990-01-01"
-    ) {
-      return fail("Введите дату рождения, не позже сегодняшнего дня.");
-    }
-    birthDate = birthDateInput;
-    isAgeApproximate = false;
-  } else {
-    if (!ageYearsInput && !ageMonthsInput) {
-      return fail("Укажите дату рождения или примерный возраст.");
-    }
-    const years = Number(ageYearsInput || "0");
-    const months = Number(ageMonthsInput || "0");
-    if (
-      !Number.isInteger(years) ||
-      !Number.isInteger(months) ||
-      years < 0 ||
-      years > 30 ||
-      months < 0 ||
-      months > 11
-    ) {
-      return fail("Возраст: лет от 0 до 30, месяцев от 0 до 11.");
-    }
-    birthDate = birthDateFromAge(years, months);
-    isAgeApproximate = true;
-  }
+  const {
+    name,
+    species,
+    sex,
+    diet,
+    health,
+    description,
+    photoAlt,
+    weight,
+    birthDate,
+    isAgeApproximate,
+  } = parsed.fields;
 
   const photo = formData.get("photo");
   if (!(photo instanceof File) || photo.size === 0) {
