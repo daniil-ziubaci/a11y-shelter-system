@@ -23,5 +23,37 @@
     "senior": "7 years and older",
     "none": "No matching animals.",
     "found": "Animals found: {count}"
+  },
+  "Pet": {
+    "sex": "Sex",
+    "age": "Age",
+    "weight": "Weight",
+    "weightValue": "{weight} kg",
+    "aboutTitle": "About the animal",
+    "diet": "Diet",
+    "health": "Health",
+    "back": "← All animals",
+    "titleWithShelter": "{name}, {animal} looking for a home — {shelter}",
+    "status": {
+      "looking": "looking for a home",
+      "pending": "in progress",
+      "adopted": "adopted",
+      "removed": "withdrawn"
+    },
+    "sexValue": { "boy": "boy", "girl": "girl" }
+  },
+  "Age": {
+    "months": "{count, plural, one {# month} other {# months}}",
+    "years": "{count, plural, one {# year} other {# years}}",
+    "yearsAndMonths": "{years} and {months}"
+  },
+  "Animal": {
+    "kitten": "kitten",
+    "catMale": "cat",
+    "catFemale": "cat",
+    "puppy": "puppy",
+    "dogMale": "dog",
+    "dogFemale": "dog",
+    "other": "animal"
   }
 }

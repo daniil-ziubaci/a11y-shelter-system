@@ -23,5 +23,37 @@
     "senior": "Peste 7 ani",
     "none": "Nu există animale potrivite.",
     "found": "Animale găsite: {count}"
+  },
+  "Pet": {
+    "sex": "Sex",
+    "age": "Vârstă",
+    "weight": "Greutate",
+    "weightValue": "{weight} kg",
+    "aboutTitle": "Despre animal",
+    "diet": "Hrănire",
+    "health": "Sănătate",
+    "back": "← Toate animalele",
+    "titleWithShelter": "{name}, {animal} caută o casă — {shelter}",
+    "status": {
+      "looking": "caută o casă",
+      "pending": "în proces",
+      "adopted": "adoptat",
+      "removed": "retras din evidență"
+    },
+    "sexValue": { "boy": "băiat", "girl": "fată" }
+  },
+  "Age": {
+    "months": "{count, plural, one {# lună} few {# luni} other {# de luni}}",
+    "years": "{count, plural, one {# an} few {# ani} other {# de ani}}",
+    "yearsAndMonths": "{years} și {months}"
+  },
+  "Animal": {
+    "kitten": "pisoi",
+    "catMale": "motan",
+    "catFemale": "pisică",
+    "puppy": "cățel",
+    "dogMale": "câine",
+    "dogFemale": "cățea",
+    "other": "animal"
   }
 }

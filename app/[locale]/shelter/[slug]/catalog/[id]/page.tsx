@@ -2,31 +2,35 @@ import { toPet } from "@/lib/toPet";
 import { formatAge } from "@/lib/formatAge";
 import Image from "next/image";
 import { Link } from "@/i18n/navigation";
-import { getAnimalWord } from "@/lib/animalWord";
+import { getAnimalKey } from "@/lib/animalKey";
 import { getLifeStage } from "@/lib/lifeStage";
 import { truncateText } from "@/lib/truncateText";
 import { getPet } from "@/lib/getPet";
 import { getShelter } from "@/lib/getShelter";
+import { getTranslations } from "next-intl/server";
+import { getSexKey } from "@/lib/petLabels";
 
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ slug: string; id: string }>;
+  params: Promise<{ slug: string; id: string; locale: string }>;
 }) {
-  const { slug, id } = await params;
+  const { slug, id, locale } = await params;
   const shelter = await getShelter(slug);
   const data = await getPet(id, shelter.id);
   const pet = toPet(data);
-  const word = getAnimalWord(
-    pet.species,
-    pet.sex,
-    getLifeStage(pet.ageInMonths),
+  const t = await getTranslations({ locale, namespace: "Pet" });
+  const tAnimal = await getTranslations({ locale, namespace: "Animal" });
+  const animal = tAnimal(
+    getAnimalKey(pet.species, pet.sex, getLifeStage(pet.ageInMonths)),
   );
 
-  const shelterName = data.shelters?.name;
-  const title = shelterName
-    ? `${pet.name}, ${word} ищет дом — ${shelterName}`
-    : `${pet.name}, ${word} ищет дом`;
+  const title = t("titleWithShelter", {
+    name: pet.name,
+    animal,
+    shelter: shelter.name,
+  });
+
   const description = truncateText(pet.description, 155);
   return {
     title,
@@ -48,6 +52,8 @@ export default async function PetPage({
   const shelter = await getShelter(slug);
   const data = await getPet(id, shelter.id);
   const pet = toPet(data);
+  const t = await getTranslations("Pet");
+  const tAge = await getTranslations("Age");
 
   return (
     <main className="w-full flex flex-col gap-6 p-4 max-w-5xl mx-auto">
@@ -55,7 +61,7 @@ export default async function PetPage({
         href={`/shelter/${slug}/catalog`}
         className="inline-block py-2 underline"
       >
-        ← Все питомцы
+        {t("back")}
       </Link>
       <h1 className="text-3xl font-bold">{pet.name}</h1>
       <div className="relative w-full max-w-md aspect-3/4">
@@ -71,23 +77,23 @@ export default async function PetPage({
 
       <dl className="flex flex-wrap gap-x-4">
         <div className="flex gap-1">
-          <dt className="sr-only">Пол</dt>
-          <dd>{pet.sex}</dd>
+          <dt className="sr-only">{t("sex")}</dt>
+          <dd>{t(`sexValue.${getSexKey(pet.sex)}`)}</dd>
         </div>
         <div className="flex gap-1">
-          <dt className="sr-only">Возраст</dt>
-          <dd>{formatAge(pet.ageInMonths, pet.isAgeApproximate)}</dd>
+          <dt className="sr-only">{t("age")}</dt>
+          <dd>{formatAge(pet.ageInMonths, pet.isAgeApproximate, tAge)}</dd>
         </div>
         <div className="flex gap-1">
-          <dt className="sr-only">Вес</dt>
-          <dd>{pet.weight} кг</dd>
+          <dt className="sr-only">{t("weight")}</dt>
+          <dd>{t("weightValue", { weight: pet.weight })}</dd>
         </div>
       </dl>
-      <h2 className="text-xl font-bold">О питомце</h2>
+      <h2 className="text-xl font-bold">{t("aboutTitle")}</h2>
       <p>{pet.description}</p>
-      <h2 className="text-xl font-bold">Питание</h2>
+      <h2 className="text-xl font-bold">{t("diet")}</h2>
       <p>{pet.diet}</p>
-      <h2 className="text-xl font-bold">Здоровье</h2>
+      <h2 className="text-xl font-bold">{t("health")}</h2>
       <p>{pet.health}</p>
     </main>
   );

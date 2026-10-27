@@ -23,5 +23,37 @@
     "senior": "От 7 лет",
     "none": "Подходящих животных нет.",
     "found": "Найдено животных: {count}"
+  },
+  "Pet": {
+    "sex": "Пол",
+    "age": "Возраст",
+    "weight": "Вес",
+    "weightValue": "{weight} кг",
+    "aboutTitle": "О питомце",
+    "diet": "Питание",
+    "health": "Здоровье",
+    "back": "← Все животные",
+    "titleWithShelter": "{name}, {animal} ищет дом — {shelter}",
+    "status": {
+      "looking": "ищет дом",
+      "pending": "в процессе",
+      "adopted": "пристроен",
+      "removed": "снят с учёта"
+    },
+    "sexValue": { "boy": "мальчик", "girl": "девочка" }
+  },
+  "Age": {
+    "months": "{count, plural, one {# месяц} few {# месяца} many {# месяцев} other {# месяца}}",
+    "years": "{count, plural, one {# год} few {# года} many {# лет} other {# года}}",
+    "yearsAndMonths": "{years} и {months}"
+  },
+  "Animal": {
+    "kitten": "котёнок",
+    "catMale": "кот",
+    "catFemale": "кошка",
+    "puppy": "щенок",
+    "dogMale": "пёс",
+    "dogFemale": "собака",
+    "other": "животное"
   }
 }

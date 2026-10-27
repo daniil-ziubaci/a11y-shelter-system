@@ -1,40 +1,45 @@
-function plural(n: number, one: string, few: string, many: string): string {
-  const lastTwoDigits = n % 100;
-  const lastDigit = n % 10;
-  if (lastTwoDigits > 10 && lastTwoDigits < 15) {
-    return many;
-  }
-  if (lastDigit === 1) {
-    return one;
-  } else if (lastDigit === 2 || lastDigit === 3 || lastDigit === 4) {
-    return few;
-  }
-  return many;
-}
+type Translate = (
+  key: string,
+  values?: Record<string, string | number>,
+) => string;
 
-function buildAge(months: number, isApproximate: boolean): string {
+function buildAge(
+  months: number,
+  isApproximate: boolean,
+  t: Translate,
+): string {
   if (months < 12) {
-    return `${months} ${plural(months, "месяц", "месяца", "месяцев")}`;
+    return t("months", { count: months });
   }
   const fullYears = Math.floor(months / 12);
   const additionalMonths = months % 12;
   if (!isApproximate) {
     if (additionalMonths === 0) {
-      return `${fullYears} ${plural(fullYears, "год", "года", "лет")}`;
+      return t("years", { count: fullYears });
     }
-    return `${fullYears} ${plural(fullYears, "год", "года", "лет")} и ${additionalMonths} ${plural(additionalMonths, "месяц", "месяца", "месяцев")}`;
+    return t("yearsAndMonths", {
+      years: t("years", { count: fullYears }),
+      months: t("months", { count: additionalMonths }),
+    });
   }
   if (months < 24) {
     if (additionalMonths === 0) {
-      return "1 год";
+      return t("years", { count: 1 });
     }
-    return `1 год и ${additionalMonths} ${plural(additionalMonths, "месяц", "месяца", "месяцев")}`;
+    return t("yearsAndMonths", {
+      years: t("years", { count: 1 }),
+      months: t("months", { count: additionalMonths }),
+    });
   }
-  return `${fullYears} ${plural(fullYears, "год", "года", "лет")}`;
+  return t("years", { count: fullYears });
 }
 
-export function formatAge(months: number, isApproximate: boolean): string {
-  const text = buildAge(months, isApproximate);
+export function formatAge(
+  months: number,
+  isApproximate: boolean,
+  t: Translate,
+): string {
+  const text = buildAge(months, isApproximate, t);
   if (isApproximate) {
     return `≈${text}`;
   }
