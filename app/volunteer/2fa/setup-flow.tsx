@@ -27,13 +27,15 @@ export function SetupFlow() {
   if (enrollment) {
     return (
       <div>
-        {/* eslint-disable-next-line @next/next/no-img-element -- QR приходит как data-URI, оптимизировать нечего */}
-        <img
-          src={enrollment.qrCode}
-          alt="QR-код для приложения-аутентификатора. Если отсканировать не получается, используйте ключ ниже."
-          width={200}
-          height={200}
-        />
+        <div style={{ width: "fit-content", background: "#fff", padding: 24 }}>
+          {/* eslint-disable-next-line @next/next/no-img-element -- QR приходит как data-URI, оптимизировать нечего */}
+          <img
+            src={enrollment.qrCode}
+            alt="QR-код для приложения-аутентификатора. Если отсканировать не получается, используйте ключ ниже."
+            width={200}
+            height={200}
+          />
+        </div>
 
         <button
           type="button"
