@@ -1,3 +1,4 @@
+import { ShelterNav } from "@/app/shelter/[slug]/shelter-nav";
 import { getShelter } from "@/lib/getShelter";
 import Link from "next/link";
 
@@ -14,26 +15,7 @@ export default async function ShelterLayout({
   return (
     <>
       <header className="w-full max-w-5xl mx-auto p-4">
-        <nav aria-label="Основная навигация" className="flex flex-wrap gap-4">
-          <Link
-            href={`/shelter/${slug}/catalog`}
-            className="underline inline-block py-2"
-          >
-            Животные ищут дом
-          </Link>
-          <Link
-            href={`/shelter/${slug}/treatment`}
-            className="underline inline-block py-2"
-          >
-            Нужна помощь с лечением
-          </Link>
-          <Link
-            href={`/shelter/${slug}/about`}
-            className="underline inline-block py-2"
-          >
-            О приюте
-          </Link>
-        </nav>
+        <ShelterNav slug={slug} />
       </header>
       {children}
       <footer className="w-full max-w-5xl mx-auto p-4 mt-auto">
