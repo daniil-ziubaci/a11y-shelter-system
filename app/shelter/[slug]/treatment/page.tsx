@@ -47,7 +47,9 @@ export default async function ShelterTreatmentPage({
         <ul>
           {pets.map((pet) => (
             <li key={pet.id}>
-              <Link href={`/catalog/${pet.id}`}>{pet.name}</Link>
+              <Link href={`/shelter/${slug}/catalog/${pet.id}`}>
+                {pet.name}
+              </Link>
               {pet.needs_treatment_since && (
                 <p>
                   Срочно нужна помощь с лечением — с{" "}

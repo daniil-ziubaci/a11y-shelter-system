@@ -96,7 +96,10 @@ export default async function ShelterAboutPage({
             Новости приюта
           </a>
         )}
-        <Link href="/catalog" className="underline inline-block py-2">
+        <Link
+          href={`/shelter/${slug}/catalog`}
+          className="underline inline-block py-2"
+        >
           Найти друга в каталоге
         </Link>
       </section>

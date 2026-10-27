@@ -2,12 +2,13 @@ import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
 
-export const getPet = cache(async (id: string) => {
+export const getPet = cache(async (id: string, shelterId: string) => {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("pets")
     .select("*, shelters(name)")
     .eq("id", id)
+    .eq("shelter_id", shelterId)
     .neq("status", "снят с учёта")
     .single();
   if (error?.code === "PGRST116" || error?.code === "22P02") {

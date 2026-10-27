@@ -3,7 +3,15 @@ import { formatAge } from "@/lib/formatAge";
 import Image from "next/image";
 import Link from "next/link";
 
-export function PetCard({ pet, eager = false }: { pet: Pet; eager?: boolean }) {
+export function PetCard({
+  pet,
+  slug,
+  eager = false,
+}: {
+  pet: Pet;
+  slug: string;
+  eager?: boolean;
+}) {
   return (
     <article className="p-4 border rounded-lg flex flex-col gap-4 relative focus-within:outline-2 focus-within:outline-offset-2 hover:bg-gray-900">
       <div className="relative aspect-3/4">
@@ -21,7 +29,7 @@ export function PetCard({ pet, eager = false }: { pet: Pet; eager?: boolean }) {
       </div>
       <h2 className="text-xl font-bold">
         <Link
-          href={`/catalog/${pet.id}`}
+          href={`/shelter/${slug}/catalog/${pet.id}`}
           className="after:absolute after:inset-0"
         >
           {pet.name}

@@ -1,29 +1,48 @@
 import { PetCard } from "@/components/PetCard";
+import { getShelter } from "@/lib/getShelter";
 import { createClient } from "@/lib/supabase/server";
 import { toPet } from "@/lib/toPet";
 import Link from "next/link";
-export const metadata = {
-  title: "Каталог животных, которые ищут дом",
-  description:
-    "Собаки и кошки из приюта ищут дом. Фильтры по виду, полу и возрасту.",
-};
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  const shelter = await getShelter(slug);
+
+  return {
+    title: `Животные ищут дом — ${shelter.name}`,
+    description: `Собаки и кошки из приюта «${shelter.name}» ищут дом. Фильтры по виду, полу и возрасту.`,
+  };
+}
+
 export default async function Catalog({
+  params,
   searchParams,
 }: {
+  params: Promise<{ slug: string }>;
   searchParams: Promise<{ species?: string; sex?: string; age?: string }>;
 }) {
+  const { slug } = await params;
   const { species, sex, age } = await searchParams;
+  const shelter = await getShelter(slug);
+
   const twelveMonthsAgo = new Date();
   twelveMonthsAgo.setMonth(twelveMonthsAgo.getMonth() - 12);
   const sevenYearsAgo = new Date();
   sevenYearsAgo.setMonth(sevenYearsAgo.getMonth() - 84);
   const supabase = await createClient();
+
   let query = supabase
     .from("pets")
     .select("*")
+    .eq("shelter_id", shelter.id)
     .in("status", ["ищет дом", "в процессе"])
     .order("created_at", { ascending: false })
     .order("name");
+
   if (species === "cat") {
     query = query.eq("species", "кошка");
   }
@@ -50,7 +69,9 @@ export default async function Catalog({
   if (error) {
     throw new Error("Не удалось загрузить питомцев из базы.");
   }
+
   const pets = (data ?? []).map(toPet);
+
   function buildHref(
     newSpecies: string | undefined,
     newSex: string | undefined,
@@ -66,12 +87,15 @@ export default async function Catalog({
     if (newAge) {
       params.set("age", newAge);
     }
+
     const queryString = params.toString();
+    const base = `/shelter/${slug}/catalog`;
     if (queryString) {
-      return "/catalog?" + queryString;
+      return base + "?" + queryString;
     }
-    return "/catalog";
+    return base;
   }
+
   return (
     <main className="w-full flex flex-col gap-6 p-4 max-w-5xl mx-auto">
       <h1 className="text-3xl font-bold text-center">Животные ищут дом</h1>
@@ -170,7 +194,7 @@ export default async function Catalog({
       {pets.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {pets.map((pet, index) => (
-            <PetCard key={pet.id} pet={pet} eager={index < 3} />
+            <PetCard key={pet.id} pet={pet} slug={slug} eager={index < 3} />
           ))}
         </div>
       )}

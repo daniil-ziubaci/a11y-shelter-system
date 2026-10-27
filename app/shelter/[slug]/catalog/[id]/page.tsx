@@ -6,14 +6,16 @@ import { getAnimalWord } from "@/lib/animalWord";
 import { getLifeStage } from "@/lib/lifeStage";
 import { truncateText } from "@/lib/truncateText";
 import { getPet } from "@/lib/getPet";
+import { getShelter } from "@/lib/getShelter";
 
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ id: string }>;
+  params: Promise<{ slug: string; id: string }>;
 }) {
-  const { id } = await params;
-  const data = await getPet(id);
+  const { slug, id } = await params;
+  const shelter = await getShelter(slug);
+  const data = await getPet(id, shelter.id);
   const pet = toPet(data);
   const word = getAnimalWord(
     pet.species,
@@ -40,15 +42,19 @@ export async function generateMetadata({
 export default async function PetPage({
   params,
 }: {
-  params: Promise<{ id: string }>;
+  params: Promise<{ slug: string; id: string }>;
 }) {
-  const { id } = await params;
-  const data = await getPet(id);
+  const { slug, id } = await params;
+  const shelter = await getShelter(slug);
+  const data = await getPet(id, shelter.id);
   const pet = toPet(data);
 
   return (
     <main className="w-full flex flex-col gap-6 p-4 max-w-5xl mx-auto">
-      <Link href="/catalog" className="inline-block py-2 underline">
+      <Link
+        href={`/shelter/${slug}/catalog`}
+        className="inline-block py-2 underline"
+      >
         ← Все питомцы
       </Link>
       <h1 className="text-3xl font-bold">{pet.name}</h1>
