@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { setPetStatus, setPetTreatment } from "@/app/volunteer/actions";
 import { PET_STATUSES } from "@/lib/petStatuses";
+import Link from "next/link";
 
 export async function PetList({ shelterId }: { shelterId: string }) {
   const supabase = await createClient();
@@ -22,6 +23,12 @@ export async function PetList({ shelterId }: { shelterId: string }) {
       {pets.map((pet) => (
         <li key={pet.id}>
           {pet.name}, {pet.status}
+          <Link
+            href={`/volunteer/pets/${pet.id}/edit`}
+            aria-label={`Редактировать: ${pet.name}`}
+          >
+            Редактировать
+          </Link>
           <form action={setPetStatus}>
             <input type="hidden" name="petId" value={pet.id} />
             <label htmlFor={`status-${pet.id}`}>Статус: {pet.name}</label>
