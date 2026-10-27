@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { toPet } from "@/lib/toPet";
 import { Link } from "@/i18n/navigation";
 import { getTranslations } from "next-intl/server";
+import { buildAlternates } from "@/lib/seo";
 
 export async function generateMetadata({
   params,
@@ -17,6 +18,7 @@ export async function generateMetadata({
   return {
     title: t("title", { shelter: shelter.name }),
     description: t("description", { shelter: shelter.name }),
+    alternates: buildAlternates(locale, `/shelter/${slug}/catalog`),
   };
 }
 

@@ -2,6 +2,7 @@ import { getShelter } from "@/lib/getShelter";
 import { createClient } from "@/lib/supabase/server";
 import { Link } from "@/i18n/navigation";
 import { getFormatter, getTranslations } from "next-intl/server";
+import { buildAlternates } from "@/lib/seo";
 
 export async function generateMetadata({
   params,
@@ -14,6 +15,7 @@ export async function generateMetadata({
   return {
     title: t("title", { shelter: shelter.name }),
     description: t("description", { shelter: shelter.name }),
+    alternates: buildAlternates(locale, `/shelter/${slug}/treatment`),
   };
 }
 

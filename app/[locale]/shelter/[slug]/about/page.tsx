@@ -1,5 +1,6 @@
 import { Link } from "@/i18n/navigation";
 import { getShelter } from "@/lib/getShelter";
+import { buildAlternates } from "@/lib/seo";
 import { truncateText } from "@/lib/truncateText";
 import { getTranslations } from "next-intl/server";
 
@@ -17,7 +18,11 @@ export async function generateMetadata({
   const description = shelter.about
     ? truncateText(shelter.about, 155)
     : t("descriptionFallback", { name: shelter.name });
-  return { title, description };
+  return {
+    title,
+    description,
+    alternates: buildAlternates(locale, `/shelter/${slug}/about`),
+  };
 }
 
 export default async function ShelterAboutPage({

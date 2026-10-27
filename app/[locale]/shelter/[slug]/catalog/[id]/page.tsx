@@ -9,6 +9,7 @@ import { getPet } from "@/lib/getPet";
 import { getShelter } from "@/lib/getShelter";
 import { getTranslations } from "next-intl/server";
 import { getSexKey } from "@/lib/petLabels";
+import { buildAlternates } from "@/lib/seo";
 
 export async function generateMetadata({
   params,
@@ -32,9 +33,11 @@ export async function generateMetadata({
   });
 
   const description = truncateText(pet.description, 155);
+
   return {
     title,
     description,
+    alternates: buildAlternates(locale, `/shelter/${slug}/catalog/${id}`),
     openGraph: {
       title,
       description,
