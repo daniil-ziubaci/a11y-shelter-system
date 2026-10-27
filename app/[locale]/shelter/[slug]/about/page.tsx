@@ -1,6 +1,7 @@
 import { Link } from "@/i18n/navigation";
 import { getShelter } from "@/lib/getShelter";
 import { buildAlternates } from "@/lib/seo";
+import { buildShelterJsonLd } from "@/lib/shelterJsonLd";
 import { truncateText } from "@/lib/truncateText";
 import { getTranslations } from "next-intl/server";
 
@@ -28,14 +29,24 @@ export async function generateMetadata({
 export default async function ShelterAboutPage({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ slug: string; locale: string }>;
 }) {
-  const { slug } = await params;
+  const { slug, locale } = await params;
   const shelter = await getShelter(slug);
   const t = await getTranslations("About");
+  const jsonLd = JSON.stringify(
+    buildShelterJsonLd(
+      shelter,
+      `${process.env.SITE_URL!}/${locale}/shelter/${slug}/about`,
+    ),
+  ).replace(/</g, "\\u003c");
 
   return (
     <main className="w-full flex flex-col gap-6 p-4 max-w-5xl mx-auto">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: jsonLd }}
+      />
       <h1 className="text-3xl font-bold">{shelter.name}</h1>
       {shelter.about && <p>{shelter.about}</p>}
       <dl className="flex flex-col gap-2">
