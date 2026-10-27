@@ -1,6 +1,7 @@
 import { ShelterNav } from "@/app/[locale]/shelter/[slug]/shelter-nav";
 import { getShelter } from "@/lib/getShelter";
 import { Link } from "@/i18n/navigation";
+import { getTranslations } from "next-intl/server";
 
 export default async function ShelterLayout({
   children,
@@ -11,6 +12,7 @@ export default async function ShelterLayout({
 }) {
   const { slug } = await params;
   const shelter = await getShelter(slug);
+  const t = await getTranslations("Nav");
 
   return (
     <>
@@ -24,7 +26,7 @@ export default async function ShelterLayout({
           href={`/shelter/${slug}/about`}
           className="underline inline-block py-2"
         >
-          О приюте
+          {t("about")}
         </Link>
       </footer>
     </>

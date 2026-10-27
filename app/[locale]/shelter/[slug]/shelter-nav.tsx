@@ -1,17 +1,19 @@
 "use client";
 
 import { Link, usePathname } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 
 export function ShelterNav({ slug }: { slug: string }) {
   const pathname = usePathname();
+  const t = useTranslations("Nav");
   const links = [
-    { href: `/shelter/${slug}/catalog`, label: "Животные ищут дом" },
-    { href: `/shelter/${slug}/treatment`, label: "Нужна помощь с лечением" },
-    { href: `/shelter/${slug}/about`, label: "О приюте" },
+    { href: `/shelter/${slug}/catalog`, label: t("catalog") },
+    { href: `/shelter/${slug}/treatment`, label: t("treatment") },
+    { href: `/shelter/${slug}/about`, label: t("about") },
   ];
 
   return (
-    <nav aria-label="Основная навигация">
+    <nav aria-label={t("label")}>
       <ul className="flex flex-wrap gap-4">
         {links.map((link) => (
           <li key={link.href}>
