@@ -2,7 +2,7 @@ import { PetCard } from "@/components/PetCard";
 import { getShelter } from "@/lib/getShelter";
 import { createClient } from "@/lib/supabase/server";
 import { toPet } from "@/lib/toPet";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 
 export async function generateMetadata({
   params,

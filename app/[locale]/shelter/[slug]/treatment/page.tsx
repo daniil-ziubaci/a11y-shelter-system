@@ -1,6 +1,6 @@
 import { getShelter } from "@/lib/getShelter";
 import { createClient } from "@/lib/supabase/server";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 
 export async function generateMetadata({
   params,

@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { getShelter } from "@/lib/getShelter";
 import { truncateText } from "@/lib/truncateText";
 

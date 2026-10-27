@@ -1,6 +1,6 @@
-import { ShelterNav } from "@/app/shelter/[slug]/shelter-nav";
+import { ShelterNav } from "@/app/[locale]/shelter/[slug]/shelter-nav";
 import { getShelter } from "@/lib/getShelter";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 
 export default async function ShelterLayout({
   children,

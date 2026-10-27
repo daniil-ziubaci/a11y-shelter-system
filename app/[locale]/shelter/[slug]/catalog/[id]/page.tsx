@@ -1,7 +1,7 @@
 import { toPet } from "@/lib/toPet";
 import { formatAge } from "@/lib/formatAge";
 import Image from "next/image";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { getAnimalWord } from "@/lib/animalWord";
 import { getLifeStage } from "@/lib/lifeStage";
 import { truncateText } from "@/lib/truncateText";
