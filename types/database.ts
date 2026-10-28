@@ -57,7 +57,7 @@ export type Database = {
           size: string | null
           species: string
           status: string
-          weight: number
+          weight: number | null
         }
         Insert: {
           birth_date: string
@@ -76,7 +76,7 @@ export type Database = {
           size?: string | null
           species: string
           status?: string
-          weight: number
+          weight?: number | null
         }
         Update: {
           birth_date?: string
@@ -95,7 +95,7 @@ export type Database = {
           size?: string | null
           species?: string
           status?: string
-          weight?: number
+          weight?: number | null
         }
         Relationships: [
           {

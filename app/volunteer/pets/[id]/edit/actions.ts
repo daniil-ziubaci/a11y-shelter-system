@@ -76,7 +76,7 @@ export async function updatePet(
       sex: fields.sex,
       birth_date: fields.birthDate,
       is_age_approximate: fields.isAgeApproximate,
-      weight: fields.weight,
+      size: fields.size,
       diet: fields.diet,
       health: fields.health,
       description: fields.description,

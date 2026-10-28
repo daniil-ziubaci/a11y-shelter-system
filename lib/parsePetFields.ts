@@ -1,4 +1,5 @@
 import { birthDateFromAge } from "@/lib/birthDateFromAge";
+import { PET_SIZES } from "@/lib/petSizes";
 
 export type PetFields = {
   name: string;
@@ -8,7 +9,7 @@ export type PetFields = {
   health: string;
   description: string;
   photoAlt: string;
-  weight: number;
+  size: string | null;
   birthDate: string;
   isAgeApproximate: boolean;
 };
@@ -43,12 +44,13 @@ export function parsePetFields(formData: FormData): ParsePetFieldsResult {
     return { ok: false, error: "Выберите пол животного." };
   }
 
-  const weight = Number(text("weight").replace(",", "."));
-  if (!Number.isFinite(weight) || weight <= 0 || weight > 100) {
-    return {
-      ok: false,
-      error: "Введите вес в килограммах, например 0,8.",
-    };
+  const sizeInput = text("size");
+  let size: string | null = null;
+  if (species === "собака") {
+    if (!PET_SIZES.includes(sizeInput)) {
+      return { ok: false, error: "Выберите размер собаки." };
+    }
+    size = sizeInput;
   }
   const birthDateInput = text("birthDate");
   const ageYearsInput = text("ageYears");
@@ -105,7 +107,7 @@ export function parsePetFields(formData: FormData): ParsePetFieldsResult {
       health,
       description,
       photoAlt,
-      weight,
+      size,
       birthDate,
       isAgeApproximate,
     },

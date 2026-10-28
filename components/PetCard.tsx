@@ -4,6 +4,7 @@ import Image from "next/image";
 import { Link } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { getSexKey, getStatusKey } from "@/lib/petLabels";
+import { getSizeKey } from "@/lib/petSizes";
 
 export function PetCard({
   pet,
@@ -17,6 +18,7 @@ export function PetCard({
   const t = useTranslations("Pet");
   const tAge = useTranslations("Age");
   const statusKey = getStatusKey(pet.status);
+  const sizeKey = pet.size ? getSizeKey(pet.size) : undefined;
 
   return (
     <article className="p-4 border rounded-lg flex flex-col gap-4 relative focus-within:outline-2 focus-within:outline-offset-2 hover:bg-gray-900">
@@ -33,14 +35,8 @@ export function PetCard({
           className="object-cover bg-gray-100"
         />
       </div>
-      <h2 className="text-xl font-bold">
-        <Link
-          href={`/shelter/${slug}/catalog/${pet.id}`}
-          className="after:absolute after:inset-0"
-        >
-          {pet.name}
-        </Link>
-      </h2>
+
+      <h2 className="text-xl font-bold">{pet.name}</h2>
       <dl className="flex flex-wrap gap-x-4">
         <div className="flex gap-1">
           <dt className="sr-only">{t("sex")}</dt>
@@ -50,12 +46,21 @@ export function PetCard({
           <dt className="sr-only">{t("age")}</dt>
           <dd>{formatAge(pet.ageInMonths, pet.isAgeApproximate, tAge)}</dd>
         </div>
-        <div className="flex gap-1">
-          <dt className="sr-only">{t("weight")}</dt>
-          <dd>{t("weightValue", { weight: pet.weight })}</dd>
-        </div>
+        {sizeKey && (
+          <div className="flex gap-1">
+            <dt>{t("size")}</dt>
+            <dd>{t(`sizeValue.${sizeKey}`)}</dd>
+          </div>
+        )}
       </dl>
-      <p className="line-clamp-2">{pet.description}</p>
+      <Link
+        href={`/shelter/${slug}/catalog/${pet.id}`}
+        aria-label={t("moreLabel", { name: pet.name })}
+        className="underline after:absolute after:inset-0"
+      >
+        {t("more")}
+      </Link>
+
     </article>
   );
 }

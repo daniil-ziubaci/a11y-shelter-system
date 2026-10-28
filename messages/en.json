@@ -29,12 +29,18 @@
   "Pet": {
     "sex": "Sex",
     "age": "Age",
-    "weight": "Weight",
-    "weightValue": "{weight} kg",
+    "size": "Size:",
+    "sizeValue": {
+      "small": "small",
+      "medium": "medium",
+      "large": "large"
+    },
     "aboutTitle": "About the animal",
     "diet": "Diet",
     "health": "Health",
     "back": "← All animals",
+    "more": "Details",
+    "moreLabel": "Details: {name}",
     "adopt": "I want to take it home",
     "adoptLabel": "I want to take {name} home",
     "help": "Help",

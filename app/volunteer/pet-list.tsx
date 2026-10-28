@@ -7,13 +7,14 @@ import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 import { formatAge } from "@/lib/formatAge";
 import { monthsSince } from "@/lib/monthsSince";
+import { PET_SIZE_LABELS } from "@/lib/petSizes";
 
 export async function PetList({ shelterId }: { shelterId: string }) {
   const supabase = await createClient();
   const { data: pets, error } = await supabase
     .from("pets")
     .select(
-      "id, name, status, needs_treatment_since, photo_url, birth_date, is_age_approximate, sex, weight",
+      "id, name, status, needs_treatment_since, photo_url, birth_date, is_age_approximate, sex, species, size",
     )
     .eq("shelter_id", shelterId)
     .order("name");
@@ -48,7 +49,9 @@ export async function PetList({ shelterId }: { shelterId: string }) {
                   pet.is_age_approximate,
                   tAge,
                 )}
-                , {pet.weight.toLocaleString("ru-RU")} кг
+                {pet.size
+                  ? `, размер: ${PET_SIZE_LABELS[pet.size] ?? pet.size}`
+                  : ""}
               </p>
               <Link
                 href={`/volunteer/pets/${pet.id}/edit`}

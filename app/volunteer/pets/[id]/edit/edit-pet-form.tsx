@@ -2,13 +2,15 @@
 
 import { updatePet } from "@/app/volunteer/pets/[id]/edit/actions";
 import { monthsSince } from "@/lib/monthsSince";
+import { PET_SIZES } from "@/lib/petSizes";
 import { Tables } from "@/types/database";
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 
 type Pet = Tables<"pets">;
 
 export function EditPetForm({ pet }: { pet: Pet }) {
   const [state, formAction, isPending] = useActionState(updatePet, undefined);
+  const [species, setSpecies] = useState(state?.values.species ?? pet.species);
   const totalMonths = Math.max(0, monthsSince(pet.birth_date));
   const exact = !pet.is_age_approximate;
   const initialBirthDate = exact ? pet.birth_date : "";
@@ -77,20 +79,24 @@ export function EditPetForm({ pet }: { pet: Pet }) {
           Девочка
         </label>
       </fieldset>
-      <div className="flex flex-col gap-1">
-        <label htmlFor="weight">Вес, кг</label>
-        <input
-          id="weight"
-          name="weight"
-          type="text"
-          inputMode="decimal"
-          autoComplete="off"
-          aria-describedby="weight-hint"
-          defaultValue={state?.values.weight ?? String(pet.weight)}
-          required
-        />
-        <p id="weight-hint">Например, 0,8 или 12.</p>
-      </div>
+      {species === "собака" && (
+        <fieldset className="flex flex-col gap-1" aria-describedby="size-hint">
+          <legend>Размер</legend>
+          {PET_SIZES.map((size) => (
+            <label key={size}>
+              <input
+                type="radio"
+                name="size"
+                value={size}
+                defaultChecked={(state?.values.size ?? pet.size) === size}
+                required
+              />{" "}
+              {size[0].toUpperCase() + size.slice(1)}
+            </label>
+          ))}
+          <p id="size-hint">Оцените размер на глаз, взвешивать не нужно.</p>
+        </fieldset>
+      )}
       <fieldset className="flex flex-col gap-2" aria-describedby="age-hint">
         <legend>Возраст</legend>
         <p id="age-hint">

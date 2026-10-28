@@ -9,7 +9,7 @@ export type Pet = {
   sex: "мальчик" | "девочка";
   ageInMonths: number;
   isAgeApproximate: boolean;
-  weight: number; // кг, может быть дробным (0.8)
+  size: string | null;
   diet: string;
   description: string;
   health: string;

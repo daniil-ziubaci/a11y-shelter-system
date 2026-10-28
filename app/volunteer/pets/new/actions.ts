@@ -50,7 +50,7 @@ export async function createPet(
     health,
     description,
     photoAlt,
-    weight,
+    size,
     birthDate,
     isAgeApproximate,
   } = parsed.fields;
@@ -84,7 +84,7 @@ export async function createPet(
     sex,
     birth_date: birthDate,
     is_age_approximate: isAgeApproximate,
-    weight,
+    size,
     diet,
     health,
     description,

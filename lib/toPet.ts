@@ -16,7 +16,7 @@ export function toPet(row: PetRow): Pet {
     sex: row.sex as Pet["sex"],
     ageInMonths: monthsSince(row.birth_date),
     isAgeApproximate: row.is_age_approximate,
-    weight: row.weight,
+    size: row.size,
     diet: row.diet,
     health: row.health,
     description: row.description,

@@ -29,12 +29,18 @@
   "Pet": {
     "sex": "Пол",
     "age": "Возраст",
-    "weight": "Вес",
-    "weightValue": "{weight} кг",
+    "size": "Размер:",
+    "sizeValue": {
+      "small": "мелкий",
+      "medium": "средний",
+      "large": "крупный"
+    },
     "aboutTitle": "О питомце",
     "diet": "Питание",
     "health": "Здоровье",
     "back": "← Все животные",
+    "more": "Подробнее",
+    "moreLabel": "Подробнее: {name}",
     "adopt": "Хочу забрать домой",
     "adoptLabel": "Хочу забрать домой: {name}",
     "help": "Помочь",

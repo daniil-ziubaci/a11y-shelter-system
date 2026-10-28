@@ -1,10 +1,12 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { createPet } from "@/app/volunteer/pets/new/actions";
+import { PET_SIZES } from "@/lib/petSizes";
 
 export function NewPetForm() {
   const [state, formAction, isPending] = useActionState(createPet, undefined);
+  const [species, setSpecies] = useState(state?.values.species ?? "");
 
   return (
     <form action={formAction} className="flex flex-col gap-6">
@@ -27,6 +29,7 @@ export function NewPetForm() {
             type="radio"
             name="species"
             value="собака"
+            onChange={() => setSpecies("собака")}
             defaultChecked={state?.values.species === "собака"}
             required
           />{" "}
@@ -37,6 +40,7 @@ export function NewPetForm() {
             type="radio"
             name="species"
             value="кошка"
+            onChange={() => setSpecies("кошка")}
             defaultChecked={state?.values.species === "кошка"}
             required
           />{" "}
@@ -68,20 +72,24 @@ export function NewPetForm() {
         </label>
       </fieldset>
 
-      <div className="flex flex-col gap-1">
-        <label htmlFor="weight">Вес, кг</label>
-        <input
-          id="weight"
-          name="weight"
-          type="text"
-          inputMode="decimal"
-          autoComplete="off"
-          aria-describedby="weight-hint"
-          defaultValue={state?.values.weight}
-          required
-        />
-        <p id="weight-hint">Например, 0,8 или 12.</p>
-      </div>
+      {species === "собака" && (
+        <fieldset className="flex flex-col gap-1" aria-describedby="size-hint">
+          <legend>Размер</legend>
+          {PET_SIZES.map((size) => (
+            <label key={size}>
+              <input
+                type="radio"
+                name="size"
+                value={size}
+                defaultChecked={state?.values.size === size}
+                required
+              />{" "}
+              {size[0].toUpperCase() + size.slice(1)}
+            </label>
+          ))}
+          <p id="size-hint">Оцените размер на глаз, взвешивать не нужно.</p>
+        </fieldset>
+      )}
 
       <fieldset className="flex flex-col gap-2" aria-describedby="age-hint">
         <legend>Возраст</legend>

@@ -29,12 +29,18 @@
   "Pet": {
     "sex": "Sex",
     "age": "Vârstă",
-    "weight": "Greutate",
-    "weightValue": "{weight} kg",
+    "size": "Mărime:",
+    "sizeValue": {
+      "small": "mică",
+      "medium": "medie",
+      "large": "mare"
+    },
     "aboutTitle": "Despre animal",
     "diet": "Hrănire",
     "health": "Sănătate",
     "back": "← Toate animalele",
+    "more": "Detalii",
+    "moreLabel": "Detalii: {name}",
     "adopt": "Vreau să-l iau acasă",
     "adoptLabel": "Vreau să-l iau acasă: {name}",
     "help": "Ajută",

@@ -11,6 +11,7 @@ import { getTranslations } from "next-intl/server";
 import { getSexKey } from "@/lib/petLabels";
 import { buildAlternates } from "@/lib/seo";
 import { ShelterContact } from "@/components/ShelterContact";
+import { getSizeKey } from "@/lib/petSizes";
 
 export async function generateMetadata({
   params,
@@ -59,6 +60,7 @@ export default async function PetPage({
   const t = await getTranslations("Pet");
   const tAge = await getTranslations("Age");
   const tAdoption = await getTranslations("Adoption");
+  const sizeKey = pet.size ? getSizeKey(pet.size) : undefined;
 
   return (
     <main className="w-full flex flex-col gap-6 p-4 max-w-5xl mx-auto">
@@ -89,10 +91,12 @@ export default async function PetPage({
           <dt className="sr-only">{t("age")}</dt>
           <dd>{formatAge(pet.ageInMonths, pet.isAgeApproximate, tAge)}</dd>
         </div>
-        <div className="flex gap-1">
-          <dt className="sr-only">{t("weight")}</dt>
-          <dd>{t("weightValue", { weight: pet.weight })}</dd>
-        </div>
+        {sizeKey && (
+          <div className="flex gap-1">
+            <dt>{t("size")}</dt>
+            <dd>{t(`sizeValue.${sizeKey}`)}</dd>
+          </div>
+        )}
       </dl>
       <div className="flex flex-wrap gap-4">
         <a
