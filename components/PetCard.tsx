@@ -21,44 +21,60 @@ export function PetCard({
   const sizeKey = pet.size ? getSizeKey(pet.size) : undefined;
 
   return (
-    <article className="p-4 border border-(--border) bg-(--surface) rounded-lg flex flex-col gap-4 relative transition duration-200 hover:shadow-lg motion-safe:hover:-translate-y-1 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-(--focus)">
-      <div className="relative aspect-3/4">
-        <p className="absolute top-2 left-2 bg-white text-black px-2 py-1 rounded text-sm font-medium">
-          {statusKey ? t(`status.${statusKey}`) : pet.status}
-        </p>
+    <article className="group relative flex flex-col overflow-hidden rounded-lg border border-(--border) bg-(--surface) transition duration-300 ease-out hover:shadow-2xl motion-safe:hover:-translate-y-1.5 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-(--focus)">
+      <div className="relative aspect-4/5">
+        {pet.status !== "ищет дом" && (
+          <p className="absolute top-2 left-2 z-10 rounded bg-(--surface) px-2 py-1 text-sm font-medium text-(--foreground) shadow-sm">
+            {statusKey ? t(`status.${statusKey}`) : pet.status}
+          </p>
+        )}
         <Image
           src={pet.photo.url}
           alt={pet.photo.alt}
           fill
           sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
           loading={eager ? "eager" : "lazy"}
-          className="object-cover bg-gray-100"
+          className="object-cover bg-(--hover)"
         />
       </div>
-      <h2 className="text-xl font-bold">{pet.name}</h2>
-      <dl className="flex flex-wrap gap-x-4">
-        <div className="flex gap-1">
-          <dt className="sr-only">{t("sex")}</dt>
-          <dd>{t(`sexValue.${getSexKey(pet.sex)}`)}</dd>
-        </div>
-        <div className="flex gap-1">
-          <dt className="sr-only">{t("age")}</dt>
-          <dd>{formatAge(pet.ageInMonths, pet.isAgeApproximate, tAge)}</dd>
-        </div>
-        {sizeKey && (
-          <div className="flex gap-1">
-            <dt>{t("size")}</dt>
-            <dd>{t(`sizeValue.${sizeKey}`)}</dd>
+      <div className="flex flex-1 flex-col justify-between gap-1 px-4 py-3">
+        <h2 className="text-xl font-bold transition-colors duration-200 group-hover:text-(--accent) group-focus-within:text-(--accent) motion-reduce:transition-none">
+          {pet.name}
+        </h2>
+        <dl className="flex flex-wrap gap-x-3">
+          <div>
+            <dt className="sr-only">{t("sex")}</dt>
+            <dd className="first-letter:uppercase">
+              {t(`sexValue.${getSexKey(pet.sex)}`)}
+            </dd>
           </div>
-        )}
-      </dl>
-      <Link
-        href={`/shelter/${slug}/catalog/${pet.id}`}
-        aria-label={t("moreLabel", { name: pet.name })}
-        className="underline after:absolute after:inset-0"
-      >
-        {t("more")}
-      </Link>
+          <div>
+            <dt className="sr-only">{t("age")}</dt>
+            <dd>{formatAge(pet.ageInMonths, pet.isAgeApproximate, tAge)}</dd>
+          </div>
+        </dl>
+        <div className="flex items-end gap-2">
+          {sizeKey && (
+            <dl className="flex gap-1 text-(--muted)">
+              <dt>{t("size")}</dt>
+              <dd>{t(`sizeValue.${sizeKey}`)}</dd>
+            </dl>
+          )}
+          <Link
+            href={`/shelter/${slug}/catalog/${pet.id}`}
+            aria-label={t("moreLabel", { name: pet.name })}
+            className="ml-auto font-medium transition-colors duration-200 group-hover:text-(--accent) group-focus-within:text-(--accent) motion-reduce:transition-none after:absolute after:inset-0"
+          >
+            {t("more")}
+            <span
+              aria-hidden="true"
+              className="ml-1 inline-block transition-transform duration-200 group-hover:translate-x-1 group-focus-within:translate-x-1 motion-reduce:transition-none"
+            >
+              →
+            </span>
+          </Link>
+        </div>
+      </div>
     </article>
   );
 }
