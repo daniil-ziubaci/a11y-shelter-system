@@ -22,7 +22,7 @@ export function PetCard({
 
   return (
     <article className="group relative flex flex-col overflow-hidden rounded-lg border border-(--border) bg-(--surface) transition duration-300 ease-out hover:shadow-2xl motion-safe:hover:-translate-y-1.5 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-(--focus)">
-      <div className="relative aspect-4/5">
+      <div className="relative aspect-4/3">
         {pet.status !== "ищет дом" && (
           <p className="absolute top-2 left-2 z-10 rounded bg-(--surface) px-2 py-1 text-sm font-medium text-(--foreground) shadow-sm">
             {statusKey ? t(`status.${statusKey}`) : pet.status}
