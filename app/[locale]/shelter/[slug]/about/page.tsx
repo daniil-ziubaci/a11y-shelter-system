@@ -1,3 +1,4 @@
+import { ShelterContact } from "@/components/ShelterContact";
 import { Link } from "@/i18n/navigation";
 import { getShelter } from "@/lib/getShelter";
 import { buildAlternates } from "@/lib/seo";
@@ -86,26 +87,12 @@ export default async function ShelterAboutPage({
         <h2 id="contact-heading" className="text-xl font-bold">
           {t("contactHeading")}
         </h2>
-        {shelter.contact_phone && (
-          <a
-            href={`tel:${shelter.contact_phone.replace(/[^\d+]/g, "")}`}
-            className="underline inline-block py-2"
-          >
-            {t("call", { phone: shelter.contact_phone })}
-          </a>
-        )}
-        {shelter.contact_messenger && (
-          <a
-            href={shelter.contact_messenger}
-            className="underline inline-block py-2"
-            rel="noopener noreferrer"
-          >
-            {t("messenger")}
-          </a>
-        )}
-        {!shelter.contact_phone && !shelter.contact_messenger && (
-          <p>{t("noContact")}</p>
-        )}
+
+        <ShelterContact
+          phone={shelter.contact_phone}
+          messenger={shelter.contact_messenger}
+          emptyText={t("noContact")}
+        />
         {shelter.public_channel_url && (
           <a
             href={shelter.public_channel_url}

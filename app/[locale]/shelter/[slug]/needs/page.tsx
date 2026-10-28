@@ -1,3 +1,4 @@
+import { ShelterContact } from "@/components/ShelterContact";
 import { Link } from "@/i18n/navigation";
 import { getShelter } from "@/lib/getShelter";
 import { getCategoryKey } from "@/lib/needCategories";
@@ -53,26 +54,11 @@ export default async function ShelterNeedsPage({
         {t("howToHelpHeading")}
       </h2>
       <p>{t("howToHelpIntro")}</p>
-      {shelter.contact_phone && (
-        <a
-          href={`tel:${shelter.contact_phone.replace(/[^\d+]/g, "")}`}
-          className="underline inline-block py-2"
-        >
-          {tAbout("call", { phone: shelter.contact_phone })}
-        </a>
-      )}
-      {shelter.contact_messenger && (
-        <a
-          href={shelter.contact_messenger}
-          className="underline inline-block py-2"
-          rel="noopener noreferrer"
-        >
-          {tAbout("messenger")}
-        </a>
-      )}
-      {!shelter.contact_phone && !shelter.contact_messenger && (
-        <p>{t("noContactNeeds")}</p>
-      )}
+      <ShelterContact
+        phone={shelter.contact_phone}
+        messenger={shelter.contact_messenger}
+        emptyText={t("noContactNeeds")}
+      />
       {shelter.public_channel_url && (
         <a
           href={shelter.public_channel_url}
