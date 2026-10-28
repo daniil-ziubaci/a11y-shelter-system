@@ -22,6 +22,10 @@
     "age": "Age",
     "young": "Under 1 year",
     "adult": "1 to 7 years",
+    "size": "Size",
+    "sizeSmall": "Small",
+    "sizeMedium": "Medium",
+    "sizeLarge": "Large",
     "senior": "7 years and older",
     "none": "No matching animals.",
     "found": "Animals found: {count}"

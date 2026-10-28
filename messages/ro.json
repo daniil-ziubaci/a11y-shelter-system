@@ -23,6 +23,10 @@
     "young": "Sub 1 an",
     "adult": "De la 1 la 7 ani",
     "senior": "Peste 7 ani",
+    "size": "Mărime",
+    "sizeSmall": "Mic",
+    "sizeMedium": "Mediu",
+    "sizeLarge": "Mare",
     "none": "Nu există animale potrivite.",
     "found": "Animale găsite: {count}"
   },

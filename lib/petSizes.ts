@@ -8,6 +8,10 @@ export function getSizeKey(size: string): string | undefined {
   return sizeKeys[size];
 }
 
+export function getSizeFromKey(key: string): string | undefined {
+  return Object.keys(sizeKeys).find((size) => sizeKeys[size] === key);
+}
+
 export const PET_SIZES = Object.keys(sizeKeys);
 
 export const PET_SIZE_LABELS: Record<string, string> = {

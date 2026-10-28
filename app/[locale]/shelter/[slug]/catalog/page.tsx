@@ -5,6 +5,7 @@ import { toPet } from "@/lib/toPet";
 import { Link } from "@/i18n/navigation";
 import { getTranslations } from "next-intl/server";
 import { buildAlternates } from "@/lib/seo";
+import { getSizeFromKey } from "@/lib/petSizes";
 
 export async function generateMetadata({
   params,
@@ -27,10 +28,15 @@ export default async function Catalog({
   searchParams,
 }: {
   params: Promise<{ slug: string }>;
-  searchParams: Promise<{ species?: string; sex?: string; age?: string }>;
+  searchParams: Promise<{
+    species?: string;
+    sex?: string;
+    age?: string;
+    size?: string;
+  }>;
 }) {
   const { slug } = await params;
-  const { species, sex, age } = await searchParams;
+  const { species, sex, age, size } = await searchParams;
   const shelter = await getShelter(slug);
   const t = await getTranslations("Catalog");
 
@@ -70,6 +76,11 @@ export default async function Catalog({
   if (age === "senior") {
     query = query.lte("birth_date", sevenYearsAgo.toISOString().slice(0, 10));
   }
+  const sizeValue =
+    species === "dog" && size ? getSizeFromKey(size) : undefined;
+  if (sizeValue) {
+    query = query.eq("size", sizeValue);
+  }
   const { data, error } = await query;
   if (error) {
     throw new Error("Не удалось загрузить питомцев из базы.");
@@ -81,6 +92,7 @@ export default async function Catalog({
     newSpecies: string | undefined,
     newSex: string | undefined,
     newAge: string | undefined,
+    newSize: string | null | undefined = size,
   ) {
     const params = new URLSearchParams();
     if (newSpecies) {
@@ -91,6 +103,9 @@ export default async function Catalog({
     }
     if (newAge) {
       params.set("age", newAge);
+    }
+    if (newSize && newSpecies === "dog") {
+      params.set("size", newSize);
     }
 
     const queryString = params.toString();
@@ -190,6 +205,41 @@ export default async function Catalog({
             </Link>
           </div>
         </fieldset>
+        {species === "dog" && (
+          <fieldset>
+            <legend>{t("size")}</legend>
+            <div className="flex flex-wrap gap-2">
+              <Link
+                href={buildHref(species, sex, age, null)}
+                aria-current={!size ? "true" : undefined}
+                className={`px-3 py-2 ${!size ? "font-bold" : ""}`}
+              >
+                {t("all")}
+              </Link>
+              <Link
+                href={buildHref(species, sex, age, "small")}
+                aria-current={size === "small" ? "true" : undefined}
+                className={`px-3 py-2 ${size === "small" ? "font-bold" : ""}`}
+              >
+                {t("sizeSmall")}
+              </Link>
+              <Link
+                href={buildHref(species, sex, age, "medium")}
+                aria-current={size === "medium" ? "true" : undefined}
+                className={`px-3 py-2 ${size === "medium" ? "font-bold" : ""}`}
+              >
+                {t("sizeMedium")}
+              </Link>
+              <Link
+                href={buildHref(species, sex, age, "large")}
+                aria-current={size === "large" ? "true" : undefined}
+                className={`px-3 py-2 ${size === "large" ? "font-bold" : ""}`}
+              >
+                {t("sizeLarge")}
+              </Link>
+            </div>
+          </fieldset>
+        )}
       </nav>
       <p role="status">
         {pets.length === 0 ? t("none") : t("found", { count: pets.length })}
