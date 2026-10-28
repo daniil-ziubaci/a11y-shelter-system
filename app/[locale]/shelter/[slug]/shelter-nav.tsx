@@ -15,13 +15,13 @@ export function ShelterNav({ slug }: { slug: string }) {
 
   return (
     <nav aria-label={t("label")}>
-      <ul className="flex flex-wrap gap-4">
+      <ul className="flex flex-wrap gap-1">
         {links.map((link) => (
           <li key={link.href}>
             <Link
               href={link.href}
               aria-current={pathname === link.href ? "page" : undefined}
-              className="underline inline-block py-2"
+              className="inline-block rounded-md px-2 py-2 text-sm font-medium md:text-base transition-colors duration-200 hover:bg-(--hover) motion-reduce:transition-none aria-[current=page]:bg-(--hover) aria-[current=page]:font-semibold"
             >
               {link.label}
             </Link>
