@@ -10,6 +10,7 @@ import { getShelter } from "@/lib/getShelter";
 import { getTranslations } from "next-intl/server";
 import { getSexKey } from "@/lib/petLabels";
 import { buildAlternates } from "@/lib/seo";
+import { ShelterContact } from "@/components/ShelterContact";
 
 export async function generateMetadata({
   params,
@@ -92,12 +93,59 @@ export default async function PetPage({
           <dd>{t("weightValue", { weight: pet.weight })}</dd>
         </div>
       </dl>
+      <div className="flex flex-wrap gap-4">
+        <a
+          href="#contact-heading"
+          aria-label={t("adoptLabel", { name: pet.name })}
+          className="underline inline-block py-2"
+        >
+          {t("adopt")}
+        </a>
+        <a
+          href="#contact-heading"
+          aria-label={t("helpLabel", { name: pet.name })}
+          className="underline inline-block py-2"
+        >
+          {t("help")}
+        </a>
+      </div>
       <h2 className="text-xl font-bold">{t("aboutTitle")}</h2>
       <p>{pet.description}</p>
       <h2 className="text-xl font-bold">{t("diet")}</h2>
       <p>{pet.diet}</p>
       <h2 className="text-xl font-bold">{t("health")}</h2>
       <p>{pet.health}</p>
+      <section
+        aria-labelledby="contact-heading"
+        className="flex flex-col gap-2"
+      >
+        <h2 id="contact-heading" className="text-xl font-bold">
+          {t("contactHeading")}
+        </h2>
+        <p>{t("contactIntro")}</p>
+        <ShelterContact
+          phone={shelter.contact_phone}
+          messenger={shelter.contact_messenger}
+          emptyText={t("noContact")}
+        />
+        {data.needs_treatment_since && (
+          <p>
+            {t("treatmentNote")}{" "}
+            <Link
+              href={`/shelter/${slug}/treatment`}
+              className="underline inline-block py-2"
+            >
+              {t("treatmentLink")}
+            </Link>
+          </p>
+        )}
+        <Link
+          href={`/shelter/${slug}/about`}
+          className="underline inline-block py-2"
+        >
+          {t("aboutShelter")}
+        </Link>
+      </section>
     </main>
   );
 }
