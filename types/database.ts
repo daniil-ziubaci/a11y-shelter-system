@@ -104,6 +104,44 @@ export type Database = {
           },
         ]
       }
+      purchase_items: {
+        Row: {
+          category: string
+          created_at: string
+          id: string
+          name: string
+          remaining: number
+          shelter_id: string
+          unit: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          id?: string
+          name: string
+          remaining: number
+          shelter_id: string
+          unit: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          id?: string
+          name?: string
+          remaining?: number
+          shelter_id?: string
+          unit?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "purchase_items_shelter_id_fkey"
+            columns: ["shelter_id"]
+            isOneToOne: false
+            referencedRelation: "shelters"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       shelter_members: {
         Row: {
           shelter_id: string
