@@ -142,6 +142,45 @@ export type Database = {
           },
         ]
       }
+      purchase_log: {
+        Row: {
+          amount: number
+          created_at: string
+          id: string
+          item_id: string
+          shelter_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          id?: string
+          item_id: string
+          shelter_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          id?: string
+          item_id?: string
+          shelter_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "purchase_log_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "purchase_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "purchase_log_shelter_id_fkey"
+            columns: ["shelter_id"]
+            isOneToOne: false
+            referencedRelation: "shelters"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       shelter_members: {
         Row: {
           shelter_id: string
