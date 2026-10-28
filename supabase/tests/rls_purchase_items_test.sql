@@ -1,6 +1,6 @@
 begin;
 
-select plan(23);
+select plan(25);
 
 select has_table('public', 'purchase_items', 'purchase_items table exists');
 
@@ -52,7 +52,7 @@ select throws_ok(
 
 select throws_ok(
   $$
-    update public.purchase_items set remaining = 99
+    update public.purchase_items set name = 'Взлом'
     where id = 'd0000000-0000-0000-0000-000000000001'
   $$,
   '42501',
@@ -96,16 +96,37 @@ select throws_ok(
 
 select lives_ok(
   $$
-    update public.purchase_items set remaining = 3
+    update public.purchase_items
+    set name = 'Корм для щенков (старый)', category = 'лекарства'
     where id = 'd0000000-0000-0000-0000-000000000001'
   $$,
-  'member can update item of own shelter'
+  'member can change name and category of own item'
 );
 
 select is(
-  (select remaining from public.purchase_items where id = 'd0000000-0000-0000-0000-000000000001'),
-  3::numeric,
-  'own item was changed'
+  (select name from public.purchase_items where id = 'd0000000-0000-0000-0000-000000000001'),
+  'Корм для щенков (старый)',
+  'own item name was changed'
+);
+
+select throws_ok(
+  $$
+    update public.purchase_items set remaining = 99
+    where id = 'd0000000-0000-0000-0000-000000000001'
+  $$,
+  '42501',
+  null,
+  'member cannot change remaining directly'
+);
+
+select throws_ok(
+  $$
+    update public.purchase_items set unit = 'шт'
+    where id = 'd0000000-0000-0000-0000-000000000001'
+  $$,
+  '42501',
+  null,
+  'member cannot change unit'
 );
 
 select throws_ok(
@@ -121,15 +142,15 @@ select throws_ok(
 
 select lives_ok(
   $$
-    update public.purchase_items set remaining = 99
+    update public.purchase_items set name = 'Взлом'
     where id = 'd0000000-0000-0000-0000-000000000004'
   $$,
   'update of another shelter item raises no error'
 );
 
 select is(
-  (select remaining from public.purchase_items where id = 'd0000000-0000-0000-0000-000000000004'),
-  5::numeric,
+  (select name from public.purchase_items where id = 'd0000000-0000-0000-0000-000000000004'),
+  'Корм для кошек',
   'item of another shelter was not changed'
 );
 
@@ -177,15 +198,15 @@ select throws_ok(
 
 select lives_ok(
   $$
-    update public.purchase_items set remaining = 1
+    update public.purchase_items set name = 'Без второго фактора'
     where id = 'd0000000-0000-0000-0000-000000000001'
   $$,
   'update without second factor raises no error'
 );
 
 select is(
-  (select remaining from public.purchase_items where id = 'd0000000-0000-0000-0000-000000000001'),
-  3::numeric,
+  (select name from public.purchase_items where id = 'd0000000-0000-0000-0000-000000000001'),
+  'Корм для щенков (старый)',
   'update without second factor changed nothing'
 );
 
