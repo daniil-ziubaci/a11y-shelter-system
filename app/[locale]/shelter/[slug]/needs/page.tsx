@@ -1,5 +1,6 @@
 import { getShelter } from "@/lib/getShelter";
 import { getCategoryKey } from "@/lib/needCategories";
+import { getUnitKey } from "@/lib/needUnits";
 import { buildAlternates } from "@/lib/seo";
 import { createClient } from "@/lib/supabase/server";
 import { getFormatter, getTranslations } from "next-intl/server";
@@ -53,6 +54,7 @@ export default async function ShelterNeedsPage({
         <ul>
           {items.map((item) => {
             const categoryKey = getCategoryKey(item.category);
+            const unitKey = getUnitKey(item.unit);
             return (
               <li key={item.id}>
                 <h2>{item.name}</h2>
@@ -62,7 +64,7 @@ export default async function ShelterNeedsPage({
                 <p>
                   {t("remaining", {
                     amount: format.number(item.remaining),
-                    unit: item.unit,
+                    unit: unitKey ? t(`units.${unitKey}`) : item.unit,
                   })}
                 </p>
               </li>

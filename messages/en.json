@@ -96,6 +96,11 @@
       "hygiene": "Hygiene",
       "disinfection": "Disinfection",
       "supplies": "Supplies"
+    },
+    "units": {
+      "kg": "kg",
+      "pcs": "pcs",
+      "l": "l"
     }
   }
 }

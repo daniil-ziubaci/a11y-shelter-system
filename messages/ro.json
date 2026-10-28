@@ -96,6 +96,11 @@
       "hygiene": "Igienă",
       "disinfection": "Dezinfectare",
       "supplies": "Consumabile"
+    },
+    "units": {
+      "kg": "kg",
+      "pcs": "buc.",
+      "l": "l"
     }
   }
 }
