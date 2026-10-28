@@ -1,10 +1,10 @@
 {
   "Nav": {
     "label": "Main navigation",
-    "catalog": "Animals looking for a home",
-    "needs": "What the shelter needs",
-    "treatment": "Help with treatment",
-    "about": "About the shelter",
+    "catalog": "Catalog",
+    "needs": "How to help",
+    "treatment": "Treatment",
+    "about": "About us",
     "language": "Language"
   },
   "Catalog": {

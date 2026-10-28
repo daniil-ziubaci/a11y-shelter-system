@@ -1,10 +1,10 @@
 {
   "Nav": {
     "label": "Navigare principală",
-    "catalog": "Animale care caută o casă",
-    "needs": "De ce are nevoie adăpostul",
-    "treatment": "Ajutor pentru tratament",
-    "about": "Despre adăpost",
+    "catalog": "Catalog",
+    "needs": "Ajută-ne",
+    "treatment": "Tratament",
+    "about": "Despre noi",
     "language": "Limba"
   },
   "Catalog": {
