@@ -126,21 +126,21 @@ export default async function Catalog({
             <Link
               href={buildHref(undefined, sex, age)}
               aria-current={species === undefined ? "true" : undefined}
-              className={`px-3 py-2 ${species === undefined ? "font-bold" : ""}`}
+              className="px-3 py-2 transition-colors duration-200 hover:text-(--accent) motion-reduce:transition-none aria-[current=true]:font-semibold aria-[current=true]:text-(--accent)"
             >
               {t("all")}
             </Link>
             <Link
               href={buildHref("dog", sex, age)}
               aria-current={species === "dog" ? "true" : undefined}
-              className={`px-3 py-2 ${species === "dog" ? "font-bold" : ""}`}
+              className="px-3 py-2 transition-colors duration-200 hover:text-(--accent) motion-reduce:transition-none aria-[current=true]:font-semibold aria-[current=true]:text-(--accent)"
             >
               {t("dogs")}
             </Link>
             <Link
               href={buildHref("cat", sex, age)}
               aria-current={species === "cat" ? "true" : undefined}
-              className={`px-3 py-2 ${species === "cat" ? "font-bold" : ""}`}
+              className="px-3 py-2 transition-colors duration-200 hover:text-(--accent) motion-reduce:transition-none aria-[current=true]:font-semibold aria-[current=true]:text-(--accent)"
             >
               {t("cats")}
             </Link>
@@ -152,21 +152,21 @@ export default async function Catalog({
             <Link
               href={buildHref(species, undefined, age)}
               aria-current={sex === undefined ? "true" : undefined}
-              className={`px-3 py-2 ${sex === undefined ? "font-bold" : ""}`}
+              className="px-3 py-2 transition-colors duration-200 hover:text-(--accent) motion-reduce:transition-none aria-[current=true]:font-semibold aria-[current=true]:text-(--accent)"
             >
               {t("all")}
             </Link>
             <Link
               href={buildHref(species, "male", age)}
               aria-current={sex === "male" ? "true" : undefined}
-              className={`px-3 py-2 ${sex === "male" ? "font-bold" : ""}`}
+              className="px-3 py-2 transition-colors duration-200 hover:text-(--accent) motion-reduce:transition-none aria-[current=true]:font-semibold aria-[current=true]:text-(--accent)"
             >
               {t("males")}
             </Link>
             <Link
               href={buildHref(species, "female", age)}
               aria-current={sex === "female" ? "true" : undefined}
-              className={`px-3 py-2 ${sex === "female" ? "font-bold" : ""}`}
+              className="px-3 py-2 transition-colors duration-200 hover:text-(--accent) motion-reduce:transition-none aria-[current=true]:font-semibold aria-[current=true]:text-(--accent)"
             >
               {t("females")}
             </Link>
@@ -178,28 +178,28 @@ export default async function Catalog({
             <Link
               href={buildHref(species, sex, undefined)}
               aria-current={age === undefined ? "true" : undefined}
-              className={`px-3 py-2 ${age === undefined ? "font-bold" : ""}`}
+              className="px-3 py-2 transition-colors duration-200 hover:text-(--accent) motion-reduce:transition-none aria-[current=true]:font-semibold aria-[current=true]:text-(--accent)"
             >
               {t("all")}
             </Link>
             <Link
               href={buildHref(species, sex, "young")}
               aria-current={age === "young" ? "true" : undefined}
-              className={`px-3 py-2 ${age === "young" ? "font-bold" : ""}`}
+              className="px-3 py-2 transition-colors duration-200 hover:text-(--accent) motion-reduce:transition-none aria-[current=true]:font-semibold aria-[current=true]:text-(--accent)"
             >
               {t("young")}
             </Link>
             <Link
               href={buildHref(species, sex, "adult")}
               aria-current={age === "adult" ? "true" : undefined}
-              className={`px-3 py-2 ${age === "adult" ? "font-bold" : ""}`}
+              className="px-3 py-2 transition-colors duration-200 hover:text-(--accent) motion-reduce:transition-none aria-[current=true]:font-semibold aria-[current=true]:text-(--accent)"
             >
               {t("adult")}
             </Link>
             <Link
               href={buildHref(species, sex, "senior")}
               aria-current={age === "senior" ? "true" : undefined}
-              className={`px-3 py-2 ${age === "senior" ? "font-bold" : ""}`}
+              className="px-3 py-2 transition-colors duration-200 hover:text-(--accent) motion-reduce:transition-none aria-[current=true]:font-semibold aria-[current=true]:text-(--accent)"
             >
               {t("senior")}
             </Link>
@@ -212,28 +212,28 @@ export default async function Catalog({
               <Link
                 href={buildHref(species, sex, age, null)}
                 aria-current={!size ? "true" : undefined}
-                className={`px-3 py-2 ${!size ? "font-bold" : ""}`}
+                className="px-3 py-2 transition-colors duration-200 hover:text-(--accent) motion-reduce:transition-none aria-[current=true]:font-semibold aria-[current=true]:text-(--accent)"
               >
                 {t("all")}
               </Link>
               <Link
                 href={buildHref(species, sex, age, "small")}
                 aria-current={size === "small" ? "true" : undefined}
-                className={`px-3 py-2 ${size === "small" ? "font-bold" : ""}`}
+                className="px-3 py-2 transition-colors duration-200 hover:text-(--accent) motion-reduce:transition-none aria-[current=true]:font-semibold aria-[current=true]:text-(--accent)"
               >
                 {t("sizeSmall")}
               </Link>
               <Link
                 href={buildHref(species, sex, age, "medium")}
                 aria-current={size === "medium" ? "true" : undefined}
-                className={`px-3 py-2 ${size === "medium" ? "font-bold" : ""}`}
+                className="px-3 py-2 transition-colors duration-200 hover:text-(--accent) motion-reduce:transition-none aria-[current=true]:font-semibold aria-[current=true]:text-(--accent)"
               >
                 {t("sizeMedium")}
               </Link>
               <Link
                 href={buildHref(species, sex, age, "large")}
                 aria-current={size === "large" ? "true" : undefined}
-                className={`px-3 py-2 ${size === "large" ? "font-bold" : ""}`}
+                className="px-3 py-2 transition-colors duration-200 hover:text-(--accent) motion-reduce:transition-none aria-[current=true]:font-semibold aria-[current=true]:text-(--accent)"
               >
                 {t("sizeLarge")}
               </Link>
