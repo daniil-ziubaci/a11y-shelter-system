@@ -8,6 +8,7 @@ export function ShelterNav({ slug }: { slug: string }) {
   const t = useTranslations("Nav");
   const links = [
     { href: `/shelter/${slug}/catalog`, label: t("catalog") },
+    { href: `/shelter/${slug}/needs`, label: t("needs") },
     { href: `/shelter/${slug}/treatment`, label: t("treatment") },
     { href: `/shelter/${slug}/about`, label: t("about") },
   ];

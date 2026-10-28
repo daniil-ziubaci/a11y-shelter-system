@@ -2,6 +2,7 @@
   "Nav": {
     "label": "Navigare principală",
     "catalog": "Animale care caută o casă",
+    "needs": "De ce are nevoie adăpostul",
     "treatment": "Ajutor pentru tratament",
     "about": "Despre adăpost",
     "language": "Limba"
@@ -81,5 +82,20 @@
     "loadError": "Nu s-a putut încărca lista animalelor.",
     "empty": "Momentan niciun animal nu are nevoie de ajutor pentru tratament.",
     "since": "Este nevoie urgentă de ajutor pentru tratament — din {date}"
+  },
+  "Needs": {
+    "title": "De ce are nevoie adăpostul — {shelter}",
+    "description": "Lista a ceea ce are nevoie acum adăpostul „{shelter}”: hrană, medicamente, igienă și consumabile. Alegeți un articol și ajutați.",
+    "heading": "De ce are nevoie adăpostul",
+    "loadError": "Nu s-a putut încărca lista de nevoi.",
+    "empty": "Momentan adăpostul nu cere nimic. Reveniți mai târziu.",
+    "remaining": "Necesar: {amount} {unit}",
+    "categories": {
+      "food": "Hrană",
+      "medicine": "Medicamente",
+      "hygiene": "Igienă",
+      "disinfection": "Dezinfectare",
+      "supplies": "Consumabile"
+    }
   }
 }
