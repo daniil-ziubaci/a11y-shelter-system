@@ -5,6 +5,46 @@ import { getLatestPurchase } from "@/lib/getLatestPurchase";
 import { UndoForm } from "@/app/volunteer/needs/undo/undo-form";
 import Link from "next/link";
 
+type NeedItem = {
+  id: string;
+  name: string;
+  unit: string;
+  remaining: number;
+};
+
+function NeedSection({
+  title,
+  emptyText,
+  items,
+}: {
+  title: string;
+  emptyText: string;
+  items: NeedItem[];
+}) {
+  return (
+    <section className="flex flex-col gap-2">
+      <h2 className="text-xl font-bold">{title}</h2>
+      {items.length === 0 ? (
+        <p>{emptyText}</p>
+      ) : (
+        <ul>
+          {items.map((item) => (
+            <li key={item.id}>
+              {item.name}: {formatRemaining(item.remaining, item.unit)}{" "}
+              <Link
+                href={`/volunteer/needs/${item.id}/edit`}
+                aria-label={`Редактировать: ${item.name}`}
+              >
+                Редактировать
+              </Link>
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
+  );
+}
+
 export async function NeedList({ shelterId }: { shelterId: string }) {
   const supabase = await createClient();
   const { data: items, error } = await supabase
@@ -21,50 +61,28 @@ export async function NeedList({ shelterId }: { shelterId: string }) {
   }
 
   const open = items.filter((item) => item.remaining > 0);
-  const closed = items.filter((item) => item.remaining <= 0);
+  const stock = items.filter((item) => item.remaining < 0);
+  const closed = items.filter((item) => item.remaining === 0);
   const latest = await getLatestPurchase(shelterId);
 
   return (
     <>
-      <h3 className="text-lg font-bold">Приёмка товара</h3>
-      <ReceiveForm items={items} />
-      <UndoForm latest={latest} />
-      <h3 className="text-lg font-bold">Нужно купить</h3>
-      {open.length === 0 ? (
-        <p>Открытых нужд нет.</p>
-      ) : (
-        <ul>
-          {open.map((item) => (
-            <li key={item.id}>
-              {item.name}: {formatRemaining(item.remaining, item.unit)}
-              <Link
-                href={`/volunteer/needs/${item.id}/edit`}
-                aria-label={`Редактировать: ${item.name}`}
-              >
-                Редактировать
-              </Link>
-            </li>
-          ))}
-        </ul>
-      )}
-      <h3 className="text-lg font-bold">Запас и закрытые</h3>
-      {closed.length === 0 ? (
-        <p>Запаса и закрытых позиций нет.</p>
-      ) : (
-        <ul>
-          {closed.map((item) => (
-            <li key={item.id}>
-              {item.name}: {formatRemaining(item.remaining, item.unit)}
-              <Link
-                href={`/volunteer/needs/${item.id}/edit`}
-                aria-label={`Редактировать: ${item.name}`}
-              >
-                Редактировать
-              </Link>
-            </li>
-          ))}
-        </ul>
-      )}
+      <section className="flex flex-col gap-4">
+        <h2 className="text-xl font-bold">Приёмка товара</h2>
+        <ReceiveForm items={items} />
+        <UndoForm latest={latest} />
+      </section>
+      <NeedSection
+        title="Нужно купить"
+        emptyText="Открытых нужд нет."
+        items={open}
+      />
+      <NeedSection title="Запас" emptyText="Запаса нет." items={stock} />
+      <NeedSection
+        title="Закрытые"
+        emptyText="Закрытых позиций нет."
+        items={closed}
+      />
     </>
   );
 }

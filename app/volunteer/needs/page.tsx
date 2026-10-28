@@ -21,8 +21,8 @@ export default async function VolunteerNeedsPage() {
       {membership ? (
         <>
           <p>Приют: {membership.shelters?.name}</p>
-          <NeedList shelterId={membership.shelter_id} />
           <Link href="/volunteer/needs/new">Добавить позицию</Link>
+          <NeedList shelterId={membership.shelter_id} />
         </>
       ) : (
         <p>Вы пока не состоите ни в одном приюте. Обратитесь к координатору.</p>
