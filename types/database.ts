@@ -264,6 +264,7 @@ export type Database = {
         Args: { p_amount: number; p_item_id: string }
         Returns: number
       }
+      undo_purchase: { Args: { p_log_id: string }; Returns: number }
     }
     Enums: {
       [_ in never]: never
