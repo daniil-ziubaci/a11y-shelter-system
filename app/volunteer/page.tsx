@@ -21,8 +21,8 @@ export default async function VolunteerPage() {
       {membership ? (
         <>
           <p>Приют: {membership.shelters?.name}</p>
-          <PetList shelterId={membership.shelter_id} />
           <Link href="/volunteer/pets/new">Добавить животное</Link>
+          <PetList shelterId={membership.shelter_id} />
         </>
       ) : (
         <p>Вы пока не состоите ни в одном приюте. Обратитесь к координатору.</p>
