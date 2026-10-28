@@ -1,3 +1,4 @@
+import { Link } from "@/i18n/navigation";
 import { getShelter } from "@/lib/getShelter";
 import { getCategoryKey } from "@/lib/needCategories";
 import { getUnitKey } from "@/lib/needUnits";
@@ -29,6 +30,7 @@ export default async function ShelterNeedsPage({
   const shelter = await getShelter(slug);
   const t = await getTranslations("Needs");
   const format = await getFormatter();
+  const tAbout = await getTranslations("About");
   const supabase = await createClient();
   const { data: items, error } = await supabase
     .from("purchase_items")
@@ -44,6 +46,50 @@ export default async function ShelterNeedsPage({
       </main>
     );
   }
+
+  const helpBlock = (
+    <section aria-labelledby="help-heading" className="flex flex-col gap-2">
+      <h2 id="help-heading" className="text-xl font-bold">
+        {t("howToHelpHeading")}
+      </h2>
+      <p>{t("howToHelpIntro")}</p>
+      {shelter.contact_phone && (
+        <a
+          href={`tel:${shelter.contact_phone.replace(/[^\d+]/g, "")}`}
+          className="underline inline-block py-2"
+        >
+          {tAbout("call", { phone: shelter.contact_phone })}
+        </a>
+      )}
+      {shelter.contact_messenger && (
+        <a
+          href={shelter.contact_messenger}
+          className="underline inline-block py-2"
+          rel="noopener noreferrer"
+        >
+          {tAbout("messenger")}
+        </a>
+      )}
+      {!shelter.contact_phone && !shelter.contact_messenger && (
+        <p>{t("noContactNeeds")}</p>
+      )}
+      {shelter.public_channel_url && (
+        <a
+          href={shelter.public_channel_url}
+          className="underline inline-block py-2"
+          rel="noopener noreferrer"
+        >
+          {tAbout("news")}
+        </a>
+      )}
+      <Link
+        href={`/shelter/${slug}/about`}
+        className="underline inline-block py-2"
+      >
+        {t("aboutLink")}
+      </Link>
+    </section>
+  );
 
   return (
     <main className="w-full flex flex-col gap-6 p-4 max-w-5xl mx-auto">
@@ -67,11 +113,19 @@ export default async function ShelterNeedsPage({
                     unit: unitKey ? t(`units.${unitKey}`) : item.unit,
                   })}
                 </p>
+                <a
+                  href="#help-heading"
+                  aria-label={t("helpLabel", { name: item.name })}
+                  className="underline inline-block py-2"
+                >
+                  {t("help")}
+                </a>
               </li>
             );
           })}
         </ul>
       )}
+      {helpBlock}
     </main>
   );
 }

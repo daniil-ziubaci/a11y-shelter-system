@@ -89,6 +89,12 @@
     "heading": "De ce are nevoie adăpostul",
     "loadError": "Nu s-a putut încărca lista de nevoi.",
     "empty": "Momentan adăpostul nu cere nimic. Reveniți mai târziu.",
+    "help": "Ajută",
+    "helpLabel": "Ajută: {name}",
+    "howToHelpHeading": "Cum puteți ajuta",
+    "howToHelpIntro": "Sunați sau scrieți unui voluntar al adăpostului și vă va spune cum puteți ajuta.",
+    "noContactNeeds": "Contactul adăpostului nu este încă indicat.",
+    "aboutLink": "Despre adăpost",
     "remaining": "Necesar: {amount} {unit}",
     "categories": {
       "food": "Hrană",

@@ -89,6 +89,12 @@
     "heading": "What the shelter needs",
     "loadError": "Could not load the list of needs.",
     "empty": "The shelter isn't asking for anything right now. Please check back later.",
+    "help": "Help",
+    "helpLabel": "Help with: {name}",
+    "howToHelpHeading": "How to help",
+    "howToHelpIntro": "Call or message a shelter volunteer and they will tell you how to help.",
+    "noContactNeeds": "The shelter's contact has not been added yet.",
+    "aboutLink": "About the shelter",
     "remaining": "Needed: {amount} {unit}",
     "categories": {
       "food": "Food",
