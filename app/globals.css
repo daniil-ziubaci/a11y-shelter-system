@@ -1,23 +1,5 @@
 @import "tailwindcss";
 
-/* :root {
-  color-scheme: light;
-  --background: #f4f7f5;
-  --surface: #ffffff;
-  --foreground: #1c2421;
-  --muted: #52615c;
-  
-  --accent: #2e6b52;
-  --accent-soft: #e2ede7;
-  --accent-contrast: #ffffff;
-  
-  --border: #d3dfd9;
-  --border-strong: #6b8278;
-  --hover: #e8f0ec;
-  
-  --focus: #1d52a8;
-  --danger: #a32a1d;
-} */
 :root {
   color-scheme: light;
   --background: #fcf6ec;
