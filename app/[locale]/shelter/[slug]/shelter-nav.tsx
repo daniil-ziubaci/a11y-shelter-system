@@ -21,7 +21,7 @@ export function ShelterNav({ slug }: { slug: string }) {
             <Link
               href={link.href}
               aria-current={pathname === link.href ? "page" : undefined}
-              className="inline-block rounded-md px-2 py-2 text-sm font-medium md:text-base transition-colors duration-200 hover:bg-(--hover) motion-reduce:transition-none aria-[current=page]:bg-(--hover) aria-[current=page]:font-semibold"
+              className="inline-block rounded-md px-2 py-2 text-sm font-medium md:text-base transition-colors duration-200 hover:bg-(--hover) hover:text-(--accent) motion-reduce:transition-none aria-[current=page]:bg-(--hover) aria-[current=page]:text-(--accent) aria-[current=page]:font-semibold"
             >
               {link.label}
             </Link>
