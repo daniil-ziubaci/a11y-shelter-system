@@ -1,6 +1,8 @@
 import { createClient } from "@/lib/supabase/server";
 import { formatRemaining } from "@/lib/formatRemaining";
 import { ReceiveForm } from "@/app/volunteer/needs/receive/receive-form";
+import { getLatestPurchase } from "@/lib/getLatestPurchase";
+import { UndoForm } from "@/app/volunteer/needs/undo/undo-form";
 
 export async function NeedList({ shelterId }: { shelterId: string }) {
   const supabase = await createClient();
@@ -19,11 +21,13 @@ export async function NeedList({ shelterId }: { shelterId: string }) {
 
   const open = items.filter((item) => item.remaining > 0);
   const closed = items.filter((item) => item.remaining <= 0);
+  const latest = await getLatestPurchase(shelterId);
 
   return (
     <>
       <h3 className="text-lg font-bold">Приёмка товара</h3>
       <ReceiveForm items={items} />
+      <UndoForm latest={latest} />
       <h3 className="text-lg font-bold">Нужно купить</h3>
       {open.length === 0 ? (
         <p>Открытых нужд нет.</p>
