@@ -21,7 +21,7 @@ export function PetCard({
   const sizeKey = pet.size ? getSizeKey(pet.size) : undefined;
 
   return (
-    <article className="p-4 border rounded-lg flex flex-col gap-4 relative focus-within:outline-2 focus-within:outline-offset-2 hover:bg-gray-900">
+    <article className="p-4 border border-(--border) bg-(--surface) rounded-lg flex flex-col gap-4 relative transition duration-200 hover:shadow-lg motion-safe:hover:-translate-y-1 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-(--focus)">
       <div className="relative aspect-3/4">
         <p className="absolute top-2 left-2 bg-white text-black px-2 py-1 rounded text-sm font-medium">
           {statusKey ? t(`status.${statusKey}`) : pet.status}
@@ -35,7 +35,6 @@ export function PetCard({
           className="object-cover bg-gray-100"
         />
       </div>
-
       <h2 className="text-xl font-bold">{pet.name}</h2>
       <dl className="flex flex-wrap gap-x-4">
         <div className="flex gap-1">
@@ -60,7 +59,6 @@ export function PetCard({
       >
         {t("more")}
       </Link>
-
     </article>
   );
 }
