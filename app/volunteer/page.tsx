@@ -1,11 +1,9 @@
-import { logout } from "@/app/volunteer/actions";
 import { createClient } from "@/lib/supabase/server";
 import { PetList } from "@/app/volunteer/pet-list";
 import Link from "next/link";
-import { NeedList } from "@/app/volunteer/need-list";
 
 export const metadata = {
-  title: "Панель волонтёра",
+  title: "Животные приюта",
   robots: { index: false },
 };
 
@@ -18,24 +16,17 @@ export default async function VolunteerPage() {
     .maybeSingle();
 
   return (
-    <main>
-      <h1>Панель волонтёра</h1>
+    <main className="w-full flex flex-col gap-6 p-4 max-w-5xl mx-auto">
+      <h1 className="text-3xl font-bold">Животные приюта</h1>
       {membership ? (
         <>
           <p>Приют: {membership.shelters?.name}</p>
-          <h2 className="text-xl font-bold">Животные приюта</h2>
           <PetList shelterId={membership.shelter_id} />
           <Link href="/volunteer/pets/new">Добавить животное</Link>
-          <h2 className="text-xl font-bold">План закупок</h2>
-          <NeedList shelterId={membership.shelter_id} />
-          <Link href="/volunteer/needs/new">Добавить позицию</Link>
         </>
       ) : (
         <p>Вы пока не состоите ни в одном приюте. Обратитесь к координатору.</p>
       )}
-      <form action={logout}>
-        <button type="submit">Выйти</button>
-      </form>
     </main>
   );
 }
