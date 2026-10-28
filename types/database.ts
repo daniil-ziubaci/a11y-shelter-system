@@ -208,6 +208,7 @@ export type Database = {
         Row: {
           about: string | null
           address: string | null
+          adoption_info: string | null
           city: string | null
           contact_hours: string | null
           contact_messenger: string | null
@@ -224,6 +225,7 @@ export type Database = {
         Insert: {
           about?: string | null
           address?: string | null
+          adoption_info?: string | null
           city?: string | null
           contact_hours?: string | null
           contact_messenger?: string | null
@@ -240,6 +242,7 @@ export type Database = {
         Update: {
           about?: string | null
           address?: string | null
+          adoption_info?: string | null
           city?: string | null
           contact_hours?: string | null
           contact_messenger?: string | null
