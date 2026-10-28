@@ -39,6 +39,7 @@ export function EditPetForm({ pet }: { pet: Pet }) {
             type="radio"
             name="species"
             value="собака"
+            onChange={() => setSpecies("собака")}
             defaultChecked={(state?.values.species ?? pet.species) === "собака"}
             required
           />{" "}
@@ -49,6 +50,7 @@ export function EditPetForm({ pet }: { pet: Pet }) {
             type="radio"
             name="species"
             value="кошка"
+            onChange={() => setSpecies("кошка")}
             defaultChecked={(state?.values.species ?? pet.species) === "кошка"}
             required
           />{" "}
