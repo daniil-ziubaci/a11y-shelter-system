@@ -58,6 +58,7 @@ export default async function PetPage({
   const pet = toPet(data);
   const t = await getTranslations("Pet");
   const tAge = await getTranslations("Age");
+  const tAdoption = await getTranslations("Adoption");
 
   return (
     <main className="w-full flex flex-col gap-6 p-4 max-w-5xl mx-auto">
@@ -146,6 +147,17 @@ export default async function PetPage({
           {t("aboutShelter")}
         </Link>
       </section>
+      {shelter.adoption_info && (
+        <section
+          aria-labelledby="adoption-heading"
+          className="flex flex-col gap-2"
+        >
+          <h2 id="adoption-heading" className="text-xl font-bold">
+            {tAdoption("heading")}
+          </h2>
+          <p className="whitespace-pre-line">{shelter.adoption_info}</p>
+        </section>
+      )}
     </main>
   );
 }

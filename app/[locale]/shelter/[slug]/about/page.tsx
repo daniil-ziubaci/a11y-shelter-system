@@ -35,6 +35,7 @@ export default async function ShelterAboutPage({
   const { slug, locale } = await params;
   const shelter = await getShelter(slug);
   const t = await getTranslations("About");
+  const tAdoption = await getTranslations("Adoption");
   const jsonLd = JSON.stringify(
     buildShelterJsonLd(
       shelter,
@@ -80,6 +81,19 @@ export default async function ShelterAboutPage({
           </div>
         )}
       </dl>
+
+      {shelter.adoption_info && (
+        <section
+          aria-labelledby="adoption-heading"
+          className="flex flex-col gap-2"
+        >
+          <h2 id="adoption-heading" className="text-xl font-bold">
+            {tAdoption("heading")}
+          </h2>
+          <p className="whitespace-pre-line">{shelter.adoption_info}</p>
+        </section>
+      )}
+
       <section
         aria-labelledby="contact-heading"
         className="flex flex-col gap-2"
