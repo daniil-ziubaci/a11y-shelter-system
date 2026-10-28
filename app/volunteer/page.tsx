@@ -25,6 +25,8 @@ export default async function VolunteerPage() {
           <h2 className="text-xl font-bold">Животные приюта</h2>
           <PetList shelterId={membership.shelter_id} />
           <Link href="/volunteer/pets/new">Добавить животное</Link>
+          <h2 className="text-xl font-bold">План закупок</h2>
+          <Link href="/volunteer/needs/new">Добавить позицию</Link>
         </>
       ) : (
         <p>Вы пока не состоите ни в одном приюте. Обратитесь к координатору.</p>

@@ -9,3 +9,5 @@ const categoryKeys: Record<string, string> = {
 export function getCategoryKey(category: string): string | undefined {
   return categoryKeys[category];
 }
+
+export const NEED_CATEGORIES = Object.keys(categoryKeys);
