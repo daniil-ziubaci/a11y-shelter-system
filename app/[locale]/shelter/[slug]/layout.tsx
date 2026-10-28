@@ -17,9 +17,21 @@ export default async function ShelterLayout({
 
   return (
     <>
-      <header className="w-full max-w-5xl mx-auto p-4 flex flex-wrap items-center justify-between gap-4">
-        <ShelterNav slug={slug} />
-        <LanguageSwitcher />
+      <header className="sticky top-0 z-10 w-full bg-(--background) shadow-md">
+        <div className="w-full max-w-5xl mx-auto px-4 py-1 flex flex-wrap items-center justify-between gap-x-4 gap-y-1">
+          <Link
+            href={`/shelter/${slug}/catalog`}
+            className="text-lg font-bold py-2"
+          >
+            {shelter.name}
+          </Link>
+          <div className="lg:order-3">
+            <LanguageSwitcher />
+          </div>
+          <div className="order-last w-full lg:order-2 lg:w-auto">
+            <ShelterNav slug={slug} />
+          </div>
+        </div>
       </header>
       {children}
       <footer className="w-full max-w-5xl mx-auto p-4 mt-auto">
