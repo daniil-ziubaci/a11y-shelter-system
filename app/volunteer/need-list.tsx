@@ -3,6 +3,7 @@ import { formatRemaining } from "@/lib/formatRemaining";
 import { ReceiveForm } from "@/app/volunteer/needs/receive/receive-form";
 import { getLatestPurchase } from "@/lib/getLatestPurchase";
 import { UndoForm } from "@/app/volunteer/needs/undo/undo-form";
+import Link from "next/link";
 
 export async function NeedList({ shelterId }: { shelterId: string }) {
   const supabase = await createClient();
@@ -36,6 +37,12 @@ export async function NeedList({ shelterId }: { shelterId: string }) {
           {open.map((item) => (
             <li key={item.id}>
               {item.name}: {formatRemaining(item.remaining, item.unit)}
+              <Link
+                href={`/volunteer/needs/${item.id}/edit`}
+                aria-label={`Редактировать: ${item.name}`}
+              >
+                Редактировать
+              </Link>
             </li>
           ))}
         </ul>
@@ -48,6 +55,12 @@ export async function NeedList({ shelterId }: { shelterId: string }) {
           {closed.map((item) => (
             <li key={item.id}>
               {item.name}: {formatRemaining(item.remaining, item.unit)}
+              <Link
+                href={`/volunteer/needs/${item.id}/edit`}
+                aria-label={`Редактировать: ${item.name}`}
+              >
+                Редактировать
+              </Link>
             </li>
           ))}
         </ul>
