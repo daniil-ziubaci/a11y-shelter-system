@@ -68,7 +68,7 @@
     "aboutShelter": "Despre adăpost",
     "titleWithShelter": "{name}, {animal} caută o casă — {shelter}",
     "titleInShelter": "{name}, {animal} în adăpost — {shelter}",
-    "needsTreatmentBadge": "Ajutor urgent pentru tratament",
+    "needsTreatmentBadge": "ajutor urgent pentru tratament",
     "status": {
       "looking": "caută o casă",
       "pending": "în proces",

@@ -27,7 +27,11 @@ export function PetCard({
         {(showStatusBadge || pet.needsTreatmentSince) && (
           <div className="absolute top-2.5 left-2.5 z-10 flex flex-col items-start gap-1.5">
             {pet.needsTreatmentSince && (
-              <p className="inline-flex items-center rounded-full bg-(--surface) px-2.5 py-0.5 text-sm font-medium text-(--foreground) shadow-sm ring-1 ring-(--border-strong)">
+              <p className="inline-flex items-center gap-1.5 rounded-full bg-(--danger-soft) px-2.5 py-0.5 text-sm font-medium text-(--danger) shadow-sm ring-1 ring-(--border)">
+                <span
+                  aria-hidden="true"
+                  className="size-1.5 rounded-full bg-(--danger)"
+                />
                 {t("needsTreatmentBadge")}
               </p>
             )}

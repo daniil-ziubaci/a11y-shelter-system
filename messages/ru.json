@@ -68,7 +68,7 @@
     "aboutShelter": "О приюте",
     "titleWithShelter": "{name}, {animal} ищет дом — {shelter}",
     "titleInShelter": "{name}, {animal} в приюте — {shelter}",
-    "needsTreatmentBadge": "Срочно нужна помощь с лечением",
+    "needsTreatmentBadge": "срочно нужна помощь с лечением",
     "status": {
       "looking": "ищет дом",
       "pending": "в процессе",
