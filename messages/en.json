@@ -8,9 +8,9 @@
     "language": "Language"
   },
   "Catalog": {
-    "title": "Animals looking for a home — {shelter}",
-    "description": "Dogs and cats from the “{shelter}” shelter are looking for a home. Filter by species, sex and age.",
-    "heading": "Animals looking for a home",
+    "title": "Dogs and cats at the “{shelter}” shelter — animal catalog",
+    "description": "Dogs and cats at the “{shelter}” shelter: photos, age and size. Pick a friend, see who you can take home and how to help the shelter.",
+    "heading": "Dogs and cats at the “{shelter}” shelter",
     "treatmentTitle": "Treatment: urgent help needed — {shelter}",
     "treatmentDescription": "Animals from the “{shelter}” shelter that urgently need help with treatment.",
     "treatmentHeading": "Treatment: urgent help needed",

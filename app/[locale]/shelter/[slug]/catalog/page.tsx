@@ -153,13 +153,11 @@ export default async function Catalog({
   return (
     <main className="w-full flex flex-col gap-6 p-4 max-w-5xl mx-auto">
       <h1 className="text-3xl font-bold text-center">
-        {t(
-          isBlocked
-            ? "treatmentBlockedHeading"
-            : isTreatment
-              ? "treatmentHeading"
-              : "heading",
-        )}
+        {isBlocked
+          ? t("treatmentBlockedHeading")
+          : isTreatment
+            ? t("treatmentHeading")
+            : t("heading", { shelter: shelter.name })}
       </h1>
       {isTreatment && (
         <nav aria-label={t("treatmentGroupsLabel")}>

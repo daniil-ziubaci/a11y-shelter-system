@@ -8,9 +8,9 @@
     "language": "Limba"
   },
   "Catalog": {
-    "title": "Animale care caută o casă — {shelter}",
-    "description": "Câini și pisici din adăpostul „{shelter}” caută o casă. Filtre după specie, sex și vârstă.",
-    "heading": "Animale care caută o casă",
+    "title": "Câini și pisici din adăpostul „{shelter}” — catalogul animalelor",
+    "description": "Câini și pisici din adăpostul „{shelter}”: fotografii, vârstă și mărime. Alegeți un prieten, aflați pe cine puteți lua acasă și cum puteți ajuta adăpostul.",
+    "heading": "Câini și pisici din adăpostul „{shelter}”",
     "treatmentTitle": "Tratament: ajutor urgent necesar — {shelter}",
     "treatmentDescription": "Animalele din adăpostul „{shelter}” care au nevoie urgentă de ajutor pentru tratament.",
     "treatmentHeading": "Tratament: ajutor urgent necesar",
