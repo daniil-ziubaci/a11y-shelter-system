@@ -68,6 +68,7 @@
     "treatmentLink": "Все животные, которым нужна помощь с лечением",
     "aboutShelter": "О приюте",
     "titleWithShelter": "{name}, {animal} ищет дом — {shelter}",
+    "titleInShelter": "{name}, {animal} в приюте — {shelter}",
     "needsTreatmentBadge": "Срочно нужна помощь с лечением",
     "status": {
       "looking": "ищет дом",

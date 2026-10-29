@@ -28,11 +28,14 @@ export async function generateMetadata({
     getAnimalKey(pet.species, pet.sex, getLifeStage(pet.ageInMonths)),
   );
 
-  const title = t("titleWithShelter", {
-    name: pet.name,
-    animal,
-    shelter: shelter.name,
-  });
+  const title = t(
+    pet.status === "на лечении" ? "titleInShelter" : "titleWithShelter",
+    {
+      name: pet.name,
+      animal,
+      shelter: shelter.name,
+    },
+  );
 
   const description = truncateText(pet.description, 155);
 
