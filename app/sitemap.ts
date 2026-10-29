@@ -15,14 +15,31 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     .select("id, shelter_id")
     .in("status", PUBLIC_PET_STATUSES);
 
-  if (sheltersError || petsError || !shelters || !pets) {
+  const { data: projects, error: projectsError } = await supabase
+    .from("projects")
+    .select("shelter_id");
+
+  if (
+    sheltersError ||
+    petsError ||
+    projectsError ||
+    !shelters ||
+    !pets ||
+    !projects
+  ) {
     throw new Error("Не удалось собрать карту сайта.");
   }
 
   const paths: string[] = [];
+
+  const sheltersWithProjects = new Set(projects.map((p) => p.shelter_id));
+
   for (const shelter of shelters) {
     const base = `/shelter/${shelter.slug}`;
     paths.push(`${base}/catalog`, `${base}/about`);
+    if (sheltersWithProjects.has(shelter.id)) {
+      paths.push(`${base}/projects`);
+    }
     for (const pet of pets) {
       if (pet.shelter_id === shelter.id) {
         paths.push(`${base}/catalog/${pet.id}`);
