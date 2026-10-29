@@ -137,7 +137,7 @@ export default async function PetPage({
           <p>
             {t("treatmentNote")}{" "}
             <Link
-              href={`/shelter/${slug}/treatment`}
+              href={`/shelter/${slug}/catalog?mode=treatment`}
               className="underline inline-block py-2"
             >
               {t("treatmentLink")}

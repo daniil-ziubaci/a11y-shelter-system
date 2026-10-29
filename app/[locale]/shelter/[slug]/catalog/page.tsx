@@ -10,17 +10,28 @@ import { PUBLIC_PET_STATUSES } from "@/lib/petStatuses";
 
 export async function generateMetadata({
   params,
+  searchParams,
 }: {
   params: Promise<{ slug: string; locale: string }>;
+  searchParams: Promise<{ mode?: string }>;
 }) {
   const { slug, locale } = await params;
+  const { mode } = await searchParams;
+  const isTreatment = mode === "treatment";
   const shelter = await getShelter(slug);
   const t = await getTranslations({ locale, namespace: "Catalog" });
 
   return {
-    title: t("title", { shelter: shelter.name }),
-    description: t("description", { shelter: shelter.name }),
-    alternates: buildAlternates(locale, `/shelter/${slug}/catalog`),
+    title: t(isTreatment ? "treatmentTitle" : "title", {
+      shelter: shelter.name,
+    }),
+    description: t(isTreatment ? "treatmentDescription" : "description", {
+      shelter: shelter.name,
+    }),
+    alternates: buildAlternates(
+      locale,
+      `/shelter/${slug}/catalog${isTreatment ? "?mode=treatment" : ""}`,
+    ),
   };
 }
 
@@ -34,10 +45,12 @@ export default async function Catalog({
     sex?: string;
     age?: string;
     size?: string;
+    mode?: string;
   }>;
 }) {
   const { slug } = await params;
-  const { species, sex, age, size } = await searchParams;
+  const { species, sex, age, size, mode } = await searchParams;
+  const isTreatment = mode === "treatment";
   const shelter = await getShelter(slug);
   const t = await getTranslations("Catalog");
 
@@ -54,6 +67,10 @@ export default async function Catalog({
     .in("status", PUBLIC_PET_STATUSES)
     .order("created_at", { ascending: false })
     .order("name");
+
+  if (isTreatment) {
+    query = query.not("needs_treatment_since", "is", null);
+  }
 
   if (species === "cat") {
     query = query.eq("species", "кошка");
@@ -109,6 +126,10 @@ export default async function Catalog({
       params.set("size", newSize);
     }
 
+    if (isTreatment) {
+      params.set("mode", "treatment");
+    }
+
     const queryString = params.toString();
     const base = `/shelter/${slug}/catalog`;
     if (queryString) {
@@ -119,7 +140,9 @@ export default async function Catalog({
 
   return (
     <main className="w-full flex flex-col gap-6 p-4 max-w-5xl mx-auto">
-      <h1 className="text-3xl font-bold text-center">{t("heading")}</h1>
+      <h1 className="text-3xl font-bold text-center">
+        {t(isTreatment ? "treatmentHeading" : "heading")}
+      </h1>
       <nav aria-label={t("filtersLabel")}>
         <fieldset>
           <legend>{t("species")}</legend>
@@ -243,7 +266,9 @@ export default async function Catalog({
         )}
       </nav>
       <p role="status">
-        {pets.length === 0 ? t("none") : t("found", { count: pets.length })}
+        {pets.length === 0
+          ? t(isTreatment ? "treatmentNone" : "none")
+          : t("found", { count: pets.length })}
       </p>
       {pets.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
