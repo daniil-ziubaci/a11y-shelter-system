@@ -19,9 +19,7 @@ export function PetCard({
   const tAge = useTranslations("Age");
   const statusKey = getStatusKey(pet.status);
   const sizeKey = pet.size ? getSizeKey(pet.size) : undefined;
-  const showStatusBadge =
-    pet.status !== "ищет дом" &&
-    !(pet.status === "на лечении" && pet.needsTreatmentSince);
+  const showStatusBadge = pet.status !== "ищет дом";
 
   return (
     <article className="group relative flex flex-col overflow-hidden rounded-lg border border-(--border) bg-(--surface) transition duration-300 ease-out hover:shadow-2xl motion-safe:hover:-translate-y-1.5 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-(--focus)">

@@ -60,11 +60,11 @@
     "treatmentLink": "Все животные, которым нужна помощь с лечением",
     "aboutShelter": "О приюте",
     "titleWithShelter": "{name}, {animal} ищет дом — {shelter}",
-    "needsTreatmentBadge": "Нужна помощь с лечением",
+    "needsTreatmentBadge": "Срочно нужна помощь с лечением",
     "status": {
       "looking": "ищет дом",
       "pending": "в процессе",
-      "treatment": "на лечении",
+      "treatment": "Пока нельзя забрать",
       "adopted": "пристроен",
       "removed": "снят с учёта"
     },
