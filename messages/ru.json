@@ -59,6 +59,7 @@
     "status": {
       "looking": "ищет дом",
       "pending": "в процессе",
+      "treatment": "на лечении",
       "adopted": "пристроен",
       "removed": "снят с учёта"
     },

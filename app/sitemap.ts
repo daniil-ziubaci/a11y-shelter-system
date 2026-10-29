@@ -1,4 +1,5 @@
 import { routing } from "@/i18n/routing";
+import { PUBLIC_PET_STATUSES } from "@/lib/petStatuses";
 import { createClient } from "@/lib/supabase/server";
 import type { MetadataRoute } from "next";
 
@@ -12,7 +13,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const { data: pets, error: petsError } = await supabase
     .from("pets")
     .select("id, shelter_id")
-    .in("status", ["ищет дом", "в процессе"]);
+    .in("status", PUBLIC_PET_STATUSES);
 
   if (sheltersError || petsError || !shelters || !pets) {
     throw new Error("Не удалось собрать карту сайта.");

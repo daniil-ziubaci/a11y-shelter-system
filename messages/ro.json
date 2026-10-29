@@ -59,6 +59,7 @@
     "status": {
       "looking": "caută o casă",
       "pending": "în proces",
+      "treatment": "în tratament",
       "adopted": "adoptat",
       "removed": "retras din evidență"
     },

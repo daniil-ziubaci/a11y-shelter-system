@@ -6,6 +6,7 @@ import { Link } from "@/i18n/navigation";
 import { getTranslations } from "next-intl/server";
 import { buildAlternates } from "@/lib/seo";
 import { getSizeFromKey } from "@/lib/petSizes";
+import { PUBLIC_PET_STATUSES } from "@/lib/petStatuses";
 
 export async function generateMetadata({
   params,
@@ -50,7 +51,7 @@ export default async function Catalog({
     .from("pets")
     .select("*")
     .eq("shelter_id", shelter.id)
-    .in("status", ["ищет дом", "в процессе"])
+    .in("status", PUBLIC_PET_STATUSES)
     .order("created_at", { ascending: false })
     .order("name");
 

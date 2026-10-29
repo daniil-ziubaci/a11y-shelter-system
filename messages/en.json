@@ -59,6 +59,7 @@
     "status": {
       "looking": "looking for a home",
       "pending": "in progress",
+      "treatment": "in treatment",
       "adopted": "adopted",
       "removed": "withdrawn"
     },

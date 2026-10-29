@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { Link } from "@/i18n/navigation";
 import { getFormatter, getTranslations } from "next-intl/server";
 import { buildAlternates } from "@/lib/seo";
+import { PUBLIC_PET_STATUSES } from "@/lib/petStatuses";
 
 export async function generateMetadata({
   params,
@@ -33,7 +34,7 @@ export default async function ShelterTreatmentPage({
     .from("pets")
     .select("id, name, needs_treatment_since")
     .eq("shelter_id", shelter.id)
-    .in("status", ["ищет дом", "в процессе"])
+    .in("status", PUBLIC_PET_STATUSES)
     .not("needs_treatment_since", "is", null)
     .order("needs_treatment_since");
 
