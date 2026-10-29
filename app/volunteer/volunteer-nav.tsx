@@ -20,6 +20,11 @@ export function VolunteerNav() {
       label: "План закупок",
       inSection: pathname.startsWith("/volunteer/needs"),
     },
+    {
+      href: "/volunteer/projects",
+      label: "Проекты",
+      inSection: pathname.startsWith("/volunteer/projects"),
+    },
   ];
 
   return (
