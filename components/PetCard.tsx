@@ -19,24 +19,27 @@ export function PetCard({
   const tAge = useTranslations("Age");
   const statusKey = getStatusKey(pet.status);
   const sizeKey = pet.size ? getSizeKey(pet.size) : undefined;
+  const showStatusBadge =
+    pet.status !== "ищет дом" &&
+    !(pet.status === "на лечении" && pet.needsTreatmentSince);
 
   return (
     <article className="group relative flex flex-col overflow-hidden rounded-lg border border-(--border) bg-(--surface) transition duration-300 ease-out hover:shadow-2xl motion-safe:hover:-translate-y-1.5 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-(--focus)">
       <div className="relative aspect-4/3">
-        {(pet.status !== "ищет дом" || pet.needsTreatmentSince) && (
+        {(showStatusBadge || pet.needsTreatmentSince) && (
           <div className="absolute top-2.5 left-2.5 z-10 flex flex-col items-start gap-1.5">
-            {pet.status !== "ищет дом" && (
+            {pet.needsTreatmentSince && (
+              <p className="inline-flex items-center rounded-full bg-(--surface) px-2.5 py-0.5 text-sm font-medium text-(--foreground) shadow-sm ring-1 ring-(--border-strong)">
+                {t("needsTreatmentBadge")}
+              </p>
+            )}
+            {showStatusBadge && (
               <p className="inline-flex items-center gap-1.5 rounded-full bg-(--accent-soft) px-2.5 py-0.5 text-sm font-medium text-(--accent) shadow-sm ring-1 ring-(--border)">
                 <span
                   aria-hidden="true"
                   className="size-1.5 rounded-full bg-(--accent)"
                 />
                 {statusKey ? t(`status.${statusKey}`) : pet.status}
-              </p>
-            )}
-            {pet.needsTreatmentSince && (
-              <p className="inline-flex items-center rounded-full bg-(--surface) px-2.5 py-0.5 text-sm font-medium text-(--foreground) shadow-sm ring-1 ring-(--border-strong)">
-                {t("needsTreatmentBadge")}
               </p>
             )}
           </div>
