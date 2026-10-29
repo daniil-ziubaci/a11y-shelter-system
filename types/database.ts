@@ -115,6 +115,7 @@ export type Database = {
           goal: string | null
           id: string
           shelter_id: string
+          stage: string
           status: string
           title: string
         }
@@ -125,6 +126,7 @@ export type Database = {
           goal?: string | null
           id?: string
           shelter_id: string
+          stage?: string
           status?: string
           title: string
         }
@@ -135,6 +137,7 @@ export type Database = {
           goal?: string | null
           id?: string
           shelter_id?: string
+          stage?: string
           status?: string
           title?: string
         }
