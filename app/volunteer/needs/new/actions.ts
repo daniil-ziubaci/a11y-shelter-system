@@ -54,5 +54,5 @@ export async function createNeed(
     return fail("Не удалось сохранить позицию. Попробуйте ещё раз.");
   }
 
-  redirect("/volunteer");
+  redirect("/volunteer/needs");
 }
