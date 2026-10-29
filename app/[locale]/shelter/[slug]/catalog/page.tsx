@@ -6,32 +6,35 @@ import { Link } from "@/i18n/navigation";
 import { getTranslations } from "next-intl/server";
 import { buildAlternates } from "@/lib/seo";
 import { getSizeFromKey } from "@/lib/petSizes";
-import { PUBLIC_PET_STATUSES } from "@/lib/petStatuses";
+import { getStatusRank, PUBLIC_PET_STATUSES } from "@/lib/petStatuses";
 
 export async function generateMetadata({
   params,
   searchParams,
 }: {
   params: Promise<{ slug: string; locale: string }>;
-  searchParams: Promise<{ mode?: string }>;
+  searchParams: Promise<{ mode?: string; group?: string }>;
 }) {
   const { slug, locale } = await params;
-  const { mode } = await searchParams;
+  const { mode, group } = await searchParams;
   const isTreatment = mode === "treatment";
+  const isBlocked = isTreatment && group === "blocked";
   const shelter = await getShelter(slug);
   const t = await getTranslations({ locale, namespace: "Catalog" });
 
+  const prefix = isBlocked ? "treatmentBlocked" : "treatment";
+  const titleKey = isTreatment ? `${prefix}Title` : "title";
+  const descriptionKey = isTreatment ? `${prefix}Description` : "description";
+  const query = isBlocked
+    ? "?mode=treatment&group=blocked"
+    : isTreatment
+      ? "?mode=treatment"
+      : "";
+
   return {
-    title: t(isTreatment ? "treatmentTitle" : "title", {
-      shelter: shelter.name,
-    }),
-    description: t(isTreatment ? "treatmentDescription" : "description", {
-      shelter: shelter.name,
-    }),
-    alternates: buildAlternates(
-      locale,
-      `/shelter/${slug}/catalog${isTreatment ? "?mode=treatment" : ""}`,
-    ),
+    title: t(titleKey, { shelter: shelter.name }),
+    description: t(descriptionKey, { shelter: shelter.name }),
+    alternates: buildAlternates(locale, `/shelter/${slug}/catalog${query}`),
   };
 }
 
@@ -46,11 +49,13 @@ export default async function Catalog({
     age?: string;
     size?: string;
     mode?: string;
+    group?: string;
   }>;
 }) {
   const { slug } = await params;
-  const { species, sex, age, size, mode } = await searchParams;
+  const { species, sex, age, size, mode, group } = await searchParams;
   const isTreatment = mode === "treatment";
+  const isBlocked = isTreatment && group === "blocked";
   const shelter = await getShelter(slug);
   const t = await getTranslations("Catalog");
 
@@ -68,7 +73,9 @@ export default async function Catalog({
     .order("created_at", { ascending: false })
     .order("name");
 
-  if (isTreatment) {
+  if (isBlocked) {
+    query = query.eq("status", "на лечении");
+  } else if (isTreatment) {
     query = query.not("needs_treatment_since", "is", null);
   }
 
@@ -104,7 +111,9 @@ export default async function Catalog({
     throw new Error("Не удалось загрузить питомцев из базы.");
   }
 
-  const pets = (data ?? []).map(toPet);
+  const pets = (data ?? [])
+    .map(toPet)
+    .sort((a, b) => getStatusRank(a.status) - getStatusRank(b.status));
 
   function buildHref(
     newSpecies: string | undefined,
@@ -129,6 +138,9 @@ export default async function Catalog({
     if (isTreatment) {
       params.set("mode", "treatment");
     }
+    if (isBlocked) {
+      params.set("group", "blocked");
+    }
 
     const queryString = params.toString();
     const base = `/shelter/${slug}/catalog`;
@@ -141,8 +153,38 @@ export default async function Catalog({
   return (
     <main className="w-full flex flex-col gap-6 p-4 max-w-5xl mx-auto">
       <h1 className="text-3xl font-bold text-center">
-        {t(isTreatment ? "treatmentHeading" : "heading")}
+        {t(
+          isBlocked
+            ? "treatmentBlockedHeading"
+            : isTreatment
+              ? "treatmentHeading"
+              : "heading",
+        )}
       </h1>
+      {isTreatment && (
+        <nav aria-label={t("treatmentGroupsLabel")}>
+          <ul className="flex flex-wrap gap-2">
+            <li>
+              <Link
+                href={`/shelter/${slug}/catalog?mode=treatment`}
+                aria-current={!isBlocked ? "true" : undefined}
+                className="inline-block px-3 py-2 transition-colors duration-200 hover:text-(--accent) motion-reduce:transition-none aria-current:font-semibold aria-current:text-(--accent)"
+              >
+                {t("treatmentGroupHelp")}
+              </Link>
+            </li>
+            <li>
+              <Link
+                href={`/shelter/${slug}/catalog?mode=treatment&group=blocked`}
+                aria-current={isBlocked ? "true" : undefined}
+                className="inline-block px-3 py-2 transition-colors duration-200 hover:text-(--accent) motion-reduce:transition-none aria-current:font-semibold aria-current:text-(--accent)"
+              >
+                {t("treatmentGroupBlocked")}
+              </Link>
+            </li>
+          </ul>
+        </nav>
+      )}
       <nav aria-label={t("filtersLabel")}>
         <fieldset>
           <legend>{t("species")}</legend>
@@ -266,9 +308,7 @@ export default async function Catalog({
         )}
       </nav>
       <p role="status">
-        {pets.length === 0
-          ? t(isTreatment ? "treatmentNone" : "none")
-          : t("found", { count: pets.length })}
+        {pets.length === 0 ? t("none") : t("found", { count: pets.length })}
       </p>
       {pets.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
