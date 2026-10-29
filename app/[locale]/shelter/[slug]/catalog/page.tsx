@@ -159,6 +159,11 @@ export default async function Catalog({
             ? t("treatmentHeading")
             : t("heading", { shelter: shelter.name })}
       </h1>
+      {!isBlocked && !isTreatment && (
+        <p className="-mt-3 text-center text-lg text-(--muted)">
+          {t("subheading")}
+        </p>
+      )}
       {isTreatment && (
         <nav aria-label={t("treatmentGroupsLabel")}>
           <ul className="flex flex-wrap gap-2">

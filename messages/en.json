@@ -8,9 +8,10 @@
     "language": "Language"
   },
   "Catalog": {
-    "title": "Dogs and cats at the “{shelter}” shelter — animal catalog",
+    "title": "Animal catalog of “{shelter}” shelter",
     "description": "Dogs and cats at the “{shelter}” shelter: photos, age and size. Pick a friend, see who you can take home and how to help the shelter.",
-    "heading": "Dogs and cats at the “{shelter}” shelter",
+    "heading": "Animals at “{shelter}” shelter",
+    "subheading": "Find your friend",
     "treatmentTitle": "Treatment: urgent help needed — {shelter}",
     "treatmentDescription": "Animals from the “{shelter}” shelter that urgently need help with treatment.",
     "treatmentHeading": "Treatment: urgent help needed",
