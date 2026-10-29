@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
+import { PROJECT_STATUSES } from "@/lib/projectStages";
+import { setProjectStatus } from "@/app/volunteer/projects/actions";
 
 export const metadata = {
   title: "Проекты приюта",
@@ -61,6 +63,31 @@ export default async function VolunteerProjectsPage() {
               >
                 Редактировать
               </Link>
+              <form
+                action={setProjectStatus}
+                className="flex flex-wrap items-center gap-2"
+              >
+                <input type="hidden" name="projectId" value={project.id} />
+                <label htmlFor={`status-${project.id}`}>Статус</label>
+                <select
+                  id={`status-${project.id}`}
+                  name="status"
+                  defaultValue={project.status}
+                  aria-label={`Статус: ${project.title}`}
+                >
+                  {PROJECT_STATUSES.map((s) => (
+                    <option key={s} value={s}>
+                      {s}
+                    </option>
+                  ))}
+                </select>
+                <button
+                  type="submit"
+                  aria-label={`Сохранить статус: ${project.title}`}
+                >
+                  Сохранить
+                </button>
+              </form>
             </li>
           ))}
         </ul>
