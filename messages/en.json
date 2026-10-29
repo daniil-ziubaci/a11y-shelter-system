@@ -4,6 +4,7 @@
     "catalog": "Catalog",
     "needs": "How to help",
     "treatment": "Treatment",
+    "projects": "Projects",
     "about": "About us",
     "language": "Language"
   },
@@ -109,6 +110,24 @@
     "noContact": "No contact has been provided for the shelter yet.",
     "news": "Shelter news",
     "findFriend": "Find a friend in the catalog"
+  },
+  "Projects": {
+    "title": "Projects of “{shelter}” shelter",
+    "description": "Projects of “{shelter}” shelter: enclosure repairs and insulation, equipment. See what is happening now and help.",
+    "heading": "Shelter projects",
+    "intro": "Repairs, insulation, equipment: work that a list of supplies cannot cover. Thank you for helping!",
+    "ongoingHeading": "In progress",
+    "completedHeading": "Completed",
+    "completedOn": "Completed on {date}",
+    "noOngoing": "There are no projects in progress right now.",
+    "none": "There are no projects yet.",
+    "goal": "Goal: {goal}",
+    "help": "Help",
+    "helpLabel": "Help the project “{name}”",
+    "howToHelpHeading": "How to help",
+    "howToHelpIntro": "Contact a shelter volunteer and decide together how you can help the project.",
+    "noContact": "The shelter's contact is not set yet.",
+    "loadError": "Could not load the projects. Please try again later."
   },
   "Needs": {
     "title": "What the shelter needs — {shelter}",

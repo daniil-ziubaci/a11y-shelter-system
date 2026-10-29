@@ -27,6 +27,11 @@ export function ShelterNav({ slug }: { slug: string }) {
       current: pathname === catalogPath && isTreatment,
     },
     {
+      href: `/shelter/${slug}/projects`,
+      label: t("projects"),
+      current: pathname === `/shelter/${slug}/projects`,
+    },
+    {
       href: `/shelter/${slug}/about`,
       label: t("about"),
       current: pathname === `/shelter/${slug}/about`,

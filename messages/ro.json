@@ -4,6 +4,7 @@
     "catalog": "Catalog",
     "needs": "Ajută-ne",
     "treatment": "Tratament",
+    "projects": "Proiecte",
     "about": "Despre noi",
     "language": "Limba"
   },
@@ -109,6 +110,24 @@
     "noContact": "Contactul adăpostului nu este încă indicat.",
     "news": "Noutățile adăpostului",
     "findFriend": "Găsiți un prieten în catalog"
+  },
+  "Projects": {
+    "title": "Proiectele adăpostului „{shelter}”",
+    "description": "Proiectele adăpostului „{shelter}”: reparația și izolarea țarcurilor, echipamente. Aflați ce se face acum și ajutați.",
+    "heading": "Proiectele adăpostului",
+    "intro": "Reparații, izolare, echipamente: lucrări care nu se pot rezolva cu o listă de lucruri. Vă mulțumim că ajutați!",
+    "ongoingHeading": "În desfășurare",
+    "completedHeading": "Finalizate",
+    "completedOn": "Finalizat pe {date}",
+    "noOngoing": "Momentan nu sunt proiecte în desfășurare.",
+    "none": "Nu există încă proiecte.",
+    "goal": "Scop: {goal}",
+    "help": "Ajută",
+    "helpLabel": "Ajută proiectul „{name}”",
+    "howToHelpHeading": "Cum poți ajuta",
+    "howToHelpIntro": "Contactează un voluntar al adăpostului și hotărâți împreună cum poți ajuta proiectul.",
+    "noContact": "Contactul adăpostului nu este încă indicat.",
+    "loadError": "Nu am putut încărca proiectele. Încearcă mai târziu."
   },
   "Needs": {
     "title": "De ce are nevoie adăpostul — {shelter}",
