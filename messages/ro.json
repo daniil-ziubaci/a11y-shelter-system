@@ -56,6 +56,7 @@
     "treatmentLink": "Toate animalele care au nevoie de ajutor pentru tratament",
     "aboutShelter": "Despre adăpost",
     "titleWithShelter": "{name}, {animal} caută o casă — {shelter}",
+    "needsTreatmentBadge": "Ajutor pentru tratament",
     "status": {
       "looking": "caută o casă",
       "pending": "în proces",

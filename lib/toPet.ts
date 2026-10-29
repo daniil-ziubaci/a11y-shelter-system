@@ -21,5 +21,6 @@ export function toPet(row: PetRow): Pet {
     health: row.health,
     description: row.description,
     status: row.status as Pet["status"],
+    needsTreatmentSince: row.needs_treatment_since,
   };
 }

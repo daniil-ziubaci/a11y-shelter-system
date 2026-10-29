@@ -56,6 +56,7 @@
     "treatmentLink": "All animals that need help with treatment",
     "aboutShelter": "About the shelter",
     "titleWithShelter": "{name}, {animal} looking for a home — {shelter}",
+    "needsTreatmentBadge": "Needs help with treatment",
     "status": {
       "looking": "looking for a home",
       "pending": "in progress",

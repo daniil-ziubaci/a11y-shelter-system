@@ -1,3 +1,5 @@
+import { PET_STATUSES } from "@/lib/petStatuses";
+
 export type Pet = {
   id: string;
   name: string;
@@ -13,5 +15,6 @@ export type Pet = {
   diet: string;
   description: string;
   health: string;
-  status: "ищет дом" | "в процессе" | "пристроен" | "снят с учёта";
+  status: (typeof PET_STATUSES)[number];
+  needsTreatmentSince: string | null;
 };
