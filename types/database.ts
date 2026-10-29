@@ -107,6 +107,47 @@ export type Database = {
           },
         ]
       }
+      projects: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          description: string
+          goal: string | null
+          id: string
+          shelter_id: string
+          status: string
+          title: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          description: string
+          goal?: string | null
+          id?: string
+          shelter_id: string
+          status?: string
+          title: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          description?: string
+          goal?: string | null
+          id?: string
+          shelter_id?: string
+          status?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "projects_shelter_id_fkey"
+            columns: ["shelter_id"]
+            isOneToOne: false
+            referencedRelation: "shelters"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       purchase_items: {
         Row: {
           category: string
