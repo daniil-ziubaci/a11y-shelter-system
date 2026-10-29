@@ -18,6 +18,8 @@
   --focus: #1d52a8;
   --danger: #b0143c;
   --danger-soft: #f9e1e6;
+  --pending: #7a4b00;
+  --pending-soft: #fbecc4;
 }
 
 html {

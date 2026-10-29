@@ -41,18 +41,18 @@ export function PetCard({
                 className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-sm font-medium shadow-sm ring-1 ${
                   isInTreatment
                     ? "bg-(--hover) text-(--muted) ring-(--border-strong)"
-                    : "bg-(--accent-soft) text-(--accent) ring-(--border)"
+                    : "bg-(--pending-soft) text-(--pending) ring-(--border)"
                 }`}
               >
                 <span
                   aria-hidden="true"
                   className={`size-1.5 rounded-full ${
-                    isInTreatment ? "bg-(--muted)" : "bg-(--accent)"
+                    isInTreatment ? "bg-(--muted)" : "bg-(--pending)"
                   }`}
                 />
                 {statusKey ? t(`status.${statusKey}`) : pet.status}
               </p>
-            )}  
+            )}
           </div>
         )}
         <Image
