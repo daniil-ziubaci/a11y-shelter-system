@@ -20,6 +20,7 @@ export function PetCard({
   const statusKey = getStatusKey(pet.status);
   const sizeKey = pet.size ? getSizeKey(pet.size) : undefined;
   const showStatusBadge = pet.status !== "ищет дом";
+  const isInTreatment = pet.status === "на лечении";
 
   return (
     <article className="group relative flex flex-col overflow-hidden rounded-lg border border-(--border) bg-(--surface) transition duration-300 ease-out hover:shadow-2xl motion-safe:hover:-translate-y-1.5 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-(--focus)">
@@ -36,14 +37,22 @@ export function PetCard({
               </p>
             )}
             {showStatusBadge && (
-              <p className="inline-flex items-center gap-1.5 rounded-full bg-(--accent-soft) px-2.5 py-0.5 text-sm font-medium text-(--accent) shadow-sm ring-1 ring-(--border)">
+              <p
+                className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-sm font-medium shadow-sm ring-1 ${
+                  isInTreatment
+                    ? "bg-(--hover) text-(--muted) ring-(--border-strong)"
+                    : "bg-(--accent-soft) text-(--accent) ring-(--border)"
+                }`}
+              >
                 <span
                   aria-hidden="true"
-                  className="size-1.5 rounded-full bg-(--accent)"
+                  className={`size-1.5 rounded-full ${
+                    isInTreatment ? "bg-(--muted)" : "bg-(--accent)"
+                  }`}
                 />
                 {statusKey ? t(`status.${statusKey}`) : pet.status}
               </p>
-            )}
+            )}  
           </div>
         )}
         <Image

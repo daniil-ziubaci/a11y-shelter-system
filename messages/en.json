@@ -72,7 +72,7 @@
     "status": {
       "looking": "looking for a home",
       "pending": "in progress",
-      "treatment": "Not available for adoption yet",
+      "treatment": "not available for adoption yet",
       "adopted": "adopted",
       "removed": "withdrawn"
     },
