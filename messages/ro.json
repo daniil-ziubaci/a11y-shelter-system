@@ -14,7 +14,6 @@
     "treatmentTitle": "Tratament: ajutor urgent necesar — {shelter}",
     "treatmentDescription": "Animalele din adăpostul „{shelter}” care au nevoie urgentă de ajutor pentru tratament.",
     "treatmentHeading": "Tratament: ajutor urgent necesar",
-    "treatmentNone": "Momentan niciun animal nu are nevoie urgentă de ajutor pentru tratament.",
     "treatmentGroupsLabel": "Grupurile secțiunii „Tratament”",
     "treatmentGroupHelp": "Ajutor urgent necesar",
     "treatmentGroupBlocked": "Deocamdată nu pot fi adoptate",
@@ -109,14 +108,6 @@
     "noContact": "Contactul adăpostului nu este încă indicat.",
     "news": "Noutățile adăpostului",
     "findFriend": "Găsiți un prieten în catalog"
-  },
-  "Treatment": {
-    "title": "Ajutor pentru tratament — {shelter}",
-    "description": "Animalele din adăpostul „{shelter}” care au nevoie acum de ajutor pentru tratament.",
-    "heading": "Ajutor pentru tratament",
-    "loadError": "Nu s-a putut încărca lista animalelor.",
-    "empty": "Momentan niciun animal nu are nevoie de ajutor pentru tratament.",
-    "since": "Este nevoie urgentă de ajutor pentru tratament — din {date}"
   },
   "Needs": {
     "title": "De ce are nevoie adăpostul — {shelter}",

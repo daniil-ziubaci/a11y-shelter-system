@@ -14,7 +14,6 @@
     "treatmentTitle": "Treatment: urgent help needed — {shelter}",
     "treatmentDescription": "Animals from the “{shelter}” shelter that urgently need help with treatment.",
     "treatmentHeading": "Treatment: urgent help needed",
-    "treatmentNone": "No animals urgently need help with treatment right now.",
     "treatmentGroupsLabel": "Treatment groups",
     "treatmentGroupHelp": "Urgent help needed",
     "treatmentGroupBlocked": "Not available for adoption yet",
@@ -109,14 +108,6 @@
     "noContact": "No contact has been provided for the shelter yet.",
     "news": "Shelter news",
     "findFriend": "Find a friend in the catalog"
-  },
-  "Treatment": {
-    "title": "Help with treatment — {shelter}",
-    "description": "Animals from the “{shelter}” shelter that currently need help with treatment.",
-    "heading": "Help with treatment",
-    "loadError": "Could not load the list of animals.",
-    "empty": "No animal needs help with treatment right now.",
-    "since": "Urgently needs help with treatment — since {date}"
   },
   "Needs": {
     "title": "What the shelter needs — {shelter}",
