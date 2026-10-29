@@ -25,7 +25,7 @@ export default async function VolunteerProjectsPage() {
 
   const { data: projects, error } = await supabase
     .from("projects")
-    .select("id, title, goal, status")
+    .select("id, title, goal, status, stage")
     .eq("shelter_id", membership.shelter_id)
     .order("created_at", { ascending: false });
 
@@ -53,6 +53,14 @@ export default async function VolunteerProjectsPage() {
               <h2 className="text-xl font-bold">{project.title}</h2>
               <p>Статус: {project.status}</p>
               {project.goal && <p>Цель: {project.goal}</p>}
+              {project.status === "идёт" && <p>Этап: {project.stage}</p>}
+              <Link
+                href={`/volunteer/projects/${project.id}/edit`}
+                aria-label={`Редактировать: ${project.title}`}
+                className="underline inline-block py-2"
+              >
+                Редактировать
+              </Link>
             </li>
           ))}
         </ul>
