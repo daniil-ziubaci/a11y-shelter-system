@@ -57,6 +57,7 @@
     "more": "Details",
     "moreLabel": "Details: {name}",
     "adopt": "I want to take it home",
+    "adoptBlocked": "The animal is in treatment right now and cannot be adopted yet.",
     "adoptLabel": "I want to take {name} home",
     "help": "Help",
     "helpLabel": "Help {name}",

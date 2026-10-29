@@ -99,13 +99,17 @@ export default async function PetPage({
         )}
       </dl>
       <div className="flex flex-wrap gap-4">
-        <a
-          href="#contact-heading"
-          aria-label={t("adoptLabel", { name: pet.name })}
-          className="underline inline-block py-2"
-        >
-          {t("adopt")}
-        </a>
+        {pet.status === "на лечении" ? (
+          <p className="py-2">{t("adoptBlocked")}</p>
+        ) : (
+          <a
+            href="#contact-heading"
+            aria-label={t("adoptLabel", { name: pet.name })}
+            className="underline inline-block py-2"
+          >
+            {t("adopt")}
+          </a>
+        )}
         <a
           href="#contact-heading"
           aria-label={t("helpLabel", { name: pet.name })}

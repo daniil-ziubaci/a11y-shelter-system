@@ -57,6 +57,7 @@
     "more": "Detalii",
     "moreLabel": "Detalii: {name}",
     "adopt": "Vreau să-l iau acasă",
+    "adoptBlocked": "În prezent animalul este în tratament și deocamdată nu este dat în familie.",
     "adoptLabel": "Vreau să-l iau acasă: {name}",
     "help": "Ajută",
     "helpLabel": "Ajută: {name}",
