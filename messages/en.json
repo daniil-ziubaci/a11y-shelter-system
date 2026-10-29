@@ -122,6 +122,12 @@
     "noOngoing": "There are no projects in progress right now.",
     "none": "There are no projects yet.",
     "goal": "Goal: {goal}",
+    "stageLabel": "Stage: {stage}",
+    "stages": {
+      "preparing": "Preparing",
+      "inProgress": "In progress",
+      "almostDone": "Almost done"
+    },
     "help": "Help",
     "helpLabel": "Help the project “{name}”",
     "howToHelpHeading": "How to help",

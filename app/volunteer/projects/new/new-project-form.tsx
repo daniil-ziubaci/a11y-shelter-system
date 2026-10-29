@@ -3,6 +3,7 @@
 import { useActionState } from "react";
 import { createProject } from "@/app/volunteer/projects/new/actions";
 import { PROJECT_LIMITS } from "@/lib/parseProjectFields";
+import { DEFAULT_PROJECT_STAGE, PROJECT_STAGES } from "@/lib/projectStages";
 
 export function NewProjectForm() {
   const [state, formAction, isPending] = useActionState(
@@ -56,6 +57,26 @@ export function NewProjectForm() {
         />
         <p id="goal-hint">
           Одной фразой и без сумм, например «утеплить 12 вольеров до декабря».
+        </p>
+      </div>
+
+      <div className="flex flex-col gap-1">
+        <label htmlFor="stage">Этап</label>
+        <select
+          id="stage"
+          name="stage"
+          defaultValue={state?.values.stage ?? DEFAULT_PROJECT_STAGE}
+          aria-describedby="stage-hint"
+          required
+        >
+          {PROJECT_STAGES.map((stage) => (
+            <option key={stage} value={stage}>
+              {stage[0].toUpperCase() + stage.slice(1)}
+            </option>
+          ))}
+        </select>
+        <p id="stage-hint">
+          На каком этапе проект сейчас. Посетители увидят этот этап словами.
         </p>
       </div>
 

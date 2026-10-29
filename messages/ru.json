@@ -122,6 +122,12 @@
     "noOngoing": "Сейчас проектов нет.",
     "none": "Проектов пока нет.",
     "goal": "Цель: {goal}",
+    "stageLabel": "Этап: {stage}",
+    "stages": {
+      "preparing": "Готовим",
+      "inProgress": "В работе",
+      "almostDone": "Почти готово"
+    },
     "help": "Помочь",
     "helpLabel": "Помочь проекту «{name}»",
     "howToHelpHeading": "Как помочь",

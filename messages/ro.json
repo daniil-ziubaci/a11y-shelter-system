@@ -122,6 +122,12 @@
     "noOngoing": "Momentan nu sunt proiecte în desfășurare.",
     "none": "Nu există încă proiecte.",
     "goal": "Scop: {goal}",
+    "stageLabel": "Etapa: {stage}",
+    "stages": {
+      "preparing": "Pregătim",
+      "inProgress": "În lucru",
+      "almostDone": "Aproape gata"
+    },
     "help": "Ajută",
     "helpLabel": "Ajută proiectul „{name}”",
     "howToHelpHeading": "Cum poți ajuta",

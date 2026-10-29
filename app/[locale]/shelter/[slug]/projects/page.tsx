@@ -1,5 +1,6 @@
 import { ShelterContact } from "@/components/ShelterContact";
 import { getShelter } from "@/lib/getShelter";
+import { getStageKey } from "@/lib/projectStages";
 import { buildAlternates } from "@/lib/seo";
 import { createClient } from "@/lib/supabase/server";
 import { getFormatter, getTranslations } from "next-intl/server";
@@ -31,7 +32,7 @@ export default async function ShelterProjectsPage({
   const supabase = await createClient();
   const { data: projects, error } = await supabase
     .from("projects")
-    .select("id, title, description, goal, status, completed_at")
+    .select("id, title, description, goal, status, stage, completed_at")
     .eq("shelter_id", shelter.id)
     .order("completed_at", { ascending: false, nullsFirst: false })
     .order("created_at", { ascending: false });
@@ -56,6 +57,13 @@ export default async function ShelterProjectsPage({
       <p className="whitespace-pre-line">{project.description}</p>
       {project.goal && (
         <p className="text-(--muted)">{t("goal", { goal: project.goal })}</p>
+      )}
+      {project.status === "идёт" && getStageKey(project.stage) && (
+        <p className="font-medium">
+          {t("stageLabel", {
+            stage: t(`stages.${getStageKey(project.stage)}`),
+          })}
+        </p>
       )}
       {project.completed_at && (
         <p className="text-(--muted)">

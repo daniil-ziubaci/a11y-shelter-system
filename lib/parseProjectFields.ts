@@ -1,3 +1,5 @@
+import { PROJECT_STAGES, type ProjectStage } from "@/lib/projectStages";
+
 export const PROJECT_LIMITS = {
   title: 120,
   description: 1000,
@@ -7,7 +9,12 @@ export const PROJECT_LIMITS = {
 type ParsedProject =
   | {
       ok: true;
-      fields: { title: string; description: string; goal: string | null };
+      fields: {
+        title: string;
+        description: string;
+        goal: string | null;
+        stage: ProjectStage;
+      };
     }
   | { ok: false; error: string };
 
@@ -47,8 +54,13 @@ export function parseProjectFields(formData: FormData): ParsedProject {
     };
   }
 
+  const stage = PROJECT_STAGES.find((s) => s === read("stage"));
+  if (!stage) {
+    return { ok: false, error: "Выберите этап проекта." };
+  }
+
   return {
     ok: true,
-    fields: { title, description, goal: goalText || null },
+    fields: { title, description, goal: goalText || null, stage },
   };
 }

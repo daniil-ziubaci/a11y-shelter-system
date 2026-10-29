@@ -41,13 +41,14 @@ export async function createProject(
   if (!parsed.ok) {
     return fail(parsed.error);
   }
-  const { title, description, goal } = parsed.fields;
+  const { title, description, goal, stage } = parsed.fields;
 
   const { error: insertError } = await supabase.from("projects").insert({
     shelter_id: membership.shelter_id,
     title,
     description,
     goal,
+    stage,
   });
   if (insertError) {
     return fail("Не удалось сохранить проект. Попробуйте ещё раз.");
