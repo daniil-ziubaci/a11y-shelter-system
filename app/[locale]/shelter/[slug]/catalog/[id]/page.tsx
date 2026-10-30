@@ -135,15 +135,17 @@ export default async function PetPage({
           </Link>
         )}
       </div>
-      <h2 className="text-xl font-bold">{t("aboutTitle")}</h2>
-      <p>{pet.description}</p>
-      <h2 className="text-xl font-bold">{t("diet")}</h2>
-      <p>{pet.diet}</p>
-      <h2 className="text-xl font-bold">{t("health")}</h2>
-      <p>{pet.health}</p>
+      <div className="flex max-w-2xl flex-col gap-2">
+        <h2 className="text-xl font-bold">{t("aboutTitle")}</h2>
+        <p>{pet.description}</p>
+        <h2 className="mt-4 text-xl font-bold">{t("diet")}</h2>
+        <p>{pet.diet}</p>
+        <h2 className="mt-4 text-xl font-bold">{t("health")}</h2>
+        <p>{pet.health}</p>
+      </div>
       <section
         aria-labelledby="contact-heading"
-        className="flex flex-col gap-2"
+        className="flex max-w-2xl flex-col gap-2 rounded-lg border border-(--border) bg-(--surface) p-4"
       >
         <h2 id="contact-heading" className="text-xl font-bold">
           {t("contactHeading")}
@@ -175,7 +177,7 @@ export default async function PetPage({
       {shelter.adoption_info && (
         <section
           aria-labelledby="adoption-heading"
-          className="flex flex-col gap-2"
+          className="flex max-w-2xl flex-col gap-2"
         >
           <h2 id="adoption-heading" className="text-xl font-bold">
             {tAdoption("heading")}
