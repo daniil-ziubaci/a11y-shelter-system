@@ -170,10 +170,7 @@ export default async function PetPage({
           </div>
         </div>
       </div>
-      <div className="flex max-w-2xl flex-col gap-2">
-        <h2 className="mt-4 text-xl font-bold">{t("diet")}</h2>
-        <p>{pet.diet}</p>
-      </div>
+
       <section
         aria-labelledby="contact-heading"
         className="flex max-w-2xl flex-col gap-2 rounded-lg border border-(--border) bg-(--surface) p-4"

@@ -12,7 +12,6 @@ export type Pet = {
   ageInMonths: number;
   isAgeApproximate: boolean;
   size: string | null;
-  diet: string;
   description: string;
   health: string;
   status: (typeof PET_STATUSES)[number];

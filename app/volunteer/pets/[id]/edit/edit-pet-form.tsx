@@ -172,18 +172,6 @@ export function EditPetForm({ pet }: { pet: Pet }) {
       </div>
 
       <div className="flex flex-col gap-1">
-        <label htmlFor="diet">Питание</label>
-        <textarea
-          id="diet"
-          name="diet"
-          rows={3}
-          aria-describedby="text-hint"
-          defaultValue={state?.values.diet ?? pet.diet}
-          required
-        />
-      </div>
-
-      <div className="flex flex-col gap-1">
         <label htmlFor="health">Здоровье</label>
         <textarea
           id="health"

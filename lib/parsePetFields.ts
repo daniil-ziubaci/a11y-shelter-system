@@ -5,7 +5,6 @@ export type PetFields = {
   name: string;
   species: string;
   sex: string;
-  diet: string;
   health: string;
   description: string;
   photoAlt: string;
@@ -27,12 +26,11 @@ export function parsePetFields(formData: FormData): ParsePetFieldsResult {
   const name = text("name");
   const species = text("species");
   const sex = text("sex");
-  const diet = text("diet");
   const health = text("health");
   const description = text("description");
   const photoAlt = text("photoAlt");
 
-  if (!name || !diet || !health || !description || !photoAlt) {
+  if (!name || !health || !description || !photoAlt) {
     return { ok: false, error: "Заполните все обязательные поля." };
   }
 
@@ -103,7 +101,6 @@ export function parsePetFields(formData: FormData): ParsePetFieldsResult {
       name,
       species,
       sex,
-      diet,
       health,
       description,
       photoAlt,

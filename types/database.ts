@@ -44,7 +44,7 @@ export type Database = {
           birth_date: string
           created_at: string
           description: string
-          diet: string
+          diet: string | null
           health: string
           id: string
           is_age_approximate: boolean
@@ -64,7 +64,7 @@ export type Database = {
           birth_date: string
           created_at?: string
           description: string
-          diet: string
+          diet?: string | null
           health: string
           id?: string
           is_age_approximate: boolean
@@ -84,7 +84,7 @@ export type Database = {
           birth_date?: string
           created_at?: string
           description?: string
-          diet?: string
+          diet?: string | null
           health?: string
           id?: string
           is_age_approximate?: boolean
