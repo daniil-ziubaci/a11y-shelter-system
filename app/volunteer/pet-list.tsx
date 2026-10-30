@@ -8,13 +8,17 @@ import { getTranslations } from "next-intl/server";
 import { formatAge } from "@/lib/formatAge";
 import { monthsSince } from "@/lib/monthsSince";
 import { PET_SIZE_LABELS } from "@/lib/petSizes";
+import {
+  isPetStatusStale,
+  PET_STATUS_REVIEW_DAYS,
+} from "@/lib/petStatusReview";
 
 export async function PetList({ shelterId }: { shelterId: string }) {
   const supabase = await createClient();
   const { data: pets, error } = await supabase
     .from("pets")
     .select(
-      "id, name, status, needs_treatment_since, photo_url, birth_date, is_age_approximate, sex, species, size",
+      "id, name, status, status_changed_at, needs_treatment_since, photo_url, birth_date, is_age_approximate, sex, species, size",
     )
     .eq("shelter_id", shelterId)
     .order("name");
@@ -84,6 +88,12 @@ export async function PetList({ shelterId }: { shelterId: string }) {
               Сохранить
             </button>
           </form>
+          {isPetStatusStale(pet.status, pet.status_changed_at) && (
+            <p className="text-(--pending) font-medium">
+              Проверьте, актуален ли статус : текущему статусу больше{" "}
+              {PET_STATUS_REVIEW_DAYS} дней.
+            </p>
+          )}
           <form
             action={setPetTreatment}
             className="flex flex-wrap items-center gap-2"
