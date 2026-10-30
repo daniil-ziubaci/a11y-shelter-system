@@ -59,6 +59,7 @@
     "moreLabel": "Details: {name}",
     "adopt": "I want to take it home",
     "adoptBlocked": "The animal is in treatment right now and cannot be adopted yet.",
+    "adoptPending": "The animal is being adopted right now. If you would like to take it home, contact the shelter: things may change.",
     "adoptLabel": "I want to take {name} home",
     "help": "Help",
     "helpLabel": "Help {name}",
@@ -73,8 +74,8 @@
     "needsTreatmentBadge": "urgent help with treatment needed",
     "status": {
       "looking": "looking for a home",
-      "pending": "in progress",
-      "treatment": "not available for adoption yet",
+      "pending": "adoption in progress",
+      "treatment": "treatment: not available for adoption yet",
       "adopted": "adopted",
       "removed": "withdrawn"
     },

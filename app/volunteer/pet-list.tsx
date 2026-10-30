@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { setPetStatus, setPetTreatment } from "@/app/volunteer/actions";
-import { PET_STATUSES } from "@/lib/petStatuses";
+import { PET_STATUS_LABELS, PET_STATUSES } from "@/lib/petStatuses";
 import Link from "next/link";
 import { isTreatmentStale } from "@/lib/treatmentReview";
 import Image from "next/image";
@@ -76,7 +76,7 @@ export async function PetList({ shelterId }: { shelterId: string }) {
             >
               {PET_STATUSES.map((s) => (
                 <option key={s} value={s}>
-                  {s}
+                  {PET_STATUS_LABELS[s] ?? s}
                 </option>
               ))}
             </select>

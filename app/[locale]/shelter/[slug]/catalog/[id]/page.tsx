@@ -101,6 +101,7 @@ export default async function PetPage({
           </div>
         )}
       </dl>
+      {pet.status === "в процессе" && <p>{t("adoptPending")}</p>}
       <div className="flex flex-wrap gap-4">
         {pet.status === "на лечении" ? (
           <p className="py-2">{t("adoptBlocked")}</p>
