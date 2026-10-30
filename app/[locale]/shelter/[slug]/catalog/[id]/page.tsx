@@ -12,7 +12,8 @@ import { getSexKey } from "@/lib/petLabels";
 import { buildAlternates } from "@/lib/seo";
 import { ShelterContact } from "@/components/ShelterContact";
 import { getSizeKey } from "@/lib/petSizes";
-import { PET_STATUS_PENDING, PET_STATUS_TREATMENT } from "@/lib/petStatuses";
+import { PET_STATUS_LOOKING, PET_STATUS_PENDING, PET_STATUS_TREATMENT } from "@/lib/petStatuses";
+import { PetBadges } from "@/components/PetBadges";
 
 export async function generateMetadata({
   params,
@@ -88,7 +89,15 @@ export default async function PetPage({
           />
         </div>
         <div className="flex flex-col gap-4">
-          <h1 className="text-4xl font-bold sm:text-5xl">{pet.name}</h1>{" "}
+          {(pet.status !== PET_STATUS_LOOKING || pet.needsTreatmentSince) && (
+            <div className="flex flex-wrap items-center gap-2">
+              <PetBadges
+                status={pet.status}
+                needsTreatmentSince={pet.needsTreatmentSince}
+              />
+            </div>
+          )}
+          <h1 className="text-4xl font-bold sm:text-5xl">{pet.name}</h1>
           <dl className="flex flex-wrap gap-3">
             <div className="rounded-lg border border-(--border) bg-(--surface) px-4 py-3">
               <dt className="text-sm text-(--muted)">{t("sex")}</dt>
