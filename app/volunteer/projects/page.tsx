@@ -2,6 +2,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { PROJECT_STATUSES } from "@/lib/projectStages";
 import { setProjectStatus } from "@/app/volunteer/projects/actions";
+import { isProjectStale, PROJECT_REVIEW_DAYS } from "@/lib/projectReview";
 
 export const metadata = {
   title: "Проекты приюта",
@@ -27,7 +28,7 @@ export default async function VolunteerProjectsPage() {
 
   const { data: projects, error } = await supabase
     .from("projects")
-    .select("id, title, goal, status, stage")
+    .select("id, title, goal, status, stage, updated_at")
     .eq("shelter_id", membership.shelter_id)
     .order("created_at", { ascending: false });
 
@@ -56,6 +57,13 @@ export default async function VolunteerProjectsPage() {
               <p>Статус: {project.status}</p>
               {project.goal && <p>Цель: {project.goal}</p>}
               {project.status === "идёт" && <p>Этап: {project.stage}</p>}
+              {project.status === "идёт" &&
+                isProjectStale(project.updated_at) && (
+                  <p className="text-(--pending) font-medium">
+                    Проверьте, актуально ли: проект не обновлялся больше{" "}
+                    {PROJECT_REVIEW_DAYS} дней.
+                  </p>
+                )}
               <Link
                 href={`/volunteer/projects/${project.id}/edit`}
                 aria-label={`Редактировать: ${project.title}`}
