@@ -124,6 +124,12 @@ export default async function PetPage({
               </div>
             )}
           </dl>
+          <div className="flex flex-col gap-2">
+            <h2 className="text-xl font-bold">{t("aboutTitle")}</h2>
+            <p>{pet.description}</p>
+            <h2 className="mt-4 text-xl font-bold">{t("health")}</h2>
+            <p>{pet.health}</p>
+          </div>
           {(pet.status === PET_STATUS_PENDING ||
             pet.status === PET_STATUS_TREATMENT) && (
             <p className="rounded-lg border border-(--border) bg-(--accent-soft) px-4 py-3">
@@ -165,12 +171,8 @@ export default async function PetPage({
         </div>
       </div>
       <div className="flex max-w-2xl flex-col gap-2">
-        <h2 className="text-xl font-bold">{t("aboutTitle")}</h2>
-        <p>{pet.description}</p>
         <h2 className="mt-4 text-xl font-bold">{t("diet")}</h2>
         <p>{pet.diet}</p>
-        <h2 className="mt-4 text-xl font-bold">{t("health")}</h2>
-        <p>{pet.health}</p>
       </div>
       <section
         aria-labelledby="contact-heading"
