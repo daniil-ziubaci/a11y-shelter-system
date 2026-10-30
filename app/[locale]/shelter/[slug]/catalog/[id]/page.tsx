@@ -76,64 +76,73 @@ export default async function PetPage({
       >
         {t("back")}
       </Link>
-      <h1 className="text-3xl font-bold">{pet.name}</h1>
-      <div className="relative w-full max-w-2xl aspect-4/3 overflow-hidden rounded-lg border border-(--border) bg-(--surface)">
-        <Image
-          src={pet.photo.url}
-          alt={pet.photo.alt}
-          fill
-          sizes="(min-width: 672px) 672px, 100vw"
-          loading="eager"
-          className="object-contain"
-        />
-      </div>
-
-      <dl className="flex flex-wrap gap-x-4">
-        <div className="flex gap-1">
-          <dt className="sr-only">{t("sex")}</dt>
-          <dd>{t(`sexValue.${getSexKey(pet.sex)}`)}</dd>
+      <div className="grid gap-6 lg:grid-cols-2 lg:items-start">
+        <div className="relative w-full aspect-4/3 overflow-hidden rounded-lg border border-(--border) bg-(--surface)">
+          <Image
+            src={pet.photo.url}
+            alt={pet.photo.alt}
+            fill
+            sizes="(min-width: 1024px) 496px, 100vw"
+            loading="eager"
+            className="object-contain"
+          />
         </div>
-        <div className="flex gap-1">
-          <dt className="sr-only">{t("age")}</dt>
-          <dd>{formatAge(pet.ageInMonths, pet.isAgeApproximate, tAge)}</dd>
-        </div>
-        {sizeKey && (
-          <div className="flex gap-1">
-            <dt>{t("size")}</dt>
-            <dd>{t(`sizeValue.${sizeKey}`)}</dd>
+        <div className="flex flex-col gap-4">
+          <h1 className="text-4xl font-bold sm:text-5xl">{pet.name}</h1>{" "}
+          <dl className="flex flex-wrap gap-3">
+            <div className="rounded-lg border border-(--border) bg-(--surface) px-4 py-3">
+              <dt className="text-sm text-(--muted)">{t("sex")}</dt>
+              <dd className="whitespace-nowrap text-lg font-semibold first-letter:uppercase">
+                {t(`sexValue.${getSexKey(pet.sex)}`)}
+              </dd>
+            </div>
+            <div className="rounded-lg border border-(--border) bg-(--surface) px-4 py-3">
+              <dt className="text-sm text-(--muted)">{t("age")}</dt>
+              <dd className="whitespace-nowrap text-lg font-semibold first-letter:uppercase">
+                {formatAge(pet.ageInMonths, pet.isAgeApproximate, tAge)}
+              </dd>
+            </div>
+            {sizeKey && (
+              <div className="rounded-lg border border-(--border) bg-(--surface) px-4 py-3">
+                <dt className="text-sm text-(--muted)">{t("size")}</dt>
+                <dd className="whitespace-nowrap text-lg font-semibold first-letter:uppercase">
+                  {t(`sizeValue.${sizeKey}`)}
+                </dd>
+              </div>
+            )}
+          </dl>
+          {pet.status === PET_STATUS_PENDING && <p>{t("adoptPending")}</p>}
+          <div className="flex flex-wrap gap-4">
+            {pet.status === PET_STATUS_TREATMENT ? (
+              <p className="py-2">{t("adoptBlocked")}</p>
+            ) : (
+              <a
+                href="#contact-heading"
+                aria-label={t("adoptLabel", { name: pet.name })}
+                className="inline-flex min-h-11 items-center justify-center rounded-full bg-(--accent) px-5 py-2 font-semibold text-(--accent-contrast) hover:shadow-md"
+              >
+                {t("adopt")}
+              </a>
+            )}
+            {isTreatmentRelated ? (
+              <a
+                href="#contact-heading"
+                aria-label={t("helpLabel", { name: pet.name })}
+                className="inline-flex min-h-11 items-center justify-center rounded-full border-2 border-(--accent) px-5 py-2 font-semibold text-(--accent) hover:bg-(--hover)"
+              >
+                {t("help")}
+              </a>
+            ) : (
+              <Link
+                href={`/shelter/${slug}/needs`}
+                aria-label={t("helpLabel", { name: pet.name })}
+                className="inline-flex min-h-11 items-center justify-center rounded-full border-2 border-(--accent) px-5 py-2 font-semibold text-(--accent) hover:bg-(--hover)"
+              >
+                {t("help")}
+              </Link>
+            )}
           </div>
-        )}
-      </dl>
-      {pet.status === PET_STATUS_PENDING && <p>{t("adoptPending")}</p>}
-      <div className="flex flex-wrap gap-4">
-        {pet.status === PET_STATUS_TREATMENT ? (
-          <p className="py-2">{t("adoptBlocked")}</p>
-        ) : (
-          <a
-            href="#contact-heading"
-            aria-label={t("adoptLabel", { name: pet.name })}
-            className="inline-flex min-h-11 items-center justify-center rounded-full bg-(--accent) px-5 py-2 font-semibold text-(--accent-contrast) hover:shadow-md"
-          >
-            {t("adopt")}
-          </a>
-        )}
-        {isTreatmentRelated ? (
-          <a
-            href="#contact-heading"
-            aria-label={t("helpLabel", { name: pet.name })}
-            className="inline-flex min-h-11 items-center justify-center rounded-full border-2 border-(--accent) px-5 py-2 font-semibold text-(--accent) hover:bg-(--hover)"
-          >
-            {t("help")}
-          </a>
-        ) : (
-          <Link
-            href={`/shelter/${slug}/needs`}
-            aria-label={t("helpLabel", { name: pet.name })}
-            className="inline-flex min-h-11 items-center justify-center rounded-full border-2 border-(--accent) px-5 py-2 font-semibold text-(--accent) hover:bg-(--hover)"
-          >
-            {t("help")}
-          </Link>
-        )}
+        </div>
       </div>
       <div className="flex max-w-2xl flex-col gap-2">
         <h2 className="text-xl font-bold">{t("aboutTitle")}</h2>
