@@ -59,6 +59,8 @@ export default async function PetPage({
   const { slug, id } = await params;
   const shelter = await getShelter(slug);
   const data = await getPet(id, shelter.id);
+  const isTreatmentRelated =
+    data.needs_treatment_since !== null || data.status === "на лечении";
   const pet = toPet(data);
   const t = await getTranslations("Pet");
   const tAge = await getTranslations("Age");
@@ -114,13 +116,23 @@ export default async function PetPage({
             {t("adopt")}
           </a>
         )}
-        <a
-          href="#contact-heading"
-          aria-label={t("helpLabel", { name: pet.name })}
-          className="underline inline-block py-2"
-        >
-          {t("help")}
-        </a>
+        {isTreatmentRelated ? (
+          <a
+            href="#contact-heading"
+            aria-label={t("helpLabel", { name: pet.name })}
+            className="underline inline-block py-2"
+          >
+            {t("help")}
+          </a>
+        ) : (
+          <Link
+            href={`/shelter/${slug}/needs`}
+            aria-label={t("helpLabel", { name: pet.name })}
+            className="underline inline-block py-2"
+          >
+            {t("help")}
+          </Link>
+        )}
       </div>
       <h2 className="text-xl font-bold">{t("aboutTitle")}</h2>
       <p>{pet.description}</p>
