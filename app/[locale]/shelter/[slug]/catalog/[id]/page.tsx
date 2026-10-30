@@ -112,7 +112,7 @@ export default async function PetPage({
           <a
             href="#contact-heading"
             aria-label={t("adoptLabel", { name: pet.name })}
-            className="underline inline-block py-2"
+            className="inline-flex min-h-11 items-center justify-center rounded-full bg-(--accent) px-5 py-2 font-semibold text-(--accent-contrast) hover:shadow-md"
           >
             {t("adopt")}
           </a>
@@ -121,7 +121,7 @@ export default async function PetPage({
           <a
             href="#contact-heading"
             aria-label={t("helpLabel", { name: pet.name })}
-            className="underline inline-block py-2"
+            className="inline-flex min-h-11 items-center justify-center rounded-full border-2 border-(--accent) px-5 py-2 font-semibold text-(--accent) hover:bg-(--hover)"
           >
             {t("help")}
           </a>
@@ -129,7 +129,7 @@ export default async function PetPage({
           <Link
             href={`/shelter/${slug}/needs`}
             aria-label={t("helpLabel", { name: pet.name })}
-            className="underline inline-block py-2"
+            className="inline-flex min-h-11 items-center justify-center rounded-full border-2 border-(--accent) px-5 py-2 font-semibold text-(--accent) hover:bg-(--hover)"
           >
             {t("help")}
           </Link>
