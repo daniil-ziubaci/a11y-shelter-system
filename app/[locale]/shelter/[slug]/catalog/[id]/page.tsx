@@ -77,14 +77,14 @@ export default async function PetPage({
         {t("back")}
       </Link>
       <h1 className="text-3xl font-bold">{pet.name}</h1>
-      <div className="relative w-full max-w-md aspect-3/4">
+      <div className="relative w-full max-w-2xl aspect-4/3 overflow-hidden rounded-lg border border-(--border) bg-(--surface)">
         <Image
           src={pet.photo.url}
           alt={pet.photo.alt}
           fill
-          sizes="(min-width: 448px) 448px, 100vw"
+          sizes="(min-width: 672px) 672px, 100vw"
           loading="eager"
-          className="object-cover"
+          className="object-contain"
         />
       </div>
 
