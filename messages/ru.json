@@ -45,7 +45,7 @@
   "Pet": {
     "sex": "Пол",
     "age": "Возраст",
-    "size": "Размер:",
+    "size": "Размер",
     "sizeValue": {
       "small": "мелкий",
       "medium": "средний",
@@ -66,8 +66,8 @@
     "contactHeading": "Как связаться с приютом",
     "contactIntro": "Позвоните или напишите волонтёру приюта.",
     "noContact": "Контакт приюта пока не указан.",
-    "treatmentNote": "Этому животному нужна помощь с лечением.",
-    "treatmentLink": "Все животные, которым нужна помощь с лечением",
+    "treatmentNote": "Этому питомцу нужна помощь с лечением",
+    "treatmentLink": "Все питомцы, которым нужна помощь с лечением",
     "aboutShelter": "О приюте",
     "titleWithShelter": "{name}, {animal} ищет дом — {shelter}",
     "titleInShelter": "{name}, {animal} в приюте — {shelter}",

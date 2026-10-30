@@ -45,7 +45,7 @@
   "Pet": {
     "sex": "Sex",
     "age": "Vârstă",
-    "size": "Mărime:",
+    "size": "Mărime",
     "sizeValue": {
       "small": "mică",
       "medium": "medie",
