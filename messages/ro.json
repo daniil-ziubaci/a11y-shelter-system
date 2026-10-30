@@ -1,4 +1,11 @@
 {
+  "Footer": {
+    "contactHeading": "Cum poți contacta adăpostul",
+    "contactIntro": "Sună sau scrie voluntarului adăpostului.",
+    "noContact": "Datele de contact ale adăpostului nu sunt încă indicate.",
+    "hours": "Program de contact: {hours}",
+    "address": "Adresă: {address}"
+  },
   "Nav": {
     "label": "Navigare principală",
     "catalog": "Catalog",
