@@ -5,6 +5,7 @@ import { Link } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { getSexKey, getStatusKey } from "@/lib/petLabels";
 import { getSizeKey } from "@/lib/petSizes";
+import { PET_STATUS_TREATMENT } from "@/lib/petStatuses";
 
 export function PetCard({
   pet,
@@ -20,8 +21,8 @@ export function PetCard({
   const statusKey = getStatusKey(pet.status);
   const sizeKey = pet.size ? getSizeKey(pet.size) : undefined;
   const showStatusBadge = pet.status !== "ищет дом";
-  const isInTreatment = pet.status === "на лечении";
-
+  const isInTreatment = pet.status === PET_STATUS_TREATMENT;
+  
   return (
     <article className="group relative flex flex-col overflow-hidden rounded-lg border border-(--border) bg-(--surface) transition duration-300 ease-out hover:shadow-2xl motion-safe:hover:-translate-y-1.5 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-(--focus)">
       <div className="relative aspect-4/3">

@@ -12,6 +12,7 @@ import { getSexKey } from "@/lib/petLabels";
 import { buildAlternates } from "@/lib/seo";
 import { ShelterContact } from "@/components/ShelterContact";
 import { getSizeKey } from "@/lib/petSizes";
+import { PET_STATUS_PENDING, PET_STATUS_TREATMENT } from "@/lib/petStatuses";
 
 export async function generateMetadata({
   params,
@@ -29,7 +30,7 @@ export async function generateMetadata({
   );
 
   const title = t(
-    pet.status === "на лечении" ? "titleInShelter" : "titleWithShelter",
+    pet.status === PET_STATUS_TREATMENT ? "titleInShelter" : "titleWithShelter",
     {
       name: pet.name,
       animal,
@@ -60,7 +61,7 @@ export default async function PetPage({
   const shelter = await getShelter(slug);
   const data = await getPet(id, shelter.id);
   const isTreatmentRelated =
-    data.needs_treatment_since !== null || data.status === "на лечении";
+    data.needs_treatment_since !== null || data.status === PET_STATUS_TREATMENT;
   const pet = toPet(data);
   const t = await getTranslations("Pet");
   const tAge = await getTranslations("Age");
@@ -103,9 +104,9 @@ export default async function PetPage({
           </div>
         )}
       </dl>
-      {pet.status === "в процессе" && <p>{t("adoptPending")}</p>}
+      {pet.status === PET_STATUS_PENDING && <p>{t("adoptPending")}</p>}
       <div className="flex flex-wrap gap-4">
-        {pet.status === "на лечении" ? (
+        {pet.status === PET_STATUS_TREATMENT ? (
           <p className="py-2">{t("adoptBlocked")}</p>
         ) : (
           <a

@@ -6,7 +6,7 @@ import { Link } from "@/i18n/navigation";
 import { getTranslations } from "next-intl/server";
 import { buildAlternates } from "@/lib/seo";
 import { getSizeFromKey } from "@/lib/petSizes";
-import { getStatusRank, PUBLIC_PET_STATUSES } from "@/lib/petStatuses";
+import { getStatusRank, PET_STATUS_TREATMENT, PUBLIC_PET_STATUSES } from "@/lib/petStatuses";
 
 export async function generateMetadata({
   params,
@@ -74,7 +74,7 @@ export default async function Catalog({
     .order("name");
 
   if (isBlocked) {
-    query = query.eq("status", "на лечении");
+    query = query.eq("status", PET_STATUS_TREATMENT);
   } else if (isTreatment) {
     query = query.not("needs_treatment_since", "is", null);
   }

@@ -1,4 +1,6 @@
-const REVIEW_STATUSES = ["в процессе", "на лечении"];
+import { PET_STATUS_PENDING, PET_STATUS_TREATMENT } from "@/lib/petStatuses";
+
+const REVIEW_STATUSES: string[] = [PET_STATUS_PENDING, PET_STATUS_TREATMENT];
 
 export const PET_STATUS_REVIEW_DAYS = 7;
 
