@@ -12,7 +12,11 @@ import { getSexKey } from "@/lib/petLabels";
 import { buildAlternates } from "@/lib/seo";
 import { ShelterContact } from "@/components/ShelterContact";
 import { getSizeKey } from "@/lib/petSizes";
-import { PET_STATUS_LOOKING, PET_STATUS_PENDING, PET_STATUS_TREATMENT } from "@/lib/petStatuses";
+import {
+  PET_STATUS_LOOKING,
+  PET_STATUS_PENDING,
+  PET_STATUS_TREATMENT,
+} from "@/lib/petStatuses";
 import { PetBadges } from "@/components/PetBadges";
 
 export async function generateMetadata({
@@ -120,11 +124,18 @@ export default async function PetPage({
               </div>
             )}
           </dl>
-          {pet.status === PET_STATUS_PENDING && <p>{t("adoptPending")}</p>}
+          {(pet.status === PET_STATUS_PENDING ||
+            pet.status === PET_STATUS_TREATMENT) && (
+            <p className="rounded-lg border border-(--border) bg-(--accent-soft) px-4 py-3">
+              {t(
+                pet.status === PET_STATUS_PENDING
+                  ? "adoptPending"
+                  : "adoptBlocked",
+              )}
+            </p>
+          )}
           <div className="flex flex-wrap gap-4">
-            {pet.status === PET_STATUS_TREATMENT ? (
-              <p className="py-2">{t("adoptBlocked")}</p>
-            ) : (
+            {pet.status !== PET_STATUS_TREATMENT && (
               <a
                 href="#contact-heading"
                 aria-label={t("adoptLabel", { name: pet.name })}
