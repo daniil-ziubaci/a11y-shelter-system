@@ -1,6 +1,10 @@
 import { ShelterContact } from "@/components/ShelterContact";
 import { getShelter } from "@/lib/getShelter";
-import { getStageKey } from "@/lib/projectStages";
+import {
+  getStageKey,
+  PROJECT_STATUS_COMPLETED,
+  PROJECT_STATUS_ONGOING,
+} from "@/lib/projectStages";
 import { buildAlternates } from "@/lib/seo";
 import { createClient } from "@/lib/supabase/server";
 import { getFormatter, getTranslations } from "next-intl/server";
@@ -45,8 +49,12 @@ export default async function ShelterProjectsPage({
     );
   }
 
-  const ongoing = (projects ?? []).filter((p) => p.status === "идёт");
-  const completed = (projects ?? []).filter((p) => p.status === "завершён");
+  const ongoing = (projects ?? []).filter(
+    (p) => p.status === PROJECT_STATUS_ONGOING,
+  );
+  const completed = (projects ?? []).filter(
+    (p) => p.status === PROJECT_STATUS_COMPLETED,
+  );
 
   const renderProject = (project: (typeof ongoing)[number]) => (
     <li
@@ -58,13 +66,14 @@ export default async function ShelterProjectsPage({
       {project.goal && (
         <p className="text-(--muted)">{t("goal", { goal: project.goal })}</p>
       )}
-      {project.status === "идёт" && getStageKey(project.stage) && (
-        <p className="font-medium">
-          {t("stageLabel", {
-            stage: t(`stages.${getStageKey(project.stage)}`),
-          })}
-        </p>
-      )}
+      {project.status === PROJECT_STATUS_ONGOING &&
+        getStageKey(project.stage) && (
+          <p className="font-medium">
+            {t("stageLabel", {
+              stage: t(`stages.${getStageKey(project.stage)}`),
+            })}
+          </p>
+        )}
       {project.completed_at && (
         <p className="text-(--muted)">
           {t("completedOn", {
@@ -75,7 +84,7 @@ export default async function ShelterProjectsPage({
           })}
         </p>
       )}
-      {project.status === "идёт" && (
+      {project.status === PROJECT_STATUS_ONGOING && (
         <a
           href="#help-heading"
           aria-label={t("helpLabel", { name: project.title })}

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import { PROJECT_STATUSES } from "@/lib/projectStages";
+import { PROJECT_STATUS_ONGOING, PROJECT_STATUSES } from "@/lib/projectStages";
 import { setProjectStatus } from "@/app/volunteer/projects/actions";
 import { isProjectStale, PROJECT_REVIEW_DAYS } from "@/lib/projectReview";
 
@@ -56,8 +56,10 @@ export default async function VolunteerProjectsPage() {
               <h2 className="text-xl font-bold">{project.title}</h2>
               <p>Статус: {project.status}</p>
               {project.goal && <p>Цель: {project.goal}</p>}
-              {project.status === "идёт" && <p>Этап: {project.stage}</p>}
-              {project.status === "идёт" &&
+              {project.status === PROJECT_STATUS_ONGOING && (
+                <p>Этап: {project.stage}</p>
+              )}
+              {project.status === PROJECT_STATUS_ONGOING &&
                 isProjectStale(project.updated_at) && (
                   <p className="text-(--pending) font-medium">
                     Проверьте, актуально ли: проект не обновлялся больше{" "}

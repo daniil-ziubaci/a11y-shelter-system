@@ -14,4 +14,10 @@ export function getStageKey(stage: string): string | null {
   return (STAGE_KEYS as Record<string, string>)[stage] ?? null;
 }
 
-export const PROJECT_STATUSES = ["идёт", "завершён"] as const;
+export const PROJECT_STATUS_ONGOING = "идёт";
+export const PROJECT_STATUS_COMPLETED = "завершён";
+
+export const PROJECT_STATUSES = [
+  PROJECT_STATUS_ONGOING,
+  PROJECT_STATUS_COMPLETED,
+] as const;
