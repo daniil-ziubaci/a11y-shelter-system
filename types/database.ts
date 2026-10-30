@@ -57,6 +57,7 @@ export type Database = {
           size: string | null
           species: string
           status: string
+          status_changed_at: string
           weight: number | null
         }
         Insert: {
@@ -76,6 +77,7 @@ export type Database = {
           size?: string | null
           species: string
           status?: string
+          status_changed_at?: string
           weight?: number | null
         }
         Update: {
@@ -95,6 +97,7 @@ export type Database = {
           size?: string | null
           species?: string
           status?: string
+          status_changed_at?: string
           weight?: number | null
         }
         Relationships: [
