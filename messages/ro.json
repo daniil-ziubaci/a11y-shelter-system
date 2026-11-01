@@ -21,7 +21,9 @@
     "treatment": "Tratament",
     "projects": "Proiecte",
     "about": "Despre noi",
-    "language": "Limba"
+    "language": "Limba",
+    "menu": "Meniu",
+    "contact": "Contactează adăpostul"
   },
   "Catalog": {
     "title": "Catalogul animalelor adăpostului „{shelter}”",

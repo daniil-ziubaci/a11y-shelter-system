@@ -21,7 +21,9 @@
     "treatment": "Лечение",
     "projects": "Проекты",
     "about": "О приюте",
-    "language": "Язык"
+    "language": "Язык",
+    "menu": "Меню",
+    "contact": "Связаться с приютом"
   },
   "Catalog": {
     "title": "Каталог животных приюта «{shelter}»",

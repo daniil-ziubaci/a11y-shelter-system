@@ -21,7 +21,9 @@
     "treatment": "Treatment",
     "projects": "Projects",
     "about": "About us",
-    "language": "Language"
+    "language": "Language",
+    "menu": "Menu",
+    "contact": "Contact the shelter"
   },
   "Catalog": {
     "title": "Animal catalog of “{shelter}” shelter",
