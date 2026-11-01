@@ -12,6 +12,11 @@
     "linksLabel": "Site sections",
     "socialHeading": "Find us on social media:",
     "socialLink": "Shelter's {network}",
+    "cityLabel": "City",
+    "addressLabel": "Address",
+    "hoursLabel": "Contact and visiting hours",
+    "foundedLabel": "Founded",
+    "legalLabel": "Legal information",
     "addressByAppointment": "Visits by appointment"
   },
   "Nav": {

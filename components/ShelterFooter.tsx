@@ -65,32 +65,55 @@ export async function ShelterFooter({
         </section>
         <section
           aria-labelledby="footer-about-heading"
-          className="flex flex-col gap-3"
+          className="flex flex-col gap-3 border-t border-(--border) pt-8 md:border-t-0 md:pt-0"
         >
           <h2 id="footer-about-heading" className="text-xl font-bold">
             {name}
           </h2>
-          {city && <p>{t("city", { city })}</p>}
-          <p>
-            {address ? t("address", { address }) : t("addressByAppointment")}
-          </p>
-          {hours && <p>{t("hours", { hours })}</p>}
-          {foundedYear !== null && <p>{t("founded", { year: foundedYear })}</p>}
-          {legalInfo && <p>{t("legal", { legal: legalInfo })}</p>}
+          <dl className="flex flex-col gap-3 text-pretty">
+            {city && (
+              <div>
+                <dt className="text-sm text-(--muted)">{t("cityLabel")}</dt>
+                <dd>{city}</dd>
+              </div>
+            )}
+            <div>
+              <dt className="text-sm text-(--muted)">{t("addressLabel")}</dt>
+              <dd>{address || t("addressByAppointment")}</dd>
+            </div>
+            {hours && (
+              <div>
+                <dt className="text-sm text-(--muted)">{t("hoursLabel")}</dt>
+                <dd>{hours}</dd>
+              </div>
+            )}
+            {foundedYear !== null && (
+              <div>
+                <dt className="text-sm text-(--muted)">{t("foundedLabel")}</dt>
+                <dd>{foundedYear}</dd>
+              </div>
+            )}
+            {legalInfo && (
+              <div>
+                <dt className="text-sm text-(--muted)">{t("legalLabel")}</dt>
+                <dd>{legalInfo}</dd>
+              </div>
+            )}
+          </dl>
         </section>
         <nav
           aria-labelledby="footer-links-heading"
-          className="flex flex-col gap-3"
+          className="flex flex-col gap-3 border-t border-(--border) pt-8 md:border-t-0 md:pt-0"
         >
           <p id="footer-links-heading" className="text-xl font-bold">
             {t("linksLabel")}
           </p>
-          <ul className="flex flex-col">
+          <ul className="grid grid-cols-2 gap-x-4 md:flex md:flex-col">
             {links.map((link) => (
               <li key={link.href}>
                 <Link
                   href={link.href}
-                  className="inline-block py-2 font-semibold text-(--accent) hover:underline"
+                  className="inline-block py-3 font-semibold text-(--accent) hover:underline"
                 >
                   {link.label}
                 </Link>

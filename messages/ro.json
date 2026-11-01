@@ -12,6 +12,11 @@
     "linksLabel": "Secțiunile site-ului",
     "socialHeading": "Suntem pe rețelele sociale:",
     "socialLink": "{network} al adăpostului",
+    "cityLabel": "Oraș",
+    "addressLabel": "Adresă",
+    "hoursLabel": "Program de contact și vizită",
+    "foundedLabel": "Anul înființării",
+    "legalLabel": "Informații juridice",
     "addressByAppointment": "Vizite doar cu programare"
   },
   "Nav": {

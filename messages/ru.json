@@ -12,6 +12,11 @@
     "linksLabel": "Разделы сайта",
     "socialHeading": "Мы в соцсетях:",
     "socialLink": "{network} приюта",
+    "cityLabel": "Город",
+    "addressLabel": "Адрес",
+    "hoursLabel": "Часы связи и приёма",
+    "foundedLabel": "Год основания",
+    "legalLabel": "Юридическая информация",
     "addressByAppointment": "Посещение по договорённости"
   },
   "Nav": {
