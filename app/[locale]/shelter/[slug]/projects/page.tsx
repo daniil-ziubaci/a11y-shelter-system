@@ -1,4 +1,3 @@
-import { ShelterContact } from "@/components/ShelterContact";
 import { getShelter } from "@/lib/getShelter";
 import {
   getStageKey,
@@ -86,7 +85,7 @@ export default async function ShelterProjectsPage({
       )}
       {project.status === PROJECT_STATUS_ONGOING && (
         <a
-          href="#help-heading"
+          href="#footer-contact-heading"
           aria-label={t("helpLabel", { name: project.title })}
           className="underline inline-block py-2"
         >
@@ -94,20 +93,6 @@ export default async function ShelterProjectsPage({
         </a>
       )}
     </li>
-  );
-
-  const helpBlock = (
-    <section aria-labelledby="help-heading" className="flex flex-col gap-2">
-      <h2 id="help-heading" className="text-xl font-bold">
-        {t("howToHelpHeading")}
-      </h2>
-      <p>{t("howToHelpIntro")}</p>
-      <ShelterContact
-        phone={shelter.contact_phone}
-        messenger={shelter.contact_messenger}
-        emptyText={t("noContact")}
-      />
-    </section>
   );
 
   return (
@@ -148,7 +133,6 @@ export default async function ShelterProjectsPage({
           )}
         </>
       )}
-      {helpBlock}
     </main>
   );
 }
