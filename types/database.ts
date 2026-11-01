@@ -274,6 +274,7 @@ export type Database = {
           name: string
           public_channel_url: string | null
           slug: string
+          volunteer_info: string | null
         }
         Insert: {
           about?: string | null
@@ -291,6 +292,7 @@ export type Database = {
           name: string
           public_channel_url?: string | null
           slug: string
+          volunteer_info?: string | null
         }
         Update: {
           about?: string | null
@@ -308,6 +310,7 @@ export type Database = {
           name?: string
           public_channel_url?: string | null
           slug?: string
+          volunteer_info?: string | null
         }
         Relationships: []
       }
