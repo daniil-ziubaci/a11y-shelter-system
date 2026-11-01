@@ -3,6 +3,7 @@
 import { Link, usePathname } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 import { useLocale, useTranslations } from "next-intl";
+import { useSearchParams } from "next/navigation";
 
 const labels: Record<string, string> = {
   ru: "Русский",
@@ -14,6 +15,9 @@ export function LanguageSwitcher() {
   const t = useTranslations("Nav");
   const locale = useLocale();
   const pathname = usePathname();
+
+  const searchParams = useSearchParams();
+  const query = Object.fromEntries(searchParams.entries());
 
   return (
     <nav aria-label={t("language")}>
@@ -31,7 +35,7 @@ export function LanguageSwitcher() {
           {routing.locales.map((code) => (
             <li key={code}>
               <Link
-                href={pathname}
+                href={{ pathname, query }}
                 locale={code}
                 lang={code}
                 hrefLang={code}
