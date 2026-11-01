@@ -61,7 +61,7 @@
   },
   "Pet": {
     "otherHeading": "Other pets",
-    "toCatalog": "To the catalog →",
+    "toCatalog": "To the catalog",
     "sex": "Sex",
     "age": "Age",
     "size": "Size",
@@ -72,7 +72,7 @@
     },
     "aboutTitle": "About the animal",
     "health": "Health",
-    "back": "← All animals",
+    "back": "All pets",
     "more": "Details",
     "moreLabel": "Details: {name}",
     "adopt": "I want to take it home",

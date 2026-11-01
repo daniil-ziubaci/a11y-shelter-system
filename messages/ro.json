@@ -61,7 +61,7 @@
   },
   "Pet": {
     "otherHeading": "Alte animale",
-    "toCatalog": "În catalog →",
+    "toCatalog": "În catalog",
     "sex": "Sex",
     "age": "Vârstă",
     "size": "Mărime",
@@ -72,7 +72,7 @@
     },
     "aboutTitle": "Despre animal",
     "health": "Sănătate",
-    "back": "← Toate animalele",
+    "back": "Toate animalele",
     "more": "Detalii",
     "moreLabel": "Detalii: {name}",
     "adopt": "Vreau să-l iau acasă",

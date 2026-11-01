@@ -70,7 +70,7 @@ export default async function PetPage({
     data.needs_treatment_since !== null || data.status === PET_STATUS_TREATMENT;
   const pet = toPet(data);
   const helpButtonBase =
-    "inline-flex min-h-14 items-center justify-center rounded-full px-7 py-3 text-lg font-semibold";
+    "inline-flex min-h-14 items-center justify-center rounded-full px-6 py-3 text-lg font-semibold";
   const helpOutlineClass = `${helpButtonBase} border-2 border-(--accent) text-(--accent) hover:bg-(--hover)`;
   const helpTreatmentClass = `${helpButtonBase} border-2 border-(--danger) bg-(--surface) text-(--danger) hover:bg-(--danger-soft)`;
 
@@ -84,8 +84,14 @@ export default async function PetPage({
     <main className="w-full flex flex-col gap-6 p-4 max-w-5xl mx-auto">
       <Link
         href={`/shelter/${slug}/catalog`}
-        className="inline-block py-2 underline"
+        className="group inline-flex min-h-11 items-center gap-1.5 self-start font-medium text-(--accent) transition-colors hover:text-(--foreground) motion-reduce:transition-none"
       >
+        <span
+          aria-hidden="true"
+          className="inline-block transition-transform duration-200 group-hover:-translate-x-1 motion-reduce:transition-none"
+        >
+          ←
+        </span>
         {t("back")}
       </Link>
       <div className="grid gap-6 lg:grid-cols-2 lg:items-start">
@@ -112,30 +118,30 @@ export default async function PetPage({
           <dl className="flex flex-wrap gap-2">
             <div className="rounded-lg border border-(--border) bg-(--surface) px-4 py-3">
               <dt className="text-sm text-(--muted)">{t("sex")}</dt>
-              <dd className="whitespace-nowrap text-lg font-semibold first-letter:uppercase">
+              <dd className="whitespace-nowrap font-semibold first-letter:uppercase">
                 {t(`sexValue.${getSexKey(pet.sex)}`)}
               </dd>
             </div>
             <div className="rounded-lg border border-(--border) bg-(--surface) px-4 py-3">
               <dt className="text-sm text-(--muted)">{t("age")}</dt>
-              <dd className="whitespace-nowrap text-lg font-semibold first-letter:uppercase">
+              <dd className="whitespace-nowrap font-semibold first-letter:uppercase">
                 {formatAge(pet.ageInMonths, pet.isAgeApproximate, tAge)}
               </dd>
             </div>
             {sizeKey && (
               <div className="rounded-lg border border-(--border) bg-(--surface) px-4 py-3">
                 <dt className="text-sm text-(--muted)">{t("size")}</dt>
-                <dd className="whitespace-nowrap text-lg font-semibold first-letter:uppercase">
+                <dd className="whitespace-nowrap font-semibold first-letter:uppercase">
                   {t(`sizeValue.${sizeKey}`)}
                 </dd>
               </div>
             )}
           </dl>
-          <div className="flex flex-col gap-2 rounded-lg border border-(--border) bg-(--surface) p-4 text-lg">
+          <div className="flex flex-col gap-2 rounded-lg border border-(--border) bg-(--surface) p-4">
             <h2 className="text-xl font-bold">{t("aboutTitle")}</h2>
             <p>{pet.description}</p>
           </div>
-          <div className="flex flex-col gap-2 rounded-lg border border-(--border) bg-(--surface) p-4 text-lg">
+          <div className="flex flex-col gap-2 rounded-lg border border-(--border) bg-(--surface) p-4">
             <h2 className="text-xl font-bold">{t("health")}</h2>
             <p>{pet.health}</p>
           </div>
@@ -149,7 +155,7 @@ export default async function PetPage({
               <a
                 href="#footer-contact-heading"
                 aria-label={t("adoptLabel", { name: pet.name })}
-                className="inline-flex min-h-14 items-center justify-center rounded-full bg-(--accent) px-7 py-3 text-lg font-semibold text-(--accent-contrast) hover:shadow-md"
+                className="inline-flex min-h-14 items-center justify-center rounded-full bg-(--accent) px-6 py-3 text-lg font-semibold text-(--accent-contrast) hover:shadow-md"
               >
                 {t("adopt")}
               </a>
@@ -189,7 +195,7 @@ export default async function PetPage({
       {otherPets.length > 0 && (
         <section
           aria-labelledby="other-pets-heading"
-          className="flex flex-col gap-4"
+          className="mt-8 -mb-6 flex flex-col gap-4 bg-(--accent-soft) py-10 shadow-[0_0_0_100vmax_var(--accent-soft)] [clip-path:inset(0_-100vmax)]"
         >
           <div className="flex flex-wrap items-baseline justify-between gap-x-4">
             <h2 id="other-pets-heading" className="text-2xl font-bold">
@@ -197,9 +203,15 @@ export default async function PetPage({
             </h2>
             <Link
               href={`/shelter/${slug}/catalog`}
-              className="inline-block py-2 underline"
+              className="group inline-flex min-h-11 items-center gap-1.5 font-medium text-(--accent) transition-colors hover:text-(--foreground) motion-reduce:transition-none"
             >
               {t("toCatalog")}
+              <span
+                aria-hidden="true"
+                className="inline-block transition-transform duration-200 group-hover:translate-x-1 motion-reduce:transition-none"
+              >
+                →
+              </span>
             </Link>
           </div>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
