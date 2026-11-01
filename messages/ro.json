@@ -31,6 +31,8 @@
     "contact": "Contactează adăpostul"
   },
   "Catalog": {
+    "searchLabel": "Nume",
+    "searchButton": "Caută",
     "title": "Catalogul animalelor adăpostului „{shelter}”",
     "description": "Câini și pisici din adăpostul „{shelter}”: fotografii, vârstă și mărime. Alegeți un prieten, aflați pe cine puteți lua acasă și cum puteți ajuta adăpostul.",
     "heading": "Animalele adăpostului „{shelter}”",

@@ -6,17 +6,21 @@ import { Link } from "@/i18n/navigation";
 import { getTranslations } from "next-intl/server";
 import { buildAlternates } from "@/lib/seo";
 import { getSizeFromKey } from "@/lib/petSizes";
-import { getStatusRank, PET_STATUS_TREATMENT, PUBLIC_PET_STATUSES } from "@/lib/petStatuses";
+import {
+  getStatusRank,
+  PET_STATUS_TREATMENT,
+  PUBLIC_PET_STATUSES,
+} from "@/lib/petStatuses";
 
 export async function generateMetadata({
   params,
   searchParams,
 }: {
   params: Promise<{ slug: string; locale: string }>;
-  searchParams: Promise<{ mode?: string; group?: string }>;
+  searchParams: Promise<{ mode?: string; group?: string; q?: string }>;
 }) {
   const { slug, locale } = await params;
-  const { mode, group } = await searchParams;
+  const { mode, group, q } = await searchParams;
   const isTreatment = mode === "treatment";
   const isBlocked = isTreatment && group === "blocked";
   const shelter = await getShelter(slug);
@@ -35,6 +39,7 @@ export async function generateMetadata({
     title: t(titleKey, { shelter: shelter.name }),
     description: t(descriptionKey, { shelter: shelter.name }),
     alternates: buildAlternates(locale, `/shelter/${slug}/catalog${query}`),
+    ...(q?.trim() ? { robots: { index: false, follow: true } } : {}),
   };
 }
 
@@ -50,14 +55,16 @@ export default async function Catalog({
     size?: string;
     mode?: string;
     group?: string;
+    q?: string;
   }>;
 }) {
   const { slug } = await params;
-  const { species, sex, age, size, mode, group } = await searchParams;
+  const { species, sex, age, size, mode, group, q } = await searchParams;
   const isTreatment = mode === "treatment";
   const isBlocked = isTreatment && group === "blocked";
   const shelter = await getShelter(slug);
   const t = await getTranslations("Catalog");
+  const search = (q ?? "").trim().slice(0, 50);
 
   const twelveMonthsAgo = new Date();
   twelveMonthsAgo.setMonth(twelveMonthsAgo.getMonth() - 12);
@@ -77,6 +84,11 @@ export default async function Catalog({
     query = query.eq("status", PET_STATUS_TREATMENT);
   } else if (isTreatment) {
     query = query.not("needs_treatment_since", "is", null);
+  }
+
+  if (search) {
+    const pattern = search.replace(/[\\%_]/g, "\\$&");
+    query = query.ilike("name", `%${pattern}%`);
   }
 
   if (species === "cat") {
@@ -142,6 +154,10 @@ export default async function Catalog({
       params.set("group", "blocked");
     }
 
+    if (search) {
+      params.set("q", search);
+    }
+
     const queryString = params.toString();
     const base = `/shelter/${slug}/catalog`;
     if (queryString) {
@@ -192,130 +208,173 @@ export default async function Catalog({
         </nav>
       )}
       <div className="flex flex-col gap-4 rounded-2xl border border-(--border) bg-(--surface) p-4">
-      <nav aria-label={t("filtersLabel")}>
-        <div className="flex flex-col gap-4">
-        <fieldset className="min-w-0">
-          <legend className="mb-2 text-sm font-semibold text-(--muted) sm:float-left sm:mb-0 sm:w-24 sm:pt-2.5 sm:text-base">{t("species")}</legend>
-          <div className="flex flex-wrap gap-2">
-            <Link
-              href={buildHref(undefined, sex, age)}
-              aria-current={species === undefined ? "true" : undefined}
-              className={filterLink}
+        <form
+          role="search"
+          className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-0"
+        >
+          <label
+            htmlFor="catalog-search"
+            className="text-sm font-semibold text-(--muted) sm:w-24 sm:text-base"
+          >
+            {t("searchLabel")}
+          </label>
+          <div className="flex min-w-0 max-w-95 flex-1 gap-2">
+            <input
+              id="catalog-search"
+              type="search"
+              name="q"
+              defaultValue={search}
+              maxLength={50}
+              className="min-h-10 min-w-0 flex-1 rounded-full border border-(--border-strong) bg-(--surface) px-4 focus-visible:outline-(--accent)! focus-visible:outline-offset-0!"
+            />
+            <button
+              type="submit"
+              className="min-h-10 rounded-full bg-(--accent) px-4 text-(--accent-contrast) hover:shadow-md"
             >
-              {t("all")}
-            </Link>
-            <Link
-              href={buildHref("dog", sex, age)}
-              aria-current={species === "dog" ? "true" : undefined}
-              className={filterLink}
-            >
-              {t("dogs")}
-            </Link>
-            <Link
-              href={buildHref("cat", sex, age)}
-              aria-current={species === "cat" ? "true" : undefined}
-              className={filterLink}
-            >
-              {t("cats")}
-            </Link>
+              {t("searchButton")}
+            </button>
           </div>
-        </fieldset>
-        <fieldset className="min-w-0">
-          <legend className="mb-2 text-sm font-semibold text-(--muted) sm:float-left sm:mb-0 sm:w-24 sm:pt-2.5 sm:text-base">{t("sex")}</legend>
-          <div className="flex flex-wrap gap-2">
-            <Link
-              href={buildHref(species, undefined, age)}
-              aria-current={sex === undefined ? "true" : undefined}
-              className={filterLink}
-            >
-              {t("all")}
-            </Link>
-            <Link
-              href={buildHref(species, "male", age)}
-              aria-current={sex === "male" ? "true" : undefined}
-              className={filterLink}
-            >
-              {t("males")}
-            </Link>
-            <Link
-              href={buildHref(species, "female", age)}
-              aria-current={sex === "female" ? "true" : undefined}
-              className={filterLink}
-            >
-              {t("females")}
-            </Link>
+          {species && <input type="hidden" name="species" value={species} />}
+          {sex && <input type="hidden" name="sex" value={sex} />}
+          {age && <input type="hidden" name="age" value={age} />}
+          {species === "dog" && size && (
+            <input type="hidden" name="size" value={size} />
+          )}
+          {isTreatment && <input type="hidden" name="mode" value="treatment" />}
+          {isBlocked && <input type="hidden" name="group" value="blocked" />}
+        </form>
+        <nav aria-label={t("filtersLabel")}>
+          <div className="flex flex-col gap-4">
+            <fieldset className="min-w-0">
+              <legend className="mb-2 text-sm font-semibold text-(--muted) sm:float-left sm:mb-0 sm:w-24 sm:pt-2.5 sm:text-base">
+                {t("species")}
+              </legend>
+              <div className="flex flex-wrap gap-2">
+                <Link
+                  href={buildHref(undefined, sex, age)}
+                  aria-current={species === undefined ? "true" : undefined}
+                  className={filterLink}
+                >
+                  {t("all")}
+                </Link>
+                <Link
+                  href={buildHref("dog", sex, age)}
+                  aria-current={species === "dog" ? "true" : undefined}
+                  className={filterLink}
+                >
+                  {t("dogs")}
+                </Link>
+                <Link
+                  href={buildHref("cat", sex, age)}
+                  aria-current={species === "cat" ? "true" : undefined}
+                  className={filterLink}
+                >
+                  {t("cats")}
+                </Link>
+              </div>
+            </fieldset>
+            <fieldset className="min-w-0">
+              <legend className="mb-2 text-sm font-semibold text-(--muted) sm:float-left sm:mb-0 sm:w-24 sm:pt-2.5 sm:text-base">
+                {t("sex")}
+              </legend>
+              <div className="flex flex-wrap gap-2">
+                <Link
+                  href={buildHref(species, undefined, age)}
+                  aria-current={sex === undefined ? "true" : undefined}
+                  className={filterLink}
+                >
+                  {t("all")}
+                </Link>
+                <Link
+                  href={buildHref(species, "male", age)}
+                  aria-current={sex === "male" ? "true" : undefined}
+                  className={filterLink}
+                >
+                  {t("males")}
+                </Link>
+                <Link
+                  href={buildHref(species, "female", age)}
+                  aria-current={sex === "female" ? "true" : undefined}
+                  className={filterLink}
+                >
+                  {t("females")}
+                </Link>
+              </div>
+            </fieldset>
+            <fieldset className="min-w-0">
+              <legend className="mb-2 text-sm font-semibold text-(--muted) sm:float-left sm:mb-0 sm:w-24 sm:pt-2.5 sm:text-base">
+                {t("age")}
+              </legend>
+              <div className="flex flex-wrap gap-2">
+                <Link
+                  href={buildHref(species, sex, undefined)}
+                  aria-current={age === undefined ? "true" : undefined}
+                  className={filterLink}
+                >
+                  {t("all")}
+                </Link>
+                <Link
+                  href={buildHref(species, sex, "young")}
+                  aria-current={age === "young" ? "true" : undefined}
+                  className={filterLink}
+                >
+                  {t("young")}
+                </Link>
+                <Link
+                  href={buildHref(species, sex, "adult")}
+                  aria-current={age === "adult" ? "true" : undefined}
+                  className={filterLink}
+                >
+                  {t("adult")}
+                </Link>
+                <Link
+                  href={buildHref(species, sex, "senior")}
+                  aria-current={age === "senior" ? "true" : undefined}
+                  className={filterLink}
+                >
+                  {t("senior")}
+                </Link>
+              </div>
+            </fieldset>
+            {species === "dog" && (
+              <fieldset className="min-w-0">
+                <legend className="mb-2 text-sm font-semibold text-(--muted) sm:float-left sm:mb-0 sm:w-24 sm:pt-2.5 sm:text-base">
+                  {t("size")}
+                </legend>
+                <div className="flex flex-wrap gap-2">
+                  <Link
+                    href={buildHref(species, sex, age, null)}
+                    aria-current={!size ? "true" : undefined}
+                    className={filterLink}
+                  >
+                    {t("all")}
+                  </Link>
+                  <Link
+                    href={buildHref(species, sex, age, "small")}
+                    aria-current={size === "small" ? "true" : undefined}
+                    className={filterLink}
+                  >
+                    {t("sizeSmall")}
+                  </Link>
+                  <Link
+                    href={buildHref(species, sex, age, "medium")}
+                    aria-current={size === "medium" ? "true" : undefined}
+                    className={filterLink}
+                  >
+                    {t("sizeMedium")}
+                  </Link>
+                  <Link
+                    href={buildHref(species, sex, age, "large")}
+                    aria-current={size === "large" ? "true" : undefined}
+                    className={filterLink}
+                  >
+                    {t("sizeLarge")}
+                  </Link>
+                </div>
+              </fieldset>
+            )}
           </div>
-        </fieldset>
-        <fieldset className="min-w-0">
-          <legend className="mb-2 text-sm font-semibold text-(--muted) sm:float-left sm:mb-0 sm:w-24 sm:pt-2.5 sm:text-base">{t("age")}</legend>
-          <div className="flex flex-wrap gap-2">
-            <Link
-              href={buildHref(species, sex, undefined)}
-              aria-current={age === undefined ? "true" : undefined}
-              className={filterLink}
-            >
-              {t("all")}
-            </Link>
-            <Link
-              href={buildHref(species, sex, "young")}
-              aria-current={age === "young" ? "true" : undefined}
-              className={filterLink}
-            >
-              {t("young")}
-            </Link>
-            <Link
-              href={buildHref(species, sex, "adult")}
-              aria-current={age === "adult" ? "true" : undefined}
-              className={filterLink}
-            >
-              {t("adult")}
-            </Link>
-            <Link
-              href={buildHref(species, sex, "senior")}
-              aria-current={age === "senior" ? "true" : undefined}
-              className={filterLink}
-            >
-              {t("senior")}
-            </Link>
-          </div>
-        </fieldset>
-        {species === "dog" && (
-          <fieldset className="min-w-0">
-            <legend className="mb-2 text-sm font-semibold text-(--muted) sm:float-left sm:mb-0 sm:w-24 sm:pt-2.5 sm:text-base">{t("size")}</legend>
-            <div className="flex flex-wrap gap-2">
-              <Link
-                href={buildHref(species, sex, age, null)}
-                aria-current={!size ? "true" : undefined}
-                className={filterLink}
-              >
-                {t("all")}
-              </Link>
-              <Link
-                href={buildHref(species, sex, age, "small")}
-                aria-current={size === "small" ? "true" : undefined}
-                className={filterLink}
-              >
-                {t("sizeSmall")}
-              </Link>
-              <Link
-                href={buildHref(species, sex, age, "medium")}
-                aria-current={size === "medium" ? "true" : undefined}
-                className={filterLink}
-              >
-                {t("sizeMedium")}
-              </Link>
-              <Link
-                href={buildHref(species, sex, age, "large")}
-                aria-current={size === "large" ? "true" : undefined}
-                className={filterLink}
-              >
-                {t("sizeLarge")}
-              </Link>
-            </div>
-          </fieldset>
-        )}
-      </div>
-      </nav>
+        </nav>
       </div>
       <p role="status" className="-mb-1 pt-1 text-(--muted)">
         {pets.length === 0 ? t("none") : t("found", { count: pets.length })}
