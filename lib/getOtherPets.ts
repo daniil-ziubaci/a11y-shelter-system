@@ -10,8 +10,8 @@ export async function getOtherPets(shelterId: string, excludeId: string) {
     .eq("shelter_id", shelterId)
     .in("status", PUBLIC_PET_STATUSES)
     .neq("id", excludeId)
-    .order("created_at", { ascending: false })
-    .limit(30);
+    .order("created_at", { ascending: true })
+    .limit(100);
 
   if (error) return [];
 
