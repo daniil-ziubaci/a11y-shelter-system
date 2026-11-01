@@ -3,13 +3,16 @@
     "contactHeading": "How to contact the shelter",
     "contactIntro": "Call or write to the shelter volunteer.",
     "noContact": "The shelter contact details are not given yet.",
-    "hours": "Contact hours: {hours}",
+    "hours": "Contact and visiting hours: {hours}",
     "address": "Address: {address}",
     "city": "City: {city}",
     "founded": "Founded: {year}",
     "legal": "Legal information: {legal}",
     "news": "Shelter news",
-    "linksLabel": "Site sections"
+    "linksLabel": "Site sections",
+    "socialHeading": "Find us on social media:",
+    "socialLink": "Shelter's {network}",
+    "addressByAppointment": "Visits by appointment"
   },
   "Nav": {
     "label": "Main navigation",

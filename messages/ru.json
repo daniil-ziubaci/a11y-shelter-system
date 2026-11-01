@@ -3,13 +3,16 @@
     "contactHeading": "Как связаться с приютом",
     "contactIntro": "Позвоните или напишите волонтёру приюта.",
     "noContact": "Контакты приюта пока не указаны.",
-    "hours": "Часы связи: {hours}",
+    "hours": "Часы связи и приёма: {hours}",
     "address": "Адрес: {address}",
     "city": "Город: {city}",
     "founded": "Год основания: {year}",
     "legal": "Юридическая информация: {legal}",
     "news": "Новости приюта",
-    "linksLabel": "Разделы сайта"
+    "linksLabel": "Разделы сайта",
+    "socialHeading": "Мы в соцсетях:",
+    "socialLink": "{network} приюта",
+    "addressByAppointment": "Посещение по договорённости"
   },
   "Nav": {
     "label": "Основная навигация",

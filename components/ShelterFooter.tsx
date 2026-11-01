@@ -1,4 +1,5 @@
 import { ShelterContact } from "@/components/ShelterContact";
+import { SocialLinks } from "@/components/SocialLinks";
 import { Link } from "@/i18n/navigation";
 import { getTranslations } from "next-intl/server";
 
@@ -12,7 +13,9 @@ export async function ShelterFooter({
   city,
   foundedYear,
   legalInfo,
-  channelUrl,
+  instagram,
+  viber,
+  telegram,
 }: {
   slug: string;
   name: string;
@@ -23,7 +26,9 @@ export async function ShelterFooter({
   city: string | null;
   foundedYear: number | null;
   legalInfo: string | null;
-  channelUrl: string | null;
+  instagram: string | null;
+  viber: string | null;
+  telegram: string | null;
 }) {
   const t = await getTranslations("Footer");
   const tNav = await getTranslations("Nav");
@@ -52,7 +57,11 @@ export async function ShelterFooter({
             messenger={messenger}
             emptyText={t("noContact")}
           />
-          {hours && <p>{t("hours", { hours })}</p>}
+          <SocialLinks
+            instagram={instagram}
+            viber={viber}
+            telegram={telegram}
+          />
         </section>
         <section
           aria-labelledby="footer-about-heading"
@@ -62,7 +71,10 @@ export async function ShelterFooter({
             {name}
           </h2>
           {city && <p>{t("city", { city })}</p>}
-          {address && <p>{t("address", { address })}</p>}
+          <p>
+            {address ? t("address", { address }) : t("addressByAppointment")}
+          </p>
+          {hours && <p>{t("hours", { hours })}</p>}
           {foundedYear !== null && <p>{t("founded", { year: foundedYear })}</p>}
           {legalInfo && <p>{t("legal", { legal: legalInfo })}</p>}
         </section>
@@ -84,17 +96,6 @@ export async function ShelterFooter({
                 </Link>
               </li>
             ))}
-            {channelUrl && (
-              <li>
-                <a
-                  href={channelUrl}
-                  className="inline-block py-2 font-semibold text-(--accent) hover:underline"
-                  rel="noopener noreferrer"
-                >
-                  {t("news")}
-                </a>
-              </li>
-            )}
           </ul>
         </nav>
       </div>

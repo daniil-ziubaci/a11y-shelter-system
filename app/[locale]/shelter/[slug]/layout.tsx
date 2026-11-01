@@ -44,7 +44,9 @@ export default async function ShelterLayout({
         city={shelter.city}
         foundedYear={shelter.founded_year}
         legalInfo={shelter.legal_info}
-        channelUrl={shelter.public_channel_url}
+        instagram={shelter.instagram_url}
+        viber={shelter.viber_url}
+        telegram={shelter.telegram_url}
       />
     </>
   );
