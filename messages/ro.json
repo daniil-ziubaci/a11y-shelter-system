@@ -69,6 +69,8 @@
     "adoptLabel": "Vreau să-l iau acasă: {name}",
     "help": "Ajută",
     "helpLabel": "Ajută: {name}",
+    "helpTreatment": "Ajută la tratament",
+    "helpTreatmentLabel": "Ajută la tratament: {name}",
     "contactHeading": "Cum luați legătura cu adăpostul",
     "contactIntro": "Sunați sau scrieți unui voluntar al adăpostului.",
     "noContact": "Contactul adăpostului nu este încă indicat.",

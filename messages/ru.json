@@ -69,6 +69,8 @@
     "adoptLabel": "Хочу забрать домой: {name}",
     "help": "Помочь",
     "helpLabel": "Помочь: {name}",
+    "helpTreatment": "Помочь с лечением",
+    "helpTreatmentLabel": "Помочь с лечением: {name}",
     "contactHeading": "Как связаться с приютом",
     "contactIntro": "Позвоните или напишите волонтёру приюта.",
     "noContact": "Контакт приюта пока не указан.",

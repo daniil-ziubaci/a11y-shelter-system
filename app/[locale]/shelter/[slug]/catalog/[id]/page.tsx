@@ -10,7 +10,6 @@ import { getShelter } from "@/lib/getShelter";
 import { getTranslations } from "next-intl/server";
 import { getSexKey } from "@/lib/petLabels";
 import { buildAlternates } from "@/lib/seo";
-import { ShelterContact } from "@/components/ShelterContact";
 import { getSizeKey } from "@/lib/petSizes";
 import {
   PET_STATUS_LOOKING,
@@ -68,6 +67,11 @@ export default async function PetPage({
   const isTreatmentRelated =
     data.needs_treatment_since !== null || data.status === PET_STATUS_TREATMENT;
   const pet = toPet(data);
+  const helpButtonBase =
+    "inline-flex min-h-14 items-center justify-center rounded-full px-7 py-3 text-lg font-semibold";
+  const helpOutlineClass = `${helpButtonBase} border-2 border-(--accent) text-(--accent) hover:bg-(--hover)`;
+  const helpTreatmentClass = `${helpButtonBase} border-2 border-(--danger) bg-(--surface) text-(--danger) hover:bg-(--danger-soft)`;
+
   const t = await getTranslations("Pet");
   const tAge = await getTranslations("Age");
   const tAdoption = await getTranslations("Adoption");
@@ -92,7 +96,7 @@ export default async function PetPage({
             className="object-contain"
           />
         </div>
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-3">
           {(pet.status !== PET_STATUS_LOOKING || pet.needsTreatmentSince) && (
             <div className="flex flex-wrap items-center gap-2">
               <PetBadges
@@ -102,7 +106,7 @@ export default async function PetPage({
             </div>
           )}
           <h1 className="text-4xl font-bold sm:text-5xl">{pet.name}</h1>
-          <dl className="flex flex-wrap gap-3">
+          <dl className="flex flex-wrap gap-2">
             <div className="rounded-lg border border-(--border) bg-(--surface) px-4 py-3">
               <dt className="text-sm text-(--muted)">{t("sex")}</dt>
               <dd className="whitespace-nowrap text-lg font-semibold first-letter:uppercase">
@@ -124,45 +128,42 @@ export default async function PetPage({
               </div>
             )}
           </dl>
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-2 rounded-lg border border-(--border) bg-(--surface) p-4 text-lg">
             <h2 className="text-xl font-bold">{t("aboutTitle")}</h2>
             <p>{pet.description}</p>
-            <h2 className="mt-4 text-xl font-bold">{t("health")}</h2>
+          </div>
+          <div className="flex flex-col gap-2 rounded-lg border border-(--border) bg-(--surface) p-4 text-lg">
+            <h2 className="text-xl font-bold">{t("health")}</h2>
             <p>{pet.health}</p>
           </div>
-          {(pet.status === PET_STATUS_PENDING ||
-            pet.status === PET_STATUS_TREATMENT) && (
+          {pet.status === PET_STATUS_PENDING && (
             <p className="rounded-lg border border-(--border) bg-(--accent-soft) px-4 py-3">
-              {t(
-                pet.status === PET_STATUS_PENDING
-                  ? "adoptPending"
-                  : "adoptBlocked",
-              )}
+              {t("adoptPending")}
             </p>
           )}
-          <div className="flex flex-wrap gap-4">
+          <div className="flex flex-wrap gap-3">
             {pet.status !== PET_STATUS_TREATMENT && (
               <a
-                href="#contact-heading"
+                href="#footer-contact-heading"
                 aria-label={t("adoptLabel", { name: pet.name })}
-                className="inline-flex min-h-11 items-center justify-center rounded-full bg-(--accent) px-5 py-2 font-semibold text-(--accent-contrast) hover:shadow-md"
+                className="inline-flex min-h-14 items-center justify-center rounded-full bg-(--accent) px-7 py-3 text-lg font-semibold text-(--accent-contrast) hover:shadow-md"
               >
                 {t("adopt")}
               </a>
             )}
             {isTreatmentRelated ? (
               <a
-                href="#contact-heading"
-                aria-label={t("helpLabel", { name: pet.name })}
-                className="inline-flex min-h-11 items-center justify-center rounded-full border-2 border-(--accent) px-5 py-2 font-semibold text-(--accent) hover:bg-(--hover)"
+                href="#footer-contact-heading"
+                aria-label={t("helpTreatmentLabel", { name: pet.name })}
+                className={helpTreatmentClass}
               >
-                {t("help")}
+                {t("helpTreatment")}
               </a>
             ) : (
               <Link
                 href={`/shelter/${slug}/needs`}
                 aria-label={t("helpLabel", { name: pet.name })}
-                className="inline-flex min-h-11 items-center justify-center rounded-full border-2 border-(--accent) px-5 py-2 font-semibold text-(--accent) hover:bg-(--hover)"
+                className={helpOutlineClass}
               >
                 {t("help")}
               </Link>
@@ -171,37 +172,6 @@ export default async function PetPage({
         </div>
       </div>
 
-      <section
-        aria-labelledby="contact-heading"
-        className="flex max-w-2xl flex-col gap-2 rounded-lg border border-(--border) bg-(--surface) p-4"
-      >
-        <h2 id="contact-heading" className="text-xl font-bold">
-          {t("contactHeading")}
-        </h2>
-        <p>{t("contactIntro")}</p>
-        <ShelterContact
-          phone={shelter.contact_phone}
-          messenger={shelter.contact_messenger}
-          emptyText={t("noContact")}
-        />
-        {data.needs_treatment_since && (
-          <p>
-            {t("treatmentNote")}{" "}
-            <Link
-              href={`/shelter/${slug}/catalog?mode=treatment`}
-              className="underline inline-block py-2"
-            >
-              {t("treatmentLink")}
-            </Link>
-          </p>
-        )}
-        <Link
-          href={`/shelter/${slug}/about`}
-          className="underline inline-block py-2"
-        >
-          {t("aboutShelter")}
-        </Link>
-      </section>
       {shelter.adoption_info && (
         <section
           aria-labelledby="adoption-heading"

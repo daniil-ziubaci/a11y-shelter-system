@@ -69,6 +69,8 @@
     "adoptLabel": "I want to take {name} home",
     "help": "Help",
     "helpLabel": "Help {name}",
+    "helpTreatment": "Help with treatment",
+    "helpTreatmentLabel": "Help {name} with treatment",
     "contactHeading": "How to contact the shelter",
     "contactIntro": "Call or message a shelter volunteer.",
     "noContact": "The shelter's contact has not been added yet.",
