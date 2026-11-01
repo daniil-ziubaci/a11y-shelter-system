@@ -20,7 +20,7 @@ export function LanguageSwitcher() {
       <details className="relative">
         <summary
           aria-label={`${t("language")}: ${labels[locale]}`}
-          className="flex cursor-pointer list-none items-center gap-1 rounded-md px-2 py-2 text-sm md:text-base font-medium transition-colors duration-200 hover:bg-(--hover) hover:text-(--accent) [&::-webkit-details-marker]:hidden"
+          className="flex min-h-11 cursor-pointer list-none items-center gap-1 rounded-md px-2 py-2 text-sm md:text-base font-medium transition-colors duration-200 hover:bg-(--hover) hover:text-(--accent) [&::-webkit-details-marker]:hidden"
         >
           {labels[locale]}
           <span aria-hidden="true" className="text-xs">
@@ -36,7 +36,7 @@ export function LanguageSwitcher() {
                 lang={code}
                 hrefLang={code}
                 aria-current={locale === code ? "true" : undefined}
-                className={`block px-3 py-2 transition-colors duration-200 hover:text-(--accent) ${locale === code ? "font-bold text-(--accent)" : ""}`}
+                className={`flex min-h-11 items-center px-3 py-2 transition-colors duration-200 hover:text-(--accent) ${locale === code ? "font-bold text-(--accent)" : ""}`}
               >
                 {labels[code]}
               </Link>
