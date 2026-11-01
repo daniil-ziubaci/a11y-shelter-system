@@ -145,8 +145,9 @@
   "Projects": {
     "title": "Proiectele adăpostului „{shelter}”",
     "description": "Proiectele adăpostului „{shelter}”: reparația și izolarea țarcurilor, echipamente. Aflați ce se face acum și ajutați.",
-    "heading": "Proiectele adăpostului",
-    "intro": "Reparații, izolare, echipamente: lucrări care nu se pot rezolva cu o listă de lucruri. Vă mulțumim că ajutați!",
+    "heading": "Proiectele adăpostului „{shelter}”",
+    "intro": "Reparații, izolare, sterilizare și alte lucrări care nu pot fi acoperite cu o listă de lucruri. Vă mulțumim că ajutați!",
+    "pinnedBadge": "program permanent",
     "ongoingHeading": "În desfășurare",
     "completedHeading": "Finalizate",
     "completedOn": "Finalizat pe {date}",

@@ -35,7 +35,9 @@ export default async function ShelterProjectsPage({
   const supabase = await createClient();
   const { data: projects, error } = await supabase
     .from("projects")
-    .select("id, title, description, goal, status, stage, completed_at")
+    .select(
+      "id, title, description, goal, status, stage, completed_at, is_pinned",
+    )
     .eq("shelter_id", shelter.id)
     .order("completed_at", { ascending: false, nullsFirst: false })
     .order("created_at", { ascending: false });
@@ -48,9 +50,10 @@ export default async function ShelterProjectsPage({
     );
   }
 
-  const ongoing = (projects ?? []).filter(
-    (p) => p.status === PROJECT_STATUS_ONGOING,
-  );
+  const ongoing = (projects ?? [])
+    .filter((p) => p.status === PROJECT_STATUS_ONGOING)
+    .sort((a, b) => Number(b.is_pinned) - Number(a.is_pinned));
+
   const completed = (projects ?? []).filter(
     (p) => p.status === PROJECT_STATUS_COMPLETED,
   );
@@ -60,12 +63,19 @@ export default async function ShelterProjectsPage({
       key={project.id}
       className="flex flex-col gap-2 rounded-lg border border-(--border-strong) bg-(--surface) p-4"
     >
+      {project.is_pinned && (
+        <p className="self-start rounded-full bg-(--accent-soft) px-3 py-1 text-sm font-medium text-(--accent)">
+          {t("pinnedBadge")}
+        </p>
+      )}
+
       <h3 className="text-xl font-bold">{project.title}</h3>
       <p className="whitespace-pre-line">{project.description}</p>
       {project.goal && (
         <p className="text-(--muted)">{t("goal", { goal: project.goal })}</p>
       )}
       {project.status === PROJECT_STATUS_ONGOING &&
+        !project.is_pinned &&
         getStageKey(project.stage) && (
           <p className="font-medium">
             {t("stageLabel", {
@@ -97,7 +107,9 @@ export default async function ShelterProjectsPage({
 
   return (
     <main className="w-full flex flex-col gap-6 p-4 max-w-5xl mx-auto">
-      <h1 className="text-3xl font-bold text-center">{t("heading")}</h1>
+      <h1 className="text-3xl font-bold text-center">
+        {t("heading", { shelter: shelter.name })}
+      </h1>
       <p className="-mt-3 text-center text-lg text-(--muted)">{t("intro")}</p>
       {!projects || projects.length === 0 ? (
         <p>{t("none")}</p>

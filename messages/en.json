@@ -145,8 +145,9 @@
   "Projects": {
     "title": "Projects of “{shelter}” shelter",
     "description": "Projects of “{shelter}” shelter: enclosure repairs and insulation, equipment. See what is happening now and help.",
-    "heading": "Shelter projects",
-    "intro": "Repairs, insulation, equipment: work that a list of supplies cannot cover. Thank you for helping!",
+    "heading": "Projects of the “{shelter}” shelter",
+    "intro": "Repairs, insulation, sterilization and other work that cannot be covered by a list of items. Thank you for helping!",
+    "pinnedBadge": "permanent program",
     "ongoingHeading": "In progress",
     "completedHeading": "Completed",
     "completedOn": "Completed on {date}",
