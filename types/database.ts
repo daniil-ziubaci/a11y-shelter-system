@@ -270,12 +270,15 @@ export type Database = {
           currency: string
           founded_year: number | null
           id: string
+          instagram_url: string | null
           legal_info: string | null
           name: string
           photo_alt: string | null
           photo_path: string | null
           public_channel_url: string | null
           slug: string
+          telegram_url: string | null
+          viber_url: string | null
           volunteer_info: string | null
         }
         Insert: {
@@ -290,12 +293,15 @@ export type Database = {
           currency: string
           founded_year?: number | null
           id?: string
+          instagram_url?: string | null
           legal_info?: string | null
           name: string
           photo_alt?: string | null
           photo_path?: string | null
           public_channel_url?: string | null
           slug: string
+          telegram_url?: string | null
+          viber_url?: string | null
           volunteer_info?: string | null
         }
         Update: {
@@ -310,12 +316,15 @@ export type Database = {
           currency?: string
           founded_year?: number | null
           id?: string
+          instagram_url?: string | null
           legal_info?: string | null
           name?: string
           photo_alt?: string | null
           photo_path?: string | null
           public_channel_url?: string | null
           slug?: string
+          telegram_url?: string | null
+          viber_url?: string | null
           volunteer_info?: string | null
         }
         Relationships: []
