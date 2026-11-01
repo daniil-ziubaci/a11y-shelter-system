@@ -58,7 +58,7 @@ export function PetCard({
             <dd>{formatAge(pet.ageInMonths, pet.isAgeApproximate, tAge)}</dd>
           </div>
         </dl>
-        <div className="flex items-end gap-2">
+        <div className="flex flex-wrap items-end gap-x-2 gap-y-1">
           {sizeKey && (
             <dl className="flex gap-1 text-(--muted)">
               <dt>{t("size")}</dt>
@@ -68,7 +68,7 @@ export function PetCard({
           <Link
             href={`/shelter/${slug}/catalog/${pet.id}`}
             aria-label={t("moreLabel", { name: pet.name })}
-            className="ml-auto font-medium transition-colors duration-200 group-hover:text-(--accent) group-focus-within:text-(--accent) motion-reduce:transition-none after:absolute after:inset-0"
+            className="ml-auto whitespace-nowrap font-medium transition-colors duration-200 group-hover:text-(--accent) group-focus-within:text-(--accent) motion-reduce:transition-none after:absolute after:inset-0"
           >
             {t("more")}
             <span
