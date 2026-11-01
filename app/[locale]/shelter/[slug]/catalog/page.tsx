@@ -59,8 +59,19 @@ export default async function Catalog({
   }>;
 }) {
   const { slug } = await params;
-  const { species, sex, age, size, mode, group, q } = await searchParams;
+  const {
+    species,
+    sex: rawSex,
+    age: rawAge,
+    size: rawSize,
+    mode,
+    group,
+    q,
+  } = await searchParams;
   const isTreatment = mode === "treatment";
+  const sex = isTreatment ? undefined : rawSex;
+  const age = isTreatment ? undefined : rawAge;
+  const size = isTreatment ? undefined : rawSize;
   const isBlocked = isTreatment && group === "blocked";
   const shelter = await getShelter(slug);
   const t = await getTranslations("Catalog");
@@ -169,6 +180,12 @@ export default async function Catalog({
   const filterLink =
     "inline-flex min-h-11 items-center rounded-full border border-transparent bg-(--hover) px-3 py-2 transition-colors duration-200 hover:border-(--accent) motion-reduce:transition-none aria-current:border-(--accent) aria-current:bg-(--accent) aria-current:font-semibold aria-current:text-(--accent-contrast)";
 
+  const searchPart =
+    (search ? `&q=${encodeURIComponent(search)}` : "") +
+    (species === "cat" || species === "dog" ? `&species=${species}` : "");
+  const treatmentHelpHref = `/shelter/${slug}/catalog?mode=treatment${searchPart}`;
+  const treatmentBlockedHref = `/shelter/${slug}/catalog?mode=treatment&group=blocked${searchPart}`;
+
   return (
     <main className="w-full flex flex-col gap-6 p-4 max-w-5xl mx-auto">
       <h1 className="text-3xl font-bold text-center">
@@ -182,30 +199,6 @@ export default async function Catalog({
         <p className="-mt-3 text-center text-lg text-(--muted)">
           {t("subheading")}
         </p>
-      )}
-      {isTreatment && (
-        <nav aria-label={t("treatmentGroupsLabel")}>
-          <ul className="flex flex-wrap gap-2">
-            <li>
-              <Link
-                href={`/shelter/${slug}/catalog?mode=treatment`}
-                aria-current={!isBlocked ? "true" : undefined}
-                className={filterLink}
-              >
-                {t("treatmentGroupHelp")}
-              </Link>
-            </li>
-            <li>
-              <Link
-                href={`/shelter/${slug}/catalog?mode=treatment&group=blocked`}
-                aria-current={isBlocked ? "true" : undefined}
-                className={filterLink}
-              >
-                {t("treatmentGroupBlocked")}
-              </Link>
-            </li>
-          </ul>
-        </nav>
       )}
       <div className="flex flex-col gap-4 rounded-2xl border border-(--border) bg-(--surface) p-4">
         <form
@@ -243,6 +236,7 @@ export default async function Catalog({
           {isTreatment && <input type="hidden" name="mode" value="treatment" />}
           {isBlocked && <input type="hidden" name="group" value="blocked" />}
         </form>
+        
         <nav aria-label={t("filtersLabel")}>
           <div className="flex flex-col gap-4">
             <fieldset className="min-w-0">
@@ -273,110 +267,151 @@ export default async function Catalog({
                 </Link>
               </div>
             </fieldset>
-            <fieldset className="min-w-0">
-              <legend className="mb-2 text-sm font-semibold text-(--muted) sm:float-left sm:mb-0 sm:w-24 sm:pt-2.5 sm:text-base">
-                {t("sex")}
-              </legend>
-              <div className="flex flex-wrap gap-2">
-                <Link
-                  href={buildHref(species, undefined, age)}
-                  aria-current={sex === undefined ? "true" : undefined}
-                  className={filterLink}
-                >
-                  {t("all")}
-                </Link>
-                <Link
-                  href={buildHref(species, "male", age)}
-                  aria-current={sex === "male" ? "true" : undefined}
-                  className={filterLink}
-                >
-                  {t("males")}
-                </Link>
-                <Link
-                  href={buildHref(species, "female", age)}
-                  aria-current={sex === "female" ? "true" : undefined}
-                  className={filterLink}
-                >
-                  {t("females")}
-                </Link>
-              </div>
-            </fieldset>
-            <fieldset className="min-w-0">
-              <legend className="mb-2 text-sm font-semibold text-(--muted) sm:float-left sm:mb-0 sm:w-24 sm:pt-2.5 sm:text-base">
-                {t("age")}
-              </legend>
-              <div className="flex flex-wrap gap-2">
-                <Link
-                  href={buildHref(species, sex, undefined)}
-                  aria-current={age === undefined ? "true" : undefined}
-                  className={filterLink}
-                >
-                  {t("all")}
-                </Link>
-                <Link
-                  href={buildHref(species, sex, "young")}
-                  aria-current={age === "young" ? "true" : undefined}
-                  className={filterLink}
-                >
-                  {t("young")}
-                </Link>
-                <Link
-                  href={buildHref(species, sex, "adult")}
-                  aria-current={age === "adult" ? "true" : undefined}
-                  className={filterLink}
-                >
-                  {t("adult")}
-                </Link>
-                <Link
-                  href={buildHref(species, sex, "senior")}
-                  aria-current={age === "senior" ? "true" : undefined}
-                  className={filterLink}
-                >
-                  {t("senior")}
-                </Link>
-              </div>
-            </fieldset>
-            {species === "dog" && (
+            {isTreatment && (
               <fieldset className="min-w-0">
                 <legend className="mb-2 text-sm font-semibold text-(--muted) sm:float-left sm:mb-0 sm:w-24 sm:pt-2.5 sm:text-base">
-                  {t("size")}
+                  {t("treatmentLegend")}
                 </legend>
                 <div className="flex flex-wrap gap-2">
                   <Link
-                    href={buildHref(species, sex, age, null)}
-                    aria-current={!size ? "true" : undefined}
+                    href={treatmentHelpHref}
+                    aria-current={!isBlocked ? "true" : undefined}
                     className={filterLink}
                   >
-                    {t("all")}
+                    {t("treatmentGroupHelp")}
                   </Link>
                   <Link
-                    href={buildHref(species, sex, age, "small")}
-                    aria-current={size === "small" ? "true" : undefined}
+                    href={treatmentBlockedHref}
+                    aria-current={isBlocked ? "true" : undefined}
                     className={filterLink}
                   >
-                    {t("sizeSmall")}
-                  </Link>
-                  <Link
-                    href={buildHref(species, sex, age, "medium")}
-                    aria-current={size === "medium" ? "true" : undefined}
-                    className={filterLink}
-                  >
-                    {t("sizeMedium")}
-                  </Link>
-                  <Link
-                    href={buildHref(species, sex, age, "large")}
-                    aria-current={size === "large" ? "true" : undefined}
-                    className={filterLink}
-                  >
-                    {t("sizeLarge")}
+                    {t("treatmentGroupBlocked")}
                   </Link>
                 </div>
               </fieldset>
             )}
+            {!isTreatment && (
+              <>
+                <fieldset className="min-w-0">
+                  <legend className="mb-2 text-sm font-semibold text-(--muted) sm:float-left sm:mb-0 sm:w-24 sm:pt-2.5 sm:text-base">
+                    {t("sex")}
+                  </legend>
+                  <div className="flex flex-wrap gap-2">
+                    <Link
+                      href={buildHref(species, undefined, age)}
+                      aria-current={sex === undefined ? "true" : undefined}
+                      className={filterLink}
+                    >
+                      {t("all")}
+                    </Link>
+                    <Link
+                      href={buildHref(species, "male", age)}
+                      aria-current={sex === "male" ? "true" : undefined}
+                      className={filterLink}
+                    >
+                      {t("males")}
+                    </Link>
+                    <Link
+                      href={buildHref(species, "female", age)}
+                      aria-current={sex === "female" ? "true" : undefined}
+                      className={filterLink}
+                    >
+                      {t("females")}
+                    </Link>
+                  </div>
+                </fieldset>
+                <fieldset className="min-w-0">
+                  <legend className="mb-2 text-sm font-semibold text-(--muted) sm:float-left sm:mb-0 sm:w-24 sm:pt-2.5 sm:text-base">
+                    {t("age")}
+                  </legend>
+                  <div className="flex flex-wrap gap-2">
+                    <Link
+                      href={buildHref(species, sex, undefined)}
+                      aria-current={age === undefined ? "true" : undefined}
+                      className={filterLink}
+                    >
+                      {t("all")}
+                    </Link>
+                    <Link
+                      href={buildHref(species, sex, "young")}
+                      aria-current={age === "young" ? "true" : undefined}
+                      className={filterLink}
+                    >
+                      {t("young")}
+                    </Link>
+                    <Link
+                      href={buildHref(species, sex, "adult")}
+                      aria-current={age === "adult" ? "true" : undefined}
+                      className={filterLink}
+                    >
+                      {t("adult")}
+                    </Link>
+                    <Link
+                      href={buildHref(species, sex, "senior")}
+                      aria-current={age === "senior" ? "true" : undefined}
+                      className={filterLink}
+                    >
+                      {t("senior")}
+                    </Link>
+                  </div>
+                </fieldset>
+                {species === "dog" && (
+                  <fieldset className="min-w-0">
+                    <legend className="mb-2 text-sm font-semibold text-(--muted) sm:float-left sm:mb-0 sm:w-24 sm:pt-2.5 sm:text-base">
+                      {t("size")}
+                    </legend>
+                    <div className="flex flex-wrap gap-2">
+                      <Link
+                        href={buildHref(species, sex, age, null)}
+                        aria-current={!size ? "true" : undefined}
+                        className={filterLink}
+                      >
+                        {t("all")}
+                      </Link>
+                      <Link
+                        href={buildHref(species, sex, age, "small")}
+                        aria-current={size === "small" ? "true" : undefined}
+                        className={filterLink}
+                      >
+                        {t("sizeSmall")}
+                      </Link>
+                      <Link
+                        href={buildHref(species, sex, age, "medium")}
+                        aria-current={size === "medium" ? "true" : undefined}
+                        className={filterLink}
+                      >
+                        {t("sizeMedium")}
+                      </Link>
+                      <Link
+                        href={buildHref(species, sex, age, "large")}
+                        aria-current={size === "large" ? "true" : undefined}
+                        className={filterLink}
+                      >
+                        {t("sizeLarge")}
+                      </Link>
+                    </div>
+                  </fieldset>
+                )}
+              </>
+            )}
           </div>
         </nav>
       </div>
-      <p role="status" className="-mb-1 pt-1 text-(--muted)">
+      {isTreatment && (
+        <p className="max-w-prose text-lg">
+          {t.rich(isBlocked ? "treatmentIntroBlocked" : "treatmentIntroHelp", {
+            link: (chunks) => (
+              <Link
+                href="#footer-contact-heading"
+                className="font-semibold text-(--accent) underline underline-offset-2"
+              >
+                {chunks}
+              </Link>
+            ),
+          })}
+        </p>
+      )}
+      <p role="status" className="-mb-1 text-(--muted)">
         {pets.length === 0 ? t("none") : t("found", { count: pets.length })}
       </p>
       {pets.length > 0 && (
