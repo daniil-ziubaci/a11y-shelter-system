@@ -278,7 +278,6 @@ export type Database = {
           name: string
           photo_alt: string | null
           photo_path: string | null
-          public_channel_url: string | null
           slug: string
           telegram_url: string | null
           viber_url: string | null
@@ -300,7 +299,6 @@ export type Database = {
           name: string
           photo_alt?: string | null
           photo_path?: string | null
-          public_channel_url?: string | null
           slug: string
           telegram_url?: string | null
           viber_url?: string | null
@@ -322,7 +320,6 @@ export type Database = {
           name?: string
           photo_alt?: string | null
           photo_path?: string | null
-          public_channel_url?: string | null
           slug?: string
           telegram_url?: string | null
           viber_url?: string | null
