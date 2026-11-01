@@ -115,7 +115,12 @@
       "adopted": "adoptat",
       "removed": "retras din evidență"
     },
-    "sexValue": { "boy": "băiat", "girl": "fată" }
+    "sexValue": { "boy": "băiat", "girl": "fată" },
+    "breadcrumbLabel": "Calea de navigare",
+    "breadcrumbCatalog": "Catalog",
+    "breadcrumbTreatment": "Tratament",
+    "otherTreatmentHeading": "Și alte animale au nevoie de ajutor",
+    "toTreatment": "Toate animalele care au nevoie de ajutor pentru tratament"
   },
   "Age": {
     "months": "{count, plural, one {# lună} few {# luni} other {# de luni}}",

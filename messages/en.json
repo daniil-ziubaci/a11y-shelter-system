@@ -115,7 +115,12 @@
       "adopted": "adopted",
       "removed": "withdrawn"
     },
-    "sexValue": { "boy": "boy", "girl": "girl" }
+    "sexValue": { "boy": "boy", "girl": "girl" },
+    "breadcrumbLabel": "Breadcrumb",
+    "breadcrumbCatalog": "Catalog",
+    "breadcrumbTreatment": "Treatment",
+    "otherTreatmentHeading": "Other animals need help too",
+    "toTreatment": "Everyone who needs help with treatment"
   },
   "Age": {
     "months": "{count, plural, one {# month} other {# months}}",

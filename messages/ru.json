@@ -115,7 +115,12 @@
       "adopted": "пристроен",
       "removed": "снят с учёта"
     },
-    "sexValue": { "boy": "мальчик", "girl": "девочка" }
+    "sexValue": { "boy": "мальчик", "girl": "девочка" },
+    "breadcrumbLabel": "Хлебные крошки",
+    "breadcrumbCatalog": "Каталог",
+    "breadcrumbTreatment": "Лечение",
+    "otherTreatmentHeading": "Другим животным тоже нужна помощь",
+    "toTreatment": "Все, кому нужна помощь с лечением"
   },
   "Age": {
     "months": "{count, plural, one {# месяц} few {# месяца} many {# месяцев} other {# месяца}}",

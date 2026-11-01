@@ -78,22 +78,38 @@ export default async function PetPage({
   const tAge = await getTranslations("Age");
   const tAdoption = await getTranslations("Adoption");
   const sizeKey = pet.size ? getSizeKey(pet.size) : undefined;
-  const otherPets = await getOtherPets(shelter.id, id);
+  const treatmentPets = isTreatmentRelated
+    ? await getOtherPets(shelter.id, id, true)
+    : [];
+  const showTreatmentBlock = treatmentPets.length > 0;
+  const otherPets = showTreatmentBlock
+    ? treatmentPets
+    : await getOtherPets(shelter.id, id);
 
   return (
     <main className="w-full flex flex-col gap-6 p-4 max-w-5xl mx-auto">
-      <Link
-        href={`/shelter/${slug}/catalog`}
-        className="group inline-flex min-h-11 items-center gap-1.5 self-start font-medium text-(--accent) transition-colors hover:text-(--foreground) motion-reduce:transition-none"
-      >
-        <span
-          aria-hidden="true"
-          className="inline-block transition-transform duration-200 group-hover:-translate-x-1 motion-reduce:transition-none"
-        >
-          ←
-        </span>
-        {t("back")}
-      </Link>
+      <nav aria-label={t("breadcrumbLabel")}>
+        <ol className="flex flex-wrap items-center gap-x-2 text-base">
+          <li className="flex items-center gap-x-2">
+            <Link
+              href={
+                isTreatmentRelated
+                  ? `/shelter/${slug}/catalog?mode=treatment`
+                  : `/shelter/${slug}/catalog`
+              }
+              className="inline-flex items-center py-1 text-(--muted) transition-colors hover:text-(--foreground) motion-reduce:transition-none"
+            >
+              {isTreatmentRelated
+                ? t("breadcrumbTreatment")
+                : t("breadcrumbCatalog")}
+            </Link>
+            <span aria-hidden="true">/</span>
+          </li>
+          <li aria-current="page" className="font-semibold text-(--accent)">
+            {pet.name}
+          </li>
+        </ol>
+      </nav>
       <div className="grid gap-6 lg:grid-cols-2 lg:items-start">
         <div className="relative w-full aspect-4/3 overflow-hidden rounded-lg border border-(--border) bg-(--surface)">
           <Image
@@ -199,13 +215,19 @@ export default async function PetPage({
         >
           <div className="flex flex-wrap items-baseline justify-between gap-x-4">
             <h2 id="other-pets-heading" className="text-2xl font-bold">
-              {t("otherHeading")}
+              {showTreatmentBlock
+                ? t("otherTreatmentHeading")
+                : t("otherHeading")}
             </h2>
             <Link
-              href={`/shelter/${slug}/catalog`}
+              href={
+                showTreatmentBlock
+                  ? `/shelter/${slug}/catalog?mode=treatment`
+                  : `/shelter/${slug}/catalog`
+              }
               className="group inline-flex min-h-11 items-center gap-1.5 font-medium text-(--accent) transition-colors hover:text-(--foreground) motion-reduce:transition-none"
             >
-              {t("toCatalog")}
+              {showTreatmentBlock ? t("toTreatment") : t("toCatalog")}
               <span
                 aria-hidden="true"
                 className="inline-block transition-transform duration-200 group-hover:translate-x-1 motion-reduce:transition-none"
