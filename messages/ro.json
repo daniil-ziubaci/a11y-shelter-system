@@ -4,7 +4,12 @@
     "contactIntro": "Sună sau scrie voluntarului adăpostului.",
     "noContact": "Datele de contact ale adăpostului nu sunt încă indicate.",
     "hours": "Program de contact: {hours}",
-    "address": "Adresă: {address}"
+    "address": "Adresă: {address}",
+    "city": "Oraș: {city}",
+    "founded": "Anul înființării: {year}",
+    "legal": "Informații juridice: {legal}",
+    "news": "Noutăți despre adăpost",
+    "linksLabel": "Secțiunile site-ului"
   },
   "Nav": {
     "label": "Navigare principală",
@@ -118,7 +123,19 @@
     "messenger": "Scrieți adăpostului pe messenger",
     "noContact": "Contactul adăpostului nu este încă indicat.",
     "news": "Noutățile adăpostului",
-    "findFriend": "Găsiți un prieten în catalog"
+    "findFriend": "Găsiți un prieten în catalog",
+    "joinCallHeading": "Poți schimba o viață",
+    "joinAdoptTitle": "Adoptă un prieten",
+    "joinAdoptText": "Pentru un animal care așteaptă într-un țarc, casa ta înseamnă o lume întreagă. Îți vom povesti despre caracterul fiecăruia și te vom ajuta să te pregătești pentru întâlnire.",
+    "joinHelpTitle": "Ajută fără să adopți",
+    "joinHelpText": "Unii au nevoie de tratament, alții de un adăpost cald pentru iarnă, iar alții de un sac de hrană. Aruncă o privire la <needs>lista de nevoi</needs>, la secțiunea <treatment>tratament</treatment> și la <projects>proiectele</projects> adăpostului: orice ajutor, mare sau mic, ajunge la animale.",
+    "joinVolunteerTitle": "Devino voluntar",
+    "joinVolunteerText": "Adăpostul are nevoie nu doar de hrană și tratament, ci și de mâini. Hrănirea și îngrijirea animalelor, plimbarea câinilor, curățenia în țarcuri: pentru animale, asta înseamnă o zi în care cineva a avut grijă de ele.",
+    "joinHeading": "Alătură-te nouă",
+    "joinDefault": "Sună-ne sau scrie-ne: împreună putem ajuta și mai multe animale.",
+    "joinFind": "Găsește un prieten",
+    "joinHelp": "Ajută",
+    "joinVolunteer": "Devino voluntar"
   },
   "Projects": {
     "title": "Proiectele adăpostului „{shelter}”",

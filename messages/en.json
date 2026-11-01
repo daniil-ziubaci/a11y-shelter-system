@@ -4,7 +4,12 @@
     "contactIntro": "Call or write to the shelter volunteer.",
     "noContact": "The shelter contact details are not given yet.",
     "hours": "Contact hours: {hours}",
-    "address": "Address: {address}"
+    "address": "Address: {address}",
+    "city": "City: {city}",
+    "founded": "Founded: {year}",
+    "legal": "Legal information: {legal}",
+    "news": "Shelter news",
+    "linksLabel": "Site sections"
   },
   "Nav": {
     "label": "Main navigation",
@@ -118,7 +123,19 @@
     "messenger": "Message the shelter on a messenger",
     "noContact": "No contact has been provided for the shelter yet.",
     "news": "Shelter news",
-    "findFriend": "Find a friend in the catalog"
+    "findFriend": "Find a friend in the catalog",
+    "joinCallHeading": "You can change a life",
+    "joinAdoptTitle": "Take a friend home",
+    "joinAdoptText": "For an animal waiting in a pen, your home is a whole world. We will tell you about each animal's character and help you prepare for the meeting.",
+    "joinHelpTitle": "Help without adopting",
+    "joinHelpText": "Some need treatment, some need a warm enclosure for winter, and some need a bag of food. Take a look at the <needs>list of needs</needs>, the <treatment>treatment</treatment> section and the shelter's <projects>projects</projects>: any help, big or small, reaches the animals.",
+    "joinVolunteerTitle": "Become a volunteer",
+    "joinVolunteerText": "The shelter needs more than food and treatment: it needs hands. Feeding and caring for the animals, walking dogs, cleaning enclosures: for the animals it is a day when someone took care of them.",
+    "joinHeading": "Join us",
+    "joinDefault": "Call or write to us: together we can help even more animals.",
+    "joinFind": "Find a friend",
+    "joinHelp": "Help",
+    "joinVolunteer": "Become a volunteer"
   },
   "Projects": {
     "title": "Projects of “{shelter}” shelter",

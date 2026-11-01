@@ -41,6 +41,10 @@ export default async function ShelterLayout({
         messenger={shelter.contact_messenger}
         hours={shelter.contact_hours}
         address={shelter.address}
+        city={shelter.city}
+        foundedYear={shelter.founded_year}
+        legalInfo={shelter.legal_info}
+        channelUrl={shelter.public_channel_url}
       />
     </>
   );

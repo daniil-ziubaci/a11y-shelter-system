@@ -1,10 +1,11 @@
-import { ShelterContact } from "@/components/ShelterContact";
 import { Link } from "@/i18n/navigation";
 import { getShelter } from "@/lib/getShelter";
 import { buildAlternates } from "@/lib/seo";
 import { buildShelterJsonLd } from "@/lib/shelterJsonLd";
+import { createClient } from "@/lib/supabase/server";
 import { truncateText } from "@/lib/truncateText";
 import { getTranslations } from "next-intl/server";
+import Image from "next/image";
 
 export async function generateMetadata({
   params,
@@ -36,6 +37,13 @@ export default async function ShelterAboutPage({
   const shelter = await getShelter(slug);
   const t = await getTranslations("About");
   const tAdoption = await getTranslations("Adoption");
+  const supabase = await createClient();
+  const photoUrl =
+    shelter.photo_path && shelter.photo_alt
+      ? supabase.storage.from("pet-photos").getPublicUrl(shelter.photo_path)
+          .data.publicUrl
+      : null;
+  const aboutParagraphs = shelter.about?.split(/\n{2,}/) ?? [];
   const jsonLd = JSON.stringify(
     buildShelterJsonLd(
       shelter,
@@ -49,43 +57,40 @@ export default async function ShelterAboutPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: jsonLd }}
       />
-      <h1 className="text-3xl font-bold">{shelter.name}</h1>
-      {shelter.about && <p>{shelter.about}</p>}
-      <dl className="flex flex-col gap-2">
-        {shelter.founded_year && (
-          <div className="flex gap-1">
-            <dt>{t("founded")}</dt>
-            <dd>{shelter.founded_year}</dd>
+
+      <section
+        aria-labelledby="about-heading"
+        className="grid gap-6 lg:grid-cols-2 lg:items-start"
+      >
+        {photoUrl && (
+          <div className="relative aspect-4/3 overflow-hidden rounded-2xl border border-(--border) bg-(--surface)">
+            <Image
+              src={photoUrl}
+              alt={shelter.photo_alt ?? ""}
+              fill
+              sizes="(min-width: 1024px) 50vw, 100vw"
+              className="object-cover"
+            />
           </div>
         )}
-        {shelter.city && (
-          <div className="flex gap-1">
-            <dt>{t("city")}</dt>
-            <dd>{shelter.city}</dd>
-          </div>
-        )}
-        <div className="flex gap-1">
-          <dt>{t("address")}</dt>
-          <dd>{shelter.address ?? t("addressByAppointment")}</dd>
+        <div className="flex flex-col gap-4 rounded-2xl border border-(--border) bg-(--surface) p-6">
+          <h1 id="about-heading" className="text-2xl font-bold">
+            {shelter.name}
+          </h1>
+          {shelter.about && (
+            aboutParagraphs.map((paragraph, index) => (
+              <p key={index}>
+                {paragraph}
+              </p>
+            ))
+          )}
         </div>
-        {shelter.contact_hours && (
-          <div className="flex gap-1">
-            <dt>{t("hours")}</dt>
-            <dd>{shelter.contact_hours}</dd>
-          </div>
-        )}
-        {shelter.legal_info && (
-          <div className="flex gap-1">
-            <dt>{t("legal")}</dt>
-            <dd>{shelter.legal_info}</dd>
-          </div>
-        )}
-      </dl>
+      </section>
 
       {shelter.adoption_info && (
         <section
           aria-labelledby="adoption-heading"
-          className="flex flex-col gap-2"
+          className="flex max-w-3xl flex-col gap-2"
         >
           <h2 id="adoption-heading" className="text-xl font-bold">
             {tAdoption("heading")}
@@ -95,33 +100,83 @@ export default async function ShelterAboutPage({
       )}
 
       <section
-        aria-labelledby="contact-heading"
-        className="flex flex-col gap-2"
+        aria-labelledby="join-call-heading"
+        className="flex flex-col gap-6 rounded-2xl bg-(--accent-soft) p-6"
       >
-        <h2 id="contact-heading" className="text-xl font-bold">
-          {t("contactHeading")}
+        <h2 id="join-call-heading" className="text-center text-2xl font-bold">
+          {t("joinCallHeading")}
         </h2>
+        <div className="grid gap-6 md:grid-cols-3">
+          <div className="flex flex-col gap-2">
+            <h3 className="text-lg font-bold">{t("joinAdoptTitle")}</h3>
+            <p>{t("joinAdoptText")}</p>
+          </div>
+          <div className="flex flex-col gap-2">
+            <h3 className="text-lg font-bold">{t("joinHelpTitle")}</h3>
+            <p>
+              {t.rich("joinHelpText", {
+                needs: (chunks) => (
+                  <Link
+                    href={`/shelter/${slug}/needs`}
+                    className="font-semibold text-(--accent) underline"
+                  >
+                    {chunks}
+                  </Link>
+                ),
+                treatment: (chunks) => (
+                  <Link
+                    href={`/shelter/${slug}/catalog?mode=treatment`}
+                    className="font-semibold text-(--accent) underline"
+                  >
+                    {chunks}
+                  </Link>
+                ),
+                projects: (chunks) => (
+                  <Link
+                    href={`/shelter/${slug}/projects`}
+                    className="font-semibold text-(--accent) underline"
+                  >
+                    {chunks}
+                  </Link>
+                ),
+              })}
+            </p>
+          </div>
+          <div className="flex flex-col gap-2">
+            <h3 className="text-lg font-bold">{t("joinVolunteerTitle")}</h3>
+            <p>{t("joinVolunteerText")}</p>
+          </div>
+        </div>
+      </section>
 
-        <ShelterContact
-          phone={shelter.contact_phone}
-          messenger={shelter.contact_messenger}
-          emptyText={t("noContact")}
-        />
-        {shelter.public_channel_url && (
-          <a
-            href={shelter.public_channel_url}
-            className="underline inline-block py-2"
-            rel="noopener noreferrer"
+      <section
+        aria-labelledby="join-heading"
+        className="flex flex-col gap-4 rounded-2xl border border-(--border) bg-(--surface) p-6 md:items-center md:text-center"
+      >
+        <h2 id="join-heading" className="text-center text-2xl font-bold">
+          {t("joinHeading")}
+        </h2>
+        <p className="max-w-3xl whitespace-pre-line">{t("joinDefault")}</p>
+        <div className="flex flex-wrap gap-3 md:justify-center">
+          <Link
+            href={`/shelter/${slug}/catalog`}
+            className="inline-flex min-h-11 items-center justify-center rounded-full bg-(--accent) px-5 py-2 font-semibold text-(--accent-contrast) hover:shadow-md"
           >
-            {t("news")}
+            {t("joinFind")}
+          </Link>
+          <Link
+            href={`/shelter/${slug}/needs`}
+            className="inline-flex min-h-11 items-center justify-center rounded-full bg-(--accent) px-5 py-2 font-semibold text-(--accent-contrast) hover:shadow-md"
+          >
+            {t("joinHelp")}
+          </Link>
+          <a
+            href="#footer-contact-heading"
+            className="inline-flex min-h-11 items-center justify-center rounded-full bg-(--accent) px-5 py-2 font-semibold text-(--accent-contrast) hover:shadow-md"
+          >
+            {t("joinVolunteer")}
           </a>
-        )}
-        <Link
-          href={`/shelter/${slug}/catalog`}
-          className="underline inline-block py-2"
-        >
-          {t("findFriend")}
-        </Link>
+        </div>
       </section>
     </main>
   );
