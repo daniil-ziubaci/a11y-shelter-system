@@ -6,21 +6,26 @@ import { Link } from "@/i18n/navigation";
 import { getTranslations } from "next-intl/server";
 import { buildAlternates } from "@/lib/seo";
 import { getSizeFromKey } from "@/lib/petSizes";
-import {
-  getStatusRank,
-  PET_STATUS_TREATMENT,
-  PUBLIC_PET_STATUSES,
-} from "@/lib/petStatuses";
+import { PET_STATUS_TREATMENT, PUBLIC_PET_STATUSES } from "@/lib/petStatuses";
+import { CATALOG_PAGE_SIZE, parsePage } from "@/lib/parsePage";
+import { redirect } from "@/i18n/navigation";
+import { Fragment } from "react";
 
 export async function generateMetadata({
   params,
   searchParams,
 }: {
   params: Promise<{ slug: string; locale: string }>;
-  searchParams: Promise<{ mode?: string; group?: string; q?: string }>;
+  searchParams: Promise<{
+    mode?: string;
+    group?: string;
+    q?: string;
+    page?: string;
+  }>;
 }) {
   const { slug, locale } = await params;
-  const { mode, group, q } = await searchParams;
+  const { mode, group, q, page: rawPage } = await searchParams;
+  const page = parsePage(rawPage);
   const isTreatment = mode === "treatment";
   const isBlocked = isTreatment && group === "blocked";
   const shelter = await getShelter(slug);
@@ -35,10 +40,17 @@ export async function generateMetadata({
       ? "?mode=treatment"
       : "";
 
+  const pageQuery = page > 1 ? `${query ? "&" : "?"}page=${page}` : "";
+  const baseTitle = t(titleKey, { shelter: shelter.name });
+
   return {
-    title: t(titleKey, { shelter: shelter.name }),
+    title:
+      page > 1 ? t("titleWithPage", { title: baseTitle, page }) : baseTitle,
     description: t(descriptionKey, { shelter: shelter.name }),
-    alternates: buildAlternates(locale, `/shelter/${slug}/catalog${query}`),
+    alternates: buildAlternates(
+      locale,
+      `/shelter/${slug}/catalog${query}${pageQuery}`,
+    ),
     ...(q?.trim() ? { robots: { index: false, follow: true } } : {}),
   };
 }
@@ -47,7 +59,7 @@ export default async function Catalog({
   params,
   searchParams,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ slug: string; locale: string }>;
   searchParams: Promise<{
     species?: string;
     sex?: string;
@@ -56,9 +68,10 @@ export default async function Catalog({
     mode?: string;
     group?: string;
     q?: string;
+    page?: string;
   }>;
 }) {
-  const { slug } = await params;
+  const { slug, locale } = await params;
   const {
     species,
     sex: rawSex,
@@ -67,6 +80,7 @@ export default async function Catalog({
     mode,
     group,
     q,
+    page: rawPage,
   } = await searchParams;
   const isTreatment = mode === "treatment";
   const sex = isTreatment ? undefined : rawSex;
@@ -76,6 +90,7 @@ export default async function Catalog({
   const shelter = await getShelter(slug);
   const t = await getTranslations("Catalog");
   const search = (q ?? "").trim().slice(0, 50);
+  const requestedPage = parsePage(rawPage);
 
   const twelveMonthsAgo = new Date();
   twelveMonthsAgo.setMonth(twelveMonthsAgo.getMonth() - 12);
@@ -83,60 +98,98 @@ export default async function Catalog({
   sevenYearsAgo.setMonth(sevenYearsAgo.getMonth() - 84);
   const supabase = await createClient();
 
-  let query = supabase
-    .from("pets")
-    .select("*")
-    .eq("shelter_id", shelter.id)
-    .in("status", PUBLIC_PET_STATUSES)
-    .order("created_at", { ascending: false })
-    .order("name");
+  function buildQuery(head: boolean) {
+    let query = supabase
+      .from("pets")
+      .select("*", { count: "exact", head })
+      .eq("shelter_id", shelter.id)
+      .in("status", PUBLIC_PET_STATUSES)
+      .order("status_rank")
+      .order("created_at", { ascending: false })
+      .order("name");
 
-  if (isBlocked) {
-    query = query.eq("status", PET_STATUS_TREATMENT);
-  } else if (isTreatment) {
-    query = query.not("needs_treatment_since", "is", null);
-  }
+    if (isBlocked) {
+      query = query.eq("status", PET_STATUS_TREATMENT);
+    } else if (isTreatment) {
+      query = query.not("needs_treatment_since", "is", null);
+    }
 
-  if (search) {
-    const pattern = search.replace(/[\\%_]/g, "\\$&");
-    query = query.ilike("name", `%${pattern}%`);
-  }
+    if (search) {
+      const pattern = search.replace(/[\\%_]/g, "\\$&");
+      query = query.ilike("name", `%${pattern}%`);
+    }
 
-  if (species === "cat") {
-    query = query.eq("species", "кошка");
+    if (species === "cat") {
+      query = query.eq("species", "кошка");
+    }
+    if (species === "dog") {
+      query = query.eq("species", "собака");
+    }
+    if (sex === "male") {
+      query = query.eq("sex", "мальчик");
+    }
+    if (sex === "female") {
+      query = query.eq("sex", "девочка");
+    }
+    if (age === "young") {
+      query = query.gt(
+        "birth_date",
+        twelveMonthsAgo.toISOString().slice(0, 10),
+      );
+    }
+    if (age === "adult") {
+      query = query.lte(
+        "birth_date",
+        twelveMonthsAgo.toISOString().slice(0, 10),
+      );
+      query = query.gt("birth_date", sevenYearsAgo.toISOString().slice(0, 10));
+    }
+    if (age === "senior") {
+      query = query.lte("birth_date", sevenYearsAgo.toISOString().slice(0, 10));
+    }
+    const sizeValue =
+      species === "dog" && size ? getSizeFromKey(size) : undefined;
+    if (sizeValue) {
+      query = query.eq("size", sizeValue);
+    }
+    return query;
   }
-  if (species === "dog") {
-    query = query.eq("species", "собака");
+  const { count, error: countError } = await buildQuery(true);
+  if (countError) {
+    throw new Error("Не удалось загрузить питомцев из базы.");
   }
-  if (sex === "male") {
-    query = query.eq("sex", "мальчик");
+  const total = count ?? 0;
+  const lastPage = Math.max(1, Math.ceil(total / CATALOG_PAGE_SIZE));
+  if (requestedPage > lastPage) {
+    const keep = Object.fromEntries(
+      Object.entries({
+        species,
+        sex: rawSex,
+        age: rawAge,
+        size: rawSize,
+        mode,
+        group,
+        q,
+      }).filter(([, value]) => value),
+    ) as Record<string, string>;
+    redirect({
+      href: {
+        pathname: `/shelter/${slug}/catalog`,
+        query: { ...keep, ...(lastPage > 1 && { page: String(lastPage) }) },
+      },
+      locale,
+    });
   }
-  if (sex === "female") {
-    query = query.eq("sex", "девочка");
-  }
-  if (age === "young") {
-    query = query.gt("birth_date", twelveMonthsAgo.toISOString().slice(0, 10));
-  }
-  if (age === "adult") {
-    query = query.lte("birth_date", twelveMonthsAgo.toISOString().slice(0, 10));
-    query = query.gt("birth_date", sevenYearsAgo.toISOString().slice(0, 10));
-  }
-  if (age === "senior") {
-    query = query.lte("birth_date", sevenYearsAgo.toISOString().slice(0, 10));
-  }
-  const sizeValue =
-    species === "dog" && size ? getSizeFromKey(size) : undefined;
-  if (sizeValue) {
-    query = query.eq("size", sizeValue);
-  }
-  const { data, error } = await query;
+  const from = (requestedPage - 1) * CATALOG_PAGE_SIZE;
+  const { data, error } = await buildQuery(false).range(
+    from,
+    from + CATALOG_PAGE_SIZE - 1,
+  );
   if (error) {
     throw new Error("Не удалось загрузить питомцев из базы.");
   }
 
-  const pets = (data ?? [])
-    .map(toPet)
-    .sort((a, b) => getStatusRank(a.status) - getStatusRank(b.status));
+  const pets = (data ?? []).map(toPet);
 
   function buildHref(
     newSpecies: string | undefined,
@@ -177,8 +230,21 @@ export default async function Catalog({
     return base;
   }
 
+  function buildPageHref(page: number) {
+    const href = buildHref(species, sex, age);
+    if (page === 1) {
+      return href;
+    }
+    return href + (href.includes("?") ? "&" : "?") + "page=" + page;
+  }
+
+  const pageNumbers = Array.from({ length: lastPage }, (_, i) => i + 1).filter(
+    (n) => n === 1 || n === lastPage || Math.abs(n - requestedPage) <= 1,
+  );
+
   const filterLink =
     "inline-flex min-h-11 items-center rounded-full border border-transparent bg-(--hover) px-3 py-2 transition-colors duration-200 hover:border-(--accent) motion-reduce:transition-none aria-current:border-(--accent) aria-current:bg-(--accent) aria-current:font-semibold aria-current:text-(--accent-contrast)";
+  const pageLink = `${filterLink} aria-[current=page]:border-(--accent) aria-[current=page]:bg-(--accent) aria-[current=page]:font-semibold aria-[current=page]:text-(--accent-contrast)`;
 
   const searchPart =
     (search ? `&q=${encodeURIComponent(search)}` : "") +
@@ -236,7 +302,7 @@ export default async function Catalog({
           {isTreatment && <input type="hidden" name="mode" value="treatment" />}
           {isBlocked && <input type="hidden" name="group" value="blocked" />}
         </form>
-        
+
         <nav aria-label={t("filtersLabel")}>
           <div className="flex flex-col gap-4">
             <fieldset className="min-w-0">
@@ -412,7 +478,11 @@ export default async function Catalog({
         </p>
       )}
       <p role="status" className="-mb-1 text-(--muted)">
-        {pets.length === 0 ? t("none") : t("found", { count: pets.length })}
+        {total === 0
+          ? t("none")
+          : total <= CATALOG_PAGE_SIZE
+            ? t("found", { count: total })
+            : t("shown", { from: from + 1, to: from + pets.length, total })}
       </p>
       {pets.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -420,6 +490,38 @@ export default async function Catalog({
             <PetCard key={pet.id} pet={pet} slug={slug} eager={index < 3} />
           ))}
         </div>
+      )}
+      {lastPage > 1 && (
+        <nav
+          aria-label={t("paginationLabel")}
+          className="flex flex-wrap items-center justify-center gap-2"
+        >
+          {requestedPage > 1 && (
+            <Link href={buildPageHref(requestedPage - 1)} className={pageLink}>
+              {t("previousPage")}
+            </Link>
+          )}
+          {pageNumbers.map((n, i) => (
+            <Fragment key={n}>
+              {i > 0 && n - pageNumbers[i - 1] > 1 && (
+                <span aria-hidden="true">…</span>
+              )}
+              <Link
+                href={buildPageHref(n)}
+                aria-current={n === requestedPage ? "page" : undefined}
+                aria-label={t("pageLabel", { page: n })}
+                className={pageLink}
+              >
+                {n}
+              </Link>
+            </Fragment>
+          ))}
+          {requestedPage < lastPage && (
+            <Link href={buildPageHref(requestedPage + 1)} className={pageLink}>
+              {t("nextPage")}
+            </Link>
+          )}
+        </nav>
       )}
     </main>
   );

@@ -67,7 +67,13 @@
     "sizeMedium": "Mediu",
     "sizeLarge": "Mare",
     "none": "Nu există animale potrivite.",
-    "found": "Animale găsite: {count}"
+    "found": "Animale găsite: {count}",
+    "shown": "Se afișează {from}–{to} din {total}",
+    "paginationLabel": "Paginile catalogului",
+    "previousPage": "Înapoi",
+    "nextPage": "Înainte",
+    "pageLabel": "Pagina {page}",
+    "titleWithPage": "{title} — pagina {page}"
   },
   "Pet": {
     "otherHeading": "Alte animale",

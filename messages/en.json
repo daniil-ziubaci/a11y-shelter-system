@@ -67,7 +67,13 @@
     "sizeLarge": "Large",
     "senior": "7 years and older",
     "none": "No matching animals.",
-    "found": "Animals found: {count}"
+    "found": "Animals found: {count}",
+    "shown": "Showing {from}–{to} of {total}",
+    "paginationLabel": "Catalog pages",
+    "previousPage": "Previous",
+    "nextPage": "Next",
+    "pageLabel": "Page {page}",
+    "titleWithPage": "{title} — page {page}"
   },
   "Pet": {
     "otherHeading": "Other pets",

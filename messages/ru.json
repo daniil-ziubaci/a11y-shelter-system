@@ -67,7 +67,13 @@
     "sizeMedium": "Средний",
     "sizeLarge": "Крупный",
     "none": "Подходящих животных нет.",
-    "found": "Найдено животных: {count}"
+    "found": "Найдено животных: {count}",
+    "shown": "Показаны {from}–{to} из {total}",
+    "paginationLabel": "Страницы каталога",
+    "previousPage": "Назад",
+    "nextPage": "Далее",
+    "pageLabel": "Страница {page}",
+    "titleWithPage": "{title} — страница {page}"
   },
   "Pet": {
     "otherHeading": "Другие питомцы",
