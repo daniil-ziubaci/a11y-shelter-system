@@ -17,6 +17,8 @@ import {
   PET_STATUS_TREATMENT,
 } from "@/lib/petStatuses";
 import { PetBadges } from "@/components/PetBadges";
+import { getOtherPets } from "@/lib/getOtherPets";
+import { PetCard } from "@/components/PetCard";
 
 export async function generateMetadata({
   params,
@@ -76,6 +78,7 @@ export default async function PetPage({
   const tAge = await getTranslations("Age");
   const tAdoption = await getTranslations("Adoption");
   const sizeKey = pet.size ? getSizeKey(pet.size) : undefined;
+  const otherPets = await getOtherPets(shelter.id, id);
 
   return (
     <main className="w-full flex flex-col gap-6 p-4 max-w-5xl mx-auto">
@@ -181,6 +184,29 @@ export default async function PetPage({
             {tAdoption("heading")}
           </h2>
           <p className="whitespace-pre-line">{shelter.adoption_info}</p>
+        </section>
+      )}
+      {otherPets.length > 0 && (
+        <section
+          aria-labelledby="other-pets-heading"
+          className="flex flex-col gap-4"
+        >
+          <div className="flex flex-wrap items-baseline justify-between gap-x-4">
+            <h2 id="other-pets-heading" className="text-2xl font-bold">
+              {t("otherHeading")}
+            </h2>
+            <Link
+              href={`/shelter/${slug}/catalog`}
+              className="inline-block py-2 underline"
+            >
+              {t("toCatalog")}
+            </Link>
+          </div>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {otherPets.map((other) => (
+              <PetCard key={other.id} pet={other} slug={slug} />
+            ))}
+          </div>
         </section>
       )}
     </main>

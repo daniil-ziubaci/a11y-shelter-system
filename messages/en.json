@@ -60,6 +60,8 @@
     "found": "Animals found: {count}"
   },
   "Pet": {
+    "otherHeading": "Other pets",
+    "toCatalog": "To the catalog →",
     "sex": "Sex",
     "age": "Age",
     "size": "Size",

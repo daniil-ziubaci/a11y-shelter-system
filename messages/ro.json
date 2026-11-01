@@ -60,6 +60,8 @@
     "found": "Animale găsite: {count}"
   },
   "Pet": {
+    "otherHeading": "Alte animale",
+    "toCatalog": "În catalog →",
     "sex": "Sex",
     "age": "Vârstă",
     "size": "Mărime",
