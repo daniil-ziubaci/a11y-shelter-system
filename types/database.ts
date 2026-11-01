@@ -272,6 +272,8 @@ export type Database = {
           id: string
           legal_info: string | null
           name: string
+          photo_alt: string | null
+          photo_path: string | null
           public_channel_url: string | null
           slug: string
           volunteer_info: string | null
@@ -290,6 +292,8 @@ export type Database = {
           id?: string
           legal_info?: string | null
           name: string
+          photo_alt?: string | null
+          photo_path?: string | null
           public_channel_url?: string | null
           slug: string
           volunteer_info?: string | null
@@ -308,6 +312,8 @@ export type Database = {
           id?: string
           legal_info?: string | null
           name?: string
+          photo_alt?: string | null
+          photo_path?: string | null
           public_channel_url?: string | null
           slug?: string
           volunteer_info?: string | null
