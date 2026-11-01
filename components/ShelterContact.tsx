@@ -13,24 +13,26 @@ export async function ShelterContact({
 
   return (
     <>
-      {phone && (
-        <a
-          href={`tel:${phone.replace(/[^\d+]/g, "")}`}
-          className="underline inline-block py-2"
-        >
-          {t("call", { phone })}
-        </a>
-      )}
-      {messenger && (
-        <a
-          href={messenger}
-          className="underline inline-block py-2"
-          rel="noopener noreferrer"
-        >
-          {t("messenger")}
-        </a>
-      )}
-      {!phone && !messenger && <p>{emptyText}</p>}
+      <div className="flex flex-wrap gap-3">
+        {phone && (
+          <a
+            href={`tel:${phone.replace(/[^\d+]/g, "")}`}
+            className="inline-flex min-h-11 items-center justify-center rounded-full bg-(--accent) px-5 py-2 font-semibold text-(--accent-contrast) hover:shadow-md"
+          >
+            {t("call", { phone })}
+          </a>
+        )}
+        {messenger && (
+          <a
+            href={messenger}
+            className="inline-flex min-h-11 items-center justify-center rounded-full border-2 border-(--accent) px-5 py-2 font-semibold text-(--accent) hover:bg-(--hover)"
+            rel="noopener noreferrer"
+          >
+            {t("messenger")}
+          </a>
+        )}
+        {!phone && !messenger && <p>{emptyText}</p>}
+      </div>
     </>
   );
 }
