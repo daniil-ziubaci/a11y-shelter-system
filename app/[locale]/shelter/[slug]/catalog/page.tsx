@@ -150,6 +150,9 @@ export default async function Catalog({
     return base;
   }
 
+  const filterLink =
+    "inline-flex min-h-11 items-center rounded-full border border-transparent bg-(--hover) px-3 py-2 transition-colors duration-200 hover:border-(--accent) motion-reduce:transition-none aria-current:border-(--accent) aria-current:bg-(--accent) aria-current:font-semibold aria-current:text-(--accent-contrast)";
+
   return (
     <main className="w-full flex flex-col gap-6 p-4 max-w-5xl mx-auto">
       <h1 className="text-3xl font-bold text-center">
@@ -171,7 +174,7 @@ export default async function Catalog({
               <Link
                 href={`/shelter/${slug}/catalog?mode=treatment`}
                 aria-current={!isBlocked ? "true" : undefined}
-                className="inline-block px-3 py-2 transition-colors duration-200 hover:text-(--accent) motion-reduce:transition-none aria-current:font-semibold aria-current:text-(--accent)"
+                className={filterLink}
               >
                 {t("treatmentGroupHelp")}
               </Link>
@@ -180,7 +183,7 @@ export default async function Catalog({
               <Link
                 href={`/shelter/${slug}/catalog?mode=treatment&group=blocked`}
                 aria-current={isBlocked ? "true" : undefined}
-                className="inline-block px-3 py-2 transition-colors duration-200 hover:text-(--accent) motion-reduce:transition-none aria-current:font-semibold aria-current:text-(--accent)"
+                className={filterLink}
               >
                 {t("treatmentGroupBlocked")}
               </Link>
@@ -188,129 +191,133 @@ export default async function Catalog({
           </ul>
         </nav>
       )}
+      <div className="flex flex-col gap-4 rounded-2xl border border-(--border) bg-(--surface) p-4">
       <nav aria-label={t("filtersLabel")}>
-        <fieldset>
-          <legend>{t("species")}</legend>
+        <div className="flex flex-col gap-4">
+        <fieldset className="min-w-0">
+          <legend className="mb-2 text-sm font-semibold text-(--muted) sm:float-left sm:mb-0 sm:w-24 sm:pt-2.5 sm:text-base">{t("species")}</legend>
           <div className="flex flex-wrap gap-2">
             <Link
               href={buildHref(undefined, sex, age)}
               aria-current={species === undefined ? "true" : undefined}
-              className="px-3 py-2 transition-colors duration-200 hover:text-(--accent) motion-reduce:transition-none aria-current:font-semibold aria-current:text-(--accent)"
+              className={filterLink}
             >
               {t("all")}
             </Link>
             <Link
               href={buildHref("dog", sex, age)}
               aria-current={species === "dog" ? "true" : undefined}
-              className="px-3 py-2 transition-colors duration-200 hover:text-(--accent) motion-reduce:transition-none aria-current:font-semibold aria-current:text-(--accent)"
+              className={filterLink}
             >
               {t("dogs")}
             </Link>
             <Link
               href={buildHref("cat", sex, age)}
               aria-current={species === "cat" ? "true" : undefined}
-              className="px-3 py-2 transition-colors duration-200 hover:text-(--accent) motion-reduce:transition-none aria-current:font-semibold aria-current:text-(--accent)"
+              className={filterLink}
             >
               {t("cats")}
             </Link>
           </div>
         </fieldset>
-        <fieldset>
-          <legend>{t("sex")}</legend>
+        <fieldset className="min-w-0">
+          <legend className="mb-2 text-sm font-semibold text-(--muted) sm:float-left sm:mb-0 sm:w-24 sm:pt-2.5 sm:text-base">{t("sex")}</legend>
           <div className="flex flex-wrap gap-2">
             <Link
               href={buildHref(species, undefined, age)}
               aria-current={sex === undefined ? "true" : undefined}
-              className="px-3 py-2 transition-colors duration-200 hover:text-(--accent) motion-reduce:transition-none aria-current:font-semibold aria-current:text-(--accent)"
+              className={filterLink}
             >
               {t("all")}
             </Link>
             <Link
               href={buildHref(species, "male", age)}
               aria-current={sex === "male" ? "true" : undefined}
-              className="px-3 py-2 transition-colors duration-200 hover:text-(--accent) motion-reduce:transition-none aria-current:font-semibold aria-current:text-(--accent)"
+              className={filterLink}
             >
               {t("males")}
             </Link>
             <Link
               href={buildHref(species, "female", age)}
               aria-current={sex === "female" ? "true" : undefined}
-              className="px-3 py-2 transition-colors duration-200 hover:text-(--accent) motion-reduce:transition-none aria-current:font-semibold aria-current:text-(--accent)"
+              className={filterLink}
             >
               {t("females")}
             </Link>
           </div>
         </fieldset>
-        <fieldset>
-          <legend>{t("age")}</legend>
+        <fieldset className="min-w-0">
+          <legend className="mb-2 text-sm font-semibold text-(--muted) sm:float-left sm:mb-0 sm:w-24 sm:pt-2.5 sm:text-base">{t("age")}</legend>
           <div className="flex flex-wrap gap-2">
             <Link
               href={buildHref(species, sex, undefined)}
               aria-current={age === undefined ? "true" : undefined}
-              className="px-3 py-2 transition-colors duration-200 hover:text-(--accent) motion-reduce:transition-none aria-current:font-semibold aria-current:text-(--accent)"
+              className={filterLink}
             >
               {t("all")}
             </Link>
             <Link
               href={buildHref(species, sex, "young")}
               aria-current={age === "young" ? "true" : undefined}
-              className="px-3 py-2 transition-colors duration-200 hover:text-(--accent) motion-reduce:transition-none aria-current:font-semibold aria-current:text-(--accent)"
+              className={filterLink}
             >
               {t("young")}
             </Link>
             <Link
               href={buildHref(species, sex, "adult")}
               aria-current={age === "adult" ? "true" : undefined}
-              className="px-3 py-2 transition-colors duration-200 hover:text-(--accent) motion-reduce:transition-none aria-current:font-semibold aria-current:text-(--accent)"
+              className={filterLink}
             >
               {t("adult")}
             </Link>
             <Link
               href={buildHref(species, sex, "senior")}
               aria-current={age === "senior" ? "true" : undefined}
-              className="px-3 py-2 transition-colors duration-200 hover:text-(--accent) motion-reduce:transition-none aria-current:font-semibold aria-current:text-(--accent)"
+              className={filterLink}
             >
               {t("senior")}
             </Link>
           </div>
         </fieldset>
         {species === "dog" && (
-          <fieldset>
-            <legend>{t("size")}</legend>
+          <fieldset className="min-w-0">
+            <legend className="mb-2 text-sm font-semibold text-(--muted) sm:float-left sm:mb-0 sm:w-24 sm:pt-2.5 sm:text-base">{t("size")}</legend>
             <div className="flex flex-wrap gap-2">
               <Link
                 href={buildHref(species, sex, age, null)}
                 aria-current={!size ? "true" : undefined}
-                className="px-3 py-2 transition-colors duration-200 hover:text-(--accent) motion-reduce:transition-none aria-current:font-semibold aria-current:text-(--accent)"
+                className={filterLink}
               >
                 {t("all")}
               </Link>
               <Link
                 href={buildHref(species, sex, age, "small")}
                 aria-current={size === "small" ? "true" : undefined}
-                className="px-3 py-2 transition-colors duration-200 hover:text-(--accent) motion-reduce:transition-none aria-current:font-semibold aria-current:text-(--accent)"
+                className={filterLink}
               >
                 {t("sizeSmall")}
               </Link>
               <Link
                 href={buildHref(species, sex, age, "medium")}
                 aria-current={size === "medium" ? "true" : undefined}
-                className="px-3 py-2 transition-colors duration-200 hover:text-(--accent) motion-reduce:transition-none aria-current:font-semibold aria-current:text-(--accent)"
+                className={filterLink}
               >
                 {t("sizeMedium")}
               </Link>
               <Link
                 href={buildHref(species, sex, age, "large")}
                 aria-current={size === "large" ? "true" : undefined}
-                className="px-3 py-2 transition-colors duration-200 hover:text-(--accent) motion-reduce:transition-none aria-current:font-semibold aria-current:text-(--accent)"
+                className={filterLink}
               >
                 {t("sizeLarge")}
               </Link>
             </div>
           </fieldset>
         )}
+      </div>
       </nav>
-      <p role="status">
+      </div>
+      <p role="status" className="-mb-1 pt-1 text-(--muted)">
         {pets.length === 0 ? t("none") : t("found", { count: pets.length })}
       </p>
       {pets.length > 0 && (
