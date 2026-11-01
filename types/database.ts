@@ -282,7 +282,6 @@ export type Database = {
           slug: string
           telegram_url: string | null
           viber_url: string | null
-          volunteer_info: string | null
         }
         Insert: {
           about?: string | null
@@ -305,7 +304,6 @@ export type Database = {
           slug: string
           telegram_url?: string | null
           viber_url?: string | null
-          volunteer_info?: string | null
         }
         Update: {
           about?: string | null
@@ -328,7 +326,6 @@ export type Database = {
           slug?: string
           telegram_url?: string | null
           viber_url?: string | null
-          volunteer_info?: string | null
         }
         Relationships: []
       }
