@@ -20,7 +20,7 @@ export function PetBadges({
         <p className="inline-flex items-center gap-1.5 rounded-full bg-(--danger-soft) px-2.5 py-0.5 text-sm font-medium text-(--danger) shadow-sm ring-1 ring-(--border)">
           <span
             aria-hidden="true"
-            className="size-1.5 rounded-full bg-(--danger)"
+            className="size-1.5 shrink-0 rounded-full bg-(--danger)"
           />
           {t("needsTreatmentBadge")}
         </p>
@@ -35,7 +35,7 @@ export function PetBadges({
         >
           <span
             aria-hidden="true"
-            className={`size-1.5 rounded-full ${
+            className={`size-1.5 shrink-0 rounded-full ${
               isInTreatment ? "bg-(--muted)" : "bg-(--pending)"
             }`}
           />
