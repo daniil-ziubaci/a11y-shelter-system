@@ -185,6 +185,11 @@
     },
     "help": "Help",
     "helpLabel": "Help the project “{name}”",
+    "helpKindsLabel": "How you can help",
+    "helpKinds": {
+      "things": "Items",
+      "money": "Money"
+    },
     "howToHelpHeading": "How to help",
     "howToHelpIntro": "Contact a shelter volunteer and decide together how you can help the project.",
     "noContact": "The shelter's contact is not set yet.",

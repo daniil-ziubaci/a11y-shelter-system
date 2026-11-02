@@ -36,7 +36,7 @@ export default async function ShelterProjectsPage({
   const { data: projects, error } = await supabase
     .from("projects")
     .select(
-      "id, title, description, goal, status, stage, completed_at, is_pinned",
+      "id, title, description, goal, status, stage, completed_at, is_pinned, help_kinds",
     )
     .eq("shelter_id", shelter.id)
     .order("completed_at", { ascending: false, nullsFirst: false })
@@ -61,10 +61,12 @@ export default async function ShelterProjectsPage({
   const renderProject = (project: (typeof ongoing)[number]) => (
     <li
       key={project.id}
-      className="flex flex-col gap-2 rounded-lg border border-(--border-strong) bg-(--surface) p-4"
+      className={`flex flex-col gap-3 rounded-2xl border border-(--border-strong) p-5 ${
+        project.is_pinned ? "bg-(--accent-soft)" : "bg-(--surface)"
+      }`}
     >
       {project.is_pinned && (
-        <p className="self-start rounded-full bg-(--accent-soft) px-3 py-1 text-sm font-medium text-(--accent)">
+        <p className="self-start rounded-full border border-(--accent) bg-(--surface) px-3 py-1 text-sm font-medium text-(--accent)">
           {t("pinnedBadge")}
         </p>
       )}
@@ -83,6 +85,18 @@ export default async function ShelterProjectsPage({
             })}
           </p>
         )}
+      {project.status === PROJECT_STATUS_ONGOING && (
+        <ul aria-label={t("helpKindsLabel")} className="flex flex-wrap gap-2">
+          {project.help_kinds.map((kind) => (
+            <li
+              key={kind}
+              className="rounded-full border border-(--border-strong) px-3 py-1 text-sm"
+            >
+              {t(`helpKinds.${kind}`)}
+            </li>
+          ))}
+        </ul>
+      )}
       {project.completed_at && (
         <p className="text-(--muted)">
           {t("completedOn", {
@@ -97,7 +111,7 @@ export default async function ShelterProjectsPage({
         <a
           href="#footer-contact-heading"
           aria-label={t("helpLabel", { name: project.title })}
-          className="underline inline-block py-2"
+          className="mt-auto inline-flex min-h-11 items-center self-start rounded-full bg-(--accent) px-6 font-semibold text-(--accent-contrast)"
         >
           {t("help")}
         </a>
@@ -125,7 +139,7 @@ export default async function ShelterProjectsPage({
             {ongoing.length === 0 ? (
               <p>{t("noOngoing")}</p>
             ) : (
-              <ul className="flex flex-col gap-4">
+              <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {ongoing.map(renderProject)}
               </ul>
             )}
@@ -138,7 +152,7 @@ export default async function ShelterProjectsPage({
               <h2 id="completed-heading" className="text-2xl font-bold">
                 {t("completedHeading")}
               </h2>
-              <ul className="flex flex-col gap-4">
+              <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {completed.map(renderProject)}
               </ul>
             </section>

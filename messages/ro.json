@@ -185,6 +185,11 @@
     },
     "help": "Ajută",
     "helpLabel": "Ajută proiectul „{name}”",
+    "helpKindsLabel": "Cum poți ajuta",
+    "helpKinds": {
+      "things": "Obiecte",
+      "money": "Bani"
+    },
     "howToHelpHeading": "Cum poți ajuta",
     "howToHelpIntro": "Contactează un voluntar al adăpostului și hotărâți împreună cum poți ajuta proiectul.",
     "noContact": "Contactul adăpostului nu este încă indicat.",
