@@ -302,7 +302,7 @@ export default async function Catalog({
             />
             <button
               type="submit"
-              className="min-h-10 rounded-full bg-(--accent) px-4 text-(--accent-contrast) hover:shadow-md"
+              className="min-h-10 cursor-pointer rounded-full bg-(--accent) px-4 text-(--accent-contrast) hover:shadow-md"
             >
               {t("searchButton")}
             </button>
@@ -320,7 +320,7 @@ export default async function Catalog({
         <nav aria-label={t("filtersLabel")}>
           <div className="flex flex-col gap-4">
             <fieldset className="min-w-0">
-              <legend className="mb-2 text-sm font-semibold text-(--muted) sm:float-left sm:mb-0 sm:w-24 sm:pt-2.5 sm:text-base">
+              <legend className="mb-2 cursor-default text-sm font-semibold text-(--muted) sm:float-left sm:mb-0 sm:w-24 sm:pt-2.5 sm:text-base">
                 {t("species")}
               </legend>
               <div className="flex flex-wrap gap-2">
@@ -349,7 +349,7 @@ export default async function Catalog({
             </fieldset>
             {isTreatment && (
               <fieldset className="min-w-0">
-                <legend className="mb-2 text-sm font-semibold text-(--muted) sm:float-left sm:mb-0 sm:w-24 sm:pt-2.5 sm:text-base">
+                <legend className="mb-2 cursor-default text-sm font-semibold text-(--muted) sm:float-left sm:mb-0 sm:w-24 sm:pt-2.5 sm:text-base">
                   {t("treatmentLegend")}
                 </legend>
                 <div className="flex flex-wrap gap-2">
@@ -373,7 +373,7 @@ export default async function Catalog({
             {!isTreatment && (
               <>
                 <fieldset className="min-w-0">
-                  <legend className="mb-2 text-sm font-semibold text-(--muted) sm:float-left sm:mb-0 sm:w-24 sm:pt-2.5 sm:text-base">
+                  <legend className="mb-2 cursor-default text-sm font-semibold text-(--muted) sm:float-left sm:mb-0 sm:w-24 sm:pt-2.5 sm:text-base">
                     {t("sex")}
                   </legend>
                   <div className="flex flex-wrap gap-2">
@@ -401,7 +401,7 @@ export default async function Catalog({
                   </div>
                 </fieldset>
                 <fieldset className="min-w-0">
-                  <legend className="mb-2 text-sm font-semibold text-(--muted) sm:float-left sm:mb-0 sm:w-24 sm:pt-2.5 sm:text-base">
+                  <legend className="mb-2 cursor-default text-sm font-semibold text-(--muted) sm:float-left sm:mb-0 sm:w-24 sm:pt-2.5 sm:text-base">
                     {t("age")}
                   </legend>
                   <div className="flex flex-wrap gap-2">
@@ -437,7 +437,7 @@ export default async function Catalog({
                 </fieldset>
                 {species === "dog" && (
                   <fieldset className="min-w-0">
-                    <legend className="mb-2 text-sm font-semibold text-(--muted) sm:float-left sm:mb-0 sm:w-24 sm:pt-2.5 sm:text-base">
+                    <legend className="mb-2 cursor-default text-sm font-semibold text-(--muted) sm:float-left sm:mb-0 sm:w-24 sm:pt-2.5 sm:text-base">
                       {t("size")}
                     </legend>
                     <div className="flex flex-wrap gap-2">
