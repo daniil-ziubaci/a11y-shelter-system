@@ -1,34 +1,27 @@
 import { routing } from "@/i18n/routing";
 import { PUBLIC_PET_STATUSES } from "@/lib/petStatuses";
 import { createClient } from "@/lib/supabase/server";
+import { fetchAll } from "@/lib/supabase/fetchAll";
 import type { MetadataRoute } from "next";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const siteUrl = process.env.SITE_URL!;
   const supabase = await createClient();
 
-  const { data: shelters, error: sheltersError } = await supabase
-    .from("shelters")
-    .select("id, slug");
-  const { data: pets, error: petsError } = await supabase
-    .from("pets")
-    .select("id, shelter_id")
-    .in("status", PUBLIC_PET_STATUSES);
-
-  const { data: projects, error: projectsError } = await supabase
-    .from("projects")
-    .select("shelter_id");
-
-  if (
-    sheltersError ||
-    petsError ||
-    projectsError ||
-    !shelters ||
-    !pets ||
-    !projects
-  ) {
-    throw new Error("Не удалось собрать карту сайта.");
-  }
+  const shelters = await fetchAll((from, to) =>
+    supabase.from("shelters").select("id, slug").order("id").range(from, to),
+  );
+  const pets = await fetchAll((from, to) =>
+    supabase
+      .from("pets")
+      .select("id, shelter_id")
+      .in("status", PUBLIC_PET_STATUSES)
+      .order("id")
+      .range(from, to),
+  );
+  const projects = await fetchAll((from, to) =>
+    supabase.from("projects").select("shelter_id").order("id").range(from, to),
+  );
 
   const paths: string[] = [];
 
