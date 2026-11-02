@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { getShelter } from "@/lib/getShelter";
+import { ProjectDescription } from "@/components/ProjectDescription";
 import {
   getStageKey,
   PROJECT_STATUS_COMPLETED,
@@ -92,11 +93,10 @@ export default async function ShelterProjectsPage({
             {t("pinnedBadge")}
           </p>
         )}
-
         <h3 className="text-2xl font-bold leading-tight sm:text-3xl">
           {project.title}
         </h3>
-        <p className="whitespace-pre-line">{project.description}</p>
+        <ProjectDescription text={project.description} />
         {project.status === PROJECT_STATUS_ONGOING &&
           project.progress_total !== null &&
           project.progress_done !== null &&
@@ -161,7 +161,6 @@ export default async function ShelterProjectsPage({
                 )}
             </dl>
           )}
-
         {project.status === PROJECT_STATUS_ONGOING && (
           <ul aria-label={t("helpKindsLabel")} className="flex flex-wrap gap-2">
             {project.help_kinds.map((kind) => (
