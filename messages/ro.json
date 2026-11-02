@@ -43,8 +43,8 @@
     "treatmentGroupsLabel": "Grupurile secțiunii „Tratament”",
     "treatmentGroupHelp": "Ajutor urgent necesar",
     "treatmentGroupBlocked": "Deocamdată nu pot fi adoptate",
-    "treatmentIntroHelp": "Aceste animale au nevoie urgentă de ajutor pentru tratament. Detaliile le va spune un voluntar: <link>sunați-ne sau scrieți-ne</link>.",
-    "treatmentIntroBlocked": "Aceste animale nu pot fi adoptate deocamdată. Detaliile le va spune un voluntar: <link>sunați-ne sau scrieți-ne</link>.",
+    "treatmentIntroHelp": "Au nevoie urgentă de ajutor pentru tratament. Detaliile le va spune un voluntar: <link>sunați-ne sau scrieți-ne</link>.",
+    "treatmentIntroBlocked": "Nu pot fi adoptate deocamdată. Detaliile le va spune un voluntar: <link>sunați-ne sau scrieți-ne</link>.",
     "treatmentLegend": "Tratament",
     "treatmentBlockedTitle": "Tratament: deocamdată nu pot fi adoptate — {shelter}",
     "treatmentBlockedDescription": "Animalele din adăpostul „{shelter}” care nu pot fi adoptate deocamdată.",
@@ -222,6 +222,7 @@
     "urgent": "Urgent",
     "urgentFilter": "Urgente",
     "emptyUrgent": "Acum nu există nevoi urgente.",
+    "intro": "Aici este lista nevoilor pentru viața protejaților. Tratamentul celor bolnavi și lucrările adăpostului sunt în secțiunile <treatment>Tratament</treatment> și <projects>Proiecte</projects>. Vă mulțumim că ajutați!",
     "remaining": "Mai este nevoie de: {amount} {unit}",
     "categories": {
       "food": "Hrană",

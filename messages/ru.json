@@ -43,8 +43,8 @@
     "treatmentGroupsLabel": "Группы раздела «Лечение»",
     "treatmentGroupHelp": "Срочно нужна помощь",
     "treatmentGroupBlocked": "Пока нельзя забрать",
-    "treatmentIntroHelp": "Этим животным срочно нужна помощь с лечением. Подробности расскажет волонтёр: <link>позвоните или напишите нам</link>.",
-    "treatmentIntroBlocked": "Эти животные пока не отдаются в семью. Подробности расскажет волонтёр: <link>позвоните или напишите нам</link>.",
+    "treatmentIntroHelp": "Им срочно нужна помощь с лечением. Подробности расскажет волонтёр: <link>позвоните или напишите нам</link>.",
+    "treatmentIntroBlocked": "Пока не отдаются в семью. Подробности расскажет волонтёр: <link>позвоните или напишите нам</link>.",
     "treatmentLegend": "Лечение",
     "treatmentBlockedTitle": "Лечение: пока нельзя забрать — {shelter}",
     "treatmentBlockedDescription": "Животные приюта «{shelter}», которых пока нельзя забрать домой.",
@@ -222,6 +222,7 @@
     "urgent": "Срочно",
     "urgentFilter": "Срочные",
     "emptyUrgent": "Срочных нужд сейчас нет.",
+    "intro": "Здесь список нужд для жизни подопечных. Лечение больных и работы приюта — в разделах <treatment>Лечение</treatment> и <projects>Проекты</projects>. Спасибо, что помогаете!",
     "remaining": "Не хватает: {amount} {unit}",
     "categories": {
       "food": "Корм",

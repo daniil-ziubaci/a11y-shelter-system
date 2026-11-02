@@ -109,6 +109,26 @@ export default async function ShelterNeedsPage({
   return (
     <main className="w-full flex flex-col gap-6 p-4 max-w-5xl mx-auto">
       <h1 className="text-3xl font-bold text-center">{t("heading")}</h1>
+      <p className="-mt-3 text-center text-lg text-(--muted)">
+        {t.rich("intro", {
+          treatment: (chunks) => (
+            <Link
+              href={`/shelter/${slug}/catalog?mode=treatment`}
+              className="font-semibold text-(--accent) underline underline-offset-2"
+            >
+              {chunks}
+            </Link>
+          ),
+          projects: (chunks) => (
+            <Link
+              href={`/shelter/${slug}/projects`}
+              className="font-semibold text-(--accent) underline underline-offset-2"
+            >
+              {chunks}
+            </Link>
+          ),
+        })}
+      </p>
       <nav aria-label={t("filtersLabel")}>
         <div className="flex flex-wrap gap-2">
           <Link

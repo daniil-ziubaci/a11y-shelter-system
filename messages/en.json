@@ -43,8 +43,8 @@
     "treatmentGroupsLabel": "Treatment groups",
     "treatmentGroupHelp": "Urgent help needed",
     "treatmentGroupBlocked": "Not available for adoption yet",
-    "treatmentIntroHelp": "These animals urgently need help with treatment. A volunteer will tell you the details: <link>call or message us</link>.",
-    "treatmentIntroBlocked": "These animals cannot be adopted yet. A volunteer will tell you the details: <link>call or message us</link>.",
+    "treatmentIntroHelp": "They urgently need help with treatment. A volunteer will tell you the details: <link>call or message us</link>.",
+    "treatmentIntroBlocked": "Cannot be adopted yet. A volunteer will tell you the details: <link>call or message us</link>.",
     "treatmentLegend": "Treatment",
     "treatmentBlockedTitle": "Treatment: not available for adoption yet — {shelter}",
     "treatmentBlockedDescription": "Animals from the “{shelter}” shelter that cannot be adopted yet.",
@@ -222,6 +222,7 @@
     "urgent": "Urgent",
     "urgentFilter": "Urgent",
     "emptyUrgent": "There are no urgent needs right now.",
+    "intro": "Here is the list of what the animals need for daily life. Treatment for sick animals and the shelter's work are in the <treatment>Treatment</treatment> and <projects>Projects</projects> sections. Thank you for helping!",
     "remaining": "Still needed: {amount} {unit}",
     "categories": {
       "food": "Food",

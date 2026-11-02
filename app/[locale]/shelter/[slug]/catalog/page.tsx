@@ -266,6 +266,20 @@ export default async function Catalog({
           {t("subheading")}
         </p>
       )}
+      {isTreatment && (
+        <p className="-mt-3 text-center text-lg text-(--muted)">
+          {t.rich(isBlocked ? "treatmentIntroBlocked" : "treatmentIntroHelp", {
+            link: (chunks) => (
+              <Link
+                href="#footer-contact-heading"
+                className="font-semibold text-(--accent) underline underline-offset-2"
+              >
+                {chunks}
+              </Link>
+            ),
+          })}
+        </p>
+      )}
       <div className="flex flex-col gap-4 rounded-2xl border border-(--border) bg-(--surface) p-4">
         <form
           role="search"
@@ -463,20 +477,7 @@ export default async function Catalog({
           </div>
         </nav>
       </div>
-      {isTreatment && (
-        <p className="max-w-prose text-lg">
-          {t.rich(isBlocked ? "treatmentIntroBlocked" : "treatmentIntroHelp", {
-            link: (chunks) => (
-              <Link
-                href="#footer-contact-heading"
-                className="font-semibold text-(--accent) underline underline-offset-2"
-              >
-                {chunks}
-              </Link>
-            ),
-          })}
-        </p>
-      )}
+
       <p role="status" className="-mb-1 text-(--muted)">
         {total === 0
           ? t("none")
