@@ -1,7 +1,7 @@
 {
   "Home": {
     "title": "{shelter} — animal shelter",
-    "description": "Website of the shelter {shelter}: pets looking for a home, animals that urgently need help, and a list of what the shelter needs.",
+    "description": "Website of the shelter {shelter}: animals looking for a home, animals that urgently need help, and a list of what the shelter needs.",
     "heading": "{shelter} animal shelter",
     "intro": "The animals here are waiting for a family. Find a friend who is looking for a home, or help those who need support most right now.",
     "findHome": "Looking for a home",
@@ -96,7 +96,7 @@
     "titleWithPage": "{title} — page {page}"
   },
   "Pet": {
-    "otherHeading": "Other pets",
+    "otherHeading": "Other animals",
     "toCatalog": "To the catalog",
     "sex": "Sex",
     "age": "Age",
