@@ -11,13 +11,19 @@ type EditNeedItem = {
   is_urgent: boolean;
 };
 
-export function EditNeedForm({ item }: { item: EditNeedItem }) {
+export function EditNeedForm({
+  item,
+  from,
+}: {
+  item: EditNeedItem;
+  from?: string;
+}) {
   const [state, formAction, isPending] = useActionState(updateNeed, undefined);
 
   return (
     <form action={formAction} className="flex flex-col gap-6">
       <input type="hidden" name="itemId" value={item.id} />
-
+      {from && <input type="hidden" name="from" value={from} />}
       <div className="flex flex-col gap-1">
         <label htmlFor="name">Название</label>
         <input
@@ -35,7 +41,6 @@ export function EditNeedForm({ item }: { item: EditNeedItem }) {
           изменить нельзя: количество меняется приёмкой товара.
         </p>
       </div>
-
       <div className="flex flex-col gap-1">
         <label htmlFor="category">Категория</label>
         <select
@@ -51,7 +56,6 @@ export function EditNeedForm({ item }: { item: EditNeedItem }) {
           ))}
         </select>
       </div>
-
       <div className="flex flex-col gap-1">
         <div className="flex items-center gap-2">
           <input
@@ -70,9 +74,7 @@ export function EditNeedForm({ item }: { item: EditNeedItem }) {
           срочность прошла.
         </p>
       </div>
-
       {state?.error && <p role="alert">{state.error}</p>}
-
       <button type="submit" disabled={isPending}>
         {isPending ? "Сохраняем…" : "Сохранить"}
       </button>

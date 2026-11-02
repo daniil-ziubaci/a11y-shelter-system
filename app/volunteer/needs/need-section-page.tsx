@@ -47,7 +47,7 @@ export async function NeedSectionPage({
       {error ? (
         <p role="alert">Не удалось загрузить план закупок.</p>
       ) : (
-        <NeedItems items={shown} emptyText={emptyText} />
+        <NeedItems items={shown} emptyText={emptyText} kind={kind} />
       )}
     </main>
   );

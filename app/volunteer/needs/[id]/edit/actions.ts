@@ -60,5 +60,9 @@ export async function updateNeed(
     return fail("Позиция не найдена или недоступна.");
   }
 
-  redirect("/volunteer");
+  const from = formData.get("from");
+  const section =
+    from === "open" || from === "stock" || from === "closed" ? from : "";
+
+  redirect(section ? `/volunteer/needs/${section}` : "/volunteer/needs");
 }

@@ -8,10 +8,13 @@ export const metadata = {
 
 export default async function EditNeedPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ from?: string }>;
 }) {
   const { id } = await params;
+  const { from } = await searchParams;
   const supabase = await createClient();
 
   const { data: membership } = await supabase
@@ -42,7 +45,7 @@ export default async function EditNeedPage({
   return (
     <main className="w-full flex flex-col gap-6 p-4 max-w-5xl mx-auto">
       <h1 className="text-3xl font-bold">Редактирование: {item.name}</h1>
-      <EditNeedForm item={item} />
+      <EditNeedForm item={item} from={from} />
     </main>
   );
 }
