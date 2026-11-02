@@ -34,6 +34,7 @@ export async function ShelterFooter({
   const tNav = await getTranslations("Nav");
   const catalogPath = `/shelter/${slug}/catalog`;
   const links = [
+    { href: `/shelter/${slug}`, label: tNav("home") },
     { href: catalogPath, label: tNav("catalog") },
     { href: `/shelter/${slug}/needs`, label: tNav("needs") },
     { href: `${catalogPath}?mode=treatment`, label: tNav("treatment") },

@@ -1,4 +1,23 @@
 {
+  "Home": {
+    "title": "{shelter} — adăpost pentru animale",
+    "description": "Site-ul adăpostului «{shelter}»: animale care caută o casă, animale care au nevoie urgentă de ajutor și lista lucrurilor de care are nevoie adăpostul.",
+    "heading": "Adăpostul «{shelter}»",
+    "intro": "Aici trăiesc animale care așteaptă o familie. Găsiți un prieten care caută o casă sau ajutați-i pe cei care au cel mai mult nevoie de sprijin acum.",
+    "findHome": "Caută o casă",
+    "howToHelp": "Cum puteți ajuta",
+    "loadError": "Nu s-a putut încărca o parte din pagină. Încercați să reîmprospătați pagina puțin mai târziu.",
+    "lookingHeading": "Caută o casă",
+    "allCatalog": "Tot catalogul",
+    "treatmentHeading": "Au nevoie urgentă de ajutor pentru tratament",
+    "allTreatment": "Toți cei care au nevoie de ajutor",
+    "urgentHeading": "Este nevoie urgentă acum",
+    "allUrgent": "Toate cele urgente",
+    "statsHeading": "Cum merge adăpostul?",
+    "statsTotal": "Animale în total",
+    "statsLooking": "Caută o casă",
+    "statsAdopted": "Adoptate"
+  },
   "Footer": {
     "contactHeading": "Cum poți contacta adăpostul",
     "contactIntro": "Sună sau scrie voluntarului adăpostului.",
@@ -21,6 +40,7 @@
   },
   "Nav": {
     "label": "Navigare principală",
+    "home": "Acasă",
     "catalog": "Catalog",
     "needs": "Ajută-ne",
     "treatment": "Tratament",

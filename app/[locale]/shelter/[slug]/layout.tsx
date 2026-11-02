@@ -19,7 +19,7 @@ export default async function ShelterLayout({
       <header className="sticky top-0 z-30 w-full bg-(--background) shadow-md">
         <div className="relative mx-auto flex w-full max-w-5xl items-center justify-between gap-x-4 px-4 py-1">
           <Link
-            href={`/shelter/${slug}/catalog`}
+            href={`/shelter/${slug}`}
             className="py-2 text-lg font-bold"
           >
             {shelter.name}

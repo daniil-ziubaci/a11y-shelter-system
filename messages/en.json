@@ -1,4 +1,23 @@
 {
+  "Home": {
+    "title": "{shelter} — animal shelter",
+    "description": "Website of the shelter {shelter}: pets looking for a home, animals that urgently need help, and a list of what the shelter needs.",
+    "heading": "{shelter} animal shelter",
+    "intro": "The animals here are waiting for a family. Find a friend who is looking for a home, or help those who need support most right now.",
+    "findHome": "Looking for a home",
+    "howToHelp": "How to help",
+    "loadError": "Part of the page could not be loaded. Please try refreshing a little later.",
+    "lookingHeading": "Looking for a home",
+    "allCatalog": "Full catalog",
+    "treatmentHeading": "Urgent help with treatment needed",
+    "allTreatment": "All who need help",
+    "urgentHeading": "Urgently needed now",
+    "allUrgent": "All urgent items",
+    "statsHeading": "How is the shelter doing?",
+    "statsTotal": "Animals in total",
+    "statsLooking": "Looking for a home",
+    "statsAdopted": "Adopted"
+  },
   "Footer": {
     "contactHeading": "How to contact the shelter",
     "contactIntro": "Call or write to the shelter volunteer.",
@@ -21,6 +40,7 @@
   },
   "Nav": {
     "label": "Main navigation",
+    "home": "Home",
     "catalog": "Catalog",
     "needs": "How to help",
     "treatment": "Treatment",
