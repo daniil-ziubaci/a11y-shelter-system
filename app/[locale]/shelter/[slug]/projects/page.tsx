@@ -190,7 +190,7 @@ export default async function ShelterProjectsPage({
               project.is_pinned ? "supportProgramLabel" : "helpLabel",
               { name: project.title },
             )}
-            className="mt-auto flex min-h-11 w-full items-center justify-center rounded-full bg-(--accent) px-5 text-lg font-semibold text-(--accent-contrast) sm:inline-flex sm:w-auto sm:self-start"
+            className="mt-auto flex min-h-11 w-full items-center justify-center rounded-full bg-(--accent) px-5 py-2 text-center text-lg font-semibold text-(--accent-contrast) sm:inline-flex sm:w-auto sm:self-start"
           >
             {t(project.is_pinned ? "supportProgram" : "help")}
           </a>
