@@ -77,6 +77,22 @@
 
 ---
 
+## 🚀 Как запустить локально
+
+Нужны Node.js 24 (разработка идёт на 24.17.0), Docker и [Supabase CLI](https://supabase.com/docs/guides/cli/getting-started) (проверено на 2.122.0).
+
+1. `npm install`
+2. `supabase start` поднимает локальный Supabase в Docker.
+3. `cp .env.example .env.local`, затем впишите в `NEXT_PUBLIC_SUPABASE_ANON_KEY` публичный ключ из вывода `supabase status`; адрес `http://127.0.0.1:54321` и `SITE_URL` уже подходят для локальной работы.
+4. `supabase db reset --local` применяет все миграции из `supabase/migrations`. Файла с тестовыми данными (`supabase/seed.sql`) пока нет, поэтому приют и животных нужно добавить самому, например в Supabase Studio, адрес которой показывает `supabase status`.
+5. `npm run dev`: сайт открывается на `http://localhost:3000`, страницы приюта лежат по адресу `/ru/shelter/{slug}`.
+
+**Проверки перед коммитом**: `npx tsc --noEmit`, `npm run lint` и для базы `supabase db reset --local && supabase test db` (тесты RLS, прав и триггеров на pgTAP лежат в `supabase/tests`; перед ними всегда сбрасывается локальная база). Парные откаты миграций лежат в `supabase/down`.
+
+**Скрипты координатора** (`scripts/`): `invite-volunteer.ts` (приглашение волонтёра), `reset-2fa.ts` (сброс второго фактора), `upload-shelter-photo.ts` (фото приюта). Они запускаются от лица координатора с серверным ключом из файла `.env.coordinator` (`SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `SITE_URL`), например: `node --env-file=.env.coordinator scripts/invite-volunteer.ts почта slug`. Серверный ключ обходит RLS, поэтому файл лежит только у координатора и не попадает в git (шаблон `.env*` в `.gitignore`, исключение только для `.env.example`).
+
+---
+
 ## 📱 Основные модули системы
 
 ### План закупок
