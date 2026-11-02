@@ -15,7 +15,7 @@ export async function createProject(
   const values: Record<string, string> = {};
   for (const [key, value] of formData.entries()) {
     if (typeof value === "string") {
-      values[key] = value;
+      values[key] = key in values ? `${values[key]},${value}` : value;
     }
   }
   const fail = (error: string): CreateProjectState => ({ error, values });
@@ -41,7 +41,7 @@ export async function createProject(
   if (!parsed.ok) {
     return fail(parsed.error);
   }
-  const { title, description, goal, stage } = parsed.fields;
+  const { title, description, goal, stage, helpKinds } = parsed.fields;
 
   const { error: insertError } = await supabase.from("projects").insert({
     shelter_id: membership.shelter_id,
@@ -49,6 +49,7 @@ export async function createProject(
     description,
     goal,
     stage,
+    help_kinds: helpKinds,
   });
   if (insertError) {
     return fail("Не удалось сохранить проект. Попробуйте ещё раз.");

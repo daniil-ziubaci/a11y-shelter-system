@@ -119,6 +119,7 @@ export type Database = {
           created_at: string
           description: string
           goal: string | null
+          help_kinds: string[]
           id: string
           is_pinned: boolean
           shelter_id: string
@@ -132,6 +133,7 @@ export type Database = {
           created_at?: string
           description: string
           goal?: string | null
+          help_kinds?: string[]
           id?: string
           is_pinned?: boolean
           shelter_id: string
@@ -145,6 +147,7 @@ export type Database = {
           created_at?: string
           description?: string
           goal?: string | null
+          help_kinds?: string[]
           id?: string
           is_pinned?: boolean
           shelter_id?: string

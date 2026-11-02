@@ -15,7 +15,7 @@ export async function updateProject(
   const values: Record<string, string> = {};
   for (const [key, value] of formData.entries()) {
     if (typeof value === "string") {
-      values[key] = value;
+      values[key] = key in values ? `${values[key]},${value}` : value;
     }
   }
   const fail = (error: string): UpdateProjectState => ({ error, values });
@@ -44,11 +44,10 @@ export async function updateProject(
   if (!parsed.ok) {
     return fail(parsed.error);
   }
-  const { title, description, goal, stage } = parsed.fields;
-
+  const { title, description, goal, stage, helpKinds } = parsed.fields;
   const { data: updated, error: updateError } = await supabase
     .from("projects")
-    .update({ title, description, goal, stage })
+    .update({ title, description, goal, stage, help_kinds: helpKinds })
     .eq("id", projectId)
     .eq("shelter_id", membership.shelter_id)
     .select("id")

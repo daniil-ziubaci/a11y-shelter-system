@@ -1,3 +1,7 @@
+import {
+  PROJECT_HELP_KINDS,
+  type ProjectHelpKind,
+} from "@/lib/projectHelpKinds";
 import { PROJECT_STAGES, type ProjectStage } from "@/lib/projectStages";
 
 export const PROJECT_LIMITS = {
@@ -14,6 +18,7 @@ type ParsedProject =
         description: string;
         goal: string | null;
         stage: ProjectStage;
+        helpKinds: ProjectHelpKind[];
       };
     }
   | { ok: false; error: string };
@@ -59,8 +64,22 @@ export function parseProjectFields(formData: FormData): ParsedProject {
     return { ok: false, error: "Выберите этап проекта." };
   }
 
+  const submitted = formData.getAll("help_kinds");
+  const helpKinds = PROJECT_HELP_KINDS.filter((kind) =>
+    submitted.includes(kind),
+  );
+  if (helpKinds.length === 0) {
+    return { ok: false, error: "Отметьте, чем можно помочь." };
+  }
+
   return {
     ok: true,
-    fields: { title, description, goal: goalText || null, stage },
+    fields: {
+      title,
+      description,
+      goal: goalText || null,
+      stage,
+      helpKinds,
+    },
   };
 }

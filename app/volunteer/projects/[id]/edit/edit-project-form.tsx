@@ -3,6 +3,10 @@
 import { useActionState } from "react";
 import { updateProject } from "@/app/volunteer/projects/[id]/edit/actions";
 import { PROJECT_LIMITS } from "@/lib/parseProjectFields";
+import {
+  PROJECT_HELP_KINDS,
+  PROJECT_HELP_KIND_LABELS,
+} from "@/lib/projectHelpKinds";
 import { PROJECT_STAGES } from "@/lib/projectStages";
 
 type EditableProject = {
@@ -11,6 +15,7 @@ type EditableProject = {
   description: string;
   goal: string | null;
   stage: string;
+  help_kinds: string[];
 };
 
 export function EditProjectForm({ project }: { project: EditableProject }) {
@@ -18,6 +23,10 @@ export function EditProjectForm({ project }: { project: EditableProject }) {
     updateProject,
     undefined,
   );
+
+  const selectedHelpKinds = state
+    ? (state.values.help_kinds ?? "").split(",")
+    : project.help_kinds;
 
   return (
     <form action={formAction} className="flex flex-col gap-6">
@@ -88,6 +97,28 @@ export function EditProjectForm({ project }: { project: EditableProject }) {
           На каком этапе проект сейчас. Посетители увидят этот этап словами.
         </p>
       </div>
+
+      <fieldset
+        className="flex flex-col gap-1"
+        aria-describedby="help-kinds-hint"
+      >
+        <legend>Чем можно помочь</legend>
+        {PROJECT_HELP_KINDS.map((kind) => (
+          <label key={kind} className="flex min-h-11 items-center gap-2">
+            <input
+              type="checkbox"
+              name="help_kinds"
+              value={kind}
+              defaultChecked={selectedHelpKinds.includes(kind)}
+            />
+            {PROJECT_HELP_KIND_LABELS[kind]}
+          </label>
+        ))}
+        <p id="help-kinds-hint">
+          Отметьте всё, что подходит. Если нужны вещи, напишите в описании, что
+          вы принимаете, что нет и как привезти.
+        </p>
+      </fieldset>
 
       {state?.error && <p role="alert">{state.error}</p>}
 
