@@ -189,7 +189,7 @@ export default async function ShelterNeedsPage({
               <li
                 key={item.id}
                 id={`need-${index}`}
-                className={`group relative flex min-w-0 flex-col gap-3 rounded-2xl border bg-(--surface) p-4 transition duration-300 ease-out hover:shadow-2xl focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-(--focus) motion-safe:hover:-translate-y-1.5 ${
+                className={`group relative flex min-w-0 flex-col gap-3 rounded-2xl border bg-(--surface) p-4 shadow-sm transition duration-300 ease-out hover:shadow-2xl focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-(--focus) motion-safe:hover:-translate-y-1.5 ${
                   item.is_urgent ? "border-(--danger)" : "border-(--border)"
                 }`}
               >

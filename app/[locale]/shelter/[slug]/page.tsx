@@ -216,7 +216,7 @@ export default async function ShelterHomePage({
               return (
                 <li
                   key={item.id}
-                  className="group relative flex min-w-0 flex-col gap-3 rounded-2xl border border-(--danger) bg-(--surface) p-4 transition duration-300 ease-out hover:shadow-2xl focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-(--focus) motion-safe:hover:-translate-y-1.5"
+                  className="group relative flex min-w-0 flex-col gap-3 rounded-2xl border border-(--danger) bg-(--surface) p-4 shadow-sm transition duration-300 ease-out hover:shadow-2xl focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-(--focus) motion-safe:hover:-translate-y-1.5"
                 >
                   <div className="flex min-w-0 flex-col gap-1">
                     <h3 className="min-w-0 text-lg font-bold wrap-anywhere">
