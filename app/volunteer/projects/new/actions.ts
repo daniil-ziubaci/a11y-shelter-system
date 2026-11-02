@@ -42,7 +42,7 @@ export async function createProject(
   if (!parsed.ok) {
     return fail(parsed.error);
   }
-  const { title, description, goal, stage, helpKinds, photoAlt } =
+  const { title, description, goal, stage, helpKinds, photoAlt, progress } =
     parsed.fields;
 
   let photoPath: string | null = null;
@@ -71,6 +71,9 @@ export async function createProject(
     help_kinds: helpKinds,
     photo_path: photoPath,
     photo_alt: photoPath ? photoAlt : null,
+    progress_total: progress?.total ?? null,
+    progress_done: progress?.done ?? null,
+    progress_unit: progress?.unit ?? null,
   });
   if (insertError) {
     return fail("Не удалось сохранить проект. Попробуйте ещё раз.");

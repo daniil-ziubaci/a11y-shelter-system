@@ -18,6 +18,9 @@ type EditableProject = {
   help_kinds: string[];
   photo_path: string | null;
   photo_alt: string | null;
+  progress_total: number | null;
+  progress_done: number | null;
+  progress_unit: string | null;
 };
 
 export function EditProjectForm({ project }: { project: EditableProject }) {
@@ -154,6 +157,58 @@ export function EditProjectForm({ project }: { project: EditableProject }) {
         <p id="help-kinds-hint">
           Отметьте всё, что подходит. Если нужны вещи, напишите в описании, что
           вы принимаете, что нет и как привезти.
+        </p>
+      </fieldset>
+
+      <fieldset
+        className="flex flex-col gap-4"
+        aria-describedby="progress-hint"
+      >
+        <legend>Счёт дел (необязательно)</legend>
+        <div className="flex flex-col gap-1">
+          <label htmlFor="progressTotal">Сколько всего</label>
+          <input
+            id="progressTotal"
+            name="progressTotal"
+            type="number"
+            inputMode="numeric"
+            min={1}
+            max={PROJECT_LIMITS.progressMax}
+            defaultValue={
+              state?.values.progressTotal ?? project.progress_total ?? ""
+            }
+          />
+        </div>
+        <div className="flex flex-col gap-1">
+          <label htmlFor="progressDone">Сколько сделано</label>
+          <input
+            id="progressDone"
+            name="progressDone"
+            type="number"
+            inputMode="numeric"
+            min={0}
+            max={PROJECT_LIMITS.progressMax}
+            defaultValue={
+              state?.values.progressDone ?? project.progress_done ?? ""
+            }
+          />
+        </div>
+        <div className="flex flex-col gap-1">
+          <label htmlFor="progressUnit">Что считаем</label>
+          <input
+            id="progressUnit"
+            name="progressUnit"
+            type="text"
+            autoComplete="off"
+            maxLength={PROJECT_LIMITS.progressUnit}
+            defaultValue={
+              state?.values.progressUnit ?? project.progress_unit ?? ""
+            }
+          />
+        </div>
+        <p id="progress-hint">
+          Считаем дела и вещи, не деньги. Например: всего 20, сделано 2, считаем
+          «вольеров». Заполните все три поля или оставьте пустыми.
         </p>
       </fieldset>
 

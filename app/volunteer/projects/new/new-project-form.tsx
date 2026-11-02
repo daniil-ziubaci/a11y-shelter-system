@@ -143,6 +143,52 @@ export function NewProjectForm() {
         </p>
       </fieldset>
 
+      <fieldset
+        className="flex flex-col gap-4"
+        aria-describedby="progress-hint"
+      >
+        <legend>Счёт дел (необязательно)</legend>
+        <div className="flex flex-col gap-1">
+          <label htmlFor="progressTotal">Сколько всего</label>
+          <input
+            id="progressTotal"
+            name="progressTotal"
+            type="number"
+            inputMode="numeric"
+            min={1}
+            max={PROJECT_LIMITS.progressMax}
+            defaultValue={state?.values.progressTotal}
+          />
+        </div>
+        <div className="flex flex-col gap-1">
+          <label htmlFor="progressDone">Сколько сделано</label>
+          <input
+            id="progressDone"
+            name="progressDone"
+            type="number"
+            inputMode="numeric"
+            min={0}
+            max={PROJECT_LIMITS.progressMax}
+            defaultValue={state?.values.progressDone}
+          />
+        </div>
+        <div className="flex flex-col gap-1">
+          <label htmlFor="progressUnit">Что считаем</label>
+          <input
+            id="progressUnit"
+            name="progressUnit"
+            type="text"
+            autoComplete="off"
+            maxLength={PROJECT_LIMITS.progressUnit}
+            defaultValue={state?.values.progressUnit}
+          />
+        </div>
+        <p id="progress-hint">
+          Считаем дела и вещи, не деньги. Например: всего 20, сделано 2, считаем
+          «вольеров». Заполните все три поля или оставьте пустыми.
+        </p>
+      </fieldset>
+
       {state?.error && <p role="alert">{state.error}</p>}
 
       <button type="submit" disabled={isPending}>

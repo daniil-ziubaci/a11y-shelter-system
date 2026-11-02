@@ -124,6 +124,9 @@ export type Database = {
           is_pinned: boolean
           photo_alt: string | null
           photo_path: string | null
+          progress_done: number | null
+          progress_total: number | null
+          progress_unit: string | null
           shelter_id: string
           stage: string
           status: string
@@ -140,6 +143,9 @@ export type Database = {
           is_pinned?: boolean
           photo_alt?: string | null
           photo_path?: string | null
+          progress_done?: number | null
+          progress_total?: number | null
+          progress_unit?: string | null
           shelter_id: string
           stage?: string
           status?: string
@@ -156,6 +162,9 @@ export type Database = {
           is_pinned?: boolean
           photo_alt?: string | null
           photo_path?: string | null
+          progress_done?: number | null
+          progress_total?: number | null
+          progress_unit?: string | null
           shelter_id?: string
           stage?: string
           status?: string

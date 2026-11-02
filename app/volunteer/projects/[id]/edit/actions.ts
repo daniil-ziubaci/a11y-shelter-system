@@ -45,7 +45,7 @@ export async function updateProject(
   if (!parsed.ok) {
     return fail(parsed.error);
   }
-  const { title, description, goal, stage, helpKinds, photoAlt } =
+  const { title, description, goal, stage, helpKinds, photoAlt, progress } =
     parsed.fields;
 
   let photoFields: { photo_path?: string; photo_alt?: string } = {};
@@ -85,6 +85,9 @@ export async function updateProject(
       goal,
       stage,
       help_kinds: helpKinds,
+      progress_total: progress?.total ?? null,
+      progress_done: progress?.done ?? null,
+      progress_unit: progress?.unit ?? null,
       ...photoFields,
     })
     .eq("id", projectId)
