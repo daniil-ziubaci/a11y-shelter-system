@@ -6,6 +6,7 @@ export type PurchaseItemFields = {
   category: string;
   unit: string;
   quantity: number;
+  isUrgent: boolean;
 };
 
 export type ParsePurchaseItemFieldsResult =
@@ -46,5 +47,10 @@ export function parsePurchaseItemFields(
     };
   }
 
-  return { ok: true, fields: { name, category, unit, quantity } };
+  const isUrgent = formData.get("is_urgent") === "on";
+
+  return {
+    ok: true,
+    fields: { name, category, unit, quantity, isUrgent },
+  };
 }

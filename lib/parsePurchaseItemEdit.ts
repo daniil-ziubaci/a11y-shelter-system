@@ -3,6 +3,7 @@ import { NEED_CATEGORIES } from "@/lib/needCategories";
 export type PurchaseItemEdit = {
   name: string;
   category: string;
+  isUrgent: boolean;
 };
 
 export type ParsePurchaseItemEditResult =
@@ -30,5 +31,7 @@ export function parsePurchaseItemEdit(
     return { ok: false, error: "Выберите категорию." };
   }
 
-  return { ok: true, fields: { name, category } };
+  const isUrgent = formData.get("is_urgent") === "on";
+
+  return { ok: true, fields: { name, category, isUrgent } };
 }

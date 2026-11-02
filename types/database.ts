@@ -186,28 +186,34 @@ export type Database = {
           category: string
           created_at: string
           id: string
+          is_urgent: boolean
           name: string
           remaining: number
           shelter_id: string
           unit: string
+          urgent_since: string | null
         }
         Insert: {
           category: string
           created_at?: string
           id?: string
+          is_urgent?: boolean
           name: string
           remaining: number
           shelter_id: string
           unit: string
+          urgent_since?: string | null
         }
         Update: {
           category?: string
           created_at?: string
           id?: string
+          is_urgent?: boolean
           name?: string
           remaining?: number
           shelter_id?: string
           unit?: string
+          urgent_since?: string | null
         }
         Relationships: [
           {

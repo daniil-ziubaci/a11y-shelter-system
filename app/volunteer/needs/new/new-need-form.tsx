@@ -80,6 +80,23 @@ export function NewNeedForm() {
         </p>
       </div>
 
+      <div className="flex flex-col gap-1">
+        <div className="flex items-center gap-2">
+          <input
+            id="is_urgent"
+            name="is_urgent"
+            type="checkbox"
+            defaultChecked={state?.values.is_urgent === "on"}
+            aria-describedby="is-urgent-hint"
+          />
+          <label htmlFor="is_urgent">Срочно нужно</label>
+        </div>
+        <p id="is-urgent-hint">
+          Срочные позиции показываются в списке первыми. Если срочным станет
+          всё, отметка перестанет что-то значить.
+        </p>
+      </div>
+
       {state?.error && <p role="alert">{state.error}</p>}
 
       <button type="submit" disabled={isPending}>

@@ -8,6 +8,7 @@ type EditNeedItem = {
   id: string;
   name: string;
   category: string;
+  is_urgent: boolean;
 };
 
 export function EditNeedForm({ item }: { item: EditNeedItem }) {
@@ -49,6 +50,25 @@ export function EditNeedForm({ item }: { item: EditNeedItem }) {
             </option>
           ))}
         </select>
+      </div>
+
+      <div className="flex flex-col gap-1">
+        <div className="flex items-center gap-2">
+          <input
+            id="is_urgent"
+            name="is_urgent"
+            type="checkbox"
+            defaultChecked={
+              state ? state.values.is_urgent === "on" : item.is_urgent
+            }
+            aria-describedby="is-urgent-hint"
+          />
+          <label htmlFor="is_urgent">Срочно нужно</label>
+        </div>
+        <p id="is-urgent-hint">
+          Срочные позиции показываются в списке первыми. Снимите отметку, когда
+          срочность прошла.
+        </p>
       </div>
 
       {state?.error && <p role="alert">{state.error}</p>}

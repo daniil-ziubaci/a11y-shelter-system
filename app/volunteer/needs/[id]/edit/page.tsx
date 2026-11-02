@@ -26,7 +26,7 @@ export default async function EditNeedPage({
 
   const { data: item, error } = await supabase
     .from("purchase_items")
-    .select("id, name, category")
+    .select("id, name, category, is_urgent")
     .eq("id", id)
     .eq("shelter_id", membership.shelter_id)
     .maybeSingle();

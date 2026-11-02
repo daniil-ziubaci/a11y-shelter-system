@@ -41,7 +41,7 @@ export async function createNeed(
   if (!parsed.ok) {
     return fail(parsed.error);
   }
-  const { name, category, unit, quantity } = parsed.fields;
+  const { name, category, unit, quantity, isUrgent } = parsed.fields;
 
   const { error: insertError } = await supabase.from("purchase_items").insert({
     shelter_id: membership.shelter_id,
@@ -49,6 +49,7 @@ export async function createNeed(
     category,
     unit,
     remaining: quantity,
+    is_urgent: isUrgent,
   });
   if (insertError) {
     return fail("Не удалось сохранить позицию. Попробуйте ещё раз.");
