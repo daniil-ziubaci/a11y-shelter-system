@@ -36,7 +36,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   for (const shelter of shelters) {
     const base = `/shelter/${shelter.slug}`;
-    paths.push(`${base}/catalog`, `${base}/needs`, `${base}/about`);
+    paths.push(base, `${base}/catalog`, `${base}/needs`, `${base}/about`);
     if (sheltersWithProjects.has(shelter.id)) {
       paths.push(`${base}/projects`);
     }
