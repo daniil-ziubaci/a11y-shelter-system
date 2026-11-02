@@ -8,6 +8,7 @@ export const PROJECT_LIMITS = {
   title: 120,
   description: 1000,
   goal: 300,
+  photoAlt: 200,
 } as const;
 
 type ParsedProject =
@@ -19,6 +20,7 @@ type ParsedProject =
         goal: string | null;
         stage: ProjectStage;
         helpKinds: ProjectHelpKind[];
+        photoAlt: string;
       };
     }
   | { ok: false; error: string };
@@ -59,6 +61,14 @@ export function parseProjectFields(formData: FormData): ParsedProject {
     };
   }
 
+  const photoAlt = read("photoAlt");
+  if (photoAlt.length > PROJECT_LIMITS.photoAlt) {
+    return {
+      ok: false,
+      error: `Описание фото длиннее ${PROJECT_LIMITS.photoAlt} знаков.`,
+    };
+  }
+
   const stage = PROJECT_STAGES.find((s) => s === read("stage"));
   if (!stage) {
     return { ok: false, error: "Выберите этап проекта." };
@@ -80,6 +90,7 @@ export function parseProjectFields(formData: FormData): ParsedProject {
       goal: goalText || null,
       stage,
       helpKinds,
+      photoAlt,
     },
   };
 }

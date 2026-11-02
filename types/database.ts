@@ -122,6 +122,8 @@ export type Database = {
           help_kinds: string[]
           id: string
           is_pinned: boolean
+          photo_alt: string | null
+          photo_path: string | null
           shelter_id: string
           stage: string
           status: string
@@ -136,6 +138,8 @@ export type Database = {
           help_kinds?: string[]
           id?: string
           is_pinned?: boolean
+          photo_alt?: string | null
+          photo_path?: string | null
           shelter_id: string
           stage?: string
           status?: string
@@ -150,6 +154,8 @@ export type Database = {
           help_kinds?: string[]
           id?: string
           is_pinned?: boolean
+          photo_alt?: string | null
+          photo_path?: string | null
           shelter_id?: string
           stage?: string
           status?: string

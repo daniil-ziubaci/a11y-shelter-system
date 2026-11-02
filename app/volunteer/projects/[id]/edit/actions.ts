@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { parseProjectFields } from "@/lib/parseProjectFields";
+import { uploadProjectPhoto } from "@/lib/uploadProjectPhoto";
 
 type UpdateProjectState =
   | { error: string; values: Record<string, string> }
@@ -44,10 +45,48 @@ export async function updateProject(
   if (!parsed.ok) {
     return fail(parsed.error);
   }
-  const { title, description, goal, stage, helpKinds } = parsed.fields;
+  const { title, description, goal, stage, helpKinds, photoAlt } =
+    parsed.fields;
+
+  let photoFields: { photo_path?: string; photo_alt?: string } = {};
+  const photo = formData.get("photo");
+  if (photo instanceof File && photo.size > 0) {
+    if (photoAlt.length === 0) {
+      return fail("Опишите фото: это нужно людям, которые его не видят.");
+    }
+    const uploaded = await uploadProjectPhoto(
+      supabase,
+      membership.shelter_id,
+      photo,
+    );
+    if (!uploaded.ok) {
+      return fail(uploaded.error);
+    }
+    photoFields = { photo_path: uploaded.path, photo_alt: photoAlt };
+  } else {
+    const { data: current } = await supabase
+      .from("projects")
+      .select("photo_path")
+      .eq("id", projectId)
+      .eq("shelter_id", membership.shelter_id)
+      .maybeSingle();
+    if (current?.photo_path) {
+      if (photoAlt.length === 0) {
+        return fail("Описание фото не может быть пустым.");
+      }
+      photoFields = { photo_alt: photoAlt };
+    }
+  }
   const { data: updated, error: updateError } = await supabase
     .from("projects")
-    .update({ title, description, goal, stage, help_kinds: helpKinds })
+    .update({
+      title,
+      description,
+      goal,
+      stage,
+      help_kinds: helpKinds,
+      ...photoFields,
+    })
     .eq("id", projectId)
     .eq("shelter_id", membership.shelter_id)
     .select("id")

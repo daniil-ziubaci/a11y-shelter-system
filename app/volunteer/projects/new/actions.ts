@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { parseProjectFields } from "@/lib/parseProjectFields";
+import { uploadProjectPhoto } from "@/lib/uploadProjectPhoto";
 
 type CreateProjectState =
   | { error: string; values: Record<string, string> }
@@ -41,7 +42,25 @@ export async function createProject(
   if (!parsed.ok) {
     return fail(parsed.error);
   }
-  const { title, description, goal, stage, helpKinds } = parsed.fields;
+  const { title, description, goal, stage, helpKinds, photoAlt } =
+    parsed.fields;
+
+  let photoPath: string | null = null;
+  const photo = formData.get("photo");
+  if (photo instanceof File && photo.size > 0) {
+    if (photoAlt.length === 0) {
+      return fail("Опишите фото: это нужно людям, которые его не видят.");
+    }
+    const uploaded = await uploadProjectPhoto(
+      supabase,
+      membership.shelter_id,
+      photo,
+    );
+    if (!uploaded.ok) {
+      return fail(uploaded.error);
+    }
+    photoPath = uploaded.path;
+  }
 
   const { error: insertError } = await supabase.from("projects").insert({
     shelter_id: membership.shelter_id,
@@ -50,6 +69,8 @@ export async function createProject(
     goal,
     stage,
     help_kinds: helpKinds,
+    photo_path: photoPath,
+    photo_alt: photoPath ? photoAlt : null,
   });
   if (insertError) {
     return fail("Не удалось сохранить проект. Попробуйте ещё раз.");

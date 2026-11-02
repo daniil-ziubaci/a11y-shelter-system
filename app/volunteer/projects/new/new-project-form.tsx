@@ -89,6 +89,38 @@ export function NewProjectForm() {
         </p>
       </div>
 
+      <div className="flex flex-col gap-1">
+        <label htmlFor="photo">Фото (необязательно)</label>
+        <input
+          id="photo"
+          name="photo"
+          type="file"
+          accept="image/jpeg,image/png,image/webp"
+          aria-describedby="photo-hint"
+        />
+        <p id="photo-hint">
+          Формат JPEG, PNG или WebP. Загружайте только фото, снятые в приюте или
+          с разрешения автора. После ошибки фото нужно выбрать заново.
+        </p>
+      </div>
+
+      <div className="flex flex-col gap-1">
+        <label htmlFor="photoAlt">Описание фото</label>
+        <input
+          id="photoAlt"
+          name="photoAlt"
+          type="text"
+          autoComplete="off"
+          maxLength={PROJECT_LIMITS.photoAlt}
+          defaultValue={state?.values.photoAlt}
+          aria-describedby="photo-alt-hint"
+        />
+        <p id="photo-alt-hint">
+          Обязательно, если выбрали фото. Опишите, что на нём, для человека,
+          который его не видит. Например: «Утеплённый вольер с соломой».
+        </p>
+      </div>
+
       <fieldset
         className="flex flex-col gap-1"
         aria-describedby="help-kinds-hint"

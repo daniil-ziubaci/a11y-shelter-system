@@ -16,6 +16,8 @@ type EditableProject = {
   goal: string | null;
   stage: string;
   help_kinds: string[];
+  photo_path: string | null;
+  photo_alt: string | null;
 };
 
 export function EditProjectForm({ project }: { project: EditableProject }) {
@@ -95,6 +97,41 @@ export function EditProjectForm({ project }: { project: EditableProject }) {
         </select>
         <p id="stage-hint">
           На каком этапе проект сейчас. Посетители увидят этот этап словами.
+        </p>
+      </div>
+
+      <div className="flex flex-col gap-1">
+        <label htmlFor="photo">Фото (необязательно)</label>
+        <input
+          id="photo"
+          name="photo"
+          type="file"
+          accept="image/jpeg,image/png,image/webp"
+          aria-describedby="photo-hint"
+        />
+        <p id="photo-hint">
+          {project.photo_path
+            ? "Фото уже загружено. Чтобы заменить его, выберите новый файл. "
+            : ""}
+          Формат JPEG, PNG или WebP. Загружайте только фото, снятые в приюте или
+          с разрешения автора. После ошибки фото нужно выбрать заново.
+        </p>
+      </div>
+
+      <div className="flex flex-col gap-1">
+        <label htmlFor="photoAlt">Описание фото</label>
+        <input
+          id="photoAlt"
+          name="photoAlt"
+          type="text"
+          autoComplete="off"
+          maxLength={PROJECT_LIMITS.photoAlt}
+          defaultValue={state?.values.photoAlt ?? project.photo_alt ?? ""}
+          aria-describedby="photo-alt-hint"
+        />
+        <p id="photo-alt-hint">
+          Обязательно, если есть фото. Опишите, что на нём, для человека,
+          который его не видит. Например: «Утеплённый вольер с соломой».
         </p>
       </div>
 

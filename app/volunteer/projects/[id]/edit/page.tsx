@@ -26,7 +26,9 @@ export default async function EditProjectPage({
 
   const { data: project, error } = await supabase
     .from("projects")
-    .select("id, title, description, goal, stage, help_kinds")
+    .select(
+      "id, title, description, goal, stage, help_kinds, photo_path, photo_alt",
+    )
     .eq("id", id)
     .eq("shelter_id", membership.shelter_id)
     .maybeSingle();
