@@ -210,20 +210,22 @@ export default async function ShelterNeedsPage({
                       ? t(`categories.${categoryKey}`)
                       : item.category}
                   </p>
+                </div>
+                <div className="mt-auto flex flex-col gap-3">
                   <p className="text-lg font-bold">
                     {t("remaining", {
                       amount: format.number(item.remaining),
                       unit: unitKey ? t(`units.${unitKey}`) : item.unit,
                     })}
                   </p>
+                  <a
+                    href="#footer-contact-heading"
+                    aria-label={t("helpLabel", { name: item.name })}
+                    className="flex min-h-11 items-center justify-center self-start rounded-full bg-(--accent) px-5 text-lg font-semibold text-(--accent-contrast) sm:after:absolute sm:after:inset-0"
+                  >
+                    {t("help")}
+                  </a>
                 </div>
-                <a
-                  href="#footer-contact-heading"
-                  aria-label={t("helpLabel", { name: item.name })}
-                  className="mt-auto flex min-h-11 items-center justify-center self-start rounded-full bg-(--accent) px-5 text-lg font-semibold text-(--accent-contrast) sm:after:absolute sm:after:inset-0"
-                >
-                  {t("help")}
-                </a>
               </li>
             );
           })}
