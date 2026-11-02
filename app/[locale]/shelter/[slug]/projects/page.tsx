@@ -37,7 +37,7 @@ export default async function ShelterProjectsPage({
   const { data: projects, error } = await supabase
     .from("projects")
     .select(
-      "id, title, description, goal, status, stage, completed_at, is_pinned, help_kinds, photo_path, photo_alt",
+      "id, title, description, goal, status, stage, completed_at, is_pinned, help_kinds, photo_path, photo_alt, progress_total, progress_done, progress_unit",
     )
     .eq("shelter_id", shelter.id)
     .order("completed_at", { ascending: false, nullsFirst: false })
@@ -97,38 +97,70 @@ export default async function ShelterProjectsPage({
           {project.title}
         </h3>
         <p className="whitespace-pre-line">{project.description}</p>
-        {(project.goal ||
-          (project.status === PROJECT_STATUS_ONGOING &&
-            !project.is_pinned &&
-            getStageKey(project.stage))) && (
-          <dl className="flex flex-col gap-1 border-l-4 border-(--accent) pl-4">
-            {project.goal && (
-              <div>
-                <dt className="inline font-bold">
-                  {project.status === PROJECT_STATUS_COMPLETED && (
-                    <span aria-hidden="true">✓ </span>
-                  )}
-                  {t(
-                    project.status === PROJECT_STATUS_COMPLETED
-                      ? "goalAchievedLabel"
-                      : "goalLabel",
-                  )}{" "}
-                </dt>
-                <dd className="inline">{project.goal}</dd>
+        {project.status === PROJECT_STATUS_ONGOING &&
+          project.progress_total !== null &&
+          project.progress_done !== null &&
+          project.progress_unit && (
+            <div className="flex flex-col gap-2">
+              <p className="text-lg font-semibold">
+                {t("progressText", {
+                  done: project.progress_done,
+                  total: project.progress_total,
+                  unit: project.progress_unit,
+                  left: project.progress_total - project.progress_done,
+                })}
+              </p>
+              <div
+                aria-hidden="true"
+                className="h-3 w-full overflow-hidden rounded-full border border-(--border-strong) bg-(--hover)"
+              >
+                <div
+                  className="h-full bg-(--accent)"
+                  style={{
+                    width: `${Math.round(
+                      (project.progress_done / project.progress_total) * 100,
+                    )}%`,
+                  }}
+                />
               </div>
-            )}
-            {project.status === PROJECT_STATUS_ONGOING &&
+            </div>
+          )}
+        {!(
+          project.status === PROJECT_STATUS_ONGOING &&
+          project.progress_total !== null
+        ) &&
+          (project.goal ||
+            (project.status === PROJECT_STATUS_ONGOING &&
               !project.is_pinned &&
-              getStageKey(project.stage) && (
+              getStageKey(project.stage))) && (
+            <dl className="flex flex-col gap-1 border-l-4 border-(--accent) pl-4">
+              {project.goal && (
                 <div>
-                  <dt className="inline font-bold">{t("stageTitle")} </dt>
-                  <dd className="inline">
-                    {t(`stages.${getStageKey(project.stage)}`)}
-                  </dd>
+                  <dt className="inline font-bold">
+                    {project.status === PROJECT_STATUS_COMPLETED && (
+                      <span aria-hidden="true">✓ </span>
+                    )}
+                    {t(
+                      project.status === PROJECT_STATUS_COMPLETED
+                        ? "goalAchievedLabel"
+                        : "goalLabel",
+                    )}{" "}
+                  </dt>
+                  <dd className="inline">{project.goal}</dd>
                 </div>
               )}
-          </dl>
-        )}
+              {project.status === PROJECT_STATUS_ONGOING &&
+                !project.is_pinned &&
+                getStageKey(project.stage) && (
+                  <div>
+                    <dt className="inline font-bold">{t("stageTitle")} </dt>
+                    <dd className="inline">
+                      {t(`stages.${getStageKey(project.stage)}`)}
+                    </dd>
+                  </div>
+                )}
+            </dl>
+          )}
 
         {project.status === PROJECT_STATUS_ONGOING && (
           <ul aria-label={t("helpKindsLabel")} className="flex flex-wrap gap-2">

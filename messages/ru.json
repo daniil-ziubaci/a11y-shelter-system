@@ -190,6 +190,7 @@
     "goalLabel": "Цель:",
     "stageTitle": "Этап:",
     "goalAchievedLabel": "Цель достигнута:",
+    "progressText": "Сделано {done} из {total} {unit}, осталось {left}",
     "helpKindsLabel": "Чем можно помочь",
     "helpKinds": {
       "things": "Вещи",

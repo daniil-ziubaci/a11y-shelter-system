@@ -190,6 +190,7 @@
     "goalLabel": "Obiectiv:",
     "stageTitle": "Etapă:",
     "goalAchievedLabel": "Obiectiv atins:",
+    "progressText": "Realizat {done} din {total} {unit}, rămas {left}",
     "helpKindsLabel": "Cum poți ajuta",
     "helpKinds": {
       "things": "Obiecte",
