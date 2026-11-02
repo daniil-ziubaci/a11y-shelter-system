@@ -36,6 +36,7 @@
     "addressByAppointment": "Vizite doar cu programare"
   },
   "Nav": {
+    "skipToContent": "Sari la conținut",
     "label": "Navigare principală",
     "home": "Acasă",
     "catalog": "Catalog",

@@ -3,6 +3,7 @@ import { ScrollTopLink } from "@/components/ScrollTopLink";
 import { getShelter } from "@/lib/getShelter";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { ShelterFooter } from "@/components/ShelterFooter";
+import { getTranslations } from "next-intl/server";
 
 export default async function ShelterLayout({
   children,
@@ -13,9 +14,16 @@ export default async function ShelterLayout({
 }) {
   const { slug } = await params;
   const shelter = await getShelter(slug);
+  const t = await getTranslations("Nav");
 
   return (
     <>
+      <a
+        href="#content"
+        className="fixed left-4 top-4 z-50 -translate-y-24 rounded-md bg-(--surface) px-4 py-2 font-semibold text-(--accent) underline shadow-md focus:translate-y-0"
+      >
+        {t("skipToContent")}
+      </a>
       <header className="sticky top-0 z-30 w-full bg-(--background) shadow-md">
         <div className="relative mx-auto flex w-full max-w-5xl items-center justify-between gap-x-4 px-4 py-1">
           <ScrollTopLink
@@ -35,7 +43,9 @@ export default async function ShelterLayout({
           </div>
         </div>
       </header>
-      {children}
+      <div id="content" tabIndex={-1} className="focus:outline-none">
+        {children}
+      </div>
 
       <ShelterFooter
         slug={slug}

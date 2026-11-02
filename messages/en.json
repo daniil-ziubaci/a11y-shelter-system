@@ -36,6 +36,7 @@
     "addressByAppointment": "Visits by appointment"
   },
   "Nav": {
+    "skipToContent": "Skip to content",
     "label": "Main navigation",
     "home": "Home",
     "catalog": "Catalog",
