@@ -74,7 +74,7 @@ export default async function ShelterAboutPage({
           </div>
         )}
         <div className="flex flex-col gap-4 rounded-2xl border border-(--border) bg-(--surface) p-6">
-          <h1 id="about-heading" className="text-2xl font-bold">
+          <h1 id="about-heading" className="text-3xl font-bold">
             {shelter.name}
           </h1>
           {shelter.about && (
