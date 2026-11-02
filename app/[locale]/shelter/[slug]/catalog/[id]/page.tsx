@@ -92,6 +92,15 @@ export default async function PetPage({
         <ol className="flex flex-wrap items-center gap-x-2 text-base">
           <li className="flex items-center gap-x-2">
             <Link
+              href={`/shelter/${slug}`}
+              className="inline-flex items-center py-1 text-(--muted) transition-colors hover:text-(--foreground) motion-reduce:transition-none"
+            >
+              {t("breadcrumbHome")}
+            </Link>
+            <span aria-hidden="true">/</span>
+          </li>
+          <li className="flex items-center gap-x-2">
+            <Link
               href={
                 isTreatmentRelated
                   ? `/shelter/${slug}/catalog?mode=treatment`

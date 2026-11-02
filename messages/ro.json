@@ -137,6 +137,7 @@
     },
     "sexValue": { "boy": "băiat", "girl": "fată" },
     "breadcrumbLabel": "Calea de navigare",
+    "breadcrumbHome": "Acasă",
     "breadcrumbCatalog": "Catalog",
     "breadcrumbTreatment": "Tratament",
     "otherTreatmentHeading": "Și alte animale au nevoie de ajutor",

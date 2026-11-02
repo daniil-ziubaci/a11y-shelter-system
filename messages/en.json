@@ -137,6 +137,7 @@
     },
     "sexValue": { "boy": "boy", "girl": "girl" },
     "breadcrumbLabel": "Breadcrumb",
+    "breadcrumbHome": "Home",
     "breadcrumbCatalog": "Catalog",
     "breadcrumbTreatment": "Treatment",
     "otherTreatmentHeading": "Other animals need help too",

@@ -137,6 +137,7 @@
     },
     "sexValue": { "boy": "мальчик", "girl": "девочка" },
     "breadcrumbLabel": "Хлебные крошки",
+    "breadcrumbHome": "Главная",
     "breadcrumbCatalog": "Каталог",
     "breadcrumbTreatment": "Лечение",
     "otherTreatmentHeading": "Другим животным тоже нужна помощь",
