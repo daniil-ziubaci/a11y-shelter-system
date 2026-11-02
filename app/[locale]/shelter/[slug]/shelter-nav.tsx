@@ -1,6 +1,7 @@
 "use client";
 
-import { Link, usePathname } from "@/i18n/navigation";
+import { usePathname } from "@/i18n/navigation";
+import { ScrollTopLink } from "@/components/ScrollTopLink";
 import { useTranslations } from "next-intl";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useId, useRef, useState } from "react";
@@ -76,14 +77,14 @@ export function ShelterNav({ slug }: { slug: string }) {
       >
         {links.map((link) => (
           <li key={link.href}>
-            <Link
+            <ScrollTopLink
               href={link.href}
               onClick={() => setOpen(false)}
               aria-current={link.current ? "page" : undefined}
               className="flex min-h-12 items-center rounded-md px-4 font-medium max-lg:font-semibold transition-colors duration-200 hover:bg-(--hover) hover:text-(--accent) motion-reduce:transition-none aria-[current=page]:bg-(--hover) aria-[current=page]:text-(--accent) aria-[current=page]:font-semibold lg:inline-flex lg:min-h-0 lg:rounded-md lg:px-2 lg:py-2 lg:text-base"
             >
               {link.label}
-            </Link>
+            </ScrollTopLink>
           </li>
         ))}
 
