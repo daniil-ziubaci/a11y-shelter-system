@@ -185,6 +185,11 @@
     },
     "help": "Ajută",
     "helpLabel": "Ajută proiectul „{name}”",
+    "supportProgram": "Susține programul",
+    "supportProgramLabel": "Susține programul „{name}”",
+    "goalLabel": "Obiectiv:",
+    "stageTitle": "Etapă:",
+    "goalAchievedLabel": "Obiectiv atins:",
     "helpKindsLabel": "Cum poți ajuta",
     "helpKinds": {
       "things": "Obiecte",

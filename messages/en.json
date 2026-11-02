@@ -185,6 +185,11 @@
     },
     "help": "Help",
     "helpLabel": "Help the project “{name}”",
+    "supportProgram": "Support the program",
+    "supportProgramLabel": "Support the program “{name}”",
+    "goalLabel": "Goal:",
+    "stageTitle": "Stage:",
+    "goalAchievedLabel": "Goal achieved:",
     "helpKindsLabel": "How you can help",
     "helpKinds": {
       "things": "Items",

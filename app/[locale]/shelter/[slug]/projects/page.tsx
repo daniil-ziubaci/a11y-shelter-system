@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { getShelter } from "@/lib/getShelter";
 import {
   getStageKey,
@@ -36,7 +37,7 @@ export default async function ShelterProjectsPage({
   const { data: projects, error } = await supabase
     .from("projects")
     .select(
-      "id, title, description, goal, status, stage, completed_at, is_pinned, help_kinds",
+      "id, title, description, goal, status, stage, completed_at, is_pinned, help_kinds, photo_path, photo_alt",
     )
     .eq("shelter_id", shelter.id)
     .order("completed_at", { ascending: false, nullsFirst: false })
@@ -61,61 +62,109 @@ export default async function ShelterProjectsPage({
   const renderProject = (project: (typeof ongoing)[number]) => (
     <li
       key={project.id}
-      className={`flex flex-col gap-3 rounded-2xl border border-(--border-strong) p-5 ${
+      className={`flex flex-col gap-3 rounded-2xl border border-(--border-strong) p-5 sm:flex-row sm:gap-6 ${
         project.is_pinned ? "bg-(--accent-soft)" : "bg-(--surface)"
       }`}
     >
-      {project.is_pinned && (
-        <p className="self-start rounded-full border border-(--accent) bg-(--surface) px-3 py-1 text-sm font-medium text-(--accent)">
-          {t("pinnedBadge")}
-        </p>
+      {project.photo_path && project.photo_alt && (
+        <div className="relative aspect-4/3 w-full overflow-hidden rounded-xl bg-(--hover) sm:w-2/5 sm:shrink-0 sm:self-start">
+          <Image
+            src={
+              supabase.storage
+                .from("pet-photos")
+                .getPublicUrl(project.photo_path).data.publicUrl
+            }
+            alt={project.photo_alt}
+            fill
+            sizes="(min-width: 640px) 40vw, 100vw"
+            className="object-cover"
+          />
+        </div>
       )}
 
-      <h3 className="text-xl font-bold">{project.title}</h3>
-      <p className="whitespace-pre-line">{project.description}</p>
-      {project.goal && (
-        <p className="text-(--muted)">{t("goal", { goal: project.goal })}</p>
-      )}
-      {project.status === PROJECT_STATUS_ONGOING &&
-        !project.is_pinned &&
-        getStageKey(project.stage) && (
-          <p className="font-medium">
-            {t("stageLabel", {
-              stage: t(`stages.${getStageKey(project.stage)}`),
+      <div className="flex flex-1 flex-col gap-3">
+        {project.is_pinned && (
+          <p className="inline-flex items-center gap-2 self-start rounded-full border border-(--accent) bg-(--surface) px-3 py-1 text-sm font-medium text-(--accent)">
+            <span
+              aria-hidden="true"
+              className="size-1.5 rounded-full bg-current"
+            />
+            {t("pinnedBadge")}
+          </p>
+        )}
+
+        <h3 className="text-2xl font-bold leading-tight sm:text-3xl">
+          {project.title}
+        </h3>
+        <p className="whitespace-pre-line">{project.description}</p>
+        {(project.goal ||
+          (project.status === PROJECT_STATUS_ONGOING &&
+            !project.is_pinned &&
+            getStageKey(project.stage))) && (
+          <dl className="flex flex-col gap-1 border-l-4 border-(--accent) pl-4">
+            {project.goal && (
+              <div>
+                <dt className="inline font-bold">
+                  {project.status === PROJECT_STATUS_COMPLETED && (
+                    <span aria-hidden="true">✓ </span>
+                  )}
+                  {t(
+                    project.status === PROJECT_STATUS_COMPLETED
+                      ? "goalAchievedLabel"
+                      : "goalLabel",
+                  )}{" "}
+                </dt>
+                <dd className="inline">{project.goal}</dd>
+              </div>
+            )}
+            {project.status === PROJECT_STATUS_ONGOING &&
+              !project.is_pinned &&
+              getStageKey(project.stage) && (
+                <div>
+                  <dt className="inline font-bold">{t("stageTitle")} </dt>
+                  <dd className="inline">
+                    {t(`stages.${getStageKey(project.stage)}`)}
+                  </dd>
+                </div>
+              )}
+          </dl>
+        )}
+
+        {project.status === PROJECT_STATUS_ONGOING && (
+          <ul aria-label={t("helpKindsLabel")} className="flex flex-wrap gap-2">
+            {project.help_kinds.map((kind) => (
+              <li
+                key={kind}
+                className="rounded-full border border-(--accent) bg-(--accent-soft) px-3 py-1.5 text-sm font-semibold text-(--accent)"
+              >
+                {t(`helpKinds.${kind}`)}
+              </li>
+            ))}
+          </ul>
+        )}
+        {project.completed_at && (
+          <p className="text-(--muted)">
+            {t("completedOn", {
+              date: format.dateTime(new Date(project.completed_at), {
+                dateStyle: "long",
+                timeZone: "UTC",
+              }),
             })}
           </p>
         )}
-      {project.status === PROJECT_STATUS_ONGOING && (
-        <ul aria-label={t("helpKindsLabel")} className="flex flex-wrap gap-2">
-          {project.help_kinds.map((kind) => (
-            <li
-              key={kind}
-              className="rounded-full border border-(--border-strong) px-3 py-1 text-sm"
-            >
-              {t(`helpKinds.${kind}`)}
-            </li>
-          ))}
-        </ul>
-      )}
-      {project.completed_at && (
-        <p className="text-(--muted)">
-          {t("completedOn", {
-            date: format.dateTime(new Date(project.completed_at), {
-              dateStyle: "long",
-              timeZone: "UTC",
-            }),
-          })}
-        </p>
-      )}
-      {project.status === PROJECT_STATUS_ONGOING && (
-        <a
-          href="#footer-contact-heading"
-          aria-label={t("helpLabel", { name: project.title })}
-          className="mt-auto inline-flex min-h-11 items-center self-start rounded-full bg-(--accent) px-6 font-semibold text-(--accent-contrast)"
-        >
-          {t("help")}
-        </a>
-      )}
+        {project.status === PROJECT_STATUS_ONGOING && (
+          <a
+            href="#footer-contact-heading"
+            aria-label={t(
+              project.is_pinned ? "supportProgramLabel" : "helpLabel",
+              { name: project.title },
+            )}
+            className="mt-auto flex min-h-11 w-full items-center justify-center rounded-full bg-(--accent) px-5 text-lg font-semibold text-(--accent-contrast) sm:inline-flex sm:w-auto sm:self-start"
+          >
+            {t(project.is_pinned ? "supportProgram" : "help")}
+          </a>
+        )}
+      </div>
     </li>
   );
 
@@ -139,7 +188,7 @@ export default async function ShelterProjectsPage({
             {ongoing.length === 0 ? (
               <p>{t("noOngoing")}</p>
             ) : (
-              <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              <ul className="flex flex-col gap-6">
                 {ongoing.map(renderProject)}
               </ul>
             )}
@@ -152,7 +201,7 @@ export default async function ShelterProjectsPage({
               <h2 id="completed-heading" className="text-2xl font-bold">
                 {t("completedHeading")}
               </h2>
-              <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              <ul className="flex flex-col gap-6">
                 {completed.map(renderProject)}
               </ul>
             </section>
