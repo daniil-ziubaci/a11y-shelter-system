@@ -1,6 +1,10 @@
 import "server-only";
 
 import { buildTranslations } from "@/lib/buildTranslations";
+import { routing } from "@/i18n/routing";
+import { translateCity } from "@/lib/cityNames";
+import { textHash } from "@/lib/hashText";
+import { localizeName } from "@/lib/transliterate";
 import { readTranslations, type Translations } from "@/lib/translations";
 import type { Json } from "@/types/database";
 
@@ -20,11 +24,33 @@ type ShelterTexts = {
   translations: Json;
 };
 
-export function shelterTranslations(
+function withCity(
+  translations: Translations,
+  city: string | null,
+  sourceLanguage: string,
+): Translations {
+  if (!city) {
+    return translations;
+  }
+  const hash = textHash("", city);
+  const byLanguage: Translations[string] = {};
+  for (const language of routing.locales) {
+    if (language === sourceLanguage) {
+      continue;
+    }
+    const text =
+      translateCity(city, sourceLanguage, language) ??
+      localizeName(city, language);
+    byLanguage[language] = { text, hash };
+  }
+  return { ...translations, city: byLanguage };
+}
+
+export async function shelterTranslations(
   shelter: ShelterTexts,
   sourceLanguage: string,
 ): Promise<Translations> {
-  return buildTranslations({
+  const translations = await buildTranslations({
     sourceLanguage,
     texts: {
       about: shelter.about ?? "",
@@ -32,9 +58,9 @@ export function shelterTranslations(
       legal_info: shelter.legal_info ?? "",
       contact_hours: shelter.contact_hours ?? "",
       photo_alt: shelter.photo_alt ?? "",
-      city: shelter.city ?? "",
     },
     previous: readTranslations(shelter.translations),
     context: SHELTER_CONTEXT,
   });
+  return withCity(translations, shelter.city, sourceLanguage);
 }
