@@ -1,12 +1,9 @@
 import { routing } from "@/i18n/routing";
 import { getRemainingCharacters, translateTexts } from "@/lib/deepl";
-import { hashText } from "@/lib/hashText";
+import { translateHealthPhrases } from "@/lib/healthPhrases";
+import { petTextHash } from "@/lib/hashText";
 import type { Translations } from "@/lib/translations";
 import { localizeName } from "@/lib/transliterate";
-
-export function petTextHash(name: string, text: string): string {
-  return hashText(`${name}\u0000${text}`);
-}
 
 const PET_CONTEXT: Record<string, string> = {
   ru: "Сайт приюта для бездомных животных. Текст описывает питомца: его здоровье, характер и фото.",
@@ -51,7 +48,22 @@ export async function buildPetTranslations(
     if (language === input.sourceLanguage) {
       continue;
     }
-    const stale = keepFresh(input, language, result);
+    const pending = keepFresh(input, language, result);
+    const stale: [string, string][] = [];
+    for (const [field, text] of pending) {
+      const phrase =
+        field === "health"
+          ? translateHealthPhrases(text, input.sourceLanguage, language)
+          : null;
+      if (phrase === null) {
+        stale.push([field, text]);
+      } else {
+        result[field] = {
+          ...result[field],
+          [language]: { text: phrase, hash: petTextHash(input.name, text) },
+        };
+      }
+    }
     if (stale.length === 0) {
       continue;
     }
