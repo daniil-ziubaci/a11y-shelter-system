@@ -199,6 +199,7 @@ export type Database = {
           name: string
           remaining: number
           shelter_id: string
+          translations: Json
           unit: string
           urgent_since: string | null
         }
@@ -210,6 +211,7 @@ export type Database = {
           name: string
           remaining: number
           shelter_id: string
+          translations?: Json
           unit: string
           urgent_since?: string | null
         }
@@ -221,6 +223,7 @@ export type Database = {
           name?: string
           remaining?: number
           shelter_id?: string
+          translations?: Json
           unit?: string
           urgent_since?: string | null
         }
