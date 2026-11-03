@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { getShelter } from "@/lib/getShelter";
 import { ContentLanguageNote } from "@/components/ContentLanguageNote";
+import { localizeProject } from "@/lib/localizeProject";
 import { toContentLanguage } from "@/lib/contentLanguage";
 import { ProjectDescription } from "@/components/ProjectDescription";
 import {
@@ -50,12 +51,13 @@ export default async function ShelterProjectsPage({
   const shelter = await getShelter(slug, locale);
   const t = await getTranslations("Projects");
   const contentLanguage = toContentLanguage(shelter.content_language);
+  const pageLanguage = toContentLanguage(locale);
   const format = await getFormatter();
   const supabase = await createClient();
   const { data: projects, error } = await supabase
     .from("projects")
     .select(
-      "id, title, description, goal, status, stage, completed_at, is_pinned, help_kinds, photo_path, photo_alt, progress_total, progress_done, progress_unit",
+      "id, title, description, goal, status, stage, completed_at, is_pinned, help_kinds, photo_path, photo_alt, progress_total, progress_done, progress_unit, translations",
     )
     .eq("shelter_id", shelter.id)
     .order("completed_at", { ascending: false, nullsFirst: false })
@@ -69,11 +71,19 @@ export default async function ShelterProjectsPage({
     );
   }
 
-  const ongoing = (projects ?? [])
+  const localized = (projects ?? []).map((project) =>
+    localizeProject(project, locale),
+  );
+
+  const anyTranslated = localized.some((p) =>
+    Object.values(p.translated).some(Boolean),
+  );
+
+  const ongoing = localized
     .filter((p) => p.status === PROJECT_STATUS_ONGOING)
     .sort((a, b) => Number(b.is_pinned) - Number(a.is_pinned));
 
-  const completed = (projects ?? []).filter(
+  const completed = localized.filter(
     (p) => p.status === PROJECT_STATUS_COMPLETED,
   );
 
@@ -111,14 +121,16 @@ export default async function ShelterProjectsPage({
           </p>
         )}
         <h3
-          lang={contentLanguage}
+          lang={project.translated.title ? pageLanguage : contentLanguage}
           className="text-2xl font-bold leading-tight sm:text-3xl"
         >
           {project.title}
         </h3>
         <ProjectDescription
           text={project.description}
-          language={contentLanguage}
+          language={
+            project.translated.description ? pageLanguage : contentLanguage
+          }
         />
         {project.status === PROJECT_STATUS_ONGOING &&
           project.progress_total !== null &&
@@ -169,7 +181,14 @@ export default async function ShelterProjectsPage({
                         : "goalLabel",
                     )}{" "}
                   </dt>
-                  <dd className="inline">{project.goal}</dd>
+                  <dd
+                    lang={
+                      project.translated.goal ? pageLanguage : contentLanguage
+                    }
+                    className="inline"
+                  >
+                    {project.goal}
+                  </dd>
                 </div>
               )}
               {project.status === PROJECT_STATUS_ONGOING &&
@@ -229,7 +248,10 @@ export default async function ShelterProjectsPage({
       </h1>
       <p className="-mt-3 text-center text-lg text-(--muted)">{t("intro")}</p>
       {projects && projects.length > 0 && (
-        <ContentLanguageNote language={contentLanguage} />
+        <ContentLanguageNote
+          language={contentLanguage}
+          translated={anyTranslated}
+        />
       )}
       {!projects || projects.length === 0 ? (
         <p>{t("none")}</p>
