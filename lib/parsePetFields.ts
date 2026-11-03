@@ -1,4 +1,5 @@
 import { birthDateFromAge } from "@/lib/birthDateFromAge";
+import { findContact, type ContactKind } from "@/lib/findContact";
 import { PET_SIZES } from "@/lib/petSizes";
 
 export type PetFields = {
@@ -17,6 +18,23 @@ export type ParsePetFieldsResult =
   | { ok: true; fields: PetFields }
   | { ok: false; error: string };
 
+const CONTACT_KIND_WORDS: Record<ContactKind, string> = {
+  phone: "телефон",
+  email: "почту",
+  link: "ссылку",
+  handle: "@ник",
+};
+
+function findContactError(fields: [string, string][]): string | null {
+  for (const [label, text] of fields) {
+    const found = findContact(text);
+    if (found) {
+      return `Уберите из поля «${label}» ${CONTACT_KIND_WORDS[found.kind]}: ${found.match}. Контакты приюта показываются только внизу страницы, поэтому текст с ними сохранить нельзя. Введённый текст остался в форме.`;
+    }
+  }
+  return null;
+}
+
 export function parsePetFields(formData: FormData): ParsePetFieldsResult {
   const text = (field: string) => {
     const value = formData.get(field);
@@ -32,6 +50,16 @@ export function parsePetFields(formData: FormData): ParsePetFieldsResult {
 
   if (!name || !health || !description || !photoAlt) {
     return { ok: false, error: "Заполните все обязательные поля." };
+  }
+
+  const contactProblem = findContactError([
+    ["Имя", name],
+    ["Здоровье", health],
+    ["Описание", description],
+    ["Описание фото", photoAlt],
+  ]);
+  if (contactProblem) {
+    return { ok: false, error: contactProblem };
   }
 
   if (!["собака", "кошка"].includes(species)) {
