@@ -137,6 +137,7 @@ export type Database = {
           stage: string
           status: string
           title: string
+          translations: Json
           updated_at: string
         }
         Insert: {
@@ -156,6 +157,7 @@ export type Database = {
           stage?: string
           status?: string
           title: string
+          translations?: Json
           updated_at?: string
         }
         Update: {
@@ -175,6 +177,7 @@ export type Database = {
           stage?: string
           status?: string
           title?: string
+          translations?: Json
           updated_at?: string
         }
         Relationships: [
