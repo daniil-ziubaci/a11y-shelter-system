@@ -26,6 +26,7 @@
     "address": "Address: {address}",
     "city": "City: {city}",
     "linksLabel": "Site sections",
+    "privacyLink": "Privacy policy",
     "socialHeading": "Find us on social media:",
     "socialLink": "Shelter's {network}",
     "cityLabel": "City",
@@ -227,6 +228,37 @@
       "kg": "kg",
       "pcs": "pcs",
       "l": "l"
+    }
+  },
+  "Privacy": {
+    "title": "Privacy policy",
+    "description": "What data we collect, why, and how you can control it, in plain words.",
+    "heading": "Privacy policy",
+    "intro": "We collect as little data as we can and explain in plain words what and why.",
+    "draftNotice": "This page is still being prepared: the operator, the contact for requests and the retention periods will be added before the site launches.",
+    "data": {
+      "heading": "What data we collect",
+      "text": "Visitors do not need an account, and we do not ask them for any data. For shelter volunteers we keep only an email address, a role and the shelter's name: we need them to run the shelter's work together.\nServer logs may contain a visitor's IP address, which is also personal data. We keep them for a limited time. Before animal photos are published, their metadata, including where they were taken, is removed."
+    },
+    "cookies": {
+      "heading": "Cookies",
+      "text": "We use only the cookies the site needs to work, for example for volunteer sign-in. There is no analytics and there are no advertising trackers, so no consent banner is needed."
+    },
+    "recipients": {
+      "heading": "Who else receives data",
+      "text": "The site runs on Vercel (the application) and Supabase (database, sign-in and files). The database is in the European Union, in Frankfurt. Both companies are American, so their data-processing terms and any transfer outside the EU are still being checked; the result will appear here. If other services are connected, for example error tracking, we will add them to this list."
+    },
+    "operator": {
+      "heading": "Who is responsible for the data",
+      "text": "The operator and the contact for requests will be added here before the site launches."
+    },
+    "retention": {
+      "heading": "How long we keep data",
+      "text": "Retention periods for each kind of data will be added here before the site launches. A volunteer's account is deleted on request or when the person leaves the shelter."
+    },
+    "rights": {
+      "heading": "Your rights",
+      "text": "You can find out what data we hold about you, correct it, delete it, restrict its processing, get a copy, or object to its processing. We answer within a month. Requests are sent by email to the operator; the address will appear here.\nIf you believe your rights have been violated, you can complain to the National Centre for Personal Data Protection of Moldova."
     }
   },
   "Adoption": {

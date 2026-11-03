@@ -26,6 +26,7 @@
     "address": "Adresă: {address}",
     "city": "Oraș: {city}",
     "linksLabel": "Secțiunile site-ului",
+    "privacyLink": "Politica de confidențialitate",
     "socialHeading": "Suntem pe rețelele sociale:",
     "socialLink": "{network} al adăpostului",
     "cityLabel": "Oraș",
@@ -227,6 +228,37 @@
       "kg": "kg",
       "pcs": "buc.",
       "l": "l"
+    }
+  },
+  "Privacy": {
+    "title": "Politica de confidențialitate",
+    "description": "Ce date colectăm, de ce și cum le puteți controla, pe înțelesul tuturor.",
+    "heading": "Politica de confidențialitate",
+    "intro": "Colectăm cât mai puține date și explicăm simplu ce și de ce.",
+    "draftNotice": "Pagina este încă în pregătire: operatorul, contactul pentru solicitări și termenele de păstrare vor fi indicate înainte de lansarea site-ului.",
+    "data": {
+      "heading": "Ce date colectăm",
+      "text": "Vizitatorii site-ului nu au nevoie de cont și nu le cerem nicio dată. Pentru voluntarii adăpostului păstrăm doar adresa de e-mail, rolul și numele adăpostului: ne trebuie ca să lucrăm împreună la treburile adăpostului.\nJurnalele serverului pot conține adresa IP a vizitatorului, care este tot dată cu caracter personal. O păstrăm o perioadă limitată. Din fotografiile animalelor se șterg, înainte de publicare, metadatele, inclusiv locul unde au fost făcute."
+    },
+    "cookies": {
+      "heading": "Cookie-uri",
+      "text": "Folosim doar cookie-uri necesare funcționării site-ului, de exemplu pentru autentificarea voluntarilor. Nu avem analiză și nici trackere publicitare, de aceea nu este nevoie de banner de consimțământ."
+    },
+    "recipients": {
+      "heading": "Cine mai primește datele",
+      "text": "Site-ul funcționează pe serviciile Vercel (aplicația) și Supabase (baza de date, autentificarea și fișierele). Baza de date se află în Uniunea Europeană, la Frankfurt. Ambele companii sunt americane, de aceea condițiile de prelucrare a datelor și posibilul transfer în afara UE sunt încă în curs de verificare; rezultatul va apărea aici. Dacă vor fi conectate alte servicii, de exemplu urmărirea erorilor, le vom adăuga în această listă."
+    },
+    "operator": {
+      "heading": "Cine răspunde de date",
+      "text": "Operatorul și contactul pentru solicitări vor fi indicate aici înainte de lansarea site-ului."
+    },
+    "retention": {
+      "heading": "Cât timp păstrăm datele",
+      "text": "Termenele de păstrare pentru fiecare tip de date vor fi indicate aici înainte de lansarea site-ului. Contul unui voluntar se șterge la cerere sau când persoana pleacă din adăpost."
+    },
+    "rights": {
+      "heading": "Drepturile dumneavoastră",
+      "text": "Puteți afla ce date avem despre dumneavoastră, le puteți corecta, șterge, puteți restricționa prelucrarea, primi o copie sau vă puteți opune prelucrării. Răspundem în cel mult o lună. Solicitarea se trimite prin e-mail operatorului, adresa va apărea aici.\nDacă considerați că v-au fost încălcate drepturile, puteți depune o plângere la Centrul Național pentru Protecția Datelor cu Caracter Personal din Moldova."
     }
   },
   "Adoption": {

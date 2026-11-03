@@ -120,6 +120,14 @@ export async function ShelterFooter({
                 </Link>
               </li>
             ))}
+            <li>
+              <Link
+                href="/privacy"
+                className="inline-block py-3 font-semibold text-(--accent) hover:underline"
+              >
+                {t("privacyLink")}
+              </Link>
+            </li>
           </ul>
         </nav>
       </div>

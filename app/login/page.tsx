@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { LoginForm } from "@/app/login/login-form";
 
 export const metadata = {
@@ -22,6 +23,9 @@ export default async function LoginPage({
         </p>
       )}
       <LoginForm />
+      <p>
+        <Link href="/ru/privacy">Политика конфиденциальности</Link>
+      </p>
     </main>
   );
 }
