@@ -11,10 +11,10 @@ export default async function ShelterLayout({
   params,
 }: {
   children: React.ReactNode;
-  params: Promise<{ slug: string }>;
+  params: Promise<{ slug: string; locale: string }>;
 }) {
-  const { slug } = await params;
-  const shelter = await getShelter(slug);
+  const { slug, locale } = await params;
+  const shelter = await getShelter(slug, locale);
   const t = await getTranslations("Nav");
 
   return (

@@ -19,7 +19,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string; locale: string }>;
 }) {
   const { slug, locale } = await params;
-  const shelter = await getShelter(slug);
+  const shelter = await getShelter(slug, locale);
   const t = await getTranslations({ locale, namespace: "About" });
   const title = shelter.city
     ? t("titleWithCity", { name: shelter.name, city: shelter.city })
@@ -48,7 +48,7 @@ export default async function ShelterAboutPage({
   params: Promise<{ slug: string; locale: string }>;
 }) {
   const { slug, locale } = await params;
-  const shelter = await getShelter(slug);
+  const shelter = await getShelter(slug, locale);
   const t = await getTranslations("About");
   const tAdoption = await getTranslations("Adoption");
   const supabase = await createClient();

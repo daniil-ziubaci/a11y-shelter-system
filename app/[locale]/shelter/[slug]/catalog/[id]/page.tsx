@@ -28,9 +28,9 @@ export async function generateMetadata({
   params: Promise<{ slug: string; id: string; locale: string }>;
 }) {
   const { slug, id, locale } = await params;
-  const shelter = await getShelter(slug);
+  const shelter = await getShelter(slug, locale);
   const data = await getPet(id, shelter.id);
-  const pet = toPet(data);
+  const pet = toPet(data, locale);
   const t = await getTranslations({ locale, namespace: "Pet" });
   const tAnimal = await getTranslations({ locale, namespace: "Animal" });
   const animal = tAnimal(
@@ -66,14 +66,14 @@ export async function generateMetadata({
 export default async function PetPage({
   params,
 }: {
-  params: Promise<{ slug: string; id: string }>;
+  params: Promise<{ slug: string; id: string; locale: string }>;
 }) {
-  const { slug, id } = await params;
-  const shelter = await getShelter(slug);
+  const { slug, id, locale } = await params;
+  const shelter = await getShelter(slug, locale);
   const data = await getPet(id, shelter.id);
   const isTreatmentRelated =
     data.needs_treatment_since !== null || data.status === PET_STATUS_TREATMENT;
-  const pet = toPet(data);
+  const pet = toPet(data, locale);
   const helpButtonBase =
     "inline-flex min-h-14 items-center justify-center rounded-full px-6 py-3 text-lg font-semibold";
   const helpOutlineClass = `${helpButtonBase} border-2 border-(--accent) text-(--accent) hover:bg-(--hover)`;
@@ -85,12 +85,12 @@ export default async function PetPage({
   const contentLanguage = toContentLanguage(shelter.content_language);
   const sizeKey = pet.size ? getSizeKey(pet.size) : undefined;
   const treatmentPets = isTreatmentRelated
-    ? await getOtherPets(shelter.id, id, true)
+    ? await getOtherPets(shelter.id, id, locale, true)
     : [];
   const showTreatmentBlock = treatmentPets.length > 0;
   const otherPets = showTreatmentBlock
     ? treatmentPets
-    : await getOtherPets(shelter.id, id);
+    : await getOtherPets(shelter.id, id, locale);
 
   return (
     <main className="w-full flex flex-col gap-6 p-4 max-w-5xl mx-auto">

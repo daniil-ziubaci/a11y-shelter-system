@@ -1,13 +1,14 @@
 import type { Database } from "@/types/database";
 import type { Pet } from "@/types/pet";
+import { localizeName } from "@/lib/transliterate";
 import { monthsSince } from "@/lib/monthsSince";
 
 type PetRow = Database["public"]["Tables"]["pets"]["Row"];
 
-export function toPet(row: PetRow): Pet {
+export function toPet(row: PetRow, locale: string): Pet {
   return {
     id: row.id,
-    name: row.name,
+    name: localizeName(row.name, locale),
     photo: {
       url: row.photo_url,
       alt: row.photo_alt,

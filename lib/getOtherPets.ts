@@ -5,6 +5,7 @@ import { toPet } from "@/lib/toPet";
 export async function getOtherPets(
   shelterId: string,
   excludeId: string,
+  locale: string,
   onlyTreatment = false,
 ) {
   const supabase = await createClient();
@@ -30,5 +31,5 @@ export async function getOtherPets(
 
   if (error) return [];
 
-  return (data ?? []).map((row) => toPet(row));
+  return (data ?? []).map((row) => toPet(row, locale));
 }

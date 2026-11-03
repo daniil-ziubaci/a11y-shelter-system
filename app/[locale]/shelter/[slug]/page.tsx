@@ -25,7 +25,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string; locale: string }>;
 }) {
   const { slug, locale } = await params;
-  const shelter = await getShelter(slug);
+  const shelter = await getShelter(slug, locale);
   const t = await getTranslations({ locale, namespace: "Home" });
   const title = t("title", { shelter: shelter.name });
   const description = t("description", { shelter: shelter.name });
@@ -47,10 +47,10 @@ export async function generateMetadata({
 export default async function ShelterHomePage({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ slug: string; locale: string }>;
 }) {
-  const { slug } = await params;
-  const shelter = await getShelter(slug);
+  const { slug, locale } = await params;
+  const shelter = await getShelter(slug, locale);
   const t = await getTranslations("Home");
 
   const tn = await getTranslations("Needs");
@@ -67,7 +67,7 @@ export default async function ShelterHomePage({
     .order("created_at", { ascending: false })
     .order("name")
     .limit(4);
-  const lookingPets = (lookingData ?? []).map(toPet);
+  const lookingPets = (lookingData ?? []).map((row) => toPet(row, locale));
 
   const { data: treatmentData, error: treatmentError } = await supabase
     .from("pets")
@@ -78,8 +78,8 @@ export default async function ShelterHomePage({
     .order("needs_treatment_since", { ascending: false })
     .order("name")
     .limit(3);
-  const treatmentPets = (treatmentData ?? []).map(toPet);
-
+  const treatmentPets = (treatmentData ?? []).map((row) => toPet(row, locale));
+  
   const { data: urgentData, error: urgentError } = await supabase
     .from("purchase_items")
     .select("id, name, category, unit, remaining")

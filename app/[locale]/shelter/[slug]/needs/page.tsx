@@ -19,7 +19,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string; locale: string }>;
 }) {
   const { slug, locale } = await params;
-  const shelter = await getShelter(slug);
+  const shelter = await getShelter(slug, locale);
   const t = await getTranslations({ locale, namespace: "Needs" });
   const title = t("title", { shelter: shelter.name });
   const description = t("description", { shelter: shelter.name });
@@ -42,14 +42,14 @@ export default async function ShelterNeedsPage({
   params,
   searchParams,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ slug: string; locale: string }>;
   searchParams: Promise<{
     category?: string;
     shown?: string;
     urgent?: string;
   }>;
 }) {
-  const { slug } = await params;
+  const { slug, locale } = await params;
   const {
     category: rawCategory,
     shown: rawShown,
@@ -62,7 +62,7 @@ export default async function ShelterNeedsPage({
       : undefined;
   const shown = parseShown(rawShown);
 
-  const shelter = await getShelter(slug);
+  const shelter = await getShelter(slug, locale);
   const t = await getTranslations("Needs");
   const contentLanguage = toContentLanguage(shelter.content_language);
   const format = await getFormatter();

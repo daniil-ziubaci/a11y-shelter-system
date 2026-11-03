@@ -32,7 +32,7 @@ export async function generateMetadata({
   const page = parsePage(rawPage);
   const isTreatment = mode === "treatment";
   const isBlocked = isTreatment && group === "blocked";
-  const shelter = await getShelter(slug);
+  const shelter = await getShelter(slug, locale);
   const t = await getTranslations({ locale, namespace: "Catalog" });
 
   const prefix = isBlocked ? "treatmentBlocked" : "treatment";
@@ -100,7 +100,7 @@ export default async function Catalog({
   const age = isTreatment ? undefined : rawAge;
   const size = isTreatment ? undefined : rawSize;
   const isBlocked = isTreatment && group === "blocked";
-  const shelter = await getShelter(slug);
+  const shelter = await getShelter(slug, locale);
   const t = await getTranslations("Catalog");
   const search = (q ?? "").trim().slice(0, 50);
   const requestedPage = parsePage(rawPage);
@@ -202,7 +202,7 @@ export default async function Catalog({
     throw new Error("Не удалось загрузить питомцев из базы.");
   }
 
-  const pets = (data ?? []).map(toPet);
+  const pets = (data ?? []).map((row) => toPet(row, locale));
 
   function buildHref(
     newSpecies: string | undefined,

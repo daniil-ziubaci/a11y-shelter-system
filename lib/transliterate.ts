@@ -64,3 +64,7 @@ export function transliterate(text: string): string {
     })
     .join("");
 }
+
+export function localizeName(name: string, locale: string): string {
+  return locale === "ru" ? name : transliterate(name);
+}
