@@ -1,5 +1,6 @@
 "use client";
 
+import { ContactsHint } from "@/components/ContactsHint";
 import { useActionState } from "react";
 import { createProject } from "@/app/volunteer/projects/new/actions";
 import { PROJECT_LIMITS } from "@/lib/parseProjectFields";
@@ -22,6 +23,7 @@ export function NewProjectForm() {
 
   return (
     <form action={formAction} className="flex flex-col gap-6">
+      <ContactsHint id="contacts-hint" />
       <div className="flex flex-col gap-1">
         <label htmlFor="title">Название</label>
         <input
@@ -31,7 +33,7 @@ export function NewProjectForm() {
           autoComplete="off"
           maxLength={PROJECT_LIMITS.title}
           defaultValue={state?.values.title}
-          aria-describedby="title-hint"
+          aria-describedby="title-hint contacts-hint"
           required
         />
         <p id="title-hint">Например, «Тёплые вольеры к зиме».</p>
@@ -44,7 +46,7 @@ export function NewProjectForm() {
           rows={6}
           maxLength={PROJECT_LIMITS.description}
           defaultValue={state?.values.description}
-          aria-describedby="description-hint"
+          aria-describedby="description-hint contacts-hint"
           required
         />
         <p id="description-hint">
@@ -62,7 +64,7 @@ export function NewProjectForm() {
           autoComplete="off"
           maxLength={PROJECT_LIMITS.goal}
           defaultValue={state?.values.goal}
-          aria-describedby="goal-hint"
+          aria-describedby="goal-hint contacts-hint"
         />
         <p id="goal-hint">
           Одной фразой и без сумм, например «утеплить 12 вольеров до декабря».
@@ -113,7 +115,7 @@ export function NewProjectForm() {
           autoComplete="off"
           maxLength={PROJECT_LIMITS.photoAlt}
           defaultValue={state?.values.photoAlt}
-          aria-describedby="photo-alt-hint"
+          aria-describedby="photo-alt-hint contacts-hint"
         />
         <p id="photo-alt-hint">
           Обязательно, если выбрали фото. Опишите, что на нём, для человека,
@@ -145,7 +147,7 @@ export function NewProjectForm() {
 
       <fieldset
         className="flex flex-col gap-4"
-        aria-describedby="progress-hint"
+        aria-describedby="progress-hint contacts-hint"
       >
         <legend>Счёт дел (необязательно)</legend>
         <div className="flex flex-col gap-1">

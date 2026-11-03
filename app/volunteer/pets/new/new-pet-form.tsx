@@ -1,5 +1,6 @@
 "use client";
 
+import { ContactsHint } from "@/components/ContactsHint";
 import { useActionState, useState } from "react";
 import { createPet } from "@/app/volunteer/pets/new/actions";
 import { PET_SIZES } from "@/lib/petSizes";
@@ -187,10 +188,7 @@ export function NewPetForm() {
           defaultValue={state?.values.description}
           required
         />
-        <p id="text-hint">
-          Не пишите телефоны, адреса и фамилии людей. Подсказка относится к трём
-          полям выше: питание, здоровье и описание.
-        </p>
+        <ContactsHint id="text-hint" />
       </div>
 
       <p role="alert">{state?.error}</p>

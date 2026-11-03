@@ -1,5 +1,6 @@
 "use client";
 
+import { ContactsHint } from "@/components/ContactsHint";
 import { useActionState } from "react";
 import { createNeed } from "@/app/volunteer/needs/new/actions";
 import { NEED_CATEGORIES } from "@/lib/needCategories";
@@ -19,12 +20,11 @@ export function NewNeedForm() {
           autoComplete="off"
           maxLength={100}
           defaultValue={state?.values.name}
-          aria-describedby="name-hint"
+          aria-describedby="name-hint name-contacts"
           required
         />
-        <p id="name-hint">
-          Например, «Корм для щенков». Не пишите телефоны и фамилии людей.
-        </p>
+        <p id="name-hint">Например, «Корм для щенков».</p>
+        <ContactsHint id="name-contacts" />
       </div>
       <div className="flex flex-col gap-1">
         <label htmlFor="category">Категория</label>

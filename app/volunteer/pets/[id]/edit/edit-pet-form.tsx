@@ -1,5 +1,6 @@
 "use client";
 
+import { ContactsHint } from "@/components/ContactsHint";
 import { updatePet } from "@/app/volunteer/pets/[id]/edit/actions";
 import { monthsSince } from "@/lib/monthsSince";
 import { PET_SIZES } from "@/lib/petSizes";
@@ -193,10 +194,7 @@ export function EditPetForm({ pet }: { pet: Pet }) {
           defaultValue={state?.values.description ?? pet.description}
           required
         />
-        <p id="text-hint">
-          Не пишите телефоны, адреса и фамилии людей. Подсказка относится к трём
-          полям выше: питание, здоровье и описание.
-        </p>
+        <ContactsHint id="text-hint" />
       </div>
       <p role="alert">{state?.error}</p>
 

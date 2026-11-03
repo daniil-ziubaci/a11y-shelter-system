@@ -1,5 +1,6 @@
 "use client";
 
+import { ContactsHint } from "@/components/ContactsHint";
 import { useActionState } from "react";
 import { updateProject } from "@/app/volunteer/projects/[id]/edit/actions";
 import { PROJECT_LIMITS } from "@/lib/parseProjectFields";
@@ -35,12 +36,14 @@ export function EditProjectForm({ project }: { project: EditableProject }) {
 
   return (
     <form action={formAction} className="flex flex-col gap-6">
+      <ContactsHint id="contacts-hint" />
       <input type="hidden" name="projectId" value={project.id} />
       <div className="flex flex-col gap-1">
         <label htmlFor="title">Название</label>
         <input
           id="title"
           name="title"
+          aria-describedby="contacts-hint"
           type="text"
           autoComplete="off"
           maxLength={PROJECT_LIMITS.title}
@@ -57,7 +60,7 @@ export function EditProjectForm({ project }: { project: EditableProject }) {
           rows={6}
           maxLength={PROJECT_LIMITS.description}
           defaultValue={state?.values.description ?? project.description}
-          aria-describedby="description-hint"
+          aria-describedby="description-hint contacts-hint"
           required
         />
         <p id="description-hint">
@@ -76,7 +79,7 @@ export function EditProjectForm({ project }: { project: EditableProject }) {
           autoComplete="off"
           maxLength={PROJECT_LIMITS.goal}
           defaultValue={state?.values.goal ?? project.goal ?? ""}
-          aria-describedby="goal-hint"
+          aria-describedby="goal-hint contacts-hint"
         />
         <p id="goal-hint">
           Одной фразой и без сумм, например «утеплить 12 вольеров до декабря».
@@ -130,7 +133,7 @@ export function EditProjectForm({ project }: { project: EditableProject }) {
           autoComplete="off"
           maxLength={PROJECT_LIMITS.photoAlt}
           defaultValue={state?.values.photoAlt ?? project.photo_alt ?? ""}
-          aria-describedby="photo-alt-hint"
+          aria-describedby="photo-alt-hint contacts-hint"
         />
         <p id="photo-alt-hint">
           Обязательно, если есть фото. Опишите, что на нём, для человека,
@@ -162,7 +165,7 @@ export function EditProjectForm({ project }: { project: EditableProject }) {
 
       <fieldset
         className="flex flex-col gap-4"
-        aria-describedby="progress-hint"
+        aria-describedby="progress-hint contacts-hint"
       >
         <legend>Счёт дел (необязательно)</legend>
         <div className="flex flex-col gap-1">
