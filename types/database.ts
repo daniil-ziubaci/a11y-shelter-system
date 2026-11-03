@@ -59,6 +59,7 @@ export type Database = {
           status: string
           status_changed_at: string
           status_rank: number | null
+          translations: Json
           weight: number | null
         }
         Insert: {
@@ -80,6 +81,7 @@ export type Database = {
           status?: string
           status_changed_at?: string
           status_rank?: number | null
+          translations?: Json
           weight?: number | null
         }
         Update: {
@@ -101,6 +103,7 @@ export type Database = {
           status?: string
           status_changed_at?: string
           status_rank?: number | null
+          translations?: Json
           weight?: number | null
         }
         Relationships: [
