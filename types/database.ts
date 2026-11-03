@@ -296,6 +296,7 @@ export type Database = {
           contact_hours: string | null
           contact_messenger: string | null
           contact_phone: string | null
+          content_language: string
           created_at: string
           currency: string
           founded_year: number | null
@@ -317,6 +318,7 @@ export type Database = {
           contact_hours?: string | null
           contact_messenger?: string | null
           contact_phone?: string | null
+          content_language?: string
           created_at?: string
           currency: string
           founded_year?: number | null
@@ -338,6 +340,7 @@ export type Database = {
           contact_hours?: string | null
           contact_messenger?: string | null
           contact_phone?: string | null
+          content_language?: string
           created_at?: string
           currency?: string
           founded_year?: number | null
