@@ -3,13 +3,47 @@ import "server-only";
 import { createClient } from "@/lib/supabase/server";
 import { buildTranslations } from "@/lib/buildTranslations";
 import { translateHealthPhrases } from "@/lib/healthPhrases";
-import { readTranslations } from "@/lib/translations";
+import {
+  readTranslations,
+  sameTranslations,
+  type Translations,
+} from "@/lib/translations";
+import type { Json } from "@/types/database";
 
 const PET_CONTEXT: Record<string, string> = {
   ru: "Сайт приюта для бездомных животных. Текст описывает питомца: его здоровье, характер и фото.",
   ro: "Site-ul unui adăpost pentru animale fără stăpân. Textul descrie un animal: sănătatea, caracterul și fotografia lui.",
   en: "Website of a shelter for stray animals. The text describes a pet: its health, character and photo.",
 };
+
+type PetTexts = {
+  name: string;
+  health: string;
+  description: string;
+  photo_alt: string;
+  translations: Json;
+};
+
+export function petTranslations(
+  pet: PetTexts,
+  sourceLanguage: string,
+): Promise<Translations> {
+  return buildTranslations({
+    name: pet.name,
+    sourceLanguage,
+    texts: {
+      health: pet.health,
+      description: pet.description,
+      photo_alt: pet.photo_alt,
+    },
+    previous: readTranslations(pet.translations),
+    context: PET_CONTEXT,
+    dictionary: (field, text, to) =>
+      field === "health"
+        ? translateHealthPhrases(text, sourceLanguage, to)
+        : null,
+  });
+}
 
 export async function translatePet(petId: string): Promise<void> {
   try {
@@ -30,21 +64,10 @@ export async function translatePet(petId: string): Promise<void> {
     if (!shelter) {
       return;
     }
-    const translations = await buildTranslations({
-      name: pet.name,
-      sourceLanguage: shelter.content_language,
-      texts: {
-        health: pet.health,
-        description: pet.description,
-        photo_alt: pet.photo_alt,
-      },
-      previous: readTranslations(pet.translations),
-      context: PET_CONTEXT,
-      dictionary: (field, text, to) =>
-        field === "health"
-          ? translateHealthPhrases(text, shelter.content_language, to)
-          : null,
-    });
+    const translations = await petTranslations(pet, shelter.content_language);
+    if (sameTranslations(translations, readTranslations(pet.translations))) {
+      return;
+    }
     const { error } = await supabase
       .from("pets")
       .update({ translations })

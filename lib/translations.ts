@@ -42,3 +42,31 @@ export function pickTranslation(
   const entry = translations[field]?.[language];
   return entry && entry.hash === hash ? entry.text : null;
 }
+
+export function sameTranslations(a: Translations, b: Translations): boolean {
+  const fields = Object.keys(a);
+  if (fields.length !== Object.keys(b).length) {
+    return false;
+  }
+  for (const field of fields) {
+    const languagesA = a[field] ?? {};
+    const languagesB = b[field] ?? {};
+    const languages = Object.keys(languagesA);
+    if (languages.length !== Object.keys(languagesB).length) {
+      return false;
+    }
+    for (const language of languages) {
+      const left = languagesA[language];
+      const right = languagesB[language];
+      if (
+        !left ||
+        !right ||
+        left.text !== right.text ||
+        left.hash !== right.hash
+      ) {
+        return false;
+      }
+    }
+  }
+  return true;
+}
