@@ -1,6 +1,7 @@
 import { getShelter } from "@/lib/getShelter";
 import { ContentLanguageNote } from "@/components/ContentLanguageNote";
 import { toContentLanguage } from "@/lib/contentLanguage";
+import { localizeItem } from "@/lib/localizeItem";
 import { PetCard } from "@/components/PetCard";
 import { createClient } from "@/lib/supabase/server";
 import { toPet } from "@/lib/toPet";
@@ -55,6 +56,7 @@ export default async function ShelterHomePage({
 
   const tn = await getTranslations("Needs");
   const contentLanguage = toContentLanguage(shelter.content_language);
+  const pageLanguage = toContentLanguage(locale);
   const format = await getFormatter();
 
   const supabase = await createClient();
@@ -79,17 +81,19 @@ export default async function ShelterHomePage({
     .order("name")
     .limit(3);
   const treatmentPets = (treatmentData ?? []).map((row) => toPet(row, locale));
-  
+
   const { data: urgentData, error: urgentError } = await supabase
     .from("purchase_items")
-    .select("id, name, category, unit, remaining")
+    .select("id, name, category, unit, remaining, translations")
     .eq("shelter_id", shelter.id)
     .gt("remaining", 0)
     .eq("is_urgent", true)
     .order("created_at")
     .order("id")
     .limit(5);
-  const urgentItems = urgentData ?? [];
+  const urgentItems = (urgentData ?? []).map((item) =>
+    localizeItem(item, locale),
+  );
 
   function countPets(statuses: string[]) {
     return supabase
@@ -230,7 +234,10 @@ export default async function ShelterHomePage({
                 </span>
               </Link>
             </div>
-            <ContentLanguageNote language={contentLanguage} />
+            <ContentLanguageNote
+              language={contentLanguage}
+              translated={urgentItems.some((item) => item.translated)}
+            />
             <ul
               role="list"
               className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
@@ -246,7 +253,9 @@ export default async function ShelterHomePage({
                     <div className="flex min-w-0 flex-col gap-1">
                       <div className="flex items-start justify-between gap-2">
                         <h3
-                          lang={contentLanguage}
+                          lang={
+                            item.translated ? pageLanguage : contentLanguage
+                          }
                           className="min-w-0 text-lg font-bold wrap-anywhere"
                         >
                           {item.name}

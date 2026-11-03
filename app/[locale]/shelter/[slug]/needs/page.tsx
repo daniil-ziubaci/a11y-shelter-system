@@ -1,5 +1,6 @@
 import { getShelter } from "@/lib/getShelter";
 import { ContentLanguageNote } from "@/components/ContentLanguageNote";
+import { localizeItem } from "@/lib/localizeItem";
 import { toContentLanguage } from "@/lib/contentLanguage";
 import { NEED_CATEGORIES, getCategoryKey } from "@/lib/needCategories";
 import { getUnitKey } from "@/lib/needUnits";
@@ -65,12 +66,13 @@ export default async function ShelterNeedsPage({
   const shelter = await getShelter(slug, locale);
   const t = await getTranslations("Needs");
   const contentLanguage = toContentLanguage(shelter.content_language);
+  const pageLanguage = toContentLanguage(locale);
   const format = await getFormatter();
   const supabase = await createClient();
   function buildQuery(head: boolean) {
     let query = supabase
       .from("purchase_items")
-      .select("id, name, category, unit, remaining, is_urgent", {
+      .select("id, name, category, unit, remaining, is_urgent, translations", {
         count: "exact",
         head,
       })
@@ -87,11 +89,12 @@ export default async function ShelterNeedsPage({
 
   const { count, error: countError } = await buildQuery(true);
   const total = count ?? 0;
-  const { data: items, error } = await buildQuery(false)
+  const { data: rawItems, error } = await buildQuery(false)
     .order("is_urgent", { ascending: false })
     .order("created_at")
     .order("id")
     .range(0, shown - 1);
+  const items = rawItems?.map((item) => localizeItem(item, locale));
 
   function buildHref(
     nextCategory?: string,
@@ -186,7 +189,12 @@ export default async function ShelterNeedsPage({
             : t("found", { count: total })}
         </p>
       )}
-      {total > 0 && <ContentLanguageNote language={contentLanguage} />}
+      {total > 0 && (
+        <ContentLanguageNote
+          language={contentLanguage}
+          translated={items?.some((item) => item.translated) ?? false}
+        />
+      )}
       {!items || items.length === 0 ? (
         <p>
           {urgentOnly
@@ -214,7 +222,7 @@ export default async function ShelterNeedsPage({
                 <div className="flex min-w-0 flex-col gap-1">
                   <div className="flex items-start justify-between gap-2">
                     <h2
-                      lang={contentLanguage}
+                      lang={item.translated ? pageLanguage : contentLanguage}
                       className="min-w-0 text-lg font-bold wrap-anywhere"
                     >
                       {item.name}
