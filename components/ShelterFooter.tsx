@@ -48,7 +48,7 @@ export async function ShelterFooter({
 
   return (
     <footer className="mt-auto w-full bg-(--surface)">
-      <div className="mx-auto grid w-full max-w-5xl gap-8 px-4 py-8 md:grid-cols-[repeat(3,auto)] md:justify-center md:gap-x-16">
+      <div className="mx-auto grid w-full max-w-5xl gap-8 px-4 py-8 md:grid-cols-3 md:gap-x-12">
         <section
           aria-labelledby="footer-contact-heading"
           className="flex flex-col gap-3"
