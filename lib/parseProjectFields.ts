@@ -1,3 +1,4 @@
+import { findContactError } from "@/lib/findContactError";
 import {
   PROJECT_HELP_KINDS,
   type ProjectHelpKind,
@@ -111,6 +112,17 @@ export function parseProjectFields(formData: FormData): ParsedProject {
       ok: false,
       error: `Описание фото длиннее ${PROJECT_LIMITS.photoAlt} знаков.`,
     };
+  }
+
+  const contactProblem = findContactError([
+    ["Название проекта", title],
+    ["Описание", description],
+    ["Цель", goalText],
+    ["Единица измерения", unitText],
+    ["Описание фото", photoAlt],
+  ]);
+  if (contactProblem) {
+    return { ok: false, error: contactProblem };
   }
 
   const stage = PROJECT_STAGES.find((s) => s === read("stage"));
