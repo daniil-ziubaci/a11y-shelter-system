@@ -20,7 +20,7 @@ function keepFresh(
 ): [string, string][] {
   const stale: [string, string][] = [];
   for (const [field, text] of Object.entries(input.texts)) {
-    if (text === "") {
+    if (!/\p{L}/u.test(text)) {
       continue;
     }
     const old = input.previous[field]?.[language];

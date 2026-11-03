@@ -1,6 +1,8 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { after } from "next/server";
+import { translateProject } from "@/lib/translateProject";
 import { createClient } from "@/lib/supabase/server";
 import { parseProjectFields } from "@/lib/parseProjectFields";
 import { uploadProjectPhoto } from "@/lib/uploadProjectPhoto";
@@ -101,5 +103,6 @@ export async function updateProject(
     return fail("Проект не найден или недоступен.");
   }
 
+  after(() => translateProject(projectId));
   redirect("/volunteer/projects");
 }

@@ -1,6 +1,8 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { after } from "next/server";
+import { translateProject } from "@/lib/translateProject";
 import { createClient } from "@/lib/supabase/server";
 import { parseProjectFields } from "@/lib/parseProjectFields";
 import { uploadProjectPhoto } from "@/lib/uploadProjectPhoto";
@@ -62,22 +64,27 @@ export async function createProject(
     photoPath = uploaded.path;
   }
 
-  const { error: insertError } = await supabase.from("projects").insert({
-    shelter_id: membership.shelter_id,
-    title,
-    description,
-    goal,
-    stage,
-    help_kinds: helpKinds,
-    photo_path: photoPath,
-    photo_alt: photoPath ? photoAlt : null,
-    progress_total: progress?.total ?? null,
-    progress_done: progress?.done ?? null,
-    progress_unit: progress?.unit ?? null,
-  });
-  if (insertError) {
+  const { data: created, error: insertError } = await supabase
+    .from("projects")
+    .insert({
+      shelter_id: membership.shelter_id,
+      title,
+      description,
+      goal,
+      stage,
+      help_kinds: helpKinds,
+      photo_path: photoPath,
+      photo_alt: photoPath ? photoAlt : null,
+      progress_total: progress?.total ?? null,
+      progress_done: progress?.done ?? null,
+      progress_unit: progress?.unit ?? null,
+    })
+    .select("id")
+    .single();
+  if (insertError || !created) {
     return fail("Не удалось сохранить проект. Попробуйте ещё раз.");
   }
 
+  after(() => translateProject(created.id));
   redirect("/volunteer/projects");
 }
