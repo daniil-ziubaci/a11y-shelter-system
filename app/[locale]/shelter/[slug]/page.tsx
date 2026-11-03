@@ -160,7 +160,9 @@ export default async function ShelterHomePage({
             className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4"
           >
             {lookingPets.map((pet, index) => (
-              <PetCard key={pet.id} pet={pet} slug={slug} eager={index < 3} />
+              <li key={pet.id} className="grid">
+                <PetCard pet={pet} slug={slug} eager={index < 3} />
+              </li>
             ))}
           </ul>
         </section>
@@ -194,7 +196,9 @@ export default async function ShelterHomePage({
             className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
           >
             {treatmentPets.map((pet) => (
-              <PetCard key={pet.id} pet={pet} slug={slug} eager={false} />
+              <li key={pet.id} className="grid">
+                <PetCard pet={pet} slug={slug} eager={false} />
+              </li>
             ))}
           </ul>
         </section>
