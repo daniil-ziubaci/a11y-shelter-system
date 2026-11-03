@@ -4,6 +4,6 @@ export function hashText(text: string): string {
   return createHash("sha256").update(text).digest("hex").slice(0, 16);
 }
 
-export function petTextHash(name: string, text: string): string {
-  return hashText(`${name}\u0000${text}`);
+export function textHash(key: string, text: string): string {
+  return hashText(`${key}\u0000${text}`);
 }

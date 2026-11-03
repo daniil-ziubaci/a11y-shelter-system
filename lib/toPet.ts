@@ -2,7 +2,7 @@ import type { Database } from "@/types/database";
 import type { Pet } from "@/types/pet";
 import { localizeName } from "@/lib/transliterate";
 import { monthsSince } from "@/lib/monthsSince";
-import { petTextHash } from "@/lib/hashText";
+import { textHash } from "@/lib/hashText";
 import { pickTranslation, readTranslations } from "@/lib/translations";
 
 type PetRow = Database["public"]["Tables"]["pets"]["Row"];
@@ -14,7 +14,7 @@ export function toPet(row: PetRow, locale: string): Pet {
       translations,
       field,
       locale,
-      petTextHash(row.name, original),
+      textHash(row.name, original),
     );
     return text === null
       ? { text: original, translated: false }
