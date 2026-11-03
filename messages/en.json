@@ -270,6 +270,13 @@
     "text": "The link may be out of date or the address may have a typo. It happens. Let's go back to the animals waiting for a home.",
     "home": "Back to the home page"
   },
+  "Error": {
+    "title": "Something went wrong",
+    "heading": "Something went wrong",
+    "text": "It's not your fault: something broke on our side. Please try again, and if that doesn't help, go back to the home page.",
+    "retry": "Try again",
+    "home": "Back to the home page"
+  },
   "Adoption": {
     "heading": "How meeting an animal works"
   }

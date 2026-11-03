@@ -270,6 +270,13 @@
     "text": "Poate că linkul este vechi sau adresa are o greșeală. Se întâmplă. Hai să ne întoarcem la animalele care așteaptă o casă.",
     "home": "Înapoi la pagina principală"
   },
+  "Error": {
+    "title": "Ceva nu a mers bine",
+    "heading": "Ceva nu a mers bine",
+    "text": "Nu e vina ta: a apărut o eroare la noi. Încearcă din nou, iar dacă nu merge, întoarce-te la pagina principală.",
+    "retry": "Încearcă din nou",
+    "home": "Înapoi la pagina principală"
+  },
   "Adoption": {
     "heading": "Cum decurge cunoașterea"
   }
