@@ -8,6 +8,12 @@ export function petTextHash(name: string, text: string): string {
   return hashText(`${name}\u0000${text}`);
 }
 
+const PET_CONTEXT: Record<string, string> = {
+  ru: "Сайт приюта для бездомных животных. Текст описывает питомца: его здоровье, характер и фото.",
+  ro: "Site-ul unui adăpost pentru animale fără stăpân. Textul descrie un animal: sănătatea, caracterul și fotografia lui.",
+  en: "Website of a shelter for stray animals. The text describes a pet: its health, character and photo.",
+};
+
 export type PetTextsInput = {
   name: string;
   sourceLanguage: string;
@@ -59,6 +65,7 @@ export async function buildPetTranslations(
       input.sourceLanguage,
       language,
       { from: input.name, to: localizeName(input.name, language) },
+      PET_CONTEXT[input.sourceLanguage],
     );
     if (!translated) {
       continue;

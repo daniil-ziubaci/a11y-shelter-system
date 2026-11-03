@@ -77,6 +77,7 @@ export async function translateTexts(
   from: string,
   to: string,
   name?: NamePair,
+  context?: string,
 ): Promise<string[] | null> {
   const key = process.env.DEEPL_API_KEY;
   if (!key || texts.length === 0) {
@@ -88,6 +89,7 @@ export async function translateTexts(
     target_lang: targetCode(to),
     tag_handling: "xml",
     ignore_tags: ["x"],
+    ...(context ? { context } : {}),
   });
   for (let attempt = 0; attempt < 2; attempt += 1) {
     let delay = 1000;
