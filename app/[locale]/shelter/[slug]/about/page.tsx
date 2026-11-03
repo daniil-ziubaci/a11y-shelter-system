@@ -1,3 +1,5 @@
+import { ContentLanguageNote } from "@/components/ContentLanguageNote";
+import { toContentLanguage } from "@/lib/contentLanguage";
 import { Link } from "@/i18n/navigation";
 import { getShelter } from "@/lib/getShelter";
 import { buildAlternates } from "@/lib/seo";
@@ -44,6 +46,7 @@ export default async function ShelterAboutPage({
           .data.publicUrl
       : null;
   const aboutParagraphs = shelter.about?.split(/\n{2,}/) ?? [];
+  const contentLanguage = toContentLanguage(shelter.content_language);
   const jsonLd = JSON.stringify(
     buildShelterJsonLd(
       shelter,
@@ -78,11 +81,14 @@ export default async function ShelterAboutPage({
             {shelter.name}
           </h1>
           {shelter.about && (
-            aboutParagraphs.map((paragraph, index) => (
-              <p key={index}>
-                {paragraph}
-              </p>
-            ))
+            <>
+              <ContentLanguageNote language={contentLanguage} />
+              {aboutParagraphs.map((paragraph, index) => (
+                <p key={index} lang={contentLanguage}>
+                  {paragraph}
+                </p>
+              ))}
+            </>
           )}
         </div>
       </section>
@@ -95,7 +101,10 @@ export default async function ShelterAboutPage({
           <h2 id="adoption-heading" className="text-xl font-bold">
             {tAdoption("heading")}
           </h2>
-          <p className="whitespace-pre-line">{shelter.adoption_info}</p>
+          <ContentLanguageNote language={contentLanguage} />
+          <p className="whitespace-pre-line" lang={contentLanguage}>
+            {shelter.adoption_info}
+          </p>
         </section>
       )}
 

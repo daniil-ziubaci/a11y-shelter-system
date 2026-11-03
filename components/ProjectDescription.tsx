@@ -1,8 +1,15 @@
+import type { ContentLanguage } from "@/lib/contentLanguage";
 import { parseDescription } from "@/lib/parseDescription";
 
-export function ProjectDescription({ text }: { text: string }) {
+export function ProjectDescription({
+  text,
+  language,
+}: {
+  text: string;
+  language: ContentLanguage;
+}) {
   return (
-    <div className="flex flex-col gap-3">
+    <div lang={language} className="flex flex-col gap-3">
       {parseDescription(text).map((block, index) =>
         block.type === "list" ? (
           <ul key={index} className="list-disc pl-6">

@@ -1,4 +1,6 @@
 import { getShelter } from "@/lib/getShelter";
+import { ContentLanguageNote } from "@/components/ContentLanguageNote";
+import { toContentLanguage } from "@/lib/contentLanguage";
 import { NEED_CATEGORIES, getCategoryKey } from "@/lib/needCategories";
 import { getUnitKey } from "@/lib/needUnits";
 import { buildAlternates } from "@/lib/seo";
@@ -48,6 +50,7 @@ export default async function ShelterNeedsPage({
 
   const shelter = await getShelter(slug);
   const t = await getTranslations("Needs");
+  const contentLanguage = toContentLanguage(shelter.content_language);
   const format = await getFormatter();
   const supabase = await createClient();
   function buildQuery(head: boolean) {
@@ -169,6 +172,7 @@ export default async function ShelterNeedsPage({
             : t("found", { count: total })}
         </p>
       )}
+      {total > 0 && <ContentLanguageNote language={contentLanguage} />}
       {!items || items.length === 0 ? (
         <p>
           {urgentOnly
@@ -195,7 +199,10 @@ export default async function ShelterNeedsPage({
               >
                 <div className="flex min-w-0 flex-col gap-1">
                   <div className="flex items-start justify-between gap-2">
-                    <h2 className="min-w-0 text-lg font-bold wrap-anywhere">
+                    <h2
+                      lang={contentLanguage}
+                      className="min-w-0 text-lg font-bold wrap-anywhere"
+                    >
                       {item.name}
                     </h2>
                     {item.is_urgent && (

@@ -261,6 +261,9 @@
       "text": "You can find out what data we hold about you, correct it, delete it, restrict its processing, get a copy, or object to its processing. We answer within a month. Requests are sent by email to the operator; the address will appear here.\nIf you believe your rights have been violated, you can complain to the National Centre for Personal Data Protection of Moldova."
     }
   },
+  "ContentLanguage": {
+    "note": "{language, select, ru {Text in Russian} ro {Text in Romanian} en {Text in English} other {Text in another language}}"
+  },
   "Adoption": {
     "heading": "How meeting an animal works"
   }

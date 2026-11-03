@@ -1,4 +1,6 @@
 import { getShelter } from "@/lib/getShelter";
+import { ContentLanguageNote } from "@/components/ContentLanguageNote";
+import { toContentLanguage } from "@/lib/contentLanguage";
 import { PetCard } from "@/components/PetCard";
 import { createClient } from "@/lib/supabase/server";
 import { toPet } from "@/lib/toPet";
@@ -38,6 +40,7 @@ export default async function ShelterHomePage({
   const t = await getTranslations("Home");
 
   const tn = await getTranslations("Needs");
+  const contentLanguage = toContentLanguage(shelter.content_language);
   const format = await getFormatter();
 
   const supabase = await createClient();
@@ -206,6 +209,7 @@ export default async function ShelterHomePage({
               </span>
             </Link>
           </div>
+          <ContentLanguageNote language={contentLanguage} />
           <ul
             role="list"
             className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
@@ -220,7 +224,10 @@ export default async function ShelterHomePage({
                 >
                   <div className="flex min-w-0 flex-col gap-1">
                     <div className="flex items-start justify-between gap-2">
-                      <h3 className="min-w-0 text-lg font-bold wrap-anywhere">
+                      <h3
+                        lang={contentLanguage}
+                        className="min-w-0 text-lg font-bold wrap-anywhere"
+                      >
                         {item.name}
                       </h3>
                       <p

@@ -1,5 +1,7 @@
 import Image from "next/image";
 import { getShelter } from "@/lib/getShelter";
+import { ContentLanguageNote } from "@/components/ContentLanguageNote";
+import { toContentLanguage } from "@/lib/contentLanguage";
 import { ProjectDescription } from "@/components/ProjectDescription";
 import {
   getStageKey,
@@ -33,6 +35,7 @@ export default async function ShelterProjectsPage({
   const { slug } = await params;
   const shelter = await getShelter(slug);
   const t = await getTranslations("Projects");
+  const contentLanguage = toContentLanguage(shelter.content_language);
   const format = await getFormatter();
   const supabase = await createClient();
   const { data: projects, error } = await supabase
@@ -93,10 +96,16 @@ export default async function ShelterProjectsPage({
             {t("pinnedBadge")}
           </p>
         )}
-        <h3 className="text-2xl font-bold leading-tight sm:text-3xl">
+        <h3
+          lang={contentLanguage}
+          className="text-2xl font-bold leading-tight sm:text-3xl"
+        >
           {project.title}
         </h3>
-        <ProjectDescription text={project.description} />
+        <ProjectDescription
+          text={project.description}
+          language={contentLanguage}
+        />
         {project.status === PROJECT_STATUS_ONGOING &&
           project.progress_total !== null &&
           project.progress_done !== null &&
@@ -205,6 +214,9 @@ export default async function ShelterProjectsPage({
         {t("heading", { shelter: shelter.name })}
       </h1>
       <p className="-mt-3 text-center text-lg text-(--muted)">{t("intro")}</p>
+      {projects && projects.length > 0 && (
+        <ContentLanguageNote language={contentLanguage} />
+      )}
       {!projects || projects.length === 0 ? (
         <p>{t("none")}</p>
       ) : (

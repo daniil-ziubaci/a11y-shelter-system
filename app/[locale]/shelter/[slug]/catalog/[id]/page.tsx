@@ -1,4 +1,6 @@
 import { toPet } from "@/lib/toPet";
+import { ContentLanguageNote } from "@/components/ContentLanguageNote";
+import { toContentLanguage } from "@/lib/contentLanguage";
 import { formatAge } from "@/lib/formatAge";
 import Image from "next/image";
 import { Link } from "@/i18n/navigation";
@@ -77,6 +79,7 @@ export default async function PetPage({
   const t = await getTranslations("Pet");
   const tAge = await getTranslations("Age");
   const tAdoption = await getTranslations("Adoption");
+  const contentLanguage = toContentLanguage(shelter.content_language);
   const sizeKey = pet.size ? getSizeKey(pet.size) : undefined;
   const treatmentPets = isTreatmentRelated
     ? await getOtherPets(shelter.id, id, true)
@@ -164,11 +167,12 @@ export default async function PetPage({
           </dl>
           <div className="flex flex-col gap-2 rounded-lg border border-(--border) bg-(--surface) p-4">
             <h2 className="text-xl font-bold">{t("aboutTitle")}</h2>
-            <p>{pet.description}</p>
+            <ContentLanguageNote language={contentLanguage} />
+            <p lang={contentLanguage}>{pet.description}</p>
           </div>
           <div className="flex flex-col gap-2 rounded-lg border border-(--border) bg-(--surface) p-4">
             <h2 className="text-xl font-bold">{t("health")}</h2>
-            <p>{pet.health}</p>
+            <p lang={contentLanguage}>{pet.health}</p>
           </div>
           {pet.status === PET_STATUS_PENDING && (
             <p className="rounded-lg border border-(--border) bg-(--accent-soft) px-4 py-3">
@@ -214,7 +218,10 @@ export default async function PetPage({
           <h2 id="adoption-heading" className="text-xl font-bold">
             {tAdoption("heading")}
           </h2>
-          <p className="whitespace-pre-line">{shelter.adoption_info}</p>
+          <ContentLanguageNote language={contentLanguage} />
+          <p className="whitespace-pre-line" lang={contentLanguage}>
+            {shelter.adoption_info}
+          </p>
         </section>
       )}
       {otherPets.length > 0 && (

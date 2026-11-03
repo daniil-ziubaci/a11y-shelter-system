@@ -261,6 +261,9 @@
       "text": "Puteți afla ce date avem despre dumneavoastră, le puteți corecta, șterge, puteți restricționa prelucrarea, primi o copie sau vă puteți opune prelucrării. Răspundem în cel mult o lună. Solicitarea se trimite prin e-mail operatorului, adresa va apărea aici.\nDacă considerați că v-au fost încălcate drepturile, puteți depune o plângere la Centrul Național pentru Protecția Datelor cu Caracter Personal din Moldova."
     }
   },
+  "ContentLanguage": {
+    "note": "{language, select, ru {Text în limba rusă} ro {Text în limba română} en {Text în limba engleză} other {Text în altă limbă}}"
+  },
   "Adoption": {
     "heading": "Cum decurge cunoașterea"
   }
