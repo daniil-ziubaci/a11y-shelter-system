@@ -264,6 +264,12 @@
   "ContentLanguage": {
     "note": "{language, select, ru {Text in Russian} ro {Text in Romanian} en {Text in English} other {Text in another language}}"
   },
+  "NotFound": {
+    "title": "Page not found",
+    "heading": "We couldn't find that page",
+    "text": "The link may be out of date or the address may have a typo. It happens. Let's go back to the animals waiting for a home.",
+    "home": "Back to the home page"
+  },
   "Adoption": {
     "heading": "How meeting an animal works"
   }

@@ -264,6 +264,12 @@
   "ContentLanguage": {
     "note": "{language, select, ru {Text în limba rusă} ro {Text în limba română} en {Text în limba engleză} other {Text în altă limbă}}"
   },
+  "NotFound": {
+    "title": "Pagina nu a fost găsită",
+    "heading": "Nu am găsit această pagină",
+    "text": "Poate că linkul este vechi sau adresa are o greșeală. Se întâmplă. Hai să ne întoarcem la animalele care așteaptă o casă.",
+    "home": "Înapoi la pagina principală"
+  },
   "Adoption": {
     "heading": "Cum decurge cunoașterea"
   }
