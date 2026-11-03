@@ -1,3 +1,4 @@
+import { findContactError } from "@/lib/findContactError";
 import { NEED_CATEGORIES } from "@/lib/needCategories";
 
 export type PurchaseItemEdit = {
@@ -24,6 +25,11 @@ export function parsePurchaseItemEdit(
   }
   if (name.length > 100) {
     return { ok: false, error: "Название не длиннее 100 символов." };
+  }
+
+  const contactProblem = findContactError([["Название позиции", name]]);
+  if (contactProblem) {
+    return { ok: false, error: contactProblem };
   }
 
   const category = text("category");
