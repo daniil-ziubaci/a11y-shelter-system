@@ -262,7 +262,8 @@
     }
   },
   "ContentLanguage": {
-    "note": "{language, select, ru {Text în limba rusă} ro {Text în limba română} en {Text în limba engleză} other {Text în altă limbă}}"
+    "note": "{language, select, ru {Text în limba rusă} ro {Text în limba română} en {Text în limba engleză} other {Text în altă limbă}}",
+    "translated": "Tradus automat, pot exista inexactități"
   },
   "NotFound": {
     "title": "Pagina nu a fost găsită",

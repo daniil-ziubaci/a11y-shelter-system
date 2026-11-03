@@ -32,3 +32,13 @@ export function readTranslations(value: Json): Translations {
   }
   return result;
 }
+
+export function pickTranslation(
+  translations: Translations,
+  field: string,
+  language: string,
+  hash: string,
+): string | null {
+  const entry = translations[field]?.[language];
+  return entry && entry.hash === hash ? entry.text : null;
+}

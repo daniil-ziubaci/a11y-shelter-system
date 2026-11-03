@@ -16,4 +16,9 @@ export type Pet = {
   health: string;
   status: (typeof PET_STATUSES)[number];
   needsTreatmentSince: string | null;
+  translated: {
+    description: boolean;
+    health: boolean;
+    alt: boolean;
+  };
 };

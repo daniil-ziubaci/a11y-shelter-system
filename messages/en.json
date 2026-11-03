@@ -262,7 +262,8 @@
     }
   },
   "ContentLanguage": {
-    "note": "{language, select, ru {Text in Russian} ro {Text in Romanian} en {Text in English} other {Text in another language}}"
+    "note": "{language, select, ru {Text in Russian} ro {Text in Romanian} en {Text in English} other {Text in another language}}",
+    "translated": "Translated automatically, may contain inaccuracies"
   },
   "NotFound": {
     "title": "Page not found",

@@ -170,12 +170,25 @@ export default async function PetPage({
           </dl>
           <div className="flex flex-col gap-2 rounded-lg border border-(--border) bg-(--surface) p-4">
             <h2 className="text-xl font-bold">{t("aboutTitle")}</h2>
-            <ContentLanguageNote language={contentLanguage} />
-            <p lang={contentLanguage}>{pet.description}</p>
+            <ContentLanguageNote
+              language={contentLanguage}
+              translated={pet.translated.description}
+            />
+            <p lang={pet.translated.description ? locale : contentLanguage}>
+              {pet.description}
+            </p>
           </div>
           <div className="flex flex-col gap-2 rounded-lg border border-(--border) bg-(--surface) p-4">
             <h2 className="text-xl font-bold">{t("health")}</h2>
-            <p lang={contentLanguage}>{pet.health}</p>
+            {pet.translated.health !== pet.translated.description && (
+              <ContentLanguageNote
+                language={contentLanguage}
+                translated={pet.translated.health}
+              />
+            )}
+            <p lang={pet.translated.health ? locale : contentLanguage}>
+              {pet.health}
+            </p>
           </div>
           {pet.status === PET_STATUS_PENDING && (
             <p className="rounded-lg border border-(--border) bg-(--accent-soft) px-4 py-3">
