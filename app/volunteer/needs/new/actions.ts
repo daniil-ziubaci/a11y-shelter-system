@@ -1,6 +1,8 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { after } from "next/server";
+import { translatePurchaseItem } from "@/lib/translatePurchaseItem";
 import { createClient } from "@/lib/supabase/server";
 import { parsePurchaseItemFields } from "@/lib/parsePurchaseItemFields";
 
@@ -43,7 +45,9 @@ export async function createNeed(
   }
   const { name, category, unit, quantity, isUrgent } = parsed.fields;
 
+  const itemId = crypto.randomUUID();
   const { error: insertError } = await supabase.from("purchase_items").insert({
+    id: itemId,
     shelter_id: membership.shelter_id,
     name,
     category,
@@ -55,5 +59,6 @@ export async function createNeed(
     return fail("Не удалось сохранить позицию. Попробуйте ещё раз.");
   }
 
+  after(() => translatePurchaseItem(itemId));
   redirect("/volunteer/needs");
 }

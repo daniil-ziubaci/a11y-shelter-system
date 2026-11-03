@@ -1,6 +1,8 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { after } from "next/server";
+import { translatePurchaseItem } from "@/lib/translatePurchaseItem";
 import { createClient } from "@/lib/supabase/server";
 import { parsePurchaseItemEdit } from "@/lib/parsePurchaseItemEdit";
 
@@ -64,5 +66,6 @@ export async function updateNeed(
   const section =
     from === "open" || from === "stock" || from === "closed" ? from : "";
 
+  after(() => translatePurchaseItem(itemId));
   redirect(section ? `/volunteer/needs/${section}` : "/volunteer/needs");
 }
