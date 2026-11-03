@@ -49,6 +49,7 @@ export type Database = {
           id: string
           is_age_approximate: boolean
           name: string
+          name_search: string | null
           needs_treatment_since: string | null
           photo_alt: string
           photo_url: string
@@ -71,6 +72,7 @@ export type Database = {
           id?: string
           is_age_approximate: boolean
           name: string
+          name_search?: string | null
           needs_treatment_since?: string | null
           photo_alt: string
           photo_url: string
@@ -93,6 +95,7 @@ export type Database = {
           id?: string
           is_age_approximate?: boolean
           name?: string
+          name_search?: string | null
           needs_treatment_since?: string | null
           photo_alt?: string
           photo_url?: string
@@ -368,6 +371,7 @@ export type Database = {
         Args: { p_amount: number; p_item_id: string }
         Returns: number
       }
+      translit_ru: { Args: { input: string }; Returns: string }
       undo_purchase: { Args: { p_log_id: string }; Returns: number }
     }
     Enums: {

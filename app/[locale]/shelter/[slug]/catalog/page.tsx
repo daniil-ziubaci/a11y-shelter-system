@@ -129,7 +129,7 @@ export default async function Catalog({
 
     if (search) {
       const pattern = search.replace(/[\\%_]/g, "\\$&");
-      query = query.ilike("name", `%${pattern}%`);
+      query = query.ilike("name_search", `%${pattern}%`);
     }
 
     if (species === "cat") {
