@@ -4,6 +4,8 @@ import { parsePetFields } from "@/lib/parsePetFields";
 import { processPhoto } from "@/lib/processPhoto";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
+import { after } from "next/server";
+import { translatePet } from "@/lib/translatePet";
 
 type UpdatePetState =
   | { error: string; values: Record<string, string> }
@@ -91,5 +93,6 @@ export async function updatePet(
     return fail("Не удалось сохранить животное. Попробуйте ещё раз.");
   }
 
+  after(() => translatePet(petId));
   redirect("/volunteer");
 }

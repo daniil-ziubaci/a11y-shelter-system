@@ -1,6 +1,8 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { after } from "next/server";
+import { translatePet } from "@/lib/translatePet";
 import { createClient } from "@/lib/supabase/server";
 import { processPhoto } from "@/lib/processPhoto";
 import { parsePetFields } from "@/lib/parsePetFields";
@@ -93,5 +95,6 @@ export async function createPet(
     return fail("Не удалось сохранить животное. Попробуйте ещё раз.");
   }
 
+  after(() => translatePet(petId));
   redirect("/volunteer");
 }
