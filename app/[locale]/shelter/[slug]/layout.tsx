@@ -1,6 +1,5 @@
 import { ShelterNav } from "@/app/[locale]/shelter/[slug]/shelter-nav";
 import { ScrollTopLink } from "@/components/ScrollTopLink";
-import { toContentLanguage } from "@/lib/contentLanguage";
 import { getShelter } from "@/lib/getShelter";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { ShelterFooter } from "@/components/ShelterFooter";
@@ -58,7 +57,12 @@ export default async function ShelterLayout({
         city={shelter.city}
         foundedYear={shelter.founded_year}
         legalInfo={shelter.legal_info}
-        contentLanguage={toContentLanguage(shelter.content_language)}
+        hoursLanguage={
+          shelter.translated.hours ? locale : shelter.content_language
+        }
+        legalInfoLanguage={
+          shelter.translated.legalInfo ? locale : shelter.content_language
+        }
         instagram={shelter.instagram_url}
         viber={shelter.viber_url}
         telegram={shelter.telegram_url}

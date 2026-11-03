@@ -1,5 +1,4 @@
 import { ShelterContact } from "@/components/ShelterContact";
-import type { ContentLanguage } from "@/lib/contentLanguage";
 import { SocialLinks } from "@/components/SocialLinks";
 import { Link } from "@/i18n/navigation";
 import { getTranslations } from "next-intl/server";
@@ -14,7 +13,8 @@ export async function ShelterFooter({
   city,
   foundedYear,
   legalInfo,
-  contentLanguage,
+  hoursLanguage,
+  legalInfoLanguage,
   instagram,
   viber,
   telegram,
@@ -28,7 +28,8 @@ export async function ShelterFooter({
   city: string | null;
   foundedYear: number | null;
   legalInfo: string | null;
-  contentLanguage: ContentLanguage;
+  hoursLanguage: string;
+  legalInfoLanguage: string;
   instagram: string | null;
   viber: string | null;
   telegram: string | null;
@@ -88,7 +89,7 @@ export async function ShelterFooter({
             {hours && (
               <div>
                 <dt className="text-sm text-(--muted)">{t("hoursLabel")}</dt>
-                <dd lang={contentLanguage}>{hours}</dd>
+                <dd lang={hoursLanguage}>{hours}</dd>
               </div>
             )}
             {foundedYear !== null && (
@@ -100,7 +101,7 @@ export async function ShelterFooter({
             {legalInfo && (
               <div>
                 <dt className="text-sm text-(--muted)">{t("legalLabel")}</dt>
-                <dd lang={contentLanguage}>{legalInfo}</dd>
+                <dd lang={legalInfoLanguage}>{legalInfo}</dd>
               </div>
             )}
           </dl>

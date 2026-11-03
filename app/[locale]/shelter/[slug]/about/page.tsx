@@ -94,9 +94,15 @@ export default async function ShelterAboutPage({
           </h1>
           {shelter.about && (
             <>
-              <ContentLanguageNote language={contentLanguage} />
+              <ContentLanguageNote
+                language={contentLanguage}
+                translated={shelter.translated.about}
+              />
               {aboutParagraphs.map((paragraph, index) => (
-                <p key={index} lang={contentLanguage}>
+                <p
+                  key={index}
+                  lang={shelter.translated.about ? locale : contentLanguage}
+                >
                   {paragraph}
                 </p>
               ))}
@@ -113,8 +119,14 @@ export default async function ShelterAboutPage({
           <h2 id="adoption-heading" className="text-xl font-bold">
             {tAdoption("heading")}
           </h2>
-          <ContentLanguageNote language={contentLanguage} />
-          <p className="whitespace-pre-line" lang={contentLanguage}>
+          <ContentLanguageNote
+            language={contentLanguage}
+            translated={shelter.translated.adoptionInfo}
+          />
+          <p
+            className="whitespace-pre-line"
+            lang={shelter.translated.adoptionInfo ? locale : contentLanguage}
+          >
             {shelter.adoption_info}
           </p>
         </section>

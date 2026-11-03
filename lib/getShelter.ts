@@ -1,6 +1,7 @@
 import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
 import { localizeName } from "@/lib/transliterate";
+import { localizeShelter } from "@/lib/localizeShelter";
 import { notFound } from "next/navigation";
 
 export const getShelter = cache(async (slug: string, locale: string) => {
@@ -17,5 +18,8 @@ export const getShelter = cache(async (slug: string, locale: string) => {
   if (error) {
     throw new Error("Не удалось загрузить приют из базы.");
   }
-  return { ...data, name: localizeName(data.name, locale) };
+  return {
+    ...localizeShelter(data, locale),
+    name: localizeName(data.name, locale),
+  };
 });
