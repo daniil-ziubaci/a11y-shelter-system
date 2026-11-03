@@ -320,6 +320,7 @@ export type Database = {
           photo_path: string | null
           slug: string
           telegram_url: string | null
+          translations: Json
           viber_url: string | null
         }
         Insert: {
@@ -342,6 +343,7 @@ export type Database = {
           photo_path?: string | null
           slug: string
           telegram_url?: string | null
+          translations?: Json
           viber_url?: string | null
         }
         Update: {
@@ -364,6 +366,7 @@ export type Database = {
           photo_path?: string | null
           slug?: string
           telegram_url?: string | null
+          translations?: Json
           viber_url?: string | null
         }
         Relationships: []
