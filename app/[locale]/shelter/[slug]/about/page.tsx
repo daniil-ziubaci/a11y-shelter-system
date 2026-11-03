@@ -2,7 +2,11 @@ import { ContentLanguageNote } from "@/components/ContentLanguageNote";
 import { toContentLanguage } from "@/lib/contentLanguage";
 import { Link } from "@/i18n/navigation";
 import { getShelter } from "@/lib/getShelter";
-import { buildAlternates } from "@/lib/seo";
+import {
+  buildAlternates,
+  buildSocialMetadata,
+  getShelterPreviewImage,
+} from "@/lib/seo";
 import { buildShelterJsonLd } from "@/lib/shelterJsonLd";
 import { createClient } from "@/lib/supabase/server";
 import { truncateText } from "@/lib/truncateText";
@@ -27,6 +31,14 @@ export async function generateMetadata({
     title,
     description,
     alternates: buildAlternates(locale, `/shelter/${slug}/about`),
+    ...buildSocialMetadata({
+      locale,
+      path: `/shelter/${slug}/about`,
+      title,
+      description,
+      siteName: shelter.name,
+      image: getShelterPreviewImage(shelter),
+    }),
   };
 }
 

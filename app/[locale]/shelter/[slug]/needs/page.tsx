@@ -3,7 +3,11 @@ import { ContentLanguageNote } from "@/components/ContentLanguageNote";
 import { toContentLanguage } from "@/lib/contentLanguage";
 import { NEED_CATEGORIES, getCategoryKey } from "@/lib/needCategories";
 import { getUnitKey } from "@/lib/needUnits";
-import { buildAlternates } from "@/lib/seo";
+import {
+  buildAlternates,
+  buildSocialMetadata,
+  getShelterPreviewImage,
+} from "@/lib/seo";
 import { createClient } from "@/lib/supabase/server";
 import { getFormatter, getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
@@ -17,10 +21,20 @@ export async function generateMetadata({
   const { slug, locale } = await params;
   const shelter = await getShelter(slug);
   const t = await getTranslations({ locale, namespace: "Needs" });
+  const title = t("title", { shelter: shelter.name });
+  const description = t("description", { shelter: shelter.name });
   return {
-    title: t("title", { shelter: shelter.name }),
-    description: t("description", { shelter: shelter.name }),
+    title,
+    description,
     alternates: buildAlternates(locale, `/shelter/${slug}/needs`),
+    ...buildSocialMetadata({
+      locale,
+      path: `/shelter/${slug}/needs`,
+      title,
+      description,
+      siteName: shelter.name,
+      image: getShelterPreviewImage(shelter),
+    }),
   };
 }
 

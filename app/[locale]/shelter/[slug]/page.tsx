@@ -9,7 +9,11 @@ import {
   PET_STATUS_LOOKING,
   PUBLIC_PET_STATUSES,
 } from "@/lib/petStatuses";
-import { buildAlternates } from "@/lib/seo";
+import {
+  buildAlternates,
+  buildSocialMetadata,
+  getShelterPreviewImage,
+} from "@/lib/seo";
 import { Link } from "@/i18n/navigation";
 import { getFormatter, getTranslations } from "next-intl/server";
 import { getUnitKey } from "@/lib/needUnits";
@@ -23,10 +27,20 @@ export async function generateMetadata({
   const { slug, locale } = await params;
   const shelter = await getShelter(slug);
   const t = await getTranslations({ locale, namespace: "Home" });
+  const title = t("title", { shelter: shelter.name });
+  const description = t("description", { shelter: shelter.name });
   return {
-    title: t("title", { shelter: shelter.name }),
-    description: t("description", { shelter: shelter.name }),
+    title,
+    description,
     alternates: buildAlternates(locale, `/shelter/${slug}`),
+    ...buildSocialMetadata({
+      locale,
+      path: `/shelter/${slug}`,
+      title,
+      description,
+      siteName: shelter.name,
+      image: getShelterPreviewImage(shelter),
+    }),
   };
 }
 

@@ -11,7 +11,7 @@ import { getPet } from "@/lib/getPet";
 import { getShelter } from "@/lib/getShelter";
 import { getTranslations } from "next-intl/server";
 import { getSexKey } from "@/lib/petLabels";
-import { buildAlternates } from "@/lib/seo";
+import { buildAlternates, buildSocialMetadata } from "@/lib/seo";
 import { getSizeKey } from "@/lib/petSizes";
 import {
   PET_STATUS_LOOKING,
@@ -52,11 +52,14 @@ export async function generateMetadata({
     title,
     description,
     alternates: buildAlternates(locale, `/shelter/${slug}/catalog/${id}`),
-    openGraph: {
+    ...buildSocialMetadata({
+      locale,
+      path: `/shelter/${slug}/catalog/${id}`,
       title,
       description,
-      images: [{ url: pet.photo.url, alt: pet.photo.alt }],
-    },
+      siteName: shelter.name,
+      image: { url: `/api/og/pet/${id}`, alt: pet.photo.alt },
+    }),
   };
 }
 

@@ -4,7 +4,11 @@ import { createClient } from "@/lib/supabase/server";
 import { toPet } from "@/lib/toPet";
 import { Link } from "@/i18n/navigation";
 import { getTranslations } from "next-intl/server";
-import { buildAlternates } from "@/lib/seo";
+import {
+  buildAlternates,
+  buildSocialMetadata,
+  getShelterPreviewImage,
+} from "@/lib/seo";
 import { getSizeFromKey } from "@/lib/petSizes";
 import { PET_STATUS_TREATMENT, PUBLIC_PET_STATUSES } from "@/lib/petStatuses";
 import { CATALOG_PAGE_SIZE, parsePage } from "@/lib/parsePage";
@@ -43,14 +47,23 @@ export async function generateMetadata({
   const pageQuery = page > 1 ? `${query ? "&" : "?"}page=${page}` : "";
   const baseTitle = t(titleKey, { shelter: shelter.name });
 
+  const title =
+    page > 1 ? t("titleWithPage", { title: baseTitle, page }) : baseTitle;
+  const description = t(descriptionKey, { shelter: shelter.name });
+  const path = `/shelter/${slug}/catalog${query}${pageQuery}`;
+
   return {
-    title:
-      page > 1 ? t("titleWithPage", { title: baseTitle, page }) : baseTitle,
-    description: t(descriptionKey, { shelter: shelter.name }),
-    alternates: buildAlternates(
+    title,
+    description,
+    alternates: buildAlternates(locale, path),
+    ...buildSocialMetadata({
       locale,
-      `/shelter/${slug}/catalog${query}${pageQuery}`,
-    ),
+      path,
+      title,
+      description,
+      siteName: shelter.name,
+      image: getShelterPreviewImage(shelter),
+    }),
     ...(q?.trim() ? { robots: { index: false, follow: true } } : {}),
   };
 }
