@@ -23,7 +23,7 @@ export function PetCard({
   const showStatusBadge = pet.status !== PET_STATUS_LOOKING;
 
   return (
-    <article className="group relative flex flex-col overflow-hidden rounded-lg border border-(--border) bg-(--surface) transition duration-300 ease-out hover:shadow-2xl motion-safe:hover:-translate-y-1.5 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-(--focus)">
+    <article className="group relative flex flex-col overflow-hidden rounded-2xl border border-(--border) bg-(--surface) shadow-sm transition duration-300 ease-out hover:shadow-2xl motion-safe:hover:-translate-y-1.5 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-(--focus)">
       <div className="relative aspect-4/3">
         {(showStatusBadge || pet.needsTreatmentSince) && (
           <div className="absolute top-2.5 left-2.5 z-10 flex flex-col items-start gap-1.5">

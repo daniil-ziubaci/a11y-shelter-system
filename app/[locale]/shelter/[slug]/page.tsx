@@ -289,20 +289,20 @@ export default async function ShelterHomePage({
             {t("statsHeading")}
           </h2>
           <dl className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-            <div className="flex flex-col-reverse rounded-2xl border border-(--border) bg-(--surface) p-4">
+            <div className="flex flex-col-reverse rounded-2xl border border-(--border) bg-(--surface) shadow-sm p-4">
               <dt className="text-(--muted)">{t("statsTotal")}</dt>
               <dd className="text-3xl font-bold">
                 {format.number(totalCount)}
               </dd>
             </div>
-            <div className="flex flex-col-reverse rounded-2xl border border-(--border) bg-(--surface) p-4">
+            <div className="flex flex-col-reverse rounded-2xl border border-(--border) bg-(--surface) shadow-sm p-4">
               <dt className="text-(--muted)">{t("statsLooking")}</dt>
               <dd className="text-3xl font-bold">
                 {format.number(lookingCount)}
               </dd>
             </div>
             {adoptedCount > 0 && (
-              <div className="flex flex-col-reverse rounded-2xl border border-(--border) bg-(--surface) p-4">
+              <div className="flex flex-col-reverse rounded-2xl border border-(--border) bg-(--surface) shadow-sm p-4">
                 <dt className="text-(--muted)">{t("statsAdopted")}</dt>
                 <dd className="text-3xl font-bold">
                   {format.number(adoptedCount)}
