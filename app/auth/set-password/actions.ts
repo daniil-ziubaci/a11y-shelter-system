@@ -38,5 +38,5 @@ export async function setPassword(
     return { error: "Не удалось сохранить пароль. Попробуйте другой пароль." };
   }
 
-  redirect("/volunteer");
+  redirect("/volunteer/needs");
 }

@@ -61,5 +61,5 @@ export async function verifyCode(
     return { error: "Неверный код. Попробуйте ещё раз." };
   }
 
-  redirect("/volunteer");
+  redirect("/volunteer/needs");
 }

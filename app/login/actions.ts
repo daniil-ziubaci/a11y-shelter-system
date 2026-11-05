@@ -26,5 +26,5 @@ export async function login(
     return { error: "Неверная почта или пароль." };
   }
 
-  redirect("/volunteer");
+  redirect("/volunteer/needs");
 }
