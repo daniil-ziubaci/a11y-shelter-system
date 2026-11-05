@@ -3,6 +3,14 @@
 import { useActionState } from "react";
 import { receivePurchase } from "@/app/volunteer/needs/receive/actions";
 import { formatRemaining } from "@/lib/formatRemaining";
+import {
+  fieldClass,
+  hintClass,
+  labelClass,
+  primaryButtonClass,
+  selectClass,
+} from "@/lib/formClasses";
+import { SelectWrap } from "@/components/SelectWrap";
 
 type ReceiveItem = {
   id: string;
@@ -19,14 +27,20 @@ export function ReceiveForm({ items }: { items: ReceiveItem[] }) {
   const values = state && !state.ok ? state.values : undefined;
 
   return (
-    <form action={formAction} className="flex flex-col gap-4">
+    <form
+      action={formAction}
+      className="flex flex-col gap-4 rounded-2xl border border-(--border) bg-(--surface) p-4 shadow-sm sm:mx-auto sm:w-[calc(50%-0.5rem)] sm:p-6"
+    >
       <div className="flex flex-col gap-1">
-        <label htmlFor="itemId">Позиция</label>
-        <select
+        <label htmlFor="itemId" className={labelClass}>
+          Позиция
+        </label>
+        <SelectWrap><select
           id="itemId"
           name="itemId"
           defaultValue={values?.itemId ?? ""}
           required
+          className={selectClass}
         >
           <option value="" disabled>
             Выберите позицию
@@ -36,10 +50,12 @@ export function ReceiveForm({ items }: { items: ReceiveItem[] }) {
               {item.name}: {formatRemaining(item.remaining, item.unit)}
             </option>
           ))}
-        </select>
+        </select></SelectWrap>
       </div>
       <div className="flex flex-col gap-1">
-        <label htmlFor="amount">Сколько получили</label>
+        <label htmlFor="amount" className={labelClass}>
+          Сколько получили
+        </label>
         <input
           id="amount"
           name="amount"
@@ -49,19 +65,26 @@ export function ReceiveForm({ items }: { items: ReceiveItem[] }) {
           defaultValue={values?.amount}
           aria-describedby="amount-hint"
           required
+          className={fieldClass}
         />
-        <p id="amount-hint">
+        <p id="amount-hint" className={hintClass}>
           Обычное число, например 2,5. Единица берётся из позиции.
         </p>
       </div>
 
-      {state && !state.ok && <p role="alert">{state.error}</p>}
+      {state && !state.ok && (
+        <p role="alert" className="font-medium text-(--danger)">
+          {state.error}
+        </p>
+      )}
 
-      <button type="submit" disabled={isPending}>
+      <button type="submit" disabled={isPending} className={primaryButtonClass}>
         {isPending ? "Записываем…" : "Записать"}
       </button>
 
-      <p role="status">{state?.ok ? state.message : ""}</p>
+      <p role="status" className="font-medium empty:hidden">
+        {state?.ok ? state.message : ""}
+      </p>
     </form>
   );
 }

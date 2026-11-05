@@ -5,12 +5,26 @@ export const metadata = {
   robots: { index: false },
 };
 
-export default function VolunteerNeedsClosedPage() {
+export default async function VolunteerNeedsClosedPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ archived?: string }>;
+}) {
+  const { archived } = await searchParams;
+  const showArchived = archived === "1";
+
   return (
     <NeedSectionPage
       kind="closed"
-      heading="План закупок: закрытые"
-      emptyText="Закрытых позиций нет."
+      heading={
+        showArchived
+          ? "План закупок: убранные"
+          : "План закупок: закрытые"
+      }
+      emptyText={
+        showArchived ? "Убранных позиций нет." : "Закрытых позиций нет."
+      }
+      archived={showArchived}
     />
   );
 }
