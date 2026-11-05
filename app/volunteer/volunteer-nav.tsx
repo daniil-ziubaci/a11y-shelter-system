@@ -10,15 +10,15 @@ export function VolunteerNav() {
   }
   const links = [
     {
+      href: "/volunteer/needs",
+      label: "Закупки",
+      inSection: pathname.startsWith("/volunteer/needs"),
+    },
+    {
       href: "/volunteer",
       label: "Животные",
       inSection:
         pathname === "/volunteer" || pathname.startsWith("/volunteer/pets"),
-    },
-    {
-      href: "/volunteer/needs",
-      label: "План закупок",
-      inSection: pathname.startsWith("/volunteer/needs"),
     },
     {
       href: "/volunteer/projects",
@@ -29,7 +29,7 @@ export function VolunteerNav() {
 
   return (
     <nav aria-label="Разделы панели волонтёра">
-      <ul className="flex flex-wrap gap-4">
+      <ul className="grid grid-cols-3 gap-2">
         {links.map((link) => (
           <li key={link.href}>
             <Link
@@ -41,7 +41,11 @@ export function VolunteerNav() {
                     ? "true"
                     : undefined
               }
-              className="underline inline-block py-2"
+              className={`flex min-h-10 items-center justify-center rounded-lg border px-2 text-center font-medium ${
+                link.inSection
+                  ? "border-transparent bg-(--accent) text-white"
+                  : "border-(--border-strong) bg-(--surface)"
+              }`}
             >
               {link.label}
             </Link>
