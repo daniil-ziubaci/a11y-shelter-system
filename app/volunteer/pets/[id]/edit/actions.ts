@@ -2,6 +2,7 @@
 
 import { parsePetFields } from "@/lib/parsePetFields";
 import { processPhoto } from "@/lib/processPhoto";
+import { uploadPetPhoto } from "@/lib/uploadPetPhoto";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { after } from "next/server";
@@ -63,10 +64,8 @@ export async function updatePet(
     }
 
     const photoPath = `${membership.shelter_id}/animals/${petId}/${crypto.randomUUID()}.webp`;
-    const { error: uploadError } = await supabase.storage
-      .from("pet-photos")
-      .upload(photoPath, processed, { contentType: "image/webp" });
-    if (uploadError) {
+    const uploaded = await uploadPetPhoto(supabase, photoPath, processed);
+    if (!uploaded) {
       return fail("Не удалось загрузить фото. Попробуйте ещё раз.");
     }
 

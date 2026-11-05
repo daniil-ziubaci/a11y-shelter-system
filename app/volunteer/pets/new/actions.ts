@@ -5,6 +5,7 @@ import { after } from "next/server";
 import { translatePet } from "@/lib/translatePet";
 import { createClient } from "@/lib/supabase/server";
 import { processPhoto } from "@/lib/processPhoto";
+import { uploadPetPhoto } from "@/lib/uploadPetPhoto";
 import { parsePetFields } from "@/lib/parsePetFields";
 import { PET_STATUS_TREATMENT } from "@/lib/petStatuses";
 
@@ -71,10 +72,8 @@ export async function createPet(
 
   const petId = crypto.randomUUID();
   const photoPath = `${membership.shelter_id}/animals/${petId}/photo.webp`;
-  const { error: uploadError } = await supabase.storage
-    .from("pet-photos")
-    .upload(photoPath, processed, { contentType: "image/webp" });
-  if (uploadError) {
+  const uploaded = await uploadPetPhoto(supabase, photoPath, processed);
+  if (!uploaded) {
     return fail("Не удалось загрузить фото. Попробуйте ещё раз.");
   }
 
