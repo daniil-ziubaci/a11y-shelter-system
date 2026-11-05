@@ -39,7 +39,7 @@ export function ReceiveForm({ items }: { items: ReceiveItem[] }) {
         </select>
       </div>
       <div className="flex flex-col gap-1">
-        <label htmlFor="amount">Сколько купили</label>
+        <label htmlFor="amount">Сколько получили</label>
         <input
           id="amount"
           name="amount"
@@ -58,7 +58,7 @@ export function ReceiveForm({ items }: { items: ReceiveItem[] }) {
       {state && !state.ok && <p role="alert">{state.error}</p>}
 
       <button type="submit" disabled={isPending}>
-        {isPending ? "Записываем…" : "Записать покупку"}
+        {isPending ? "Записываем…" : "Записать"}
       </button>
 
       <p role="status">{state?.ok ? state.message : ""}</p>

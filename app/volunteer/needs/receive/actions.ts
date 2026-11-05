@@ -36,7 +36,7 @@ export async function receivePurchase(
     typeof amountInput === "string" ? amountInput.trim().replace(",", ".") : "",
   );
   if (!Number.isFinite(amount) || amount <= 0 || amount > 100000) {
-    return fail("Введите, сколько купили, например 2,5.");
+    return fail("Введите, сколько получили, например 2,5.");
   }
 
   const { data: remaining, error } = await supabase.rpc("receive_purchase", {
@@ -47,7 +47,7 @@ export async function receivePurchase(
     if (error.code === "P0002") {
       return fail("Позиция не найдена или недоступна.");
     }
-    return fail("Не удалось записать покупку. Попробуйте ещё раз.");
+    return fail("Не удалось записать. Попробуйте ещё раз.");
   }
 
   const { data: item } = await supabase
@@ -59,7 +59,7 @@ export async function receivePurchase(
   revalidatePath("/volunteer");
 
   if (!item) {
-    return { ok: true, message: "Покупка записана." };
+    return { ok: true, message: "Записано." };
   }
   return {
     ok: true,
