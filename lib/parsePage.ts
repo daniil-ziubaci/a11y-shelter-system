@@ -8,6 +8,7 @@ export function parsePage(value: string | undefined): number {
 
 export const CATALOG_PAGE_SIZE = 24;
 export const NEEDS_PAGE_SIZE = 24;
+export const VOLUNTEER_PAGE_SIZE = 20;
 export function parseShown(value: string | undefined): number {
   const shown = Number(value);
   if (!Number.isInteger(shown) || shown < NEEDS_PAGE_SIZE) {
