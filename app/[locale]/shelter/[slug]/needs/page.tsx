@@ -91,7 +91,7 @@ export default async function ShelterNeedsPage({
   const total = count ?? 0;
   const { data: rawItems, error } = await buildQuery(false)
     .order("is_urgent", { ascending: false })
-    .order("created_at")
+    .order("created_at", { ascending: false })
     .order("id")
     .range(0, shown - 1);
   const items = rawItems?.map((item) => localizeItem(item, locale));
