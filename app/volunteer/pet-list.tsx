@@ -349,7 +349,7 @@ export async function PetList({
                 name="status"
                 defaultValue={pet.status}
                 aria-label={`Статус: ${pet.name}`}
-                className="h-10 w-full appearance-none rounded-lg border border-(--accent) bg-(--accent-soft) pl-3 pr-10 text-base"
+                className="h-10 w-full appearance-none rounded-lg border border-(--accent) bg-(--accent-soft) *:bg-(--surface) pl-3 pr-10 text-base"
               >
                 {PET_STATUSES.map((s) => (
                   <option key={s} value={s}>
