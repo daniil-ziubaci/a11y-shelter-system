@@ -1,8 +1,10 @@
 "use client";
 
 import Image from "next/image";
+import { useFormStatus } from "react-dom";
 import { useEffect, useRef, useState } from "react";
 import { hintClass, labelClass } from "@/lib/formClasses";
+import { resizePhoto } from "@/lib/resizeImage";
 
 type Preview = { url: string; name: string; size: number };
 
@@ -23,6 +25,8 @@ export function PhotoField({
 }) {
   const [preview, setPreview] = useState<Preview | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const { pending } = useFormStatus();
+  const [preparing, setPreparing] = useState(false);
 
   useEffect(() => {
     return () => {
@@ -56,6 +60,12 @@ export function PhotoField({
     status = "Сейчас загружено это фото.";
   }
 
+  if (preparing) {
+    status = "Готовим фото…";
+  } else if (pending && preview) {
+    status = "Отправляем фото…";
+  }
+
   return (
     <div className="flex flex-col gap-2">
       <p className={labelClass}>{label}</p>
@@ -70,7 +80,7 @@ export function PhotoField({
           />
         </div>
       )}
-      <p role="status" className="text-sm font-medium">
+      <p role="status" className="text-sm font-medium wrap-anywhere">
         {status}
       </p>
       <input
@@ -81,23 +91,32 @@ export function PhotoField({
         accept="image/jpeg,image/png,image/webp"
         required={required}
         aria-describedby={`${id}-hint`}
-        className="sr-only"
-        onChange={(event) => {
-          const file = event.target.files?.[0];
-          setPreview(
-            file
-              ? {
-                  url: URL.createObjectURL(file),
-                  name: file.name,
-                  size: file.size,
-                }
-              : null,
-          );
+        className="peer sr-only"
+        onChange={async (event) => {
+          const input = event.target;
+          const original = input.files?.[0];
+          if (!original) {
+            setPreview(null);
+            return;
+          }
+          setPreparing(true);
+          input.setCustomValidity("Подождите, фото ещё готовится.");
+          const file = await resizePhoto(original).catch(() => original);
+          const transfer = new DataTransfer();
+          transfer.items.add(file);
+          input.files = transfer.files;
+          input.setCustomValidity("");
+          setPreview({
+            url: URL.createObjectURL(file),
+            name: file.name,
+            size: file.size,
+          });
+          setPreparing(false);
         }}
       />
       <label
         htmlFor={id}
-        className="flex h-10 cursor-pointer items-center justify-center self-start rounded-lg border border-(--border-strong) bg-(--surface) px-4 font-medium has-[:focus-visible]:outline-2 focus-within:outline-2"
+        className="flex h-10 cursor-pointer items-center justify-center self-start rounded-lg border border-(--border-strong) bg-(--surface) px-4 font-medium peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-(--focus)"
       >
         {preview || currentUrl ? "Заменить фото" : "Выбрать фото"}
       </label>
