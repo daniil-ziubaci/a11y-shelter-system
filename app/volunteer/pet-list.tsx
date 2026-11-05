@@ -8,6 +8,7 @@ import {
 import Link from "next/link";
 import { isTreatmentStale } from "@/lib/treatmentReview";
 import Image from "next/image";
+import { cardCopyOf } from "@/lib/photoUrls";
 import { getTranslations } from "next-intl/server";
 import { formatAge } from "@/lib/formatAge";
 import { monthsSince } from "@/lib/monthsSince";
@@ -152,141 +153,147 @@ export async function PetList({
   return (
     <>
       <div className="flex flex-col gap-3 rounded-2xl border border-(--border) bg-(--surface) p-3 shadow-md sm:mx-auto sm:w-[calc(50%-0.5rem)]">
-      <form
-        action="/volunteer"
-        method="get"
-        role="search"
-        className="flex flex-col gap-2"
-      >
-        <label htmlFor="pet-search" className="font-medium">
-          Найти по имени
-        </label>
-        <div className="flex gap-2">
-          <input
-            id="pet-search"
-            type="search"
-            name="q"
-            defaultValue={search}
-            enterKeyHint="search"
-            autoComplete="off"
-            className="h-10 min-w-0 flex-1 rounded-lg border border-(--border-strong) bg-(--surface) px-3 text-base"
-          />
-          <button
-            type="submit"
-            className="h-10 cursor-pointer rounded-lg border border-(--border-strong) bg-(--surface) px-4 font-medium"
-          >
-            Показать
-          </button>
-        </div>
-        <div className="flex items-center gap-2">
-          <label htmlFor="pet-sort" className="font-medium">
-            Порядок
+        <form
+          action="/volunteer"
+          method="get"
+          role="search"
+          className="flex flex-col gap-2"
+        >
+          <label htmlFor="pet-search" className="font-medium">
+            Найти по имени
           </label>
-          <div className="relative min-w-0 flex-1">
-<select
-            id="pet-sort"
-            name="sort"
-            defaultValue={sort}
-            className="h-10 w-full appearance-none rounded-lg border border-(--border-strong) bg-(--surface) pl-3 pr-10 text-base"
-          >
-            <option value="name">По имени</option>
-            <option value="new">Новые сверху</option>
-            <option value="stale">Давно не проверяли</option>
-          </select>
-<span aria-hidden="true" className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-(--muted)">▾</span>
-</div>
-        </div>
-        {current.species && (
-          <input type="hidden" name="species" value={current.species} />
-        )}
-
-        {current.treatment && (
-          <input type="hidden" name="treatment" value={current.treatment} />
-        )}
-
-        {current.status && (
-          <input type="hidden" name="status" value={current.status} />
-        )}
-      </form>
-      <details className="group border-t border-(--border) pt-1">
-        <summary className="flex min-h-10 cursor-pointer items-center justify-between pr-3 font-medium">
-          {filtersSummary}
-          <span
-            aria-hidden="true"
-            className="text-(--muted) transition-transform group-open:rotate-180"
-          >
-            ▾
-          </span>
-        </summary>
-        <nav aria-label="Фильтры" className="flex flex-col gap-3 py-3">
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="font-medium">Вид</span>
-            <Link
-              href={buildHref({ ...current, species: undefined })}
-              aria-current={current.species ? undefined : "true"}
-              className={pill}
+          <div className="flex gap-2">
+            <input
+              id="pet-search"
+              type="search"
+              name="q"
+              defaultValue={search}
+              enterKeyHint="search"
+              autoComplete="off"
+              className="h-10 min-w-0 flex-1 rounded-lg border border-(--border-strong) bg-(--surface) px-3 text-base"
+            />
+            <button
+              type="submit"
+              className="h-10 cursor-pointer rounded-lg border border-(--border-strong) bg-(--surface) px-4 font-medium"
             >
-              Все
-            </Link>
-            <Link
-              href={buildHref({ ...current, species: "dog" })}
-              aria-current={current.species === "dog" ? "true" : undefined}
-              className={pill}
-            >
-              Собаки
-            </Link>
-            <Link
-              href={buildHref({ ...current, species: "cat" })}
-              aria-current={current.species === "cat" ? "true" : undefined}
-              className={pill}
-            >
-              Кошки
-            </Link>
+              Показать
+            </button>
           </div>
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="font-medium">Статус</span>
-            {[
-              [undefined, "Активные"],
-              ["looking", "Ищут дом"],
-              ["pending", "В процессе"],
-              ["archive", "Архив"],
-            ].map(([key, label]) => (
+          <div className="flex items-center gap-2">
+            <label htmlFor="pet-sort" className="font-medium">
+              Порядок
+            </label>
+            <div className="relative min-w-0 flex-1">
+              <select
+                id="pet-sort"
+                name="sort"
+                defaultValue={sort}
+                className="h-10 w-full appearance-none rounded-lg border border-(--border-strong) bg-(--surface) pl-3 pr-10 text-base"
+              >
+                <option value="name">По имени</option>
+                <option value="new">Новые сверху</option>
+                <option value="stale">Давно не проверяли</option>
+              </select>
+              <span
+                aria-hidden="true"
+                className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-(--muted)"
+              >
+                ▾
+              </span>
+            </div>
+          </div>
+          {current.species && (
+            <input type="hidden" name="species" value={current.species} />
+          )}
+
+          {current.treatment && (
+            <input type="hidden" name="treatment" value={current.treatment} />
+          )}
+
+          {current.status && (
+            <input type="hidden" name="status" value={current.status} />
+          )}
+        </form>
+        <details className="group border-t border-(--border) pt-1">
+          <summary className="flex min-h-10 cursor-pointer items-center justify-between pr-3 font-medium">
+            {filtersSummary}
+            <span
+              aria-hidden="true"
+              className="text-(--muted) transition-transform group-open:rotate-180"
+            >
+              ▾
+            </span>
+          </summary>
+          <nav aria-label="Фильтры" className="flex flex-col gap-3 py-3">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="font-medium">Вид</span>
               <Link
-                key={label}
-                href={buildHref({ ...current, status: key })}
-                aria-current={current.status === key ? "true" : undefined}
+                href={buildHref({ ...current, species: undefined })}
+                aria-current={current.species ? undefined : "true"}
                 className={pill}
               >
-                {label}
+                Все
               </Link>
-            ))}
-          </div>
-        </nav>
+              <Link
+                href={buildHref({ ...current, species: "dog" })}
+                aria-current={current.species === "dog" ? "true" : undefined}
+                className={pill}
+              >
+                Собаки
+              </Link>
+              <Link
+                href={buildHref({ ...current, species: "cat" })}
+                aria-current={current.species === "cat" ? "true" : undefined}
+                className={pill}
+              >
+                Кошки
+              </Link>
+            </div>
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="font-medium">Статус</span>
+              {[
+                [undefined, "Активные"],
+                ["looking", "Ищут дом"],
+                ["pending", "В процессе"],
+                ["archive", "Архив"],
+              ].map(([key, label]) => (
+                <Link
+                  key={label}
+                  href={buildHref({ ...current, status: key })}
+                  aria-current={current.status === key ? "true" : undefined}
+                  className={pill}
+                >
+                  {label}
+                </Link>
+              ))}
+            </div>
+          </nav>
 
-        <div className="flex flex-wrap items-center gap-2 pb-3">
-          <span className="font-medium">Лечение</span>
-          <Link
-            href={buildHref({
-              ...current,
-              status: current.status === "treatment" ? undefined : "treatment",
-            })}
-            aria-current={current.status === "treatment" ? "true" : undefined}
-            className={pill}
-          >
-            Лечение: пока нельзя забрать
-          </Link>
-          <Link
-            href={buildHref({
-              ...current,
-              treatment: current.treatment ? undefined : "1",
-            })}
-            aria-current={current.treatment ? "true" : undefined}
-            className={pill}
-          >
-            Срочно нужна помощь с лечением
-          </Link>
-        </div>
-      </details>
+          <div className="flex flex-wrap items-center gap-2 pb-3">
+            <span className="font-medium">Лечение</span>
+            <Link
+              href={buildHref({
+                ...current,
+                status:
+                  current.status === "treatment" ? undefined : "treatment",
+              })}
+              aria-current={current.status === "treatment" ? "true" : undefined}
+              className={pill}
+            >
+              Лечение: пока нельзя забрать
+            </Link>
+            <Link
+              href={buildHref({
+                ...current,
+                treatment: current.treatment ? undefined : "1",
+              })}
+              aria-current={current.treatment ? "true" : undefined}
+              className={pill}
+            >
+              Срочно нужна помощь с лечением
+            </Link>
+          </div>
+        </details>
       </div>
       <p role="status" className="sm:text-center">
         {total === 0
@@ -307,14 +314,17 @@ export async function PetList({
       )}
       <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         {pets.map((pet) => (
-          <li key={pet.id} className="flex flex-col gap-2 rounded-2xl border border-(--border) bg-(--surface) p-3 shadow-md">
+          <li
+            key={pet.id}
+            className="flex flex-col gap-2 rounded-2xl border border-(--border) bg-(--surface) p-3 shadow-md"
+          >
             <div className="flex flex-col gap-3 sm:flex-row">
               <div className="relative aspect-4/3 w-full shrink-0 overflow-hidden rounded-lg bg-(--hover) sm:w-48">
                 <Image
-                  src={pet.photo_url}
+                  src={cardCopyOf(pet.photo_url)}
                   alt=""
                   fill
-                  sizes="(min-width: 640px) 192px, calc(100vw - 3rem)"
+                  unoptimized
                   className="object-cover"
                 />
               </div>
@@ -342,31 +352,36 @@ export async function PetList({
                     ? `, размер: ${PET_SIZE_LABELS[pet.size] ?? pet.size}`
                     : ""}
                 </p>
-<form action={setPetStatus} className="mt-auto flex gap-2">
-              <input type="hidden" name="petId" value={pet.id} />
-              <div className="relative min-w-0 flex-1">
-<select
-                name="status"
-                defaultValue={pet.status}
-                aria-label={`Статус: ${pet.name}`}
-                className="h-10 w-full appearance-none rounded-lg border border-(--accent) bg-(--accent-soft) *:bg-(--surface) pl-3 pr-10 text-base"
-              >
-                {PET_STATUSES.map((s) => (
-                  <option key={s} value={s}>
-                    {s === PET_STATUS_TREATMENT ? "лечение" : s}
-                  </option>
-                ))}
-              </select>
-<span aria-hidden="true" className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-(--muted)">▾</span>
-</div>
-              <button
-                type="submit"
-                aria-label={`Сохранить статус: ${pet.name}`}
-                className="h-10 cursor-pointer rounded-lg border border-(--border-strong) bg-(--surface) px-4 font-medium"
-              >
-                Сохранить
-              </button>
-            </form>
+                <form action={setPetStatus} className="mt-auto flex gap-2">
+                  <input type="hidden" name="petId" value={pet.id} />
+                  <div className="relative min-w-0 flex-1">
+                    <select
+                      name="status"
+                      defaultValue={pet.status}
+                      aria-label={`Статус: ${pet.name}`}
+                      className="h-10 w-full appearance-none rounded-lg border border-(--accent) bg-(--accent-soft) *:bg-(--surface) pl-3 pr-10 text-base"
+                    >
+                      {PET_STATUSES.map((s) => (
+                        <option key={s} value={s}>
+                          {s === PET_STATUS_TREATMENT ? "лечение" : s}
+                        </option>
+                      ))}
+                    </select>
+                    <span
+                      aria-hidden="true"
+                      className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-(--muted)"
+                    >
+                      ▾
+                    </span>
+                  </div>
+                  <button
+                    type="submit"
+                    aria-label={`Сохранить статус: ${pet.name}`}
+                    className="h-10 cursor-pointer rounded-lg border border-(--border-strong) bg-(--surface) px-4 font-medium"
+                  >
+                    Сохранить
+                  </button>
+                </form>
               </div>
             </div>
 
@@ -380,7 +395,9 @@ export async function PetList({
               pet.needs_treatment_since) && (
               <div className="flex flex-col gap-0.5 border-t border-(--border) pt-2">
                 {pet.status === PET_STATUS_TREATMENT && (
-                  <p className="rounded-lg bg-(--danger-soft) px-3 py-1 font-medium text-(--danger)">Лечение: пока нельзя забрать.</p>
+                  <p className="rounded-lg bg-(--danger-soft) px-3 py-1 font-medium text-(--danger)">
+                    Лечение: пока нельзя забрать.
+                  </p>
                 )}
                 {pet.needs_treatment_since && (
                   <p className="rounded-lg bg-(--danger-soft) px-3 py-1 font-medium text-(--danger)">
@@ -398,7 +415,6 @@ export async function PetList({
                       Проверьте, актуально ли: отметка стоит давно.
                     </p>
                   )}
-                
               </div>
             )}
           </li>

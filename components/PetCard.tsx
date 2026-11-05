@@ -1,6 +1,7 @@
 import type { Pet } from "@/types/pet";
 import { formatAge } from "@/lib/formatAge";
 import Image from "next/image";
+import { cardCopyOf } from "@/lib/photoUrls";
 import { Link } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { getSexKey } from "@/lib/petLabels";
@@ -34,10 +35,10 @@ export function PetCard({
           </div>
         )}
         <Image
-          src={pet.photo.url}
+          src={cardCopyOf(pet.photo.url)}
           alt={pet.photo.alt}
           fill
-          sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+          unoptimized
           loading={eager ? "eager" : "lazy"}
           className="object-cover bg-(--hover)"
         />

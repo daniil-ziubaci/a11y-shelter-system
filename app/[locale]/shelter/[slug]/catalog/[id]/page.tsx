@@ -131,7 +131,7 @@ export default async function PetPage({
             src={pet.photo.url}
             alt={pet.photo.alt}
             fill
-            sizes="(min-width: 1024px) 496px, 100vw"
+            unoptimized
             loading="eager"
             className="object-contain"
           />
