@@ -78,7 +78,7 @@ export default async function ShelterAboutPage({
         className="grid gap-6 lg:grid-cols-2 lg:items-start"
       >
         {photoUrl && (
-          <div className="relative aspect-4/3 overflow-hidden rounded-2xl border border-(--border) bg-(--surface)">
+          <div className="relative shadow-sm aspect-4/3 overflow-hidden rounded-2xl border border-(--border) bg-(--surface)">
             <Image
               src={photoUrl}
               alt={shelter.photo_alt ?? ""}
@@ -88,7 +88,7 @@ export default async function ShelterAboutPage({
             />
           </div>
         )}
-        <div className="flex flex-col gap-4 rounded-2xl border border-(--border) bg-(--surface) p-6">
+        <div className="flex flex-col gap-4 rounded-2xl border border-(--border) bg-(--surface) p-6 shadow-sm">
           <h1 id="about-heading" className="text-3xl font-bold">
             {shelter.name}
           </h1>
@@ -134,7 +134,7 @@ export default async function ShelterAboutPage({
 
       <section
         aria-labelledby="join-call-heading"
-        className="flex flex-col gap-6 rounded-2xl bg-(--accent-soft) p-6"
+        className="flex flex-col gap-6 rounded-2xl bg-(--accent-soft) p-6 shadow-sm"
       >
         <h2 id="join-call-heading" className="text-center text-2xl font-bold">
           {t("joinCallHeading")}
@@ -184,7 +184,7 @@ export default async function ShelterAboutPage({
 
       <section
         aria-labelledby="join-heading"
-        className="flex flex-col gap-4 rounded-2xl border border-(--border) bg-(--surface) p-6 md:items-center md:text-center"
+        className="flex flex-col gap-4 rounded-2xl border border-(--border) bg-(--surface) p-6 shadow-sm md:items-center md:text-center"
       >
         <h2 id="join-heading" className="text-center text-2xl font-bold">
           {t("joinHeading")}

@@ -90,7 +90,7 @@ export default async function ShelterProjectsPage({
   const renderProject = (project: (typeof ongoing)[number]) => (
     <li
       key={project.id}
-      className={`flex flex-col gap-3 rounded-2xl border border-(--border-strong) p-5 sm:flex-row sm:gap-6 ${
+      className={`flex flex-col gap-3 rounded-2xl border border-(--border-strong) p-5 sm:flex-row sm:gap-6 shadow-sm ${
         project.is_pinned ? "bg-(--accent-soft)" : "bg-(--surface)"
       }`}
     >

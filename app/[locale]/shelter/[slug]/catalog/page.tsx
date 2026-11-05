@@ -301,7 +301,7 @@ export default async function Catalog({
           })}
         </p>
       )}
-      <div className="flex flex-col gap-4 rounded-2xl border border-(--border) bg-(--surface) p-4">
+      <div className="flex flex-col gap-4 rounded-2xl border border-(--border) bg-(--surface) p-4 shadow-sm">
         <form
           role="search"
           className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-0"

@@ -17,7 +17,7 @@ export const primaryButtonClass =
 export const selectClass = `${fieldClass} appearance-none pr-10`;
 
 export const cardClass =
-  "flex flex-col gap-4 rounded-2xl border border-(--border) bg-(--surface) p-4 shadow-[0_2px_10px_rgba(90,50,20,0.22)] sm:p-6";
+  "flex flex-col gap-4 rounded-2xl border border-(--border) bg-(--surface) p-4 shadow-sm sm:p-6";
 
 export const secondaryButtonClass =
   "h-10 cursor-pointer rounded-lg border border-(--border-strong) bg-(--surface) px-4 font-medium disabled:cursor-wait disabled:opacity-60";
