@@ -1,3 +1,4 @@
+import { AuthPage } from "@/components/AuthPage";
 import { SetupFlow } from "@/app/volunteer/2fa/setup-flow";
 import { createClient } from "@/lib/supabase/server";
 
@@ -11,20 +12,26 @@ export default async function TwoFactorSetupPage() {
   const { data } = await supabase.auth.mfa.listFactors();
   const isEnabled = (data?.totp.length ?? 0) > 0;
   return (
-    <main>
-      <h1>Настройка двухфакторного входа</h1>
+    <AuthPage hasHeader title="Настройка двухфакторного входа">
       {isEnabled ? (
-        <p>Двухфакторный вход уже настроен.</p>
+        <p className="text-center">Двухфакторный вход уже настроен.</p>
       ) : (
         <>
-          <p>
-            Установите на телефон любое приложение для одноразовых кодов (TOTP).
-            Нажмите «Начать настройку», отсканируйте QR-код или введите ключ
-            вручную и затем введите шестизначный код из приложения.
-          </p>
+          <div className="flex flex-col gap-2 text-(--muted)">
+            <p>
+              Чтобы войти в панель приюта, нужен пароль и короткий код из
+              приложения. Так посторонний не попадёт в панель, даже если узнает
+              ваш пароль.
+            </p>
+            <p>
+              Установите на телефон бесплатное приложение Google Authenticator,
+              нажмите «Начать настройку» и наведите камеру приложения на
+              QR-код.
+            </p>
+          </div>
           <SetupFlow />
         </>
       )}
-    </main>
+    </AuthPage>
   );
 }

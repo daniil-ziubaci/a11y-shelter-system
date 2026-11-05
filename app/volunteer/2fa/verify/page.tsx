@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { AuthPage } from "@/components/AuthPage";
 import { createClient } from "@/lib/supabase/server";
 import { CodeForm } from "@/app/volunteer/2fa/code-form";
 
@@ -16,10 +17,11 @@ export default async function VerifyPage() {
   }
 
   return (
-    <main>
-      <h1>Подтверждение входа</h1>
-      <p>Введите шестизначный код из приложения-аутентификатора.</p>
+    <AuthPage hasHeader title="Подтверждение входа">
+      <p className="text-(--muted)">
+        Введите шестизначный код из приложения-аутентификатора.
+      </p>
       <CodeForm factorId={factor.id} />
-    </main>
+    </AuthPage>
   );
 }

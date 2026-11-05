@@ -1,5 +1,7 @@
 import Link from "next/link";
+import { AuthPage } from "@/components/AuthPage";
 import { LoginForm } from "@/app/login/login-form";
+import { errorClass } from "@/lib/formClasses";
 
 export const metadata = {
   title: "Вход для волонтёров",
@@ -14,18 +16,20 @@ export default async function LoginPage({
   const { error } = await searchParams;
 
   return (
-    <main>
-      <h1>Вход для волонтёров</h1>
+    <AuthPage title="Вход для волонтёров">
       {error === "invite" && (
-        <p role="alert">
+        <p role="alert" className={errorClass}>
           Ссылка приглашения устарела или уже использована. Попросите
           координатора отправить новую.
         </p>
       )}
       <LoginForm />
-      <p>
-        <Link href="/ru/privacy">Политика конфиденциальности</Link>
-      </p>
-    </main>
+      <Link
+        href="/ru/privacy"
+        className="flex h-10 items-center justify-center text-(--muted) underline"
+      >
+        Политика конфиденциальности
+      </Link>
+    </AuthPage>
   );
 }
