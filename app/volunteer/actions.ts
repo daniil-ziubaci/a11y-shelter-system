@@ -50,27 +50,3 @@ export async function setPetStatus(formData: FormData) {
 
   revalidatePath("/volunteer");
 }
-
-export async function setPetTreatment(formData: FormData) {
-  const petId = formData.get("petId");
-  if (typeof petId !== "string") {
-    return;
-  }
-  const needsTreatment = formData.get("needsTreatment") === "on";
-  const supabase = await createClient();
-  const { data } = await supabase.auth.getClaims();
-  if (!data?.claims) {
-    return;
-  }
-  const { error } = await supabase
-    .from("pets")
-    .update({
-      needs_treatment_since: needsTreatment ? new Date().toISOString() : null,
-    })
-    .eq("id", petId);
-
-  if (error) {
-    throw new Error("Не удалось изменить отметку.");
-  }
-  revalidatePath("/volunteer");
-}
