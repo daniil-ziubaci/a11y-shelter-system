@@ -29,7 +29,9 @@ export default async function PrivacyPage() {
 
   return (
     <main className="w-full flex flex-col gap-6 p-4 max-w-3xl mx-auto">
-      <h1 className="text-3xl font-bold">{t("heading")}</h1>
+      <h1 className="text-2xl font-bold wrap-break-word sm:text-3xl">
+        {t("heading")}
+      </h1>
       <p>{t("intro")}</p>
       <p className="rounded-2xl bg-(--accent-soft) p-4">{t("draftNotice")}</p>
       {sectionKeys.map((key) => (
