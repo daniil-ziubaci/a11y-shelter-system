@@ -23,17 +23,21 @@ export default async function VolunteerPage({
   const supabase = await createClient();
   const { data: membership } = await supabase
     .from("shelter_members")
-    .select("shelter_id, shelters(name)")
+    .select("shelter_id")
     .limit(1)
     .maybeSingle();
 
   return (
-    <main className="w-full flex flex-col gap-6 p-4 max-w-5xl mx-auto">
-      <h1 className="text-3xl font-bold">Животные приюта</h1>
+    <main className="mx-auto flex w-full max-w-5xl flex-col gap-4 p-4 pt-4">
+      <h1 className="text-3xl font-bold sm:text-center">Животные приюта</h1>
       {membership ? (
         <>
-          <p>Приют: {membership.shelters?.name}</p>
-          <Link href="/volunteer/pets/new">Добавить животное</Link>
+          <Link
+            href="/volunteer/pets/new"
+            className="flex min-h-10 items-center justify-center rounded-lg border border-(--border-strong) bg-(--surface) px-4 font-medium sm:self-center"
+          >
+            Добавить животное
+          </Link>
           <PetList shelterId={membership.shelter_id} params={params} />
         </>
       ) : (

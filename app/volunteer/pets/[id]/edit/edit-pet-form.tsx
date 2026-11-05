@@ -1,5 +1,15 @@
 "use client";
 
+import {
+  fieldClass,
+  hintClass,
+  labelClass,
+  primaryButtonClass,
+  radioRowClass,
+  textareaClass,
+} from "@/lib/formClasses";
+import { PhotoField } from "@/components/PhotoField";
+
 import { PET_STATUS_TREATMENT } from "@/lib/petStatuses";
 import { ContactsHint } from "@/components/ContactsHint";
 import { updatePet } from "@/app/volunteer/pets/[id]/edit/actions";
@@ -20,12 +30,13 @@ export function EditPetForm({ pet }: { pet: Pet }) {
   const initialMonths = exact ? "" : String(totalMonths % 12);
 
   return (
-    <form action={formAction} className="flex flex-col gap-6">
+    <form action={formAction} className="flex flex-col gap-6 rounded-2xl border border-(--border) bg-(--surface) p-4 shadow-sm sm:mx-auto sm:w-[calc(50%-0.5rem)] sm:p-6">
       <input type="hidden" name="id" value={pet.id} />
 
       <div className="flex flex-col gap-1">
-        <label htmlFor="name">Кличка</label>
+        <label htmlFor="name" className={labelClass}>Кличка</label>
         <input
+          className={fieldClass}
           id="name"
           name="name"
           type="text"
@@ -34,11 +45,12 @@ export function EditPetForm({ pet }: { pet: Pet }) {
           required
         />
       </div>
-      <fieldset className="flex flex-col gap-1">
-        <legend>Вид</legend>
-        <label>
+      <fieldset className="flex flex-wrap gap-2">
+        <legend className="mb-1 font-medium">Вид</legend>
+        <label className={radioRowClass}>
           <input
             type="radio"
+            className="h-5 w-5 shrink-0 cursor-pointer"
             name="species"
             value="собака"
             onChange={() => setSpecies("собака")}
@@ -47,9 +59,10 @@ export function EditPetForm({ pet }: { pet: Pet }) {
           />{" "}
           Собака
         </label>
-        <label>
+        <label className={radioRowClass}>
           <input
             type="radio"
+            className="h-5 w-5 shrink-0 cursor-pointer"
             name="species"
             value="кошка"
             onChange={() => setSpecies("кошка")}
@@ -60,11 +73,12 @@ export function EditPetForm({ pet }: { pet: Pet }) {
         </label>
       </fieldset>
 
-      <fieldset className="flex flex-col gap-1">
-        <legend>Пол</legend>
-        <label>
+      <fieldset className="flex flex-wrap gap-2">
+        <legend className="mb-1 font-medium">Пол</legend>
+        <label className={radioRowClass}>
           <input
             type="radio"
+            className="h-5 w-5 shrink-0 cursor-pointer"
             name="sex"
             value="мальчик"
             defaultChecked={(state?.values.sex ?? pet.sex) === "мальчик"}
@@ -72,9 +86,10 @@ export function EditPetForm({ pet }: { pet: Pet }) {
           />{" "}
           Мальчик
         </label>
-        <label>
+        <label className={radioRowClass}>
           <input
             type="radio"
+            className="h-5 w-5 shrink-0 cursor-pointer"
             name="sex"
             value="девочка"
             defaultChecked={(state?.values.sex ?? pet.sex) === "девочка"}
@@ -84,12 +99,13 @@ export function EditPetForm({ pet }: { pet: Pet }) {
         </label>
       </fieldset>
       {species === "собака" && (
-        <fieldset className="flex flex-col gap-1" aria-describedby="size-hint">
-          <legend>Размер</legend>
+        <fieldset className="flex flex-wrap gap-2" aria-describedby="size-hint">
+          <legend className="mb-1 font-medium">Размер</legend>
           {PET_SIZES.map((size) => (
-            <label key={size}>
+            <label key={size} className={radioRowClass}>
               <input
                 type="radio"
+                className="h-5 w-5 shrink-0 cursor-pointer"
                 name="size"
                 value={size}
                 defaultChecked={(state?.values.size ?? pet.size) === size}
@@ -98,18 +114,19 @@ export function EditPetForm({ pet }: { pet: Pet }) {
               {size[0].toUpperCase() + size.slice(1)}
             </label>
           ))}
-          <p id="size-hint">Оцените размер на глаз, взвешивать не нужно.</p>
+          <p id="size-hint" className={hintClass}>Оцените размер на глаз, взвешивать не нужно.</p>
         </fieldset>
       )}
       <fieldset className="flex flex-col gap-2" aria-describedby="age-hint">
-        <legend>Возраст</legend>
-        <p id="age-hint">
+        <legend className="mb-1 font-medium">Возраст</legend>
+        <p id="age-hint" className={hintClass}>
           Если точная дата рождения известна, укажите её. Если нет, оставьте её
           пустой и укажите примерный возраст.
         </p>
         <div className="flex flex-col gap-1">
-          <label htmlFor="birthDate">Дата рождения</label>
+          <label htmlFor="birthDate" className={labelClass}>Дата рождения</label>
           <input
+            className={fieldClass}
             id="birthDate"
             name="birthDate"
             type="date"
@@ -117,8 +134,9 @@ export function EditPetForm({ pet }: { pet: Pet }) {
           />
         </div>
         <div className="flex flex-col gap-1">
-          <label htmlFor="ageYears">Примерный возраст: полных лет</label>
+          <label htmlFor="ageYears" className={labelClass}>Примерный возраст: полных лет</label>
           <input
+            className={fieldClass}
             id="ageYears"
             name="ageYears"
             type="number"
@@ -129,8 +147,9 @@ export function EditPetForm({ pet }: { pet: Pet }) {
           />
         </div>
         <div className="flex flex-col gap-1">
-          <label htmlFor="ageMonths">и месяцев</label>
+          <label htmlFor="ageMonths" className={labelClass}>и месяцев</label>
           <input
+            className={fieldClass}
             id="ageMonths"
             name="ageMonths"
             type="number"
@@ -141,45 +160,34 @@ export function EditPetForm({ pet }: { pet: Pet }) {
           />
         </div>
       </fieldset>
+      <PhotoField
+        id="photo"
+        name="photo"
+        label="Новое фото (необязательно)"
+        hint={"Если фото менять не нужно, оставьте поле пустым. Формат JPEG, PNG или WebP. Место съёмки из фото удаляется автоматически. Если загрузка не удалась, фото нужно выбрать заново."}
+        currentUrl={pet.photo_url}
+      />
       <div className="flex flex-col gap-1">
-        <label htmlFor="photo">Новое фото (необязательно)</label>
-        <input
-          id="photo"
-          name="photo"
-          type="file"
-          accept="image/jpeg,image/png/webp"
-          aria-describedby="photo-hint"
-        />
-        <p id="photo-hint">
-          Если фото менять не нужно, оставьте поле пустым. Формат JPEG, PNG или
-          WebP. Место съёмки из фото удаляется автоматически. Если загрузка не
-          удалась, фото нужно выбрать заново.
-        </p>
-      </div>
-      <div className="flex flex-col gap-1">
-        <label htmlFor="photoAlt">Описание фото</label>
-        <input
+        <label htmlFor="photoAlt" className={labelClass}>Описание фото</label>
+        <textarea
+          className={textareaClass}
           id="photoAlt"
           name="photoAlt"
-          type="text"
-          autoComplete="off"
+          rows={2}
           aria-describedby="photo-alt-hint"
           defaultValue={state?.values.photoAlt ?? pet.photo_alt}
           required
         />
-        <p id="photo-alt-hint">
+        <p id="photo-alt-hint" className={hintClass}>
           Опишите, что на фото, для человека, который его не видит. Если меняете
           фото, обновите и описание.
         </p>
       </div>
 
       <div className="flex flex-col gap-1">
-        <p className="font-medium">
-          Меняете лечение? Обновите описание здоровья и отметьте нужное: «пока
-          нельзя забрать», «срочно нужна помощь» или оба пункта.
-        </p>
-        <label htmlFor="health">Здоровье</label>
+        <label htmlFor="health" className={labelClass}>Здоровье</label>
         <textarea
+          className={textareaClass}
           id="health"
           name="health"
           rows={3}
@@ -189,7 +197,11 @@ export function EditPetForm({ pet }: { pet: Pet }) {
         />
       </div>
 
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col gap-3">
+        <p className="-mt-3 font-medium text-(--accent)">
+          Меняете лечение? Обновите описание здоровья и отметьте нужное: «пока
+          нельзя забрать», «срочно нужна помощь» или оба пункта.
+        </p>
         <label
           htmlFor="treatment-status"
           className="flex min-h-12 cursor-pointer items-center gap-3"
@@ -208,7 +220,7 @@ export function EditPetForm({ pet }: { pet: Pet }) {
           <span>Лечение: пока нельзя забрать</span>
         </label>
         {pet.status === PET_STATUS_TREATMENT && (
-          <p>Чтобы снять этот статус, выберите другой в списке животных.</p>
+          <p className={hintClass}>Чтобы снять этот статус, выберите другой в списке животных.</p>
         )}
         <label
           htmlFor="needs-treatment"
@@ -229,15 +241,16 @@ export function EditPetForm({ pet }: { pet: Pet }) {
           <span>Срочно нужна помощь с лечением</span>
         </label>
 
-        <p id="needs-treatment-hint">
+        <p id="needs-treatment-hint" className={hintClass}>
           Если включаете или оставляете отметку, проверьте, что описание
           здоровья выше актуально.
         </p>
       </div>
 
       <div className="flex flex-col gap-1">
-        <label htmlFor="description">Описание, характер, история</label>
+        <label htmlFor="description" className={labelClass}>Описание, характер, история</label>
         <textarea
+          className={textareaClass}
           id="description"
           name="description"
           rows={5}
@@ -247,9 +260,13 @@ export function EditPetForm({ pet }: { pet: Pet }) {
         />
         <ContactsHint id="text-hint" />
       </div>
-      <p role="alert">{state?.error}</p>
+      <p role="alert" className="empty:hidden">{state?.error}</p>
 
-      <button type="submit" disabled={isPending}>
+      <button
+        type="submit"
+        disabled={isPending}
+        className={primaryButtonClass}
+      >
         {isPending ? "Сохраняем…" : "Сохранить изменения"}
       </button>
     </form>

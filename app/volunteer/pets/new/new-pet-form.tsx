@@ -1,5 +1,15 @@
 "use client";
 
+import {
+  fieldClass,
+  hintClass,
+  labelClass,
+  primaryButtonClass,
+  radioRowClass,
+  textareaClass,
+} from "@/lib/formClasses";
+import { PhotoField } from "@/components/PhotoField";
+
 import { ContactsHint } from "@/components/ContactsHint";
 import { useActionState, useState } from "react";
 import { createPet } from "@/app/volunteer/pets/new/actions";
@@ -10,10 +20,11 @@ export function NewPetForm() {
   const [species, setSpecies] = useState(state?.values.species ?? "");
 
   return (
-    <form action={formAction} className="flex flex-col gap-6">
+    <form action={formAction} className="flex flex-col gap-6 rounded-2xl border border-(--border) bg-(--surface) p-4 shadow-sm sm:mx-auto sm:w-[calc(50%-0.5rem)] sm:p-6">
       <div className="flex flex-col gap-1">
-        <label htmlFor="name">Кличка</label>
+        <label htmlFor="name" className={labelClass}>Кличка</label>
         <input
+          className={fieldClass}
           id="name"
           name="name"
           type="text"
@@ -23,11 +34,12 @@ export function NewPetForm() {
         />
       </div>
 
-      <fieldset className="flex flex-col gap-1">
-        <legend>Вид</legend>
-        <label>
+      <fieldset className="flex flex-wrap gap-2">
+        <legend className="mb-1 font-medium">Вид</legend>
+        <label className={radioRowClass}>
           <input
             type="radio"
+            className="h-5 w-5 shrink-0 cursor-pointer"
             name="species"
             value="собака"
             onChange={() => setSpecies("собака")}
@@ -36,9 +48,10 @@ export function NewPetForm() {
           />{" "}
           Собака
         </label>
-        <label>
+        <label className={radioRowClass}>
           <input
             type="radio"
+            className="h-5 w-5 shrink-0 cursor-pointer"
             name="species"
             value="кошка"
             onChange={() => setSpecies("кошка")}
@@ -49,11 +62,12 @@ export function NewPetForm() {
         </label>
       </fieldset>
 
-      <fieldset className="flex flex-col gap-1">
-        <legend>Пол</legend>
-        <label>
+      <fieldset className="flex flex-wrap gap-2">
+        <legend className="mb-1 font-medium">Пол</legend>
+        <label className={radioRowClass}>
           <input
             type="radio"
+            className="h-5 w-5 shrink-0 cursor-pointer"
             name="sex"
             value="мальчик"
             defaultChecked={state?.values.sex === "мальчик"}
@@ -61,9 +75,10 @@ export function NewPetForm() {
           />{" "}
           Мальчик
         </label>
-        <label>
+        <label className={radioRowClass}>
           <input
             type="radio"
+            className="h-5 w-5 shrink-0 cursor-pointer"
             name="sex"
             value="девочка"
             defaultChecked={state?.values.sex === "девочка"}
@@ -74,12 +89,13 @@ export function NewPetForm() {
       </fieldset>
 
       {species === "собака" && (
-        <fieldset className="flex flex-col gap-1" aria-describedby="size-hint">
-          <legend>Размер</legend>
+        <fieldset className="flex flex-wrap gap-2" aria-describedby="size-hint">
+          <legend className="mb-1 font-medium">Размер</legend>
           {PET_SIZES.map((size) => (
-            <label key={size}>
+            <label key={size} className={radioRowClass}>
               <input
                 type="radio"
+                className="h-5 w-5 shrink-0 cursor-pointer"
                 name="size"
                 value={size}
                 defaultChecked={state?.values.size === size}
@@ -88,19 +104,20 @@ export function NewPetForm() {
               {size[0].toUpperCase() + size.slice(1)}
             </label>
           ))}
-          <p id="size-hint">Оцените размер на глаз, взвешивать не нужно.</p>
+          <p id="size-hint" className={hintClass}>Оцените размер на глаз, взвешивать не нужно.</p>
         </fieldset>
       )}
 
       <fieldset className="flex flex-col gap-2" aria-describedby="age-hint">
-        <legend>Возраст</legend>
-        <p id="age-hint">
+        <legend className="mb-1 font-medium">Возраст</legend>
+        <p id="age-hint" className={hintClass}>
           Если точная дата рождения известна, укажите её. Если нет, оставьте её
           пустой и укажите примерный возраст.
         </p>
         <div className="flex flex-col gap-1">
-          <label htmlFor="birthDate">Дата рождения</label>
+          <label htmlFor="birthDate" className={labelClass}>Дата рождения</label>
           <input
+            className={fieldClass}
             id="birthDate"
             name="birthDate"
             type="date"
@@ -108,8 +125,9 @@ export function NewPetForm() {
           />
         </div>
         <div className="flex flex-col gap-1">
-          <label htmlFor="ageYears">Примерный возраст: полных лет</label>
+          <label htmlFor="ageYears" className={labelClass}>Примерный возраст: полных лет</label>
           <input
+            className={fieldClass}
             id="ageYears"
             name="ageYears"
             type="number"
@@ -120,8 +138,9 @@ export function NewPetForm() {
           />
         </div>
         <div className="flex flex-col gap-1">
-          <label htmlFor="ageMonths">и месяцев</label>
+          <label htmlFor="ageMonths" className={labelClass}>и месяцев</label>
           <input
+            className={fieldClass}
             id="ageMonths"
             name="ageMonths"
             type="number"
@@ -133,42 +152,35 @@ export function NewPetForm() {
         </div>
       </fieldset>
 
-      <div className="flex flex-col gap-1">
-        <label htmlFor="photo">Фото</label>
-        <input
-          id="photo"
-          name="photo"
-          type="file"
-          accept="image/jpeg,image/png,image/webp"
-          aria-describedby="photo-hint"
-          required
-        />
-        <p id="photo-hint">
-          Формат JPEG, PNG или WebP. Место съёмки из фото удаляется
-          автоматически. После ошибки фото нужно выбрать заново.
-        </p>
-      </div>
+      <PhotoField
+        id="photo"
+        name="photo"
+        label="Фото"
+        hint={"Формат JPEG, PNG или WebP. Место съёмки из фото удаляется автоматически. После ошибки фото нужно выбрать заново."}
+        required
+      />
 
       <div className="flex flex-col gap-1">
-        <label htmlFor="photoAlt">Описание фото</label>
-        <input
+        <label htmlFor="photoAlt" className={labelClass}>Описание фото</label>
+        <textarea
+          className={textareaClass}
           id="photoAlt"
           name="photoAlt"
-          type="text"
-          autoComplete="off"
+          rows={2}
           aria-describedby="photo-alt-hint"
           defaultValue={state?.values.photoAlt}
           required
         />
-        <p id="photo-alt-hint">
+        <p id="photo-alt-hint" className={hintClass}>
           Опишите, что на фото, для человека, который его не видит. Например:
           «Рыжая собака среднего размера».
         </p>
       </div>
 
       <div className="flex flex-col gap-1">
-        <label htmlFor="health">Здоровье</label>
+        <label htmlFor="health" className={labelClass}>Здоровье</label>
         <textarea
+          className={textareaClass}
           id="health"
           name="health"
           rows={3}
@@ -178,9 +190,37 @@ export function NewPetForm() {
         />
       </div>
 
+      <div className="flex flex-col gap-3">
+        <p className="-mt-3 font-medium text-(--accent)">
+          Животное больное? Опишите здоровье выше и отметьте нужное: один
+          пункт, оба или ни одного.
+        </p>
+        <label htmlFor="treatment-status" className={radioRowClass}>
+          <input
+            type="checkbox"
+            id="treatment-status"
+            name="treatmentStatus"
+            defaultChecked={state?.values.treatmentStatus === "on"}
+            className="h-5 w-5 shrink-0 cursor-pointer"
+          />
+          <span>Лечение: пока нельзя забрать</span>
+        </label>
+        <label htmlFor="needs-treatment" className={radioRowClass}>
+          <input
+            type="checkbox"
+            id="needs-treatment"
+            name="needsTreatment"
+            defaultChecked={state?.values.needsTreatment === "on"}
+            className="h-5 w-5 shrink-0 cursor-pointer"
+          />
+          <span>Срочно нужна помощь с лечением</span>
+        </label>
+      </div>
+
       <div className="flex flex-col gap-1">
-        <label htmlFor="description">Описание, характер, история</label>
+        <label htmlFor="description" className={labelClass}>Описание, характер, история</label>
         <textarea
+          className={textareaClass}
           id="description"
           name="description"
           rows={5}
@@ -191,9 +231,13 @@ export function NewPetForm() {
         <ContactsHint id="text-hint" />
       </div>
 
-      <p role="alert">{state?.error}</p>
+      <p role="alert" className="empty:hidden">{state?.error}</p>
 
-      <button type="submit" disabled={isPending}>
+      <button
+        type="submit"
+        disabled={isPending}
+        className={primaryButtonClass}
+      >
         {isPending ? "Сохраняем…" : "Добавить животное"}
       </button>
     </form>

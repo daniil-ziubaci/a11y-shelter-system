@@ -6,6 +6,7 @@ import { translatePet } from "@/lib/translatePet";
 import { createClient } from "@/lib/supabase/server";
 import { processPhoto } from "@/lib/processPhoto";
 import { parsePetFields } from "@/lib/parsePetFields";
+import { PET_STATUS_TREATMENT } from "@/lib/petStatuses";
 
 type CreatePetState =
   | { error: string; values: Record<string, string> }
@@ -56,6 +57,9 @@ export async function createPet(
     isAgeApproximate,
   } = parsed.fields;
 
+  const needsTreatment = formData.get("needsTreatment") === "on";
+  const treatmentStatus = formData.get("treatmentStatus") === "on";
+
   const photo = formData.get("photo");
   if (!(photo instanceof File) || photo.size === 0) {
     return fail("Выберите фото животного.");
@@ -90,6 +94,8 @@ export async function createPet(
     description,
     photo_url: urlData.publicUrl,
     photo_alt: photoAlt,
+    ...(treatmentStatus ? { status: PET_STATUS_TREATMENT } : {}),
+    needs_treatment_since: needsTreatment ? new Date().toISOString() : null,
   });
   if (insertError) {
     return fail("Не удалось сохранить животное. Попробуйте ещё раз.");

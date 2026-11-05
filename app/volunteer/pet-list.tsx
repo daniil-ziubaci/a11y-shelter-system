@@ -1,7 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { setPetStatus } from "@/app/volunteer/actions";
 import {
-  PET_STATUS_LABELS,
   PET_STATUS_TREATMENT,
   PET_STATUSES,
   PUBLIC_PET_STATUSES,
@@ -129,7 +128,7 @@ export async function PetList({
   };
 
   const pill =
-    "inline-flex min-h-11 items-center rounded-full border px-4 aria-[current=true]:bg-(--accent) aria-[current=true]:text-white";
+    "inline-flex min-h-11 items-center rounded-full border border-(--border-strong) bg-(--surface) px-4 aria-[current=true]:bg-(--accent) aria-[current=true]:text-white";
 
   const statusLabels = {
     looking: "Ищут дом",
@@ -148,10 +147,11 @@ export async function PetList({
   ].filter(Boolean);
   const filtersSummary = selected.length
     ? `Фильтры: ${selected.join(", ")}`
-    : "Фильтры";
+    : "Фильтры: вид, статус, лечение";
 
   return (
     <>
+      <div className="flex flex-col gap-3 rounded-2xl border border-(--border) bg-(--surface) p-3 shadow-sm sm:mx-auto sm:w-[calc(50%-0.5rem)]">
       <form
         action="/volunteer"
         method="get"
@@ -169,11 +169,11 @@ export async function PetList({
             defaultValue={search}
             enterKeyHint="search"
             autoComplete="off"
-            className="h-12 min-w-0 flex-1 rounded border px-3 text-base"
+            className="h-10 min-w-0 flex-1 rounded-lg border border-(--border-strong) bg-(--surface) px-3 text-base"
           />
           <button
             type="submit"
-            className="h-12 cursor-pointer rounded border px-4 font-medium"
+            className="h-10 cursor-pointer rounded-lg border border-(--border-strong) bg-(--surface) px-4 font-medium"
           >
             Показать
           </button>
@@ -182,16 +182,19 @@ export async function PetList({
           <label htmlFor="pet-sort" className="font-medium">
             Порядок
           </label>
-          <select
+          <div className="relative min-w-0 flex-1">
+<select
             id="pet-sort"
             name="sort"
             defaultValue={sort}
-            className="h-12 min-w-0 flex-1 rounded border px-3 text-base"
+            className="h-10 w-full appearance-none rounded-lg border border-(--border-strong) bg-(--surface) pl-3 pr-10 text-base"
           >
             <option value="name">По имени</option>
             <option value="new">Новые сверху</option>
             <option value="stale">Давно не проверяли</option>
           </select>
+<span aria-hidden="true" className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-(--muted)">▾</span>
+</div>
         </div>
         {current.species && (
           <input type="hidden" name="species" value={current.species} />
@@ -205,11 +208,17 @@ export async function PetList({
           <input type="hidden" name="status" value={current.status} />
         )}
       </form>
-      <details className="rounded border">
-        <summary className="flex min-h-12 cursor-pointer items-center px-3 font-medium">
+      <details className="group border-t border-(--border) pt-1">
+        <summary className="flex min-h-10 cursor-pointer items-center justify-between pr-3 font-medium">
           {filtersSummary}
+          <span
+            aria-hidden="true"
+            className="text-(--muted) transition-transform group-open:rotate-180"
+          >
+            ▾
+          </span>
         </summary>
-        <nav aria-label="Фильтры" className="flex flex-col gap-3 p-3">
+        <nav aria-label="Фильтры" className="flex flex-col gap-3 py-3">
           <div className="flex flex-wrap items-center gap-2">
             <span className="font-medium">Вид</span>
             <Link
@@ -254,7 +263,7 @@ export async function PetList({
           </div>
         </nav>
 
-        <div className="flex flex-wrap items-center gap-2 px-3 pb-3">
+        <div className="flex flex-wrap items-center gap-2 pb-3">
           <span className="font-medium">Лечение</span>
           <Link
             href={buildHref({
@@ -278,7 +287,8 @@ export async function PetList({
           </Link>
         </div>
       </details>
-      <p role="status">
+      </div>
+      <p role="status" className="sm:text-center">
         {total === 0
           ? search || current.species || current.status
             ? "Никого не нашли."
@@ -297,19 +307,32 @@ export async function PetList({
       )}
       <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         {pets.map((pet) => (
-          <li key={pet.id} className="flex flex-col gap-3 rounded border p-4">
-            <div className="flex gap-4">
-              <Image
-                src={pet.photo_url}
-                alt=""
-                width={96}
-                height={96}
-                className="h-24 w-24 shrink-0 rounded object-cover"
-              />
-              <div className="flex flex-col gap-1">
-                <h2 className="text-xl font-bold">{pet.name}</h2>
+          <li key={pet.id} className="flex flex-col gap-2 rounded-2xl border border-(--border) bg-(--surface) p-3 shadow-sm">
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <div className="relative aspect-4/3 w-full shrink-0 overflow-hidden rounded-lg bg-(--hover) sm:w-48">
+                <Image
+                  src={pet.photo_url}
+                  alt=""
+                  fill
+                  sizes="(min-width: 640px) 192px, calc(100vw - 3rem)"
+                  className="object-cover"
+                />
+              </div>
+              <div className="flex min-w-0 flex-1 flex-col gap-2">
+                <div className="flex items-start gap-3">
+                  <h2 className="shrink-0 whitespace-nowrap text-[1.625rem] font-bold leading-tight">
+                    {pet.name}
+                  </h2>
+                  <Link
+                    href={`/volunteer/pets/${pet.id}/edit`}
+                    aria-label={`Редактировать: ${pet.name}`}
+                    className="ml-auto flex h-10 min-w-0 items-center rounded-lg border border-(--border-strong) bg-(--surface) px-3 text-[15px] font-medium"
+                  >
+                    <span className="truncate">Редактировать</span>
+                  </Link>
+                </div>
                 <p>
-                  {pet.sex},{" "}
+                  {pet.sex.charAt(0).toUpperCase() + pet.sex.slice(1)},{" "}
                   {formatAge(
                     monthsSince(pet.birth_date),
                     pet.is_age_approximate,
@@ -319,57 +342,48 @@ export async function PetList({
                     ? `, размер: ${PET_SIZE_LABELS[pet.size] ?? pet.size}`
                     : ""}
                 </p>
-                <Link
-                  href={`/volunteer/pets/${pet.id}/edit`}
-                  aria-label={`Редактировать: ${pet.name}`}
-                  className="underline inline-block py-2"
-                >
-                  Редактировать
-                </Link>
-              </div>
-            </div>
-            <form action={setPetStatus} className="flex flex-col gap-2">
+<form action={setPetStatus} className="mt-auto flex gap-2">
               <input type="hidden" name="petId" value={pet.id} />
-              <label htmlFor={`status-${pet.id}`} className="font-medium">
-                Статус
-              </label>
-              <select
-                id={`status-${pet.id}`}
+              <div className="relative min-w-0 flex-1">
+<select
                 name="status"
                 defaultValue={pet.status}
                 aria-label={`Статус: ${pet.name}`}
-                className="h-12 w-full rounded border px-3 text-base"
+                className="h-10 w-full appearance-none rounded-lg border border-(--border-strong) bg-(--surface) pl-3 pr-10 text-base"
               >
                 {PET_STATUSES.map((s) => (
                   <option key={s} value={s}>
-                    {s === PET_STATUS_TREATMENT
-                      ? "лечение"
-                      : (PET_STATUS_LABELS[s] ?? s)}
+                    {s === PET_STATUS_TREATMENT ? "лечение" : s}
                   </option>
                 ))}
               </select>
+<span aria-hidden="true" className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-(--muted)">▾</span>
+</div>
               <button
                 type="submit"
                 aria-label={`Сохранить статус: ${pet.name}`}
-                className="h-12 cursor-pointer self-start rounded border px-4 font-medium"
+                className="h-10 cursor-pointer rounded-lg border border-(--border-strong) bg-(--surface) px-4 font-medium"
               >
-                Сохранить статус
+                Сохранить
               </button>
             </form>
+              </div>
+            </div>
+
             {isPetStatusStale(pet.status, pet.status_changed_at) && (
-              <p className="text-(--pending) font-medium">
-                Проверьте, актуален ли статус : текущему статусу больше{" "}
+              <p className="rounded-lg bg-(--pending-soft) px-3 py-2 font-semibold text-(--pending)">
+                Проверьте, актуален ли статус: ему больше{" "}
                 {PET_STATUS_REVIEW_DAYS} дней.
               </p>
             )}
             {(pet.status === PET_STATUS_TREATMENT ||
               pet.needs_treatment_since) && (
-              <div className="flex flex-col gap-1 border-t pt-3">
+              <div className="flex flex-col gap-0.5 border-t border-(--border) pt-2">
                 {pet.status === PET_STATUS_TREATMENT && (
-                  <p className="font-medium">Лечение: пока нельзя забрать.</p>
+                  <p className="rounded-lg bg-(--danger-soft) px-3 py-1 font-medium text-(--danger)">Лечение: пока нельзя забрать.</p>
                 )}
                 {pet.needs_treatment_since && (
-                  <p className="font-medium">
+                  <p className="rounded-lg bg-(--danger-soft) px-3 py-1 font-medium text-(--danger)">
                     Срочно нужна помощь с лечением, с{" "}
                     {new Date(pet.needs_treatment_since).toLocaleDateString(
                       "ru-RU",
@@ -380,17 +394,11 @@ export async function PetList({
                 )}
                 {pet.needs_treatment_since &&
                   isTreatmentStale(pet.needs_treatment_since) && (
-                    <p className="font-medium text-(--pending)">
+                    <p className="rounded-lg bg-(--pending-soft) px-3 py-2 font-semibold text-(--pending)">
                       Проверьте, актуально ли: отметка стоит давно.
                     </p>
                   )}
-                <Link
-                  href={`/volunteer/pets/${pet.id}/edit`}
-                  aria-label={`Изменить в анкете: ${pet.name}`}
-                  className="inline-block py-3 underline"
-                >
-                  Изменить в анкете
-                </Link>
+                
               </div>
             )}
           </li>

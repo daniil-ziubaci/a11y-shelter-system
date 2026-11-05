@@ -40,9 +40,9 @@ export default async function EditPetPage({
   }
 
   return (
-    <section>
-      <h2>Редактирование: {pet.name}</h2>
+    <main className="mx-auto flex w-full max-w-5xl flex-col gap-4 px-4 pb-8 pt-1">
+      <h1 className="text-3xl font-bold sm:text-center">Редактирование: {pet.name}</h1>
       <EditPetForm pet={pet} />
-    </section>
+    </main>
   );
 }
