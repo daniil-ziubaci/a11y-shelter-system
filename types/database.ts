@@ -127,6 +127,7 @@ export type Database = {
           goal: string | null
           help_kinds: string[]
           id: string
+          is_archived: boolean
           is_pinned: boolean
           photo_alt: string | null
           photo_path: string | null
@@ -147,6 +148,7 @@ export type Database = {
           goal?: string | null
           help_kinds?: string[]
           id?: string
+          is_archived?: boolean
           is_pinned?: boolean
           photo_alt?: string | null
           photo_path?: string | null
@@ -167,6 +169,7 @@ export type Database = {
           goal?: string | null
           help_kinds?: string[]
           id?: string
+          is_archived?: boolean
           is_pinned?: boolean
           photo_alt?: string | null
           photo_path?: string | null
@@ -195,6 +198,7 @@ export type Database = {
           category: string
           created_at: string
           id: string
+          is_archived: boolean
           is_urgent: boolean
           name: string
           remaining: number
@@ -207,6 +211,7 @@ export type Database = {
           category: string
           created_at?: string
           id?: string
+          is_archived?: boolean
           is_urgent?: boolean
           name: string
           remaining: number
@@ -219,6 +224,7 @@ export type Database = {
           category?: string
           created_at?: string
           id?: string
+          is_archived?: boolean
           is_urgent?: boolean
           name?: string
           remaining?: number
@@ -377,6 +383,10 @@ export type Database = {
     }
     Functions: {
       receive_purchase: {
+        Args: { p_amount: number; p_item_id: string }
+        Returns: number
+      }
+      record_consumption: {
         Args: { p_amount: number; p_item_id: string }
         Returns: number
       }
