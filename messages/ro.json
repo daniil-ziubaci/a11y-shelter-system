@@ -27,6 +27,7 @@
     "city": "Oraș: {city}",
     "linksLabel": "Secțiunile site-ului",
     "privacyLink": "Politica de confidențialitate",
+    "translationNote": "Textele scrise de voluntarii adăpostului sunt traduse automat pe această pagină, pot exista inexactități.",
     "socialHeading": "Suntem pe rețelele sociale:",
     "socialLink": "{network} al adăpostului",
     "cityLabel": "Oraș",

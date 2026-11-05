@@ -63,6 +63,7 @@ export default async function ShelterLayout({
         legalInfoLanguage={
           shelter.translated.legalInfo ? locale : shelter.content_language
         }
+        contentLanguage={shelter.content_language}
         instagram={shelter.instagram_url}
         viber={shelter.viber_url}
         telegram={shelter.telegram_url}

@@ -1,7 +1,7 @@
 import { ShelterContact } from "@/components/ShelterContact";
 import { SocialLinks } from "@/components/SocialLinks";
 import { Link } from "@/i18n/navigation";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 
 export async function ShelterFooter({
   slug,
@@ -15,6 +15,7 @@ export async function ShelterFooter({
   legalInfo,
   hoursLanguage,
   legalInfoLanguage,
+  contentLanguage,
   instagram,
   viber,
   telegram,
@@ -30,12 +31,15 @@ export async function ShelterFooter({
   legalInfo: string | null;
   hoursLanguage: string;
   legalInfoLanguage: string;
+  contentLanguage: string;
   instagram: string | null;
   viber: string | null;
   telegram: string | null;
 }) {
   const t = await getTranslations("Footer");
   const tNav = await getTranslations("Nav");
+  const locale = await getLocale();
+  const showTranslationNote = locale !== contentLanguage;
   const catalogPath = `/shelter/${slug}/catalog`;
   const links = [
     { href: `/shelter/${slug}`, label: tNav("home") },
@@ -135,6 +139,12 @@ export async function ShelterFooter({
           </ul>
         </nav>
       </div>
+
+      {showTranslationNote && (
+        <p className="mx-auto w-full max-w-5xl px-4 pb-8 text-sm text-(--muted)">
+          {t("translationNote")}
+        </p>
+      )}
     </footer>
   );
 }
