@@ -2,7 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { PET_STATUSES } from "@/lib/petStatuses";
+import { PET_STATUS_TREATMENT, PET_STATUSES } from "@/lib/petStatuses";
 import { revalidatePath } from "next/cache";
 
 export async function logout() {
@@ -27,6 +27,18 @@ export async function setPetStatus(formData: FormData) {
   if (!data?.claims) {
     return;
   }
+
+  if (status === PET_STATUS_TREATMENT) {
+    const { data: current } = await supabase
+      .from("pets")
+      .select("status")
+      .eq("id", petId)
+      .maybeSingle();
+    if (current && current.status !== PET_STATUS_TREATMENT) {
+      redirect(`/volunteer/pets/${encodeURIComponent(petId)}/edit`);
+    }
+  }
+
   const { error } = await supabase
     .from("pets")
     .update({ status })

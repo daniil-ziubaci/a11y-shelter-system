@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { after } from "next/server";
 import { translatePet } from "@/lib/translatePet";
+import { PET_STATUS_TREATMENT } from "@/lib/petStatuses";
 
 type UpdatePetState =
   | { error: string; values: Record<string, string> }
@@ -50,6 +51,7 @@ export async function updatePet(
   }
   const fields = parsed.fields;
   const needsTreatment = formData.get("needsTreatment") === "on";
+  const setTreatmentStatus = formData.get("treatmentStatus") === "on";
 
   let photoUrl: string | undefined;
   const photo = formData.get("photo");
@@ -81,6 +83,7 @@ export async function updatePet(
       is_age_approximate: fields.isAgeApproximate,
       size: fields.size,
       health: fields.health,
+      ...(setTreatmentStatus ? { status: PET_STATUS_TREATMENT } : {}),
       needs_treatment_since: needsTreatment ? new Date().toISOString() : null,
       description: fields.description,
       photo_alt: fields.photoAlt,

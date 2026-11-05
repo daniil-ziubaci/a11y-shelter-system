@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { setPetStatus } from "@/app/volunteer/actions";
 import {
   PET_STATUS_LABELS,
+  PET_STATUS_TREATMENT,
   PET_STATUSES,
   PUBLIC_PET_STATUSES,
 } from "@/lib/petStatuses";
@@ -303,7 +304,9 @@ export async function PetList({
               >
                 {PET_STATUSES.map((s) => (
                   <option key={s} value={s}>
-                    {PET_STATUS_LABELS[s] ?? s}
+                    {s === PET_STATUS_TREATMENT
+                      ? "лечение"
+                      : (PET_STATUS_LABELS[s] ?? s)}
                   </option>
                 ))}
               </select>
@@ -321,21 +324,28 @@ export async function PetList({
                 {PET_STATUS_REVIEW_DAYS} дней.
               </p>
             )}
-            {pet.needs_treatment_since && (
+            {(pet.status === PET_STATUS_TREATMENT ||
+              pet.needs_treatment_since) && (
               <div className="flex flex-col gap-1 border-t pt-3">
-                <p className="font-medium">
-                  Срочно нужна помощь с лечением, с{" "}
-                  {new Date(pet.needs_treatment_since).toLocaleDateString(
-                    "ru-RU",
-                    { day: "numeric", month: "long" },
-                  )}
-                  .
-                </p>
-                {isTreatmentStale(pet.needs_treatment_since) && (
-                  <p className="font-medium text-(--pending)">
-                    Проверьте, актуально ли: отметка стоит давно.
+                {pet.status === PET_STATUS_TREATMENT && (
+                  <p className="font-medium">Лечение: пока нельзя забрать.</p>
+                )}
+                {pet.needs_treatment_since && (
+                  <p className="font-medium">
+                    Срочно нужна помощь с лечением, с{" "}
+                    {new Date(pet.needs_treatment_since).toLocaleDateString(
+                      "ru-RU",
+                      { day: "numeric", month: "long" },
+                    )}
+                    .
                   </p>
                 )}
+                {pet.needs_treatment_since &&
+                  isTreatmentStale(pet.needs_treatment_since) && (
+                    <p className="font-medium text-(--pending)">
+                      Проверьте, актуально ли: отметка стоит давно.
+                    </p>
+                  )}
                 <Link
                   href={`/volunteer/pets/${pet.id}/edit`}
                   aria-label={`Изменить в анкете: ${pet.name}`}

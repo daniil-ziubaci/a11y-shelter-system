@@ -1,5 +1,6 @@
 "use client";
 
+import { PET_STATUS_TREATMENT } from "@/lib/petStatuses";
 import { ContactsHint } from "@/components/ContactsHint";
 import { updatePet } from "@/app/volunteer/pets/[id]/edit/actions";
 import { monthsSince } from "@/lib/monthsSince";
@@ -173,6 +174,10 @@ export function EditPetForm({ pet }: { pet: Pet }) {
       </div>
 
       <div className="flex flex-col gap-1">
+        <p className="font-medium">
+          Меняете лечение? Обновите описание здоровья и отметьте нужное: «пока
+          нельзя забрать», «срочно нужна помощь» или оба пункта.
+        </p>
         <label htmlFor="health">Здоровье</label>
         <textarea
           id="health"
@@ -185,6 +190,26 @@ export function EditPetForm({ pet }: { pet: Pet }) {
       </div>
 
       <div className="flex flex-col gap-1">
+        <label
+          htmlFor="treatment-status"
+          className="flex min-h-12 cursor-pointer items-center gap-3"
+        >
+          <input
+            type="checkbox"
+            id="treatment-status"
+            name="treatmentStatus"
+            defaultChecked={
+              pet.status === PET_STATUS_TREATMENT ||
+              state?.values.treatmentStatus === "on"
+            }
+            disabled={pet.status === PET_STATUS_TREATMENT}
+            className="h-6 w-6 shrink-0 cursor-pointer"
+          />
+          <span>Лечение: пока нельзя забрать</span>
+        </label>
+        {pet.status === PET_STATUS_TREATMENT && (
+          <p>Чтобы снять этот статус, выберите другой в списке животных.</p>
+        )}
         <label
           htmlFor="needs-treatment"
           className="flex min-h-12 cursor-pointer items-center gap-3"
@@ -203,9 +228,10 @@ export function EditPetForm({ pet }: { pet: Pet }) {
           />
           <span>Срочно нужна помощь с лечением</span>
         </label>
+
         <p id="needs-treatment-hint">
           Если включаете или оставляете отметку, проверьте, что описание
-          здоровья выше актуально: даритель увидит оба.
+          здоровья выше актуально.
         </p>
       </div>
 
