@@ -15,6 +15,7 @@ export default async function VolunteerPage({
     species?: string;
     status?: string;
     sort?: string;
+    treatment?: string;
     page?: string;
   }>;
 }) {

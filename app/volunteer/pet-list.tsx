@@ -30,6 +30,7 @@ export async function PetList({
 }: {
   shelterId: string;
   params: {
+    treatment?: string;
     q?: string;
     species?: string;
     status?: string;
@@ -65,6 +66,11 @@ export async function PetList({
     if (params.species === "cat") {
       query = query.eq("species", "кошка");
     }
+
+    if (params.treatment === "1") {
+      query = query.not("needs_treatment_since", "is", null);
+    }
+
     return query;
   };
 
@@ -99,6 +105,7 @@ export async function PetList({
         ? params.species
         : undefined,
     status: statusFilter,
+    treatment: params.treatment === "1" ? "1" : undefined,
     sort,
   };
 
@@ -107,6 +114,7 @@ export async function PetList({
     species?: string;
     status?: string;
     sort?: string;
+    treatment?: string;
     page?: number;
   }) => {
     const query = new URLSearchParams();
@@ -114,6 +122,7 @@ export async function PetList({
     if (next.species) query.set("species", next.species);
     if (next.status) query.set("status", next.status);
     if (next.sort && next.sort !== "name") query.set("sort", next.sort);
+    if (next.treatment) query.set("treatment", next.treatment);
     if (next.page && next.page > 1) query.set("page", String(next.page));
     const text = query.toString();
     return text ? `/volunteer?${text}` : "/volunteer";
@@ -125,7 +134,7 @@ export async function PetList({
   const statusLabels = {
     looking: "Ищут дом",
     pending: "В процессе",
-    treatment: "На лечении",
+    treatment: "Лечение: пока нельзя забрать",
     archive: "Архив",
   };
   const selected = [
@@ -135,6 +144,7 @@ export async function PetList({
         ? "Кошки"
         : null,
     current.status ? statusLabels[current.status] : null,
+    current.treatment ? "Срочно нужна помощь с лечением" : null,
   ].filter(Boolean);
   const filtersSummary = selected.length
     ? `Фильтры: ${selected.join(", ")}`
@@ -186,6 +196,11 @@ export async function PetList({
         {current.species && (
           <input type="hidden" name="species" value={current.species} />
         )}
+
+        {current.treatment && (
+          <input type="hidden" name="treatment" value={current.treatment} />
+        )}
+
         {current.status && (
           <input type="hidden" name="status" value={current.status} />
         )}
@@ -225,7 +240,6 @@ export async function PetList({
               [undefined, "Активные"],
               ["looking", "Ищут дом"],
               ["pending", "В процессе"],
-              ["treatment", "На лечении"],
               ["archive", "Архив"],
             ].map(([key, label]) => (
               <Link
@@ -239,6 +253,30 @@ export async function PetList({
             ))}
           </div>
         </nav>
+
+        <div className="flex flex-wrap items-center gap-2 px-3 pb-3">
+          <span className="font-medium">Лечение</span>
+          <Link
+            href={buildHref({
+              ...current,
+              status: current.status === "treatment" ? undefined : "treatment",
+            })}
+            aria-current={current.status === "treatment" ? "true" : undefined}
+            className={pill}
+          >
+            Лечение: пока нельзя забрать
+          </Link>
+          <Link
+            href={buildHref({
+              ...current,
+              treatment: current.treatment ? undefined : "1",
+            })}
+            aria-current={current.treatment ? "true" : undefined}
+            className={pill}
+          >
+            Срочно нужна помощь с лечением
+          </Link>
+        </div>
       </details>
       <p role="status">
         {total === 0
