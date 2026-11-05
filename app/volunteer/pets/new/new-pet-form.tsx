@@ -20,7 +20,7 @@ export function NewPetForm() {
   const [species, setSpecies] = useState(state?.values.species ?? "");
 
   return (
-    <form action={formAction} className="flex flex-col gap-6 rounded-2xl border border-(--border) bg-(--surface) p-4 shadow-[0_2px_10px_rgba(90,50,20,0.22)] sm:mx-auto sm:w-[calc(50%-0.5rem)] sm:p-6">
+    <form action={formAction} className="flex flex-col gap-6 rounded-2xl border border-(--border) bg-(--surface) p-4 shadow-[0_3px_12px_rgba(90,50,20,0.20)] sm:mx-auto sm:w-[calc(50%-0.5rem)] sm:p-6">
       <div className="flex flex-col gap-1">
         <label htmlFor="name" className={labelClass}>Кличка</label>
         <input

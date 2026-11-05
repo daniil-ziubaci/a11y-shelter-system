@@ -55,7 +55,7 @@ function ProjectCard({ project }: { project: ProjectRow }) {
     Boolean(project.progress_unit);
 
   return (
-    <li className="flex flex-col gap-3 rounded-2xl border border-(--border) bg-(--surface) p-3 shadow-[0_2px_10px_rgba(90,50,20,0.22)]">
+    <li className="flex flex-col gap-3 rounded-2xl border border-(--border) bg-(--surface) p-3 shadow-[0_3px_12px_rgba(90,50,20,0.20)]">
       <h3 className="text-xl font-bold wrap-break-word">{project.title}</h3>
       {project.status === PROJECT_STATUS_ONGOING &&
         isProjectStale(project.updated_at) && (
@@ -187,7 +187,7 @@ export default async function VolunteerProjectsPage({
             {projects.map((project) => (
               <li
                 key={project.id}
-                className="flex flex-col gap-3 rounded-2xl border border-(--border) bg-(--surface) p-3 shadow-[0_2px_10px_rgba(90,50,20,0.22)]"
+                className="flex flex-col gap-3 rounded-2xl border border-(--border) bg-(--surface) p-3 shadow-[0_3px_12px_rgba(90,50,20,0.20)]"
               >
                 <h2 className="text-xl font-bold wrap-break-word">
                   {project.title}
