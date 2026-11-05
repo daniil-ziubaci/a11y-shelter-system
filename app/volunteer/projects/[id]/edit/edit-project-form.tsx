@@ -60,13 +60,18 @@ export function EditProjectForm({ project }: { project: EditableProject }) {
           rows={6}
           maxLength={PROJECT_LIMITS.description}
           defaultValue={state?.values.description ?? project.description}
-          aria-describedby="description-hint contacts-hint"
+          aria-describedby="description-hint description-format-hint contacts-hint"
           required
         />
         <p id="description-hint">
           Что нужно сделать и зачем, до {PROJECT_LIMITS.description} знаков. Не
           пишите телефоны, номера карт, реквизиты и суммы: помощь идёт через
           контакт приюта.
+        </p>
+        <p id="description-format-hint">
+          Пустая строка начинает новый абзац. Чтобы получился список, начните
+          каждую строку с «- » (дефис и пробел). Ссылки и картинки вставить
+          нельзя: текст показывается как есть.
         </p>
       </div>
 
