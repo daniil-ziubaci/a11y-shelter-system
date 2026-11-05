@@ -34,46 +34,46 @@ export default async function VolunteerLayout({
         Перейти к содержимому
       </a>
       <header className="sticky top-0 z-30 w-full bg-(--background) shadow-md">
-        <div className="mx-auto flex max-w-5xl flex-col gap-1 px-4 py-1.5">
-        <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
-          {shelterName &&
-            (shelterSlug ? (
-              <Link
-                href={`/ru/shelter/${shelterSlug}`}
-                aria-label={`${shelterName}: страница приюта на сайте`}
-                className="order-1 min-w-0 truncate text-base font-bold hover:underline"
-              >
-                {shelterName}
-              </Link>
-            ) : (
-              <p className="order-1 min-w-0 truncate text-base font-bold">
-                {shelterName}
-              </p>
-            ))}
-          <details className="relative order-2 ml-auto">
-            <summary className="flex h-10 cursor-pointer list-none items-center gap-1 px-2 text-(--muted) [&::-webkit-details-marker]:hidden">
-              <span>Аккаунт</span>
-              <span aria-hidden="true">▾</span>
-            </summary>
-            <div className="absolute right-0 top-full mt-1 min-w-48 rounded-xl border border-(--border) bg-(--surface) p-2 shadow-md">
-              {account && (
-                <p className="truncate px-2 py-1 text-sm text-(--muted)">
-                  {account}
-                </p>
-              )}
-              <form action={logout}>
-                <button
-                  type="submit"
-                  className="h-10 w-full cursor-pointer rounded-lg px-2 text-left font-medium hover:bg-(--hover)"
+        <div className="mx-auto flex max-w-5xl flex-col gap-1 px-4 pb-3 pt-1.5">
+          <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
+            {shelterName &&
+              (shelterSlug ? (
+                <Link
+                  href={`/ru/shelter/${shelterSlug}`}
+                  aria-label={`${shelterName}: страница приюта на сайте`}
+                  className="order-1 min-w-0 truncate text-base font-bold hover:underline"
                 >
-                  Выйти
-                </button>
-              </form>
-            </div>
-          </details>
+                  {shelterName}
+                </Link>
+              ) : (
+                <p className="order-1 min-w-0 truncate text-base font-bold">
+                  {shelterName}
+                </p>
+              ))}
+            <details className="relative order-2 ml-auto">
+              <summary className="flex h-9 cursor-pointer list-none items-center gap-1 px-2 text-(--muted) [&::-webkit-details-marker]:hidden">
+                <span>Аккаунт</span>
+                <span aria-hidden="true">▾</span>
+              </summary>
+              <div className="absolute right-0 top-full mt-1 min-w-48 rounded-xl border border-(--border) bg-(--surface) p-2 shadow-md">
+                {account && (
+                  <p className="truncate px-2 py-1 text-sm text-(--muted)">
+                    {account}
+                  </p>
+                )}
+                <form action={logout}>
+                  <button
+                    type="submit"
+                    className="h-10 w-full cursor-pointer rounded-lg px-2 text-left font-medium hover:bg-(--hover)"
+                  >
+                    Выйти
+                  </button>
+                </form>
+              </div>
+            </details>
+          </div>
+          {showNav && <VolunteerNav />}
         </div>
-        {showNav && <VolunteerNav />}
-      </div>
       </header>
       {showNav && <BackLink />}
       <div id="volunteer-content" tabIndex={-1}>
