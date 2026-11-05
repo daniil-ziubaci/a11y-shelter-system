@@ -116,15 +116,23 @@ export default async function Catalog({
       .from("pets")
       .select("*", { count: "exact", head })
       .eq("shelter_id", shelter.id)
-      .in("status", PUBLIC_PET_STATUSES)
-      .order("status_rank")
-      .order("created_at", { ascending: false })
-      .order("name");
+      .in("status", PUBLIC_PET_STATUSES);
 
     if (isBlocked) {
-      query = query.eq("status", PET_STATUS_TREATMENT);
+      query = query
+        .eq("status", PET_STATUS_TREATMENT)
+        .order("status_changed_at", { ascending: true })
+        .order("name");
     } else if (isTreatment) {
-      query = query.not("needs_treatment_since", "is", null);
+      query = query
+        .not("needs_treatment_since", "is", null)
+        .order("needs_treatment_since", { ascending: true })
+        .order("name");
+    } else {
+      query = query
+        .order("status_rank")
+        .order("created_at", { ascending: false })
+        .order("name");
     }
 
     if (search) {

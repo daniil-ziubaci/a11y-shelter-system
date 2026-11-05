@@ -77,7 +77,7 @@ export default async function ShelterHomePage({
     .eq("shelter_id", shelter.id)
     .in("status", PUBLIC_PET_STATUSES)
     .not("needs_treatment_since", "is", null)
-    .order("needs_treatment_since", { ascending: false })
+    .order("needs_treatment_since", { ascending: true })
     .order("name")
     .limit(3);
   const treatmentPets = (treatmentData ?? []).map((row) => toPet(row, locale));
@@ -88,7 +88,7 @@ export default async function ShelterHomePage({
     .eq("shelter_id", shelter.id)
     .gt("remaining", 0)
     .eq("is_urgent", true)
-    .order("created_at")
+    .order("created_at", { ascending: false })
     .order("id")
     .limit(5);
   const urgentItems = (urgentData ?? []).map((item) =>
