@@ -151,7 +151,7 @@ export async function PetList({
 
   return (
     <>
-      <div className="flex flex-col gap-3 rounded-2xl border border-(--border) bg-(--surface) p-3 shadow-[0_3px_12px_rgba(90,50,20,0.20)] sm:mx-auto sm:w-[calc(50%-0.5rem)]">
+      <div className="flex flex-col gap-3 rounded-2xl border border-(--border) bg-(--surface) p-3 shadow-md sm:mx-auto sm:w-[calc(50%-0.5rem)]">
       <form
         action="/volunteer"
         method="get"
@@ -307,7 +307,7 @@ export async function PetList({
       )}
       <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         {pets.map((pet) => (
-          <li key={pet.id} className="flex flex-col gap-2 rounded-2xl border border-(--border) bg-(--surface) p-3 shadow-[0_3px_12px_rgba(90,50,20,0.20)]">
+          <li key={pet.id} className="flex flex-col gap-2 rounded-2xl border border-(--border) bg-(--surface) p-3 shadow-md">
             <div className="flex flex-col gap-3 sm:flex-row">
               <div className="relative aspect-4/3 w-full shrink-0 overflow-hidden rounded-lg bg-(--hover) sm:w-48">
                 <Image
@@ -349,7 +349,7 @@ export async function PetList({
                 name="status"
                 defaultValue={pet.status}
                 aria-label={`Статус: ${pet.name}`}
-                className="h-10 w-full appearance-none rounded-lg border border-(--border-strong) bg-(--surface) pl-3 pr-10 text-base"
+                className="h-10 w-full appearance-none rounded-lg border border-(--accent) bg-(--accent-soft) pl-3 pr-10 text-base"
               >
                 {PET_STATUSES.map((s) => (
                   <option key={s} value={s}>

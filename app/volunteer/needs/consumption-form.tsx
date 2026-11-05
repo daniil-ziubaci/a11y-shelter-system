@@ -20,7 +20,7 @@ export function ConsumptionForm({
   const inputId = `consumption-${itemId}`;
 
   return (
-    <details className="group rounded-lg border border-(--border)">
+    <details className="group rounded-lg border border-(--accent) bg-(--accent-soft)">
       <summary
         aria-label={`Расход: ${itemName}`}
         className="flex h-10 cursor-pointer list-none items-center justify-between px-3 font-medium [&::-webkit-details-marker]:hidden"
@@ -48,7 +48,7 @@ export function ConsumptionForm({
           autoComplete="off"
           defaultValue={values?.amount}
           required
-          className="h-10 w-full rounded-lg border border-(--border-strong) bg-(--surface) px-3 text-base"
+          className="h-10 w-full rounded-lg border border-(--border-strong)  bg-(--surface) px-3 text-base"
         />
         {state && !state.ok && (
           <p role="alert" className="font-medium text-(--danger)">

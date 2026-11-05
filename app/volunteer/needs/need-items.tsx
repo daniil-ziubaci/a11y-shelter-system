@@ -32,7 +32,7 @@ export function NeedItems({
         return (
           <li
             key={item.id}
-            className={`relative flex flex-col gap-3 rounded-2xl border bg-(--surface) p-3 shadow-[0_3px_12px_rgba(90,50,20,0.20)] ${
+            className={`relative flex flex-col gap-3 rounded-2xl border bg-(--surface) p-3 shadow-md ${
               urgent
                 ? "border-(--danger)"
                 : "border-(--border)"

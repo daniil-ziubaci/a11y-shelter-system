@@ -33,7 +33,7 @@ export function EditNeedForm({
   return (
     <form
       action={formAction}
-      className="flex flex-col gap-6 rounded-2xl border border-(--border) bg-(--surface) p-4 shadow-[0_3px_12px_rgba(90,50,20,0.20)] sm:mx-auto sm:w-[calc(50%-0.5rem)] sm:p-6"
+      className="flex flex-col gap-6 rounded-2xl border border-(--border) bg-(--surface) p-4 shadow-md sm:mx-auto sm:w-[calc(50%-0.5rem)] sm:p-6"
     >
       <input type="hidden" name="itemId" value={item.id} />
       {from && <input type="hidden" name="from" value={from} />}
