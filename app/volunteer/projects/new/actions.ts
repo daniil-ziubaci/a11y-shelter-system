@@ -44,8 +44,7 @@ export async function createProject(
   if (!parsed.ok) {
     return fail(parsed.error);
   }
-  const { title, description, goal, stage, helpKinds, photoAlt, progress } =
-    parsed.fields;
+  const { title, description, helpKinds, photoAlt, progress } = parsed.fields;
 
   let photoPath: string | null = null;
   const photo = formData.get("photo");
@@ -70,8 +69,6 @@ export async function createProject(
       shelter_id: membership.shelter_id,
       title,
       description,
-      goal,
-      stage,
       help_kinds: helpKinds,
       photo_path: photoPath,
       photo_alt: photoPath ? photoAlt : null,

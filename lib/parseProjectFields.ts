@@ -3,7 +3,6 @@ import {
   PROJECT_HELP_KINDS,
   type ProjectHelpKind,
 } from "@/lib/projectHelpKinds";
-import { PROJECT_STAGES, type ProjectStage } from "@/lib/projectStages";
 
 export const PROJECT_LIMITS = {
   title: 120,
@@ -20,8 +19,6 @@ type ParsedProject =
       fields: {
         title: string;
         description: string;
-        goal: string | null;
-        stage: ProjectStage;
         helpKinds: ProjectHelpKind[];
         photoAlt: string;
         progress: { total: number; done: number; unit: string } | null;
@@ -54,14 +51,6 @@ export function parseProjectFields(formData: FormData): ParsedProject {
     return {
       ok: false,
       error: `Описание длиннее ${PROJECT_LIMITS.description} знаков.`,
-    };
-  }
-
-  const goalText = read("goal");
-  if (goalText.length > PROJECT_LIMITS.goal) {
-    return {
-      ok: false,
-      error: `Цель длиннее ${PROJECT_LIMITS.goal} знаков.`,
     };
   }
 
@@ -117,17 +106,11 @@ export function parseProjectFields(formData: FormData): ParsedProject {
   const contactProblem = findContactError([
     ["Название проекта", title],
     ["Описание", description],
-    ["Цель", goalText],
     ["Единица измерения", unitText],
     ["Описание фото", photoAlt],
   ]);
   if (contactProblem) {
     return { ok: false, error: contactProblem };
-  }
-
-  const stage = PROJECT_STAGES.find((s) => s === read("stage"));
-  if (!stage) {
-    return { ok: false, error: "Выберите этап проекта." };
   }
 
   const submitted = formData.getAll("help_kinds");
@@ -143,8 +126,6 @@ export function parseProjectFields(formData: FormData): ParsedProject {
     fields: {
       title,
       description,
-      goal: goalText || null,
-      stage,
       helpKinds,
       photoAlt,
       progress,

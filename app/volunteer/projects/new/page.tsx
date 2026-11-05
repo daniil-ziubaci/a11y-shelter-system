@@ -7,8 +7,8 @@ export const metadata = {
 
 export default function NewProjectPage() {
   return (
-    <main className="w-full flex flex-col gap-6 p-4 max-w-5xl mx-auto">
-      <h1 className="text-3xl font-bold">Добавить проект</h1>
+    <main className="mx-auto flex w-full max-w-5xl flex-col gap-4 px-4 pb-8 pt-1">
+      <h1 className="text-3xl font-bold sm:text-center">Добавить проект</h1>
       <NewProjectForm />
     </main>
   );

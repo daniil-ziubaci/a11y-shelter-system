@@ -5,7 +5,6 @@ import { localizeProject } from "@/lib/localizeProject";
 import { toContentLanguage } from "@/lib/contentLanguage";
 import { ProjectDescription } from "@/components/ProjectDescription";
 import {
-  getStageKey,
   PROJECT_STATUS_COMPLETED,
   PROJECT_STATUS_ONGOING,
 } from "@/lib/projectStages";
@@ -57,8 +56,9 @@ export default async function ShelterProjectsPage({
   const { data: projects, error } = await supabase
     .from("projects")
     .select(
-      "id, title, description, goal, status, stage, completed_at, is_pinned, help_kinds, photo_path, photo_alt, progress_total, progress_done, progress_unit, translations",
+      "id, title, description, goal, status, completed_at, is_pinned, help_kinds, photo_path, photo_alt, progress_total, progress_done, progress_unit, translations",
     )
+    .eq("is_archived", false)
     .eq("shelter_id", shelter.id)
     .order("completed_at", { ascending: false, nullsFirst: false })
     .order("created_at", { ascending: false });
@@ -160,48 +160,16 @@ export default async function ShelterProjectsPage({
               </div>
             </div>
           )}
-        {!(
-          project.status === PROJECT_STATUS_ONGOING &&
-          project.progress_total !== null
-        ) &&
-          (project.goal ||
-            (project.status === PROJECT_STATUS_ONGOING &&
-              !project.is_pinned &&
-              getStageKey(project.stage))) && (
-            <dl className="flex flex-col gap-1 border-l-4 border-(--accent) pl-4">
-              {project.goal && (
-                <div>
-                  <dt className="inline font-bold">
-                    {project.status === PROJECT_STATUS_COMPLETED && (
-                      <span aria-hidden="true">✓ </span>
-                    )}
-                    {t(
-                      project.status === PROJECT_STATUS_COMPLETED
-                        ? "goalAchievedLabel"
-                        : "goalLabel",
-                    )}{" "}
-                  </dt>
-                  <dd
-                    lang={
-                      project.translated.goal ? pageLanguage : contentLanguage
-                    }
-                    className="inline"
-                  >
-                    {project.goal}
-                  </dd>
-                </div>
-              )}
-              {project.status === PROJECT_STATUS_ONGOING &&
-                !project.is_pinned &&
-                getStageKey(project.stage) && (
-                  <div>
-                    <dt className="inline font-bold">{t("stageTitle")} </dt>
-                    <dd className="inline">
-                      {t(`stages.${getStageKey(project.stage)}`)}
-                    </dd>
-                  </div>
-                )}
-            </dl>
+        {project.status === PROJECT_STATUS_COMPLETED &&
+          project.progress_total !== null &&
+          project.progress_unit && (
+            <p className="border-l-4 border-(--accent) pl-4">
+              <span className="font-bold">
+                <span aria-hidden="true">✓ </span>
+                {t("goalAchievedLabel")}
+              </span>{" "}
+              {project.progress_total} {project.progress_unit}
+            </p>
           )}
         {project.status === PROJECT_STATUS_ONGOING && (
           <ul aria-label={t("helpKindsLabel")} className="flex flex-wrap gap-2">

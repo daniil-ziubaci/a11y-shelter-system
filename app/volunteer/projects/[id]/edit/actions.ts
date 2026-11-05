@@ -1,5 +1,9 @@
 "use server";
 
+import {
+  PROJECT_STATUS_COMPLETED,
+  PROJECT_STATUS_ONGOING,
+} from "@/lib/projectStages";
 import { redirect } from "next/navigation";
 import { after } from "next/server";
 import { translateProject } from "@/lib/translateProject";
@@ -47,8 +51,7 @@ export async function updateProject(
   if (!parsed.ok) {
     return fail(parsed.error);
   }
-  const { title, description, goal, stage, helpKinds, photoAlt, progress } =
-    parsed.fields;
+  const { title, description, helpKinds, photoAlt, progress } = parsed.fields;
 
   let photoFields: { photo_path?: string; photo_alt?: string } = {};
   const photo = formData.get("photo");
@@ -84,12 +87,18 @@ export async function updateProject(
     .update({
       title,
       description,
-      goal,
-      stage,
       help_kinds: helpKinds,
       progress_total: progress?.total ?? null,
       progress_done: progress?.done ?? null,
       progress_unit: progress?.unit ?? null,
+      ...(progress
+        ? {
+            status:
+              progress.done === progress.total
+                ? PROJECT_STATUS_COMPLETED
+                : PROJECT_STATUS_ONGOING,
+          }
+        : {}),
       ...photoFields,
     })
     .eq("id", projectId)

@@ -27,7 +27,7 @@ export default async function EditProjectPage({
   const { data: project, error } = await supabase
     .from("projects")
     .select(
-      "id, title, description, goal, stage, help_kinds, photo_path, photo_alt, progress_total, progress_done, progress_unit",
+      "id, title, description, help_kinds, photo_path, photo_alt, progress_total, progress_done, progress_unit",
     )
     .eq("id", id)
     .eq("shelter_id", membership.shelter_id)
@@ -41,10 +41,15 @@ export default async function EditProjectPage({
     return <p role="alert">Проект не найден.</p>;
   }
 
+  const photoUrl = project.photo_path
+    ? supabase.storage.from("pet-photos").getPublicUrl(project.photo_path)
+        .data.publicUrl
+    : null;
+
   return (
-    <main className="w-full flex flex-col gap-6 p-4 max-w-5xl mx-auto">
-      <h1 className="text-3xl font-bold">Редактирование: {project.title}</h1>
-      <EditProjectForm project={project} />
+    <main className="mx-auto flex w-full max-w-5xl flex-col gap-4 px-4 pb-8 pt-1">
+      <h1 className="text-3xl font-bold sm:text-center">Редактирование: {project.title}</h1>
+      <EditProjectForm project={project} photoUrl={photoUrl} />
     </main>
   );
 }
