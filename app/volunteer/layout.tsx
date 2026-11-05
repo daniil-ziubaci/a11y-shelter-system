@@ -15,7 +15,7 @@ export default async function VolunteerLayout({
   const showNav = data?.claims?.aal === "aal2";
   const email = data?.claims?.email;
   const account = typeof email === "string" ? email.split("@")[0] : "";
-  const { data: membership } = showNav
+  const { data: membership } = data?.claims
     ? await supabase
         .from("shelter_members")
         .select("shelters(name, slug)")
