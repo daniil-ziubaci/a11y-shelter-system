@@ -15,7 +15,7 @@ export function BackLink() {
   const parent = match[1] === "pets" ? "/volunteer" : `/volunteer/${match[1]}`;
 
   return (
-    <div className="mx-auto w-full max-w-5xl px-4 pt-5">
+    <div className="mx-auto w-full max-w-5xl px-4 pt-4">
       <Link
         href={parent}
         onClick={(event) => {
@@ -24,7 +24,7 @@ export function BackLink() {
             router.back();
           }
         }}
-        className="group flex h-10 w-full items-center gap-3 text-lg font-medium tracking-wide text-(--accent)"
+        className="group flex h-10 w-full items-center gap-3 sm:mx-auto sm:w-[calc(50%-0.5rem)] text-lg font-medium tracking-wide text-(--accent)"
       >
         <span
           aria-hidden="true"

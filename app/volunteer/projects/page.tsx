@@ -55,7 +55,7 @@ function ProjectCard({ project }: { project: ProjectRow }) {
     Boolean(project.progress_unit);
 
   return (
-    <li className="flex flex-col gap-3 rounded-2xl border border-(--border) bg-(--surface) p-3 shadow-sm">
+    <li className="flex flex-col gap-3 rounded-2xl border border-(--border) bg-(--surface) p-3 shadow-[0_2px_10px_rgba(90,50,20,0.22)]">
       <h3 className="text-xl font-bold wrap-break-word">{project.title}</h3>
       {project.status === PROJECT_STATUS_ONGOING &&
         isProjectStale(project.updated_at) && (
@@ -176,12 +176,6 @@ export default async function VolunteerProjectsPage({
     return (
       <main className={box}>
         <h1 className="text-3xl font-bold sm:text-center">Убранные проекты</h1>
-        <Link
-          href="/volunteer/projects"
-          className="flex h-10 items-center justify-center rounded-lg border border-(--border-strong) bg-(--surface) px-4 font-medium sm:self-center"
-        >
-          К проектам
-        </Link>
         {error ? (
           <p role="alert">Не удалось загрузить проекты.</p>
         ) : projects.length === 0 ? (
@@ -193,7 +187,7 @@ export default async function VolunteerProjectsPage({
             {projects.map((project) => (
               <li
                 key={project.id}
-                className="flex flex-col gap-3 rounded-2xl border border-(--border) bg-(--surface) p-3 shadow-sm"
+                className="flex flex-col gap-3 rounded-2xl border border-(--border) bg-(--surface) p-3 shadow-[0_2px_10px_rgba(90,50,20,0.22)]"
               >
                 <h2 className="text-xl font-bold wrap-break-word">
                   {project.title}
@@ -203,6 +197,12 @@ export default async function VolunteerProjectsPage({
             ))}
           </ul>
         )}
+        <Link
+          href="/volunteer/projects"
+          className="flex h-10 items-center justify-center text-(--muted) underline sm:self-center"
+        >
+          К проектам
+        </Link>
       </main>
     );
   }

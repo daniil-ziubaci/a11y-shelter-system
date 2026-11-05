@@ -21,7 +21,7 @@ export default async function VolunteerNeedsPage() {
   if (!membership) {
     return (
       <main className="mx-auto flex w-full max-w-5xl flex-col gap-4 px-4 pb-6 pt-4">
-        <h1 className="text-3xl font-bold sm:text-center">План закупок: приёмка товара</h1>
+        <h1 className="text-3xl font-bold wrap-break-word sm:mx-auto sm:w-[calc(50%-0.5rem)] sm:text-center">План закупок: приёмка товара</h1>
         <p>Вы пока не состоите ни в одном приюте. Обратитесь к координатору.</p>
       </main>
     );
@@ -32,7 +32,7 @@ export default async function VolunteerNeedsPage() {
 
   return (
     <main className="mx-auto flex w-full max-w-5xl flex-col gap-4 px-4 pb-6 pt-4">
-      <h1 className="text-3xl font-bold sm:text-center">План закупок: приёмка товара</h1>
+      <h1 className="text-3xl font-bold wrap-break-word sm:mx-auto sm:w-[calc(50%-0.5rem)] sm:text-center">План закупок: приёмка товара</h1>
       <NeedsNav />
       {error ? (
         <p role="alert">Не удалось загрузить план закупок.</p>
