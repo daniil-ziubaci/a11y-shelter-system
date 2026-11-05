@@ -185,6 +185,31 @@ export function EditPetForm({ pet }: { pet: Pet }) {
       </div>
 
       <div className="flex flex-col gap-1">
+        <label
+          htmlFor="needs-treatment"
+          className="flex min-h-12 cursor-pointer items-center gap-3"
+        >
+          <input
+            type="checkbox"
+            id="needs-treatment"
+            name="needsTreatment"
+            defaultChecked={
+              state
+                ? state.values.needsTreatment === "on"
+                : pet.needs_treatment_since !== null
+            }
+            aria-describedby="needs-treatment-hint"
+            className="h-6 w-6 shrink-0 cursor-pointer"
+          />
+          <span>Срочно нужна помощь с лечением</span>
+        </label>
+        <p id="needs-treatment-hint">
+          Если включаете или оставляете отметку, проверьте, что описание
+          здоровья выше актуально: даритель увидит оба.
+        </p>
+      </div>
+
+      <div className="flex flex-col gap-1">
         <label htmlFor="description">Описание, характер, история</label>
         <textarea
           id="description"

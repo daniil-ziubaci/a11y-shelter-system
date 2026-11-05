@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import { setPetStatus, setPetTreatment } from "@/app/volunteer/actions";
+import { setPetStatus } from "@/app/volunteer/actions";
 import {
   PET_STATUS_LABELS,
   PET_STATUSES,
@@ -256,7 +256,7 @@ export async function PetList({
           </Link>
         </p>
       )}
-      <ul className="grid gap-4 sm:grid-cols-2">
+      <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         {pets.map((pet) => (
           <li key={pet.id} className="flex flex-col gap-3 rounded border p-4">
             <div className="flex gap-4">
@@ -289,17 +289,17 @@ export async function PetList({
                 </Link>
               </div>
             </div>
-            <form
-              action={setPetStatus}
-              className="flex flex-wrap items-center gap-2"
-            >
+            <form action={setPetStatus} className="flex flex-col gap-2">
               <input type="hidden" name="petId" value={pet.id} />
-              <label htmlFor={`status-${pet.id}`}>Статус</label>
+              <label htmlFor={`status-${pet.id}`} className="font-medium">
+                Статус
+              </label>
               <select
                 id={`status-${pet.id}`}
                 name="status"
                 defaultValue={pet.status}
                 aria-label={`Статус: ${pet.name}`}
+                className="h-12 w-full rounded border px-3 text-base"
               >
                 {PET_STATUSES.map((s) => (
                   <option key={s} value={s}>
@@ -310,8 +310,9 @@ export async function PetList({
               <button
                 type="submit"
                 aria-label={`Сохранить статус: ${pet.name}`}
+                className="h-12 cursor-pointer self-start rounded border px-4 font-medium"
               >
-                Сохранить
+                Сохранить статус
               </button>
             </form>
             {isPetStatusStale(pet.status, pet.status_changed_at) && (
@@ -320,45 +321,30 @@ export async function PetList({
                 {PET_STATUS_REVIEW_DAYS} дней.
               </p>
             )}
-            <form
-              action={setPetTreatment}
-              className="flex flex-wrap items-center gap-2"
-            >
-              <input type="hidden" name="petId" value={pet.id} />
-              <input
-                type="checkbox"
-                id={`treatment-${pet.id}`}
-                name="needsTreatment"
-                defaultChecked={pet.needs_treatment_since !== null}
-                aria-label={`Срочно нужна помощь с лечением: ${pet.name}`}
-                aria-describedby={
-                  pet.needs_treatment_since
-                    ? `treatment-note-${pet.id}`
-                    : undefined
-                }
-              />
-              <label htmlFor={`treatment-${pet.id}`}>
-                Срочно нужна помощь с лечением
-              </label>
-              {pet.needs_treatment_since && (
-                <span id={`treatment-note-${pet.id}`}>
-                  с{" "}
+            {pet.needs_treatment_since && (
+              <div className="flex flex-col gap-1 border-t pt-3">
+                <p className="font-medium">
+                  Срочно нужна помощь с лечением, с{" "}
                   {new Date(pet.needs_treatment_since).toLocaleDateString(
                     "ru-RU",
                     { day: "numeric", month: "long" },
                   )}
-                  .{" "}
-                  {isTreatmentStale(pet.needs_treatment_since) &&
-                    "Отметка стоит давно: проверьте, актуально ли."}
-                </span>
-              )}
-              <button
-                type="submit"
-                aria-label={`Сохранить отметку о лечении: ${pet.name}`}
-              >
-                Сохранить
-              </button>
-            </form>
+                  .
+                </p>
+                {isTreatmentStale(pet.needs_treatment_since) && (
+                  <p className="font-medium text-(--pending)">
+                    Проверьте, актуально ли: отметка стоит давно.
+                  </p>
+                )}
+                <Link
+                  href={`/volunteer/pets/${pet.id}/edit`}
+                  aria-label={`Изменить в анкете: ${pet.name}`}
+                  className="inline-block py-3 underline"
+                >
+                  Изменить в анкете
+                </Link>
+              </div>
+            )}
           </li>
         ))}
       </ul>
