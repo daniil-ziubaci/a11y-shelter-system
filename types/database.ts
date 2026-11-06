@@ -74,13 +74,11 @@ export type Database = {
           birth_date: string;
           created_at: string;
           description: string;
-          diet: string | null;
           health: string;
           id: string;
           is_age_approximate: boolean;
           name: string;
           name_search: string | null;
-          needs_treatment_confirmed_at: string | null;
           needs_treatment_since: string | null;
           photo_alt: string;
           photo_url: string;
@@ -92,19 +90,16 @@ export type Database = {
           status_changed_at: string;
           status_rank: number | null;
           translations: Json;
-          weight: number | null;
         };
         Insert: {
           birth_date: string;
           created_at?: string;
           description: string;
-          diet?: string | null;
           health: string;
           id?: string;
           is_age_approximate: boolean;
           name: string;
           name_search?: string | null;
-          needs_treatment_confirmed_at?: string | null;
           needs_treatment_since?: string | null;
           photo_alt: string;
           photo_url: string;
@@ -116,19 +111,16 @@ export type Database = {
           status_changed_at?: string;
           status_rank?: number | null;
           translations?: Json;
-          weight?: number | null;
         };
         Update: {
           birth_date?: string;
           created_at?: string;
           description?: string;
-          diet?: string | null;
           health?: string;
           id?: string;
           is_age_approximate?: boolean;
           name?: string;
           name_search?: string | null;
-          needs_treatment_confirmed_at?: string | null;
           needs_treatment_since?: string | null;
           photo_alt?: string;
           photo_url?: string;
@@ -140,7 +132,6 @@ export type Database = {
           status_changed_at?: string;
           status_rank?: number | null;
           translations?: Json;
-          weight?: number | null;
         };
         Relationships: [
           {
@@ -157,7 +148,6 @@ export type Database = {
           completed_at: string | null;
           created_at: string;
           description: string;
-          goal: string | null;
           help_kinds: string[];
           id: string;
           is_archived: boolean;
@@ -168,7 +158,6 @@ export type Database = {
           progress_total: number | null;
           progress_unit: string | null;
           shelter_id: string;
-          stage: string;
           status: string;
           title: string;
           translations: Json;
@@ -178,7 +167,6 @@ export type Database = {
           completed_at?: string | null;
           created_at?: string;
           description: string;
-          goal?: string | null;
           help_kinds?: string[];
           id?: string;
           is_archived?: boolean;
@@ -189,7 +177,6 @@ export type Database = {
           progress_total?: number | null;
           progress_unit?: string | null;
           shelter_id: string;
-          stage?: string;
           status?: string;
           title: string;
           translations?: Json;
@@ -199,7 +186,6 @@ export type Database = {
           completed_at?: string | null;
           created_at?: string;
           description?: string;
-          goal?: string | null;
           help_kinds?: string[];
           id?: string;
           is_archived?: boolean;
@@ -210,7 +196,6 @@ export type Database = {
           progress_total?: number | null;
           progress_unit?: string | null;
           shelter_id?: string;
-          stage?: string;
           status?: string;
           title?: string;
           translations?: Json;
@@ -349,7 +334,6 @@ export type Database = {
           contact_phone: string | null;
           content_language: string;
           created_at: string;
-          currency: string;
           founded_year: number | null;
           id: string;
           instagram_url: string | null;
@@ -372,7 +356,6 @@ export type Database = {
           contact_phone?: string | null;
           content_language?: string;
           created_at?: string;
-          currency: string;
           founded_year?: number | null;
           id?: string;
           instagram_url?: string | null;
@@ -395,7 +378,6 @@ export type Database = {
           contact_phone?: string | null;
           content_language?: string;
           created_at?: string;
-          currency?: string;
           founded_year?: number | null;
           id?: string;
           instagram_url?: string | null;
@@ -420,7 +402,6 @@ export type Database = {
           id: string | null;
           is_age_approximate: boolean | null;
           name: string | null;
-          needs_treatment_confirmed_at: string | null;
           needs_treatment_since: string | null;
           photo_url: string | null;
           search_text: string | null;
