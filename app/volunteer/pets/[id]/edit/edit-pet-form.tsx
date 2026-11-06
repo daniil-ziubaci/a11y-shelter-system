@@ -72,7 +72,8 @@ export function EditPetForm({
           defaultValue={state?.values.enclosure ?? enclosure}
         />
         <p id="enclosure-hint" className={hintClass}>
-          Необязательно. Видно только волонтёрам, на сайте не показывается.
+          Коротко, например: 3 или необязательно. Видно только волонтёрам, на сайте
+          не показывается.
         </p>
       </div>
 
