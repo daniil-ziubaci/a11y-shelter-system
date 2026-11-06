@@ -20,9 +20,14 @@ export function NewPetForm() {
   const [species, setSpecies] = useState(state?.values.species ?? "");
 
   return (
-    <form action={formAction} className="flex flex-col gap-6 rounded-2xl border border-(--border) bg-(--surface) p-4 shadow-md sm:mx-auto sm:w-[calc(50%-0.5rem)] sm:p-6">
+    <form
+      action={formAction}
+      className="flex flex-col gap-6 rounded-2xl border border-(--border) bg-(--surface) p-4 shadow-md sm:mx-auto sm:w-[calc(50%-0.5rem)] sm:p-6"
+    >
       <div className="flex flex-col gap-1">
-        <label htmlFor="name" className={labelClass}>Кличка</label>
+        <label htmlFor="name" className={labelClass}>
+          Кличка
+        </label>
         <input
           className={fieldClass}
           id="name"
@@ -32,6 +37,25 @@ export function NewPetForm() {
           defaultValue={state?.values.name}
           required
         />
+      </div>
+
+      <div className="flex flex-col gap-1">
+        <label htmlFor="enclosure" className={labelClass}>
+          Вольер
+        </label>
+        <input
+          className={fieldClass}
+          id="enclosure"
+          name="enclosure"
+          type="text"
+          maxLength={40}
+          autoComplete="off"
+          aria-describedby="enclosure-hint"
+          defaultValue={state?.values.enclosure}
+        />
+        <p id="enclosure-hint" className={hintClass}>
+          Необязательно. Видно только волонтёрам, на сайте не показывается.
+        </p>
       </div>
 
       <fieldset className="flex flex-wrap gap-2">
@@ -104,7 +128,9 @@ export function NewPetForm() {
               {size[0].toUpperCase() + size.slice(1)}
             </label>
           ))}
-          <p id="size-hint" className={hintClass}>Оцените размер на глаз, взвешивать не нужно.</p>
+          <p id="size-hint" className={hintClass}>
+            Оцените размер на глаз, взвешивать не нужно.
+          </p>
         </fieldset>
       )}
 
@@ -115,7 +141,9 @@ export function NewPetForm() {
           пустой и укажите примерный возраст.
         </p>
         <div className="flex flex-col gap-1">
-          <label htmlFor="birthDate" className={labelClass}>Дата рождения</label>
+          <label htmlFor="birthDate" className={labelClass}>
+            Дата рождения
+          </label>
           <input
             className={fieldClass}
             id="birthDate"
@@ -125,7 +153,9 @@ export function NewPetForm() {
           />
         </div>
         <div className="flex flex-col gap-1">
-          <label htmlFor="ageYears" className={labelClass}>Примерный возраст: полных лет</label>
+          <label htmlFor="ageYears" className={labelClass}>
+            Примерный возраст: полных лет
+          </label>
           <input
             className={fieldClass}
             id="ageYears"
@@ -138,7 +168,9 @@ export function NewPetForm() {
           />
         </div>
         <div className="flex flex-col gap-1">
-          <label htmlFor="ageMonths" className={labelClass}>и месяцев</label>
+          <label htmlFor="ageMonths" className={labelClass}>
+            и месяцев
+          </label>
           <input
             className={fieldClass}
             id="ageMonths"
@@ -156,12 +188,16 @@ export function NewPetForm() {
         id="photo"
         name="photo"
         label="Фото"
-        hint={"Формат JPEG, PNG или WebP. Место съёмки из фото удаляется автоматически. После ошибки фото нужно выбрать заново."}
+        hint={
+          "Формат JPEG, PNG или WebP. Место съёмки из фото удаляется автоматически. После ошибки фото нужно выбрать заново."
+        }
         required
       />
 
       <div className="flex flex-col gap-1">
-        <label htmlFor="photoAlt" className={labelClass}>Описание фото</label>
+        <label htmlFor="photoAlt" className={labelClass}>
+          Описание фото
+        </label>
         <textarea
           className={textareaClass}
           id="photoAlt"
@@ -178,7 +214,9 @@ export function NewPetForm() {
       </div>
 
       <div className="flex flex-col gap-1">
-        <label htmlFor="health" className={labelClass}>Здоровье</label>
+        <label htmlFor="health" className={labelClass}>
+          Здоровье
+        </label>
         <textarea
           className={textareaClass}
           id="health"
@@ -192,8 +230,8 @@ export function NewPetForm() {
 
       <div className="flex flex-col gap-3">
         <p className="-mt-3 font-medium text-(--accent)">
-          Животное больное? Опишите здоровье выше и отметьте нужное: один
-          пункт, оба или ни одного.
+          Животное больное? Опишите здоровье выше и отметьте нужное: один пункт,
+          оба или ни одного.
         </p>
         <label htmlFor="treatment-status" className={radioRowClass}>
           <input
@@ -218,7 +256,9 @@ export function NewPetForm() {
       </div>
 
       <div className="flex flex-col gap-1">
-        <label htmlFor="description" className={labelClass}>Описание, характер, история</label>
+        <label htmlFor="description" className={labelClass}>
+          Описание, характер, история
+        </label>
         <textarea
           className={textareaClass}
           id="description"
@@ -231,13 +271,11 @@ export function NewPetForm() {
         <ContactsHint id="text-hint" />
       </div>
 
-      <p role="alert" className="empty:hidden">{state?.error}</p>
+      <p role="alert" className="empty:hidden">
+        {state?.error}
+      </p>
 
-      <button
-        type="submit"
-        disabled={isPending}
-        className={primaryButtonClass}
-      >
+      <button type="submit" disabled={isPending} className={primaryButtonClass}>
         {isPending ? "Сохраняем…" : "Добавить животное"}
       </button>
     </form>

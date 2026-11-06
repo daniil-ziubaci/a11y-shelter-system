@@ -1,6 +1,7 @@
 "use server";
 
 import { parsePetFields } from "@/lib/parsePetFields";
+import { saveEnclosure } from "@/lib/saveEnclosure";
 import { processPhoto } from "@/lib/processPhoto";
 import { uploadPetPhoto } from "@/lib/uploadPetPhoto";
 import { createClient } from "@/lib/supabase/server";
@@ -98,5 +99,10 @@ export async function updatePet(
   }
 
   after(() => translatePet(petId));
+  if (!(await saveEnclosure(supabase, petId, fields.enclosure))) {
+    return fail(
+      "Животное сохранено, но вольер сохранить не удалось. Попробуйте ещё раз.",
+    );
+  }
   redirect("/volunteer");
 }

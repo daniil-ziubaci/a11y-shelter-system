@@ -7,6 +7,7 @@ import { createClient } from "@/lib/supabase/server";
 import { processPhoto } from "@/lib/processPhoto";
 import { uploadPetPhoto } from "@/lib/uploadPetPhoto";
 import { parsePetFields } from "@/lib/parsePetFields";
+import { saveEnclosure } from "@/lib/saveEnclosure";
 import { PET_STATUS_TREATMENT } from "@/lib/petStatuses";
 
 type CreatePetState =
@@ -56,6 +57,7 @@ export async function createPet(
     size,
     birthDate,
     isAgeApproximate,
+    enclosure,
   } = parsed.fields;
 
   const needsTreatment = formData.get("needsTreatment") === "on";
@@ -101,5 +103,10 @@ export async function createPet(
   }
 
   after(() => translatePet(petId));
+  if (enclosure && !(await saveEnclosure(supabase, petId, enclosure))) {
+    return fail(
+      "Животное добавлено, но вольер сохранить не удалось. Найдите животное в списке и укажите вольер при редактировании.",
+    );
+  }
   redirect("/volunteer");
 }

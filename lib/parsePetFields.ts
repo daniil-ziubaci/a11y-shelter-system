@@ -10,6 +10,7 @@ export type PetFields = {
   description: string;
   photoAlt: string;
   size: string | null;
+  enclosure: string;
   birthDate: string;
   isAgeApproximate: boolean;
 };
@@ -30,9 +31,14 @@ export function parsePetFields(formData: FormData): ParsePetFieldsResult {
   const health = text("health");
   const description = text("description");
   const photoAlt = text("photoAlt");
+  const enclosure = text("enclosure");
 
   if (!name || !health || !description || !photoAlt) {
     return { ok: false, error: "Заполните все обязательные поля." };
+  }
+
+  if (enclosure.length > 40) {
+    return { ok: false, error: "Вольер: не больше 40 знаков." };
   }
 
   const contactProblem = findContactError([
@@ -116,6 +122,7 @@ export function parsePetFields(formData: FormData): ParsePetFieldsResult {
       description,
       photoAlt,
       size,
+      enclosure,
       birthDate,
       isAgeApproximate,
     },

@@ -39,10 +39,22 @@ export default async function EditPetPage({
     return <p role="alert">Животное не найдено.</p>;
   }
 
+  const { data: internal, error: internalError } = await supabase
+    .from("pet_internal")
+    .select("enclosure")
+    .eq("pet_id", pet.id)
+    .maybeSingle();
+
+  if (internalError) {
+    return <p role="alert">Не удалось загрузить вольер.</p>;
+  }
+
   return (
     <main className="mx-auto flex w-full max-w-5xl flex-col gap-4 px-4 pb-8 pt-1">
-      <h1 className="text-3xl font-bold wrap-break-word sm:mx-auto sm:w-[calc(50%-0.5rem)] sm:text-center">Редактирование: {pet.name}</h1>
-      <EditPetForm pet={pet} />
+      <h1 className="text-3xl font-bold wrap-break-word sm:mx-auto sm:w-[calc(50%-0.5rem)] sm:text-center">
+        Редактирование: {pet.name}
+      </h1>
+      <EditPetForm pet={pet} enclosure={internal?.enclosure ?? ""} />{" "}
     </main>
   );
 }
