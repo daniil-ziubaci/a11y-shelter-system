@@ -40,7 +40,9 @@ export default async function VolunteerLayout({
               (shelterSlug ? (
                 <Link
                   href={`/ru/shelter/${shelterSlug}`}
-                  aria-label={`${shelterName}: страница приюта на сайте`}
+                  aria-label={`${shelterName}: страница приюта на сайте, откроется в новой вкладке`}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="order-1 min-w-0 truncate text-base font-bold hover:underline"
                 >
                   {shelterName}
