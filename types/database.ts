@@ -80,6 +80,7 @@ export type Database = {
           is_age_approximate: boolean;
           name: string;
           name_search: string | null;
+          needs_treatment_confirmed_at: string | null;
           needs_treatment_since: string | null;
           photo_alt: string;
           photo_url: string;
@@ -103,6 +104,7 @@ export type Database = {
           is_age_approximate: boolean;
           name: string;
           name_search?: string | null;
+          needs_treatment_confirmed_at?: string | null;
           needs_treatment_since?: string | null;
           photo_alt: string;
           photo_url: string;
@@ -126,6 +128,7 @@ export type Database = {
           is_age_approximate?: boolean;
           name?: string;
           name_search?: string | null;
+          needs_treatment_confirmed_at?: string | null;
           needs_treatment_since?: string | null;
           photo_alt?: string;
           photo_url?: string;
@@ -417,6 +420,7 @@ export type Database = {
           id: string | null;
           is_age_approximate: boolean | null;
           name: string | null;
+          needs_treatment_confirmed_at: string | null;
           needs_treatment_since: string | null;
           photo_url: string | null;
           search_text: string | null;
