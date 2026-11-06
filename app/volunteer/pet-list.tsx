@@ -10,6 +10,7 @@ import { isTreatmentStale } from "@/lib/treatmentReview";
 import Image from "next/image";
 import { cardCopyOf } from "@/lib/photoUrls";
 import { getTranslations } from "next-intl/server";
+import { hintClass } from "@/lib/formClasses";
 import { formatAge } from "@/lib/formatAge";
 import { monthsSince } from "@/lib/monthsSince";
 import { PET_SIZE_LABELS } from "@/lib/petSizes";
@@ -49,16 +50,16 @@ export async function PetList({
 
   const buildQuery = (head: boolean) => {
     let query = supabase
-      .from("pets")
+      .from("volunteer_pets")
       .select(
-        "id, name, status, status_changed_at, needs_treatment_since, photo_url, birth_date, is_age_approximate, sex, species, size",
+        "id, name, status, status_changed_at, needs_treatment_since, photo_url, birth_date, is_age_approximate, sex, species, size, enclosure",
         { count: "exact", head },
       )
       .eq("shelter_id", shelterId)
       .in("status", statuses);
-    if (search) {
-      const pattern = search.replace(/[\\%_]/g, "\\$&");
-      query = query.ilike("name_search", `%${pattern}%`);
+    for (const word of search ? search.split(/\s+/).slice(0, 5) : []) {
+      const pattern = word.replace(/[\\%_]/g, "\\$&");
+      query = query.ilike("search_text", `%${pattern}%`);
     }
     if (params.species === "dog") {
       query = query.eq("species", "собака");
@@ -160,11 +161,15 @@ export async function PetList({
           className="flex flex-col gap-2"
         >
           <label htmlFor="pet-search" className="font-medium">
-            Найти по имени
+            Найти по имени или вольеру
           </label>
+          <p id="pet-search-hint" className={hintClass}>
+            Можно вписать имя, вольер или и то и другое, в любом порядке.
+          </p>
           <div className="flex gap-2">
             <input
               id="pet-search"
+              aria-describedby="pet-search-hint"
               type="search"
               name="q"
               defaultValue={search}
@@ -306,7 +311,7 @@ export async function PetList({
       </p>
       {total === 0 && (search || current.species || current.status) && (
         <p>
-          Попробуйте часть имени или другой фильтр.{" "}
+          Попробуйте часть имени, вольер или другой фильтр.{" "}
           <Link href="/volunteer" className="inline-block py-2 underline">
             Сбросить поиск
           </Link>
@@ -352,6 +357,7 @@ export async function PetList({
                     ? `, размер: ${PET_SIZE_LABELS[pet.size] ?? pet.size}`
                     : ""}
                 </p>
+                {pet.enclosure && <p>Вольер: {pet.enclosure}</p>}
                 <form action={setPetStatus} className="mt-auto flex gap-2">
                   <input type="hidden" name="petId" value={pet.id} />
                   <div className="relative min-w-0 flex-1">
