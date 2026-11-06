@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { startEnrollment } from "@/app/volunteer/2fa/actions";
 import { CodeForm } from "@/app/volunteer/2fa/code-form";
 import {
@@ -18,6 +18,14 @@ export function SetupFlow() {
   const [loading, setLoading] = useState(false);
   const [showSecret, setShowSecret] = useState(false);
 
+  const qrBlockRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (enrollment) {
+      qrBlockRef.current?.focus();
+    }
+  }, [enrollment]);
+
   async function handleStart() {
     setLoading(true);
     setError("");
@@ -33,7 +41,13 @@ export function SetupFlow() {
   if (enrollment) {
     return (
       <div className="flex flex-col gap-4">
-        <div className={`${cardClass} items-center`}>
+        <div
+          ref={qrBlockRef}
+          tabIndex={-1}
+          role="group"
+          aria-label="Подключение приложения-аутентификатора"
+          className={`${cardClass} items-center`}
+        >
           <div className="w-fit rounded-xl border border-(--border) bg-white p-3">
             {/* eslint-disable-next-line @next/next/no-img-element -- QR приходит как data-URI, оптимизировать нечего */}
             <img
