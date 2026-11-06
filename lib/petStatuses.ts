@@ -18,10 +18,6 @@ export const PUBLIC_PET_STATUSES = [
   PET_STATUS_TREATMENT,
 ];
 
-export function getStatusRank(status: string): number {
-  return PUBLIC_PET_STATUSES.indexOf(status);
-}
-
 export const PET_STATUS_LABELS: Record<string, string> = {
   "ищет дом": "ищет дом",
   "в процессе": "в процессе усыновления",
