@@ -178,7 +178,6 @@
     "completedOn": "Finalizat pe {date}",
     "noOngoing": "Momentan nu sunt proiecte în desfășurare.",
     "none": "Nu există încă proiecte.",
-    "goal": "Scop: {goal}",
     "stages": {
       "preparing": "Pregătim",
       "inProgress": "În lucru",

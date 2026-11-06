@@ -178,7 +178,6 @@
     "completedOn": "Завершён {date}",
     "noOngoing": "Сейчас проектов нет.",
     "none": "Проектов пока нет.",
-    "goal": "Цель: {goal}",
     "stages": {
       "preparing": "Готовим",
       "inProgress": "В работе",

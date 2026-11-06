@@ -10,15 +10,14 @@ import {
 import type { Json } from "@/types/database";
 
 const PROJECT_CONTEXT: Record<string, string> = {
-  ru: "Сайт приюта для бездомных животных. Текст описывает проект приюта: его название, описание, цель и единицу измерения.",
-  ro: "Site-ul unui adăpost pentru animale fără stăpân. Textul descrie un proiect al adăpostului: titlul, descrierea, obiectivul și unitatea de măsură.",
-  en: "Website of a shelter for stray animals. The text describes a shelter project: its title, description, goal and unit of measure.",
+  ru: "Сайт приюта для бездомных животных. Текст описывает проект приюта: его название, описание и единицу измерения.",
+  ro: "Site-ul unui adăpost pentru animale fără stăpân. Textul descrie un proiect al adăpostului: titlul, descrierea și unitatea de măsură.",
+  en: "Website of a shelter for stray animals. The text describes a shelter project: its title, description and unit of measure.",
 };
 
 type ProjectTexts = {
   title: string;
   description: string;
-  goal: string | null;
   progress_unit: string | null;
   photo_alt: string | null;
   translations: Json;
@@ -33,7 +32,6 @@ export function projectTranslations(
     texts: {
       title: project.title,
       description: project.description,
-      goal: project.goal ?? "",
       progress_unit: project.progress_unit ?? "",
       photo_alt: project.photo_alt ?? "",
     },
@@ -48,7 +46,7 @@ export async function translateProject(projectId: string): Promise<void> {
     const { data: project } = await supabase
       .from("projects")
       .select(
-        "title, description, goal, progress_unit, photo_alt, translations, shelter_id",
+        "title, description, progress_unit, photo_alt, translations, shelter_id",
       )
       .eq("id", projectId)
       .maybeSingle();

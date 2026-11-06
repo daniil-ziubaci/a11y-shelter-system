@@ -7,7 +7,6 @@ import {
 export const PROJECT_LIMITS = {
   title: 120,
   description: 1000,
-  goal: 300,
   photoAlt: 200,
   progressMax: 1000,
   progressUnit: 30,

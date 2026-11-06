@@ -178,7 +178,6 @@
     "completedOn": "Completed on {date}",
     "noOngoing": "There are no projects in progress right now.",
     "none": "There are no projects yet.",
-    "goal": "Goal: {goal}",
     "stages": {
       "preparing": "Preparing",
       "inProgress": "In progress",

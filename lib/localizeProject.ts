@@ -5,7 +5,6 @@ import type { Json } from "@/types/database";
 type ProjectTexts = {
   title: string;
   description: string;
-  goal: string | null;
   progress_unit: string | null;
   photo_alt: string | null;
   translations: Json;
@@ -34,7 +33,6 @@ export function localizeProject<T extends ProjectTexts>(
 
   const title = pick("title", project.title);
   const description = pick("description", project.description);
-  const goal = pickOptional("goal", project.goal);
   const unit = pickOptional("progress_unit", project.progress_unit);
   const alt = pickOptional("photo_alt", project.photo_alt);
 
@@ -42,13 +40,11 @@ export function localizeProject<T extends ProjectTexts>(
     ...project,
     title: title.text,
     description: description.text,
-    goal: goal.text,
     progress_unit: unit.text,
     photo_alt: alt.text,
     translated: {
       title: title.translated,
       description: description.translated,
-      goal: goal.translated,
       unit: unit.translated,
       alt: alt.translated,
     },

@@ -100,7 +100,7 @@ async function translateProjects(
     supabase
       .from("projects")
       .select(
-        "id, shelter_id, title, description, goal, progress_unit, photo_alt, translations",
+        "id, shelter_id, title, description, progress_unit, photo_alt, translations",
       )
       .eq("is_archived", false)
       .order("id")

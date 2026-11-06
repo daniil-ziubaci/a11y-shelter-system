@@ -56,7 +56,7 @@ export default async function ShelterProjectsPage({
   const { data: projects, error } = await supabase
     .from("projects")
     .select(
-      "id, title, description, goal, status, completed_at, is_pinned, help_kinds, photo_path, photo_alt, progress_total, progress_done, progress_unit, translations",
+      "id, title, description, status, completed_at, is_pinned, help_kinds, photo_path, photo_alt, progress_total, progress_done, progress_unit, translations",
     )
     .eq("is_archived", false)
     .eq("shelter_id", shelter.id)
