@@ -402,7 +402,34 @@ export type Database = {
       };
     };
     Views: {
-      [_ in never]: never;
+      volunteer_pets: {
+        Row: {
+          birth_date: string;
+          created_at: string;
+          enclosure: string | null;
+          id: string;
+          is_age_approximate: boolean;
+          name: string;
+          needs_treatment_since: string | null;
+          photo_url: string;
+          search_text: string | null;
+          sex: string;
+          shelter_id: string;
+          size: string | null;
+          species: string;
+          status: string;
+          status_changed_at: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "pets_shelter_id_fkey";
+            columns: ["shelter_id"];
+            isOneToOne: false;
+            referencedRelation: "shelters";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
     };
     Functions: {
       receive_purchase: {
