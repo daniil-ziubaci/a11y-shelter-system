@@ -8,24 +8,21 @@ insert into auth.users (id) values
   ('11111111-1111-1111-1111-111111111111'),
   ('22222222-2222-2222-2222-222222222222');
 
-insert into public.shelters (id, slug, name, currency) values
-  ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'shelter-a', 'Shelter A', 'MDL'),
-  ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'shelter-b', 'Shelter B', 'MDL');
+insert into public.shelters (id, slug, name) values
+  ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'shelter-a', 'Shelter A'),
+  ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'shelter-b', 'Shelter B');
 
 insert into public.shelter_members (user_id, shelter_id) values
   ('11111111-1111-1111-1111-111111111111', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
   ('22222222-2222-2222-2222-222222222222', 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb');
 
 insert into public.pets (
-  id, shelter_id, name, species, sex, birth_date, is_age_approximate,
-  weight, diet, health, description, photo_url, photo_alt
+  id, shelter_id, name, species, sex, birth_date, is_age_approximate, health, description, photo_url, photo_alt
 ) values
   ('dddddddd-dddd-dddd-dddd-dddddddddddd', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-   'Pet A', 'кошка', 'мальчик', '2024-01-01', false, 4,
-   'сухой корм', 'здоров', 'тест', '/test.jpg', 'тест'),
+   'Pet A', 'кошка', 'мальчик', '2024-01-01', false, 'здоров', 'тест', '/test.jpg', 'тест'),
   ('eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee', 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
-   'Pet B', 'кошка', 'мальчик', '2024-01-01', false, 4,
-   'сухой корм', 'здоров', 'тест', '/test.jpg', 'тест');
+   'Pet B', 'кошка', 'мальчик', '2024-01-01', false, 'здоров', 'тест', '/test.jpg', 'тест');
 
 insert into public.pet_internal (pet_id, enclosure) values
   ('dddddddd-dddd-dddd-dddd-dddddddddddd', 'Вольер 3'),

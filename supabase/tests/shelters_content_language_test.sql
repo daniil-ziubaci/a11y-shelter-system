@@ -2,8 +2,8 @@ begin;
 
 select plan(12);
 
-insert into public.shelters (id, slug, name, currency) values
-  ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'shelter-a', 'Shelter A', 'MDL');
+insert into public.shelters (id, slug, name) values
+  ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'shelter-a', 'Shelter A');
 
 select has_column('public', 'shelters', 'content_language', 'колонка content_language есть');
 

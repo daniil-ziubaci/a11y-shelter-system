@@ -2,17 +2,15 @@ begin;
 
 select plan(5);
 
-insert into public.shelters (id, slug, name, currency) values
-  ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'shelter-a', 'Shelter A', 'MDL');
+insert into public.shelters (id, slug, name) values
+  ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'shelter-a', 'Shelter A');
 
 insert into public.pets (
-  id, shelter_id, name, species, sex, birth_date, is_age_approximate,
-  weight, diet, health, description, photo_url, photo_alt
+  id, shelter_id, name, species, sex, birth_date, is_age_approximate, health, description, photo_url, photo_alt
 ) values (
   'dddddddd-dddd-dddd-dddd-dddddddddddd',
   'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-  'Status', 'кошка', 'мальчик', '2024-01-01', false, 4,
-  'сухой корм', 'здоров', 'тест', '/test.jpg', 'тест'
+  'Status', 'кошка', 'мальчик', '2024-01-01', false, 'здоров', 'тест', '/test.jpg', 'тест'
 );
 
 select has_column('public', 'pets', 'status_changed_at', 'колонка status_changed_at есть');

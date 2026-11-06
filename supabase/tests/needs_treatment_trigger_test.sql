@@ -5,20 +5,18 @@ select plan(14);
 insert into auth.users (id) values
   ('11111111-1111-1111-1111-111111111111');
 
-insert into public.shelters (id, slug, name, currency) values
-  ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'shelter-a', 'Shelter A', 'MDL');
+insert into public.shelters (id, slug, name) values
+  ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'shelter-a', 'Shelter A');
 
 insert into public.shelter_members (user_id, shelter_id) values
   ('11111111-1111-1111-1111-111111111111', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa');
 
 insert into public.pets (
-  id, shelter_id, name, species, sex, birth_date, is_age_approximate,
-  weight, diet, health, description, photo_url, photo_alt
+  id, shelter_id, name, species, sex, birth_date, is_age_approximate, health, description, photo_url, photo_alt
 ) values (
   'dddddddd-dddd-dddd-dddd-dddddddddddd',
   'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-  'Trigger', 'кошка', 'мальчик', '2024-01-01', false, 4,
-  'сухой корм', 'здоров', 'тест', '/test.jpg', 'тест'
+  'Trigger', 'кошка', 'мальчик', '2024-01-01', false, 'здоров', 'тест', '/test.jpg', 'тест'
 );
 
 select has_trigger(
@@ -139,14 +137,12 @@ reset role;
 select lives_ok(
   $$
     insert into public.pets (
-      id, shelter_id, name, species, sex, birth_date, is_age_approximate,
-      weight, diet, health, description, photo_url, photo_alt,
+      id, shelter_id, name, species, sex, birth_date, is_age_approximate, health, description, photo_url, photo_alt,
       needs_treatment_since
     ) values (
       'eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee',
       'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-      'Created marked', 'кошка', 'мальчик', '2024-01-01', false, 4,
-      'сухой корм', 'здоров', 'тест', '/test.jpg', 'тест',
+      'Created marked', 'кошка', 'мальчик', '2024-01-01', false, 'здоров', 'тест', '/test.jpg', 'тест',
       '2000-01-01 00:00:00+00'
     )
   $$,

@@ -2,8 +2,8 @@ begin;
 
 select plan(8);
 
-insert into public.shelters (id, slug, name, currency) values
-  ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'shelter-a', 'Shelter A', 'MDL');
+insert into public.shelters (id, slug, name) values
+  ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'shelter-a', 'Shelter A');
 
 insert into public.projects (id, shelter_id, title, description) values
   ('d0000000-0000-0000-0000-000000000001', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'Проект', 'Описание');

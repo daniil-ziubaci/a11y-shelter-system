@@ -2,17 +2,15 @@ begin;
 
 select plan(4);
 
-insert into public.shelters (id, slug, name, currency) values
-  ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'shelter-a', 'Shelter A', 'MDL');
+insert into public.shelters (id, slug, name) values
+  ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'shelter-a', 'Shelter A');
 
 insert into public.pets (
-  id, shelter_id, name, species, sex, birth_date, is_age_approximate,
-  weight, diet, health, description, photo_url, photo_alt
+  id, shelter_id, name, species, sex, birth_date, is_age_approximate, health, description, photo_url, photo_alt
 ) values (
   'dddddddd-dddd-dddd-dddd-dddddddddddd',
   'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-  'Treatment', 'кошка', 'мальчик', '2024-01-01', false, 4,
-  'сухой корм', 'здоров', 'тест', '/test.jpg', 'тест'
+  'Treatment', 'кошка', 'мальчик', '2024-01-01', false, 'здоров', 'тест', '/test.jpg', 'тест'
 );
 
 update public.pets
@@ -57,14 +55,12 @@ select is(
 );
 
 insert into public.pets (
-  id, shelter_id, name, species, sex, birth_date, is_age_approximate,
-  weight, diet, health, description, photo_url, photo_alt,
+  id, shelter_id, name, species, sex, birth_date, is_age_approximate, health, description, photo_url, photo_alt,
   status, needs_treatment_since
 ) values (
   'eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee',
   'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-  'Created in treatment', 'кошка', 'мальчик', '2024-01-01', false, 4,
-  'сухой корм', 'здоров', 'тест', '/test.jpg', 'тест',
+  'Created in treatment', 'кошка', 'мальчик', '2024-01-01', false, 'здоров', 'тест', '/test.jpg', 'тест',
   'на лечении', '2000-01-01 00:00:00+00'
 );
 

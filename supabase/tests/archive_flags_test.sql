@@ -10,9 +10,9 @@ insert into auth.users (id) values
   ('22222222-2222-2222-2222-222222222222'),
   ('33333333-3333-3333-3333-333333333333');
 
-insert into public.shelters (id, slug, name, currency) values
-  ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'shelter-a', 'Shelter A', 'MDL'),
-  ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'shelter-b', 'Shelter B', 'MDL');
+insert into public.shelters (id, slug, name) values
+  ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'shelter-a', 'Shelter A'),
+  ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'shelter-b', 'Shelter B');
 
 insert into public.shelter_members (user_id, shelter_id) values
   ('11111111-1111-1111-1111-111111111111', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
@@ -22,9 +22,9 @@ insert into public.purchase_items (id, shelter_id, name, category, unit, remaini
   ('d0000000-0000-0000-0000-000000000001', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'Корм закрытый', 'корм', 'кг', 0),
   ('d0000000-0000-0000-0000-000000000002', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'Корм нужный', 'корм', 'кг', 5);
 
-insert into public.projects (id, shelter_id, title, description, goal, status) values
-  ('e0000000-0000-0000-0000-000000000001', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'Проект один', 'Описание', 'Цель', 'идёт'),
-  ('e0000000-0000-0000-0000-000000000002', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'Проект два', 'Описание', 'Цель', 'идёт');
+insert into public.projects (id, shelter_id, title, description, status) values
+  ('e0000000-0000-0000-0000-000000000001', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'Проект один', 'Описание', 'идёт'),
+  ('e0000000-0000-0000-0000-000000000002', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'Проект два', 'Описание', 'идёт');
 
 set local role authenticated;
 

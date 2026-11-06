@@ -11,33 +11,33 @@ select has_column('public', 'shelters', 'telegram_url', 'telegram_url column exi
 insert into auth.users (id) values
   ('11111111-1111-1111-1111-111111111111');
 
-insert into public.shelters (id, slug, name, currency, instagram_url) values
-  ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'shelter-a', 'Shelter A', 'MDL', 'https://instagram.com/shelter');
+insert into public.shelters (id, slug, name, instagram_url) values
+  ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'shelter-a', 'Shelter A', 'https://instagram.com/shelter');
 
 insert into public.shelter_members (user_id, shelter_id) values
   ('11111111-1111-1111-1111-111111111111', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa');
 
 select lives_ok(
-  $$ insert into public.shelters (slug, name, currency, viber_url, telegram_url) values ('shelter-b', 'Shelter B', 'MDL', 'https://invite.viber.com/x', 'https://t.me/shelter') $$,
+  $$ insert into public.shelters (slug, name, viber_url, telegram_url) values ('shelter-b', 'Shelter B', 'https://invite.viber.com/x', 'https://t.me/shelter') $$,
   'https links are accepted'
 );
 
 select throws_ok(
-  $$ insert into public.shelters (slug, name, currency, telegram_url) values ('shelter-c', 'Shelter C', 'MDL', 'http://t.me/shelter') $$,
+  $$ insert into public.shelters (slug, name, telegram_url) values ('shelter-c', 'Shelter C', 'http://t.me/shelter') $$,
   '23514',
   null,
   'link without https is rejected'
 );
 
 select throws_ok(
-  $$ insert into public.shelters (slug, name, currency, instagram_url) values ('shelter-d', 'Shelter D', 'MDL', 'javascript:alert(1)') $$,
+  $$ insert into public.shelters (slug, name, instagram_url) values ('shelter-d', 'Shelter D', 'javascript:alert(1)') $$,
   '23514',
   null,
   'executable link is rejected'
 );
 
 select throws_ok(
-  $$ insert into public.shelters (slug, name, currency, viber_url) values ('shelter-e', 'Shelter E', 'MDL', 'https://' || repeat('a', 293)) $$,
+  $$ insert into public.shelters (slug, name, viber_url) values ('shelter-e', 'Shelter E', 'https://' || repeat('a', 293)) $$,
   '23514',
   null,
   'link of 301 characters is rejected'

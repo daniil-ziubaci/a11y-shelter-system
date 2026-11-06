@@ -20,17 +20,15 @@ select is(public.translit_ru('Белла 2'), 'bella 2', 'digits and spaces are 
 
 select is(public.translit_ru(''), '', 'empty string stays empty');
 
-insert into public.shelters (id, slug, name, currency) values
-  ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'shelter-a', 'Shelter A', 'MDL');
+insert into public.shelters (id, slug, name) values
+  ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'shelter-a', 'Shelter A');
 
 insert into public.pets (
-  id, shelter_id, name, species, sex, birth_date, is_age_approximate,
-  weight, diet, health, description, photo_url, photo_alt
+  id, shelter_id, name, species, sex, birth_date, is_age_approximate, health, description, photo_url, photo_alt
 ) values (
   'cccccccc-cccc-cccc-cccc-cccccccccccc',
   'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-  'Барсик', 'кошка', 'мальчик', '2024-01-01', false, 4,
-  'сухой корм', 'здоров', 'тест', '/test.jpg', 'тест'
+  'Барсик', 'кошка', 'мальчик', '2024-01-01', false, 'здоров', 'тест', '/test.jpg', 'тест'
 );
 
 select is(

@@ -11,21 +11,19 @@ select col_not_null('public', 'pets', 'translations', 'translations is not null'
 insert into auth.users (id) values
   ('11111111-1111-1111-1111-111111111111');
 
-insert into public.shelters (id, slug, name, currency) values
-  ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'shelter-a', 'Shelter A', 'MDL'),
-  ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'shelter-b', 'Shelter B', 'MDL');
+insert into public.shelters (id, slug, name) values
+  ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'shelter-a', 'Shelter A'),
+  ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'shelter-b', 'Shelter B');
 
 insert into public.shelter_members (user_id, shelter_id) values
   ('11111111-1111-1111-1111-111111111111', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa');
 
 insert into public.pets (
-  id, shelter_id, name, species, sex, birth_date, is_age_approximate,
-  weight, diet, health, description, photo_url, photo_alt
+  id, shelter_id, name, species, sex, birth_date, is_age_approximate, health, description, photo_url, photo_alt
 ) values (
   'cccccccc-cccc-cccc-cccc-cccccccccccc',
   'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
-  'Other', 'кошка', 'мальчик', '2024-01-01', false, 4,
-  'сухой корм', 'здоров', 'тест', '/test.jpg', 'тест'
+  'Other', 'кошка', 'мальчик', '2024-01-01', false, 'здоров', 'тест', '/test.jpg', 'тест'
 );
 
 select is(
@@ -67,13 +65,11 @@ set local request.jwt.claims to '{"sub": "11111111-1111-1111-1111-111111111111",
 select lives_ok(
   $$
     insert into public.pets (
-      id, shelter_id, name, species, sex, birth_date, is_age_approximate,
-      weight, diet, health, description, photo_url, photo_alt, translations
+      id, shelter_id, name, species, sex, birth_date, is_age_approximate, health, description, photo_url, photo_alt, translations
     ) values (
       'dddddddd-dddd-dddd-dddd-dddddddddddd',
       'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-      'Test', 'кошка', 'мальчик', '2024-01-01', false, 4,
-      'сухой корм', 'здоров', 'тест', '/test.jpg', 'тест',
+      'Test', 'кошка', 'мальчик', '2024-01-01', false, 'здоров', 'тест', '/test.jpg', 'тест',
       '{"description": {"en": {"text": "Hi", "hash": "x"}}}'::jsonb
     )
   $$,

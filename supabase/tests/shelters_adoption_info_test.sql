@@ -7,24 +7,24 @@ select has_column('public', 'shelters', 'adoption_info', 'adoption_info column e
 insert into auth.users (id) values
   ('11111111-1111-1111-1111-111111111111');
 
-insert into public.shelters (id, slug, name, currency, adoption_info) values
-  ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'shelter-a', 'Shelter A', 'MDL', 'Приходите в субботу');
+insert into public.shelters (id, slug, name, adoption_info) values
+  ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'shelter-a', 'Shelter A', 'Приходите в субботу');
 
 insert into public.shelter_members (user_id, shelter_id) values
   ('11111111-1111-1111-1111-111111111111', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa');
 
 select lives_ok(
   $$
-    insert into public.shelters (slug, name, currency, adoption_info)
-    values ('shelter-b', 'Shelter B', 'MDL', repeat('а', 1000))
+    insert into public.shelters (slug, name, adoption_info)
+    values ('shelter-b', 'Shelter B', repeat('а', 1000))
   $$,
   'text of 1000 characters is accepted'
 );
 
 select throws_ok(
   $$
-    insert into public.shelters (slug, name, currency, adoption_info)
-    values ('shelter-c', 'Shelter C', 'MDL', repeat('а', 1001))
+    insert into public.shelters (slug, name, adoption_info)
+    values ('shelter-c', 'Shelter C', repeat('а', 1001))
   $$,
   '23514',
   null,

@@ -8,36 +8,31 @@ insert into auth.users (id) values
   ('11111111-1111-1111-1111-111111111111'),
   ('22222222-2222-2222-2222-222222222222');
 
-insert into public.shelters (id, slug, name, currency) values
-  ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'shelter-a', 'Shelter A', 'MDL'),
-  ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'shelter-b', 'Shelter B', 'MDL');
+insert into public.shelters (id, slug, name) values
+  ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'shelter-a', 'Shelter A'),
+  ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'shelter-b', 'Shelter B');
 
 insert into public.shelter_members (user_id, shelter_id) values
   ('11111111-1111-1111-1111-111111111111', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
   ('22222222-2222-2222-2222-222222222222', 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb');
 
 insert into public.pets (
-  id, shelter_id, name, species, sex, birth_date, is_age_approximate,
-  weight, diet, health, description, photo_url, photo_alt, size
+  id, shelter_id, name, species, sex, birth_date, is_age_approximate, health, description, photo_url, photo_alt, size
 ) values
   ('c0000000-0000-0000-0000-000000000001', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-   'Dog A', 'собака', 'мальчик', '2024-01-01', false, 10,
-   'корм', 'здоров', 'тест', '/test.jpg', 'тест', 'средняя'),
+   'Dog A', 'собака', 'мальчик', '2024-01-01', false, 'здоров', 'тест', '/test.jpg', 'тест', 'средняя'),
   ('c0000000-0000-0000-0000-000000000002', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-   'Cat A', 'кошка', 'девочка', '2024-01-01', false, 4,
-   'корм', 'здоров', 'тест', '/test.jpg', 'тест', null),
+   'Cat A', 'кошка', 'девочка', '2024-01-01', false, 'здоров', 'тест', '/test.jpg', 'тест', null),
   ('c0000000-0000-0000-0000-000000000003', 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
-   'Dog B', 'собака', 'девочка', '2024-01-01', false, 8,
-   'корм', 'здоров', 'тест', '/test.jpg', 'тест', 'мелкая');
+   'Dog B', 'собака', 'девочка', '2024-01-01', false, 'здоров', 'тест', '/test.jpg', 'тест', 'мелкая');
 
 select lives_ok(
   $$
     insert into public.pets (
-      shelter_id, name, species, sex, birth_date, is_age_approximate,
-      weight, diet, health, description, photo_url, photo_alt, size
+      shelter_id, name, species, sex, birth_date, is_age_approximate, health, description, photo_url, photo_alt, size
     ) values (
       'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'Dog C', 'собака', 'мальчик',
-      '2024-01-01', false, 30, 'корм', 'здоров', 'тест', '/test.jpg', 'тест', 'крупная'
+      '2024-01-01', false, 'здоров', 'тест', '/test.jpg', 'тест', 'крупная'
     )
   $$,
   'dog with a valid size is accepted'
@@ -46,11 +41,10 @@ select lives_ok(
 select lives_ok(
   $$
     insert into public.pets (
-      shelter_id, name, species, sex, birth_date, is_age_approximate,
-      weight, diet, health, description, photo_url, photo_alt
+      shelter_id, name, species, sex, birth_date, is_age_approximate, health, description, photo_url, photo_alt
     ) values (
       'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'Dog D', 'собака', 'мальчик',
-      '2024-01-01', false, 12, 'корм', 'здоров', 'тест', '/test.jpg', 'тест'
+      '2024-01-01', false, 'здоров', 'тест', '/test.jpg', 'тест'
     )
   $$,
   'dog without a size is accepted for now'
@@ -59,11 +53,10 @@ select lives_ok(
 select throws_ok(
   $$
     insert into public.pets (
-      shelter_id, name, species, sex, birth_date, is_age_approximate,
-      weight, diet, health, description, photo_url, photo_alt, size
+      shelter_id, name, species, sex, birth_date, is_age_approximate, health, description, photo_url, photo_alt, size
     ) values (
       'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'Cat B', 'кошка', 'девочка',
-      '2024-01-01', false, 4, 'корм', 'здоров', 'тест', '/test.jpg', 'тест', 'мелкая'
+      '2024-01-01', false, 'здоров', 'тест', '/test.jpg', 'тест', 'мелкая'
     )
   $$,
   '23514',
@@ -74,11 +67,10 @@ select throws_ok(
 select throws_ok(
   $$
     insert into public.pets (
-      shelter_id, name, species, sex, birth_date, is_age_approximate,
-      weight, diet, health, description, photo_url, photo_alt, size
+      shelter_id, name, species, sex, birth_date, is_age_approximate, health, description, photo_url, photo_alt, size
     ) values (
       'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'Dog E', 'собака', 'мальчик',
-      '2024-01-01', false, 30, 'корм', 'здоров', 'тест', '/test.jpg', 'тест', 'огромная'
+      '2024-01-01', false, 'здоров', 'тест', '/test.jpg', 'тест', 'огромная'
     )
   $$,
   '23514',

@@ -9,22 +9,20 @@ insert into auth.users (id) values
   ('22222222-2222-2222-2222-222222222222'),
   ('33333333-3333-3333-3333-333333333333');
 
-insert into public.shelters (id, slug, name, currency) values
-  ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'shelter-a', 'Shelter A', 'MDL'),
-  ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'shelter-b', 'Shelter B', 'MDL');
+insert into public.shelters (id, slug, name) values
+  ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'shelter-a', 'Shelter A'),
+  ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'shelter-b', 'Shelter B');
 
 insert into public.shelter_members (user_id, shelter_id) values
   ('11111111-1111-1111-1111-111111111111', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
   ('22222222-2222-2222-2222-222222222222', 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb');
 
 insert into public.pets (
-  id, shelter_id, name, species, sex, birth_date, is_age_approximate,
-  weight, diet, health, description, photo_url, photo_alt
+  id, shelter_id, name, species, sex, birth_date, is_age_approximate, health, description, photo_url, photo_alt
 ) values (
   'cccccccc-cccc-cccc-cccc-cccccccccccc',
   'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
-  'Other', 'кошка', 'мальчик', '2024-01-01', false, 4,
-  'сухой корм', 'здоров', 'тест', '/test.jpg', 'тест'
+  'Other', 'кошка', 'мальчик', '2024-01-01', false, 'здоров', 'тест', '/test.jpg', 'тест'
 );
 
 set local role authenticated;
@@ -42,11 +40,10 @@ select is(
 select lives_ok(
   $$
     insert into public.pets (
-      shelter_id, name, species, sex, birth_date, is_age_approximate,
-      weight, diet, health, description, photo_url, photo_alt
+      shelter_id, name, species, sex, birth_date, is_age_approximate, health, description, photo_url, photo_alt
     ) values (
       'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'Test', 'кошка', 'мальчик',
-      '2024-01-01', false, 4, 'сухой корм', 'здоров', 'тест',
+      '2024-01-01', false, 'здоров', 'тест',
       '/test.jpg', 'тест'
     )
   $$,
@@ -56,11 +53,10 @@ select lives_ok(
 select throws_ok(
   $$
     insert into public.pets (
-      shelter_id, name, species, sex, birth_date, is_age_approximate,
-      weight, diet, health, description, photo_url, photo_alt
+      shelter_id, name, species, sex, birth_date, is_age_approximate, health, description, photo_url, photo_alt
     ) values (
       'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'Test', 'кошка', 'мальчик',
-      '2024-01-01', false, 4, 'сухой корм', 'здоров', 'тест',
+      '2024-01-01', false, 'здоров', 'тест',
       '/test.jpg', 'тест'
     )
   $$,
@@ -95,11 +91,10 @@ set local request.jwt.claims to '{"sub": "33333333-3333-3333-3333-333333333333",
 select throws_ok(
   $$
     insert into public.pets (
-      shelter_id, name, species, sex, birth_date, is_age_approximate,
-      weight, diet, health, description, photo_url, photo_alt
+      shelter_id, name, species, sex, birth_date, is_age_approximate, health, description, photo_url, photo_alt
     ) values (
       'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'Test2', 'кошка', 'мальчик',
-      '2024-01-01', false, 4, 'сухой корм', 'здоров', 'тест',
+      '2024-01-01', false, 'здоров', 'тест',
       '/test.jpg', 'тест'
     )
   $$,
@@ -115,11 +110,10 @@ set local request.jwt.claims to '{}';
 select throws_ok(
   $$
     insert into public.pets (
-      shelter_id, name, species, sex, birth_date, is_age_approximate,
-      weight, diet, health, description, photo_url, photo_alt
+      shelter_id, name, species, sex, birth_date, is_age_approximate, health, description, photo_url, photo_alt
     ) values (
       'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'Test3', 'кошка', 'мальчик',
-      '2024-01-01', false, 4, 'сухой корм', 'здоров', 'тест',
+      '2024-01-01', false, 'здоров', 'тест',
       '/test.jpg', 'тест'
     )
   $$,
@@ -240,11 +234,10 @@ set local request.jwt.claims to '{"sub": "11111111-1111-1111-1111-111111111111",
 select throws_ok(
   $$
     insert into public.pets (
-      shelter_id, name, species, sex, birth_date, is_age_approximate,
-      weight, diet, health, description, photo_url, photo_alt
+      shelter_id, name, species, sex, birth_date, is_age_approximate, health, description, photo_url, photo_alt
     ) values (
       'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'Test4', 'кошка', 'мальчик',
-      '2024-01-01', false, 4, 'сухой корм', 'здоров', 'тест',
+      '2024-01-01', false, 'здоров', 'тест',
       '/test.jpg', 'тест'
     )
   $$,
@@ -274,11 +267,10 @@ set local request.jwt.claims to '{"sub": "11111111-1111-1111-1111-111111111111"}
 select throws_ok(
   $$
     insert into public.pets (
-      shelter_id, name, species, sex, birth_date, is_age_approximate,
-      weight, diet, health, description, photo_url, photo_alt
+      shelter_id, name, species, sex, birth_date, is_age_approximate, health, description, photo_url, photo_alt
     ) values (
       'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'Test5', 'кошка', 'мальчик',
-      '2024-01-01', false, 4, 'сухой корм', 'здоров', 'тест',
+      '2024-01-01', false, 'здоров', 'тест',
       '/test.jpg', 'тест'
     )
   $$,
@@ -299,8 +291,8 @@ select is(
 
 select throws_ok(
   $$
-    insert into public.shelters (slug, name, currency)
-    values ('shelter-c', 'Shelter C', 'MDL')
+    insert into public.shelters (slug, name)
+    values ('shelter-c', 'Shelter C')
   $$,
   '42501',
   'permission denied for table shelters',
@@ -313,8 +305,8 @@ set local request.jwt.claims to '{"sub": "11111111-1111-1111-1111-111111111111",
 
 select throws_ok(
   $$
-    insert into public.shelters (slug, name, currency)
-    values ('shelter-d', 'Shelter D', 'MDL')
+    insert into public.shelters (slug, name)
+    values ('shelter-d', 'Shelter D')
   $$,
   '42501',
   'permission denied for table shelters',
