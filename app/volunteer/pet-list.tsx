@@ -11,6 +11,7 @@ import Image from "next/image";
 import { cardCopyOf } from "@/lib/photoUrls";
 import { getTranslations } from "next-intl/server";
 import { hintClass } from "@/lib/formClasses";
+import type { VolunteerPet } from "@/lib/volunteerPet";
 import { formatAge } from "@/lib/formatAge";
 import { monthsSince } from "@/lib/monthsSince";
 import { PET_SIZE_LABELS } from "@/lib/petSizes";
@@ -91,7 +92,8 @@ export async function PetList({
   const { data: pets, error } = await sorted
     .order("name")
     .order("id")
-    .range(from, from + VOLUNTEER_PAGE_SIZE - 1);
+    .range(from, from + VOLUNTEER_PAGE_SIZE - 1)
+    .overrideTypes<VolunteerPet[], { merge: false }>();
 
   if (error || countError || !pets) {
     return <p role="alert">Не удалось загрузить список животных.</p>;
