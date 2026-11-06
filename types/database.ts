@@ -404,6 +404,7 @@ export type Database = {
           name: string | null;
           needs_treatment_since: string | null;
           photo_url: string | null;
+          review_rank: number | null;
           review_since: string | null;
           search_text: string | null;
           sex: string | null;
