@@ -102,6 +102,7 @@ async function translateProjects(
       .select(
         "id, shelter_id, title, description, goal, progress_unit, photo_alt, translations",
       )
+      .eq("is_archived", false)
       .order("id")
       .range(from, to),
   );

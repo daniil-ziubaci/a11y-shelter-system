@@ -20,7 +20,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       .range(from, to),
   );
   const projects = await fetchAll((from, to) =>
-    supabase.from("projects").select("shelter_id").order("id").range(from, to),
+    supabase
+      .from("projects")
+      .select("shelter_id")
+      .eq("is_archived", false)
+      .order("id")
+      .range(from, to),
   );
 
   const paths: string[] = [];
