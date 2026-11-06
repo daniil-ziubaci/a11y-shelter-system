@@ -23,6 +23,7 @@ import {
 } from "@/lib/parseVolunteerStatus";
 import {
   isPetStatusStale,
+  getPetReviewCutoff,
   PET_STATUS_REVIEW_DAYS,
 } from "@/lib/petStatusReview";
 
@@ -73,6 +74,10 @@ export async function PetList({
       query = query.not("needs_treatment_since", "is", null);
     }
 
+    if (sort === "stale") {
+      query = query.lt("review_since", getPetReviewCutoff());
+    }
+
     return query;
   };
 
@@ -87,7 +92,9 @@ export async function PetList({
     sort === "new"
       ? base.order("created_at", { ascending: false })
       : sort === "stale"
-        ? base.order("status_changed_at", { ascending: true, nullsFirst: true })
+        ? base
+            .order("review_rank", { ascending: true })
+            .order("review_since", { ascending: true })
         : base;
   const { data: pets, error } = await sorted
     .order("name")
@@ -199,7 +206,7 @@ export async function PetList({
               >
                 <option value="name">По имени</option>
                 <option value="new">Новые сверху</option>
-                <option value="stale">Давно не проверяли</option>
+                <option value="stale">Требуют проверки</option>
               </select>
               <span
                 aria-hidden="true"
