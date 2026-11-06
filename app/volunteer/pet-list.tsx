@@ -310,7 +310,7 @@ export async function PetList({
             : `Найдено животных: ${total}`}
       </p>
       {total === 0 && (search || current.species || current.status) && (
-        <p>
+        <p className="sm:mx-auto sm:w-[calc(50%-0.5rem)] sm:text-center">
           Попробуйте часть имени, вольер или другой фильтр.{" "}
           <Link href="/volunteer" className="inline-block py-2 underline">
             Сбросить поиск
