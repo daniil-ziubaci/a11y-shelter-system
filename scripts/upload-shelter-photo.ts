@@ -56,7 +56,10 @@ const photoPath = `${shelter.id}/shelter/${randomUUID()}.webp`;
 
 const { error: uploadError } = await supabase.storage
   .from("pet-photos")
-  .upload(photoPath, processed, { contentType: "image/webp" });
+  .upload(photoPath, processed, {
+    contentType: "image/webp",
+    cacheControl: "31536000",
+  });
 
 if (uploadError) {
   console.error(`Не удалось загрузить файл: ${uploadError.message}`);

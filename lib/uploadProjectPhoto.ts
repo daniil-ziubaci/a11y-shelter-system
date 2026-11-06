@@ -19,7 +19,10 @@ export async function uploadProjectPhoto(
   const path = `${shelterId}/projects/${crypto.randomUUID()}.webp`;
   const { error } = await supabase.storage
     .from("pet-photos")
-    .upload(path, processed, { contentType: "image/webp" });
+    .upload(path, processed, {
+      contentType: "image/webp",
+      cacheControl: "31536000",
+    });
   if (error) {
     return {
       ok: false,
