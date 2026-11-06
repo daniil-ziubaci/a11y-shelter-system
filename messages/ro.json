@@ -178,17 +178,10 @@
     "completedOn": "Finalizat pe {date}",
     "noOngoing": "Momentan nu sunt proiecte în desfășurare.",
     "none": "Nu există încă proiecte.",
-    "stages": {
-      "preparing": "Pregătim",
-      "inProgress": "În lucru",
-      "almostDone": "Aproape gata"
-    },
     "help": "Ajută",
     "helpLabel": "Ajută proiectul „{name}”",
     "supportProgram": "Susține programul",
     "supportProgramLabel": "Susține programul „{name}”",
-    "goalLabel": "Obiectiv:",
-    "stageTitle": "Etapă:",
     "goalAchievedLabel": "Obiectiv atins:",
     "progressText": "Realizat {done} din {total} {unit}, rămas {left}",
     "helpKindsLabel": "Cum poți ajuta",

@@ -178,17 +178,10 @@
     "completedOn": "Завершён {date}",
     "noOngoing": "Сейчас проектов нет.",
     "none": "Проектов пока нет.",
-    "stages": {
-      "preparing": "Готовим",
-      "inProgress": "В работе",
-      "almostDone": "Почти готово"
-    },
     "help": "Помочь",
     "helpLabel": "Помочь проекту «{name}»",
     "supportProgram": "Поддержать программу",
     "supportProgramLabel": "Поддержать программу «{name}»",
-    "goalLabel": "Цель:",
-    "stageTitle": "Этап:",
     "goalAchievedLabel": "Цель достигнута:",
     "progressText": "Сделано {done} из {total} {unit}, осталось {left}",
     "helpKindsLabel": "Чем можно помочь",

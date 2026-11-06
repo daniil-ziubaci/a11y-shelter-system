@@ -178,17 +178,10 @@
     "completedOn": "Completed on {date}",
     "noOngoing": "There are no projects in progress right now.",
     "none": "There are no projects yet.",
-    "stages": {
-      "preparing": "Preparing",
-      "inProgress": "In progress",
-      "almostDone": "Almost done"
-    },
     "help": "Help",
     "helpLabel": "Help the project “{name}”",
     "supportProgram": "Support the program",
     "supportProgramLabel": "Support the program “{name}”",
-    "goalLabel": "Goal:",
-    "stageTitle": "Stage:",
     "goalAchievedLabel": "Goal achieved:",
     "progressText": "{done} of {total} {unit} done, {left} left",
     "helpKindsLabel": "How you can help",
