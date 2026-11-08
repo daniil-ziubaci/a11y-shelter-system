@@ -17,7 +17,7 @@ export async function ShelterContact({
         {phone && (
           <a
             href={`tel:${phone.replace(/[^\d+]/g, "")}`}
-            className="inline-flex min-h-11 items-center justify-center rounded-full bg-(--accent) px-5 py-2 font-semibold text-(--accent-contrast) hover:shadow-md"
+            className="inline-flex min-h-14 max-w-full items-center justify-start rounded-full bg-(--accent) px-6 py-3 text-left text-lg font-semibold text-(--accent-contrast) hover:shadow-md"
           >
             {t("call", { phone })}
           </a>
@@ -25,7 +25,7 @@ export async function ShelterContact({
         {messenger && (
           <a
             href={messenger}
-            className="inline-flex min-h-11 items-center justify-center rounded-full border-2 border-(--accent) px-5 py-2 font-semibold text-(--accent) hover:bg-(--hover)"
+            className="inline-flex min-h-14 max-w-full items-center justify-start rounded-full border-2 border-(--accent) px-6 py-3 text-left text-lg font-semibold text-(--accent) hover:bg-(--hover)"
             rel="noopener noreferrer"
           >
             {t("messenger")}
