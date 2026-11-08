@@ -17,11 +17,3 @@ export const PUBLIC_PET_STATUSES = [
   PET_STATUS_PENDING,
   PET_STATUS_TREATMENT,
 ];
-
-export const PET_STATUS_LABELS: Record<string, string> = {
-  "ищет дом": "ищет дом",
-  "в процессе": "в процессе усыновления",
-  "на лечении": "лечение: пока нельзя забрать",
-  пристроен: "пристроен",
-  "снят с учёта": "снят с учёта",
-};
