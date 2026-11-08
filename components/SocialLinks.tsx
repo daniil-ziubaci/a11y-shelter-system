@@ -12,7 +12,12 @@ export async function SocialLinks({
 }) {
   const t = await getTranslations("Footer");
   const networks = [
-    { name: "Instagram", icon: siInstagram, color: siInstagram.hex, url: instagram },
+    {
+      name: "Instagram",
+      icon: siInstagram,
+      color: siInstagram.hex,
+      url: instagram,
+    },
     { name: "Viber", icon: siViber, color: siViber.hex, url: viber },
     { name: "Telegram", icon: siTelegram, color: "1E84B6", url: telegram },
   ].flatMap((network) =>
@@ -26,18 +31,18 @@ export async function SocialLinks({
   return (
     <nav
       aria-labelledby="footer-social-heading"
-      className="flex flex-col gap-1"
+      className="flex flex-col gap-3 pb-1.5"
     >
       <p id="footer-social-heading" className="font-semibold">
         {t("socialHeading")}
       </p>
       <ul className="flex flex-wrap gap-3">
         {networks.map((network) => (
-          <li key={network.name}>
+          <li key={network.name} className="flex">
             <a
               href={network.url}
               aria-label={t("socialLink", { network: network.name })}
-              className="inline-flex size-12 items-center justify-center rounded-full transition-colors duration-200 hover:bg-(--hover) motion-reduce:transition-none"
+              className="inline-flex size-14 items-center justify-center rounded-full transition-opacity duration-200 hover:opacity-70 motion-reduce:transition-none"
               style={{ color: `#${network.color}` }}
               rel="noopener noreferrer"
             >
@@ -45,7 +50,7 @@ export async function SocialLinks({
                 aria-hidden="true"
                 viewBox="0 0 24 24"
                 fill="currentColor"
-                className="size-9"
+                className="size-14"
               >
                 <path d={network.icon.path} />
               </svg>
