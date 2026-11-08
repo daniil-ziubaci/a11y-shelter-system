@@ -57,10 +57,12 @@ export async function ShelterFooter({
           aria-labelledby="footer-contact-heading"
           className="flex flex-col gap-5"
         >
-          <h2 id="footer-contact-heading" className="text-xl font-bold">
-            {t("contactHeading")}
-          </h2>
-          <p>{t("contactIntro")}</p>
+          <div className="flex flex-col gap-2">
+            <h2 id="footer-contact-heading" className="text-xl font-bold">
+              {t("contactHeading")}
+            </h2>
+            <p>{t("contactIntro")}</p>
+          </div>
           <ShelterContact
             phone={phone}
             messenger={messenger}
