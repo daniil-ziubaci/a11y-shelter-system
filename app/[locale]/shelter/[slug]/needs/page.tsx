@@ -215,8 +215,10 @@ export default async function ShelterNeedsPage({
               <li
                 key={item.id}
                 id={`need-${index}`}
-                className={`group relative flex min-w-0 flex-col gap-3 rounded-2xl border bg-(--surface) p-4 shadow-sm transition duration-300 ease-out hover:shadow-2xl focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-(--focus) motion-safe:hover:-translate-y-1.5 ${
-                  item.is_urgent ? "border-(--danger)" : "border-(--border)"
+                className={`group relative flex min-w-0 flex-col gap-3 rounded-2xl bg-(--surface) p-4 shadow-md transition duration-300 ease-out hover:shadow-2xl focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-(--focus) motion-safe:hover:-translate-y-1.5 ${
+                  item.is_urgent
+                    ? "border-[1.5px] border-(--danger)"
+                    : "border-[1.2px] border-(--border-strong)"
                 }`}
               >
                 <div className="flex min-w-0 flex-col gap-1">
@@ -250,7 +252,7 @@ export default async function ShelterNeedsPage({
                   <a
                     href="#footer-contact-heading"
                     aria-label={t("helpLabel", { name: item.name })}
-                    className="flex min-h-11 items-center justify-center self-start rounded-full bg-(--accent) px-5 text-lg font-semibold text-(--accent-contrast) sm:after:absolute sm:after:inset-0"
+                    className="flex min-h-14 items-center justify-center self-start rounded-full bg-(--accent) px-6 py-3 text-lg font-semibold text-(--accent-contrast) sm:after:absolute sm:after:inset-0"
                   >
                     {t("help")}
                   </a>
