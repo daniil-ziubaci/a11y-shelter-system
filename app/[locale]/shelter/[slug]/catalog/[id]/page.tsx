@@ -195,7 +195,7 @@ export default async function PetPage({
               {t("adoptPending")}
             </p>
           )}
-          <div className="flex flex-wrap gap-3">
+          <div className="mt-4 flex flex-wrap gap-3">
             {pet.status !== PET_STATUS_TREATMENT && (
               <a
                 href="#footer-contact-heading"
@@ -249,7 +249,7 @@ export default async function PetPage({
       {otherPets.length > 0 && (
         <section
           aria-labelledby="other-pets-heading"
-          className="mt-8 -mb-6 flex flex-col gap-4 bg-(--accent-soft) py-10 shadow-[0_0_0_100vmax_var(--accent-soft)] [clip-path:inset(0_-100vmax)]"
+          className="mt-1.5 -mb-6 flex flex-col gap-4 bg-(--accent-soft) pt-6 pb-7.5 shadow-[0_0_0_100vmax_var(--accent-soft)] [clip-path:inset(0_-100vmax)]"
         >
           <div className="flex flex-wrap items-baseline justify-between gap-x-4">
             <h2 id="other-pets-heading" className="text-2xl font-bold">
