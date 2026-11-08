@@ -65,7 +65,7 @@ export default async function ShelterProjectsPage({
 
   if (error) {
     return (
-      <main className="w-full flex flex-col gap-6 px-4 pb-7.5 pt-4 max-w-5xl mx-auto">
+      <main className="w-full flex flex-col gap-6 px-4 pb-10 pt-4 max-w-5xl mx-auto">
         <p role="alert">{t("loadError")}</p>
       </main>
     );
@@ -210,7 +210,7 @@ export default async function ShelterProjectsPage({
   );
 
   return (
-    <main className="w-full flex flex-col gap-6 px-4 pb-7.5 pt-4 max-w-5xl mx-auto">
+    <main className="w-full flex flex-col gap-6 px-4 pb-10 pt-4 max-w-5xl mx-auto">
       <h1 className="text-3xl font-bold text-center">
         {t("heading", { shelter: shelter.name })}
       </h1>

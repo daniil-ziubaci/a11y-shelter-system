@@ -138,7 +138,7 @@ export default async function ShelterHomePage({
           </div>
         </div>
       </section>
-      <div className="mx-auto flex w-full max-w-5xl flex-col gap-10 px-4 pb-7.5 pt-4">
+      <div className="mx-auto flex w-full max-w-5xl flex-col gap-10 px-4 pb-10 pt-4">
         {lookingError && <p role="alert">{t("loadError")}</p>}
         {lookingPets.length > 0 && (
           <section
