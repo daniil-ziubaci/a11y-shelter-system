@@ -1,6 +1,6 @@
 begin;
 
-select plan(12);
+select plan(13);
 
 select has_column('public', 'pets', 'size', 'size column exists');
 
@@ -38,7 +38,7 @@ select lives_ok(
   'dog with a valid size is accepted'
 );
 
-select lives_ok(
+select throws_ok(
   $$
     insert into public.pets (
       shelter_id, name, species, sex, birth_date, is_age_approximate, health, description, photo_url, photo_alt
@@ -47,7 +47,9 @@ select lives_ok(
       '2024-01-01', false, 'здоров', 'тест', '/test.jpg', 'тест'
     )
   $$,
-  'dog without a size is accepted for now'
+  '23514',
+  null,
+  'dog without a size is rejected'
 );
 
 select throws_ok(
@@ -138,6 +140,16 @@ select throws_ok(
   '23514',
   null,
   'member cannot give a size to a cat'
+);
+
+select throws_ok(
+  $$
+    update public.pets set size = null
+    where id = 'c0000000-0000-0000-0000-000000000001'
+  $$,
+  '23514',
+  null,
+  'member cannot clear the size of a dog'
 );
 
 select * from finish();
