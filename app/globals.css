@@ -1,5 +1,11 @@
 @import "tailwindcss";
 
+@theme {
+  --text-xs: 0.875rem;
+  --text-sm: 1rem;
+  --text-base: 1.125rem;
+}
+
 :root {
   color-scheme: light;
   --background: #fcf6ec;
@@ -49,4 +55,5 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-nunito), system-ui, sans-serif;
+  font-size: 1.125rem;
 }
