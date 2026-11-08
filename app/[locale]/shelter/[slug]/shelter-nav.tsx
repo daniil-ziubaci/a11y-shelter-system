@@ -15,6 +15,7 @@ export function ShelterNav({ slug }: { slug: string }) {
   const [open, setOpen] = useState(false);
   const menuId = useId();
   const buttonRef = useRef<HTMLButtonElement>(null);
+  const navRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     if (!open) {
@@ -26,8 +27,17 @@ export function ShelterNav({ slug }: { slug: string }) {
         buttonRef.current?.focus();
       }
     }
+    function onPointerDown(event: PointerEvent) {
+      if (!navRef.current?.contains(event.target as Node)) {
+        setOpen(false);
+      }
+    }
     document.addEventListener("keydown", onKeyDown);
-    return () => document.removeEventListener("keydown", onKeyDown);
+    document.addEventListener("pointerdown", onPointerDown);
+    return () => {
+      document.removeEventListener("keydown", onKeyDown);
+      document.removeEventListener("pointerdown", onPointerDown);
+    };
   }, [open]);
 
   const catalogPath = `/shelter/${slug}/catalog`;
@@ -60,7 +70,7 @@ export function ShelterNav({ slug }: { slug: string }) {
   ];
 
   return (
-    <nav aria-label={t("label")}>
+    <nav ref={navRef} aria-label={t("label")}>
       <button
         ref={buttonRef}
         type="button"
