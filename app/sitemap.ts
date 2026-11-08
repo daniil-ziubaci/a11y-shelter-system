@@ -1,10 +1,14 @@
 import { routing } from "@/i18n/routing";
+import { isIndexingAllowed } from "@/lib/indexing";
 import { PUBLIC_PET_STATUSES } from "@/lib/petStatuses";
 import { createClient } from "@/lib/supabase/server";
 import { fetchAll } from "@/lib/supabase/fetchAll";
 import type { MetadataRoute } from "next";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  if (!isIndexingAllowed()) {
+    return [];
+  }
   const siteUrl = process.env.SITE_URL!;
   const supabase = await createClient();
 

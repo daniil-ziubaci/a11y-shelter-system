@@ -4,6 +4,18 @@ import createNextIntlPlugin from "next-intl/plugin";
 const supabaseUrl = new URL(process.env.NEXT_PUBLIC_SUPABASE_URL!);
 
 const nextConfig: NextConfig = {
+  async headers() {
+    if (process.env.ALLOW_INDEXING === "true") {
+      return [];
+    }
+    return [
+      {
+        source: "/:path*",
+        headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }],
+      },
+    ];
+  },
+
   images: {
     remotePatterns: [
       {
