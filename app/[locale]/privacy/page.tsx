@@ -28,7 +28,7 @@ export default async function PrivacyPage() {
   const t = await getTranslations("Privacy");
 
   return (
-    <main className="w-full flex flex-col gap-6 p-4 max-w-3xl mx-auto">
+    <main className="w-full flex flex-col gap-6 px-4 pb-7.5 pt-4 max-w-3xl mx-auto">
       <h1 className="text-2xl font-bold wrap-break-word sm:text-3xl">
         {t("heading")}
       </h1>

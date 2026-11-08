@@ -67,7 +67,7 @@ export default async function ShelterAboutPage({
   ).replace(/</g, "\\u003c");
 
   return (
-    <main className="w-full flex flex-col gap-6 p-4 max-w-5xl mx-auto">
+    <main className="w-full flex flex-col gap-6 px-4 pb-7.5 pt-4 max-w-5xl mx-auto">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: jsonLd }}

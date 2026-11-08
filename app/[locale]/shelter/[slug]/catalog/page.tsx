@@ -274,7 +274,7 @@ export default async function Catalog({
   const treatmentBlockedHref = `/shelter/${slug}/catalog?mode=treatment&group=blocked${searchPart}`;
 
   return (
-    <main className="w-full flex flex-col gap-6 p-4 max-w-5xl mx-auto">
+    <main className="w-full flex flex-col gap-6 px-4 pb-7.5 pt-4 max-w-5xl mx-auto">
       <h1 className="text-3xl font-bold text-center">
         {isBlocked
           ? t("treatmentBlockedHeading")
