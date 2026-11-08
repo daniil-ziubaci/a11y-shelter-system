@@ -125,20 +125,20 @@ export default async function ShelterHomePage({
           <div className="flex flex-wrap justify-center gap-2 sm:gap-3">
             <Link
               href={`/shelter/${slug}/catalog`}
-              className="inline-flex min-h-12 items-center justify-center rounded-full bg-(--accent) px-3 text-center text-base font-semibold text-(--accent-contrast) sm:min-h-11 sm:px-5 sm:text-lg"
+              className="inline-flex min-h-14 items-center justify-center whitespace-nowrap rounded-full bg-(--accent) px-6 py-3 text-center text-lg font-semibold text-(--accent-contrast) hover:shadow-md"
             >
               {t("findHome")}
             </Link>
             <Link
               href={`/shelter/${slug}/needs`}
-              className="inline-flex min-h-12 items-center justify-center rounded-full border border-(--accent) px-3 text-center text-base font-semibold text-(--accent) transition-colors duration-200 hover:bg-(--hover) motion-reduce:transition-none sm:min-h-11 sm:px-5 sm:text-lg"
+              className="inline-flex min-h-14 items-center justify-center whitespace-nowrap rounded-full border border-(--accent) px-6 py-3 text-center text-lg font-semibold text-(--accent) transition-colors duration-200 hover:bg-(--hover) motion-reduce:transition-none"
             >
               {t("howToHelp")}
             </Link>
           </div>
         </div>
       </section>
-      <div className="mx-auto flex w-full max-w-5xl flex-col gap-10 p-4">
+      <div className="mx-auto flex w-full max-w-5xl flex-col gap-10 px-4 pb-7.5 pt-4">
         {lookingError && <p role="alert">{t("loadError")}</p>}
         {lookingPets.length > 0 && (
           <section
@@ -174,7 +174,6 @@ export default async function ShelterHomePage({
             </ul>
           </section>
         )}
-
         {treatmentError && <p role="alert">{t("loadError")}</p>}
         {treatmentPets.length > 0 && (
           <section
@@ -210,7 +209,6 @@ export default async function ShelterHomePage({
             </ul>
           </section>
         )}
-
         {urgentError && <p role="alert">{t("loadError")}</p>}
         {urgentItems.length > 0 && (
           <section
@@ -248,7 +246,7 @@ export default async function ShelterHomePage({
                 return (
                   <li
                     key={item.id}
-                    className="group relative flex min-w-0 flex-col gap-3 rounded-2xl border border-(--danger) bg-(--surface) p-4 shadow-sm transition duration-300 ease-out hover:shadow-2xl focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-(--focus) motion-safe:hover:-translate-y-1.5"
+                    className="group relative flex min-w-0 flex-col gap-3 rounded-2xl border-[1.5px] border-(--danger) bg-(--surface) p-4 shadow-sm transition duration-300 ease-out hover:shadow-2xl focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-(--focus) motion-safe:hover:-translate-y-1.5"
                   >
                     <div className="flex min-w-0 flex-col gap-1">
                       <div className="flex items-start justify-between gap-2">
@@ -283,7 +281,7 @@ export default async function ShelterHomePage({
                       <a
                         href="#footer-contact-heading"
                         aria-label={tn("helpLabel", { name: item.name })}
-                        className="flex min-h-11 items-center justify-center self-start rounded-full bg-(--accent) px-5 text-lg font-semibold text-(--accent-contrast) sm:after:absolute sm:after:inset-0"
+                        className="flex min-h-14 items-center justify-center self-start rounded-full bg-(--accent) px-6 py-3 text-lg font-semibold text-(--accent-contrast) sm:after:absolute sm:after:inset-0"
                       >
                         {tn("help")}
                       </a>
@@ -294,7 +292,6 @@ export default async function ShelterHomePage({
             </ul>
           </section>
         )}
-
         {statsError && <p role="alert">{t("loadError")}</p>}
         {!statsError && totalCount > 0 && (
           <section
@@ -305,20 +302,20 @@ export default async function ShelterHomePage({
               {t("statsHeading")}
             </h2>
             <dl className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-              <div className="flex flex-col-reverse rounded-2xl border border-(--border) bg-(--surface) shadow-sm p-4">
+              <div className="flex flex-col-reverse rounded-2xl border-[1.2px] border-(--border-strong) bg-(--surface) shadow-sm p-4">
                 <dt className="text-(--muted)">{t("statsTotal")}</dt>
                 <dd className="text-3xl font-bold">
                   {format.number(totalCount)}
                 </dd>
               </div>
-              <div className="flex flex-col-reverse rounded-2xl border border-(--border) bg-(--surface) shadow-sm p-4">
+              <div className="flex flex-col-reverse rounded-2xl border-[1.2px] border-(--border-strong) bg-(--surface) shadow-sm p-4">
                 <dt className="text-(--muted)">{t("statsLooking")}</dt>
                 <dd className="text-3xl font-bold">
                   {format.number(lookingCount)}
                 </dd>
               </div>
               {adoptedCount > 0 && (
-                <div className="flex flex-col-reverse rounded-2xl border border-(--border) bg-(--surface) shadow-sm p-4">
+                <div className="flex flex-col-reverse rounded-2xl border-[1.2px] border-(--border-strong) bg-(--surface) shadow-sm p-4">
                   <dt className="text-(--muted)">{t("statsAdopted")}</dt>
                   <dd className="text-3xl font-bold">
                     {format.number(adoptedCount)}
