@@ -411,7 +411,16 @@ CREATE OR REPLACE VIEW "public"."volunteer_pets" WITH ("security_invoker"='true'
     "pets"."size",
     "pets"."created_at",
     "pet_internal"."enclosure",
-    "concat_ws"(' '::"text", "pets"."name_search", "pet_internal"."enclosure") AS "search_text"
+    "concat_ws"(' '::"text", "pets"."name_search", "pet_internal"."enclosure") AS "search_text",
+    LEAST(
+        CASE
+            WHEN ("pets"."status" = ANY (ARRAY['в процессе'::"text", 'на лечении'::"text"])) THEN "pets"."status_changed_at"
+            ELSE NULL::timestamp with time zone
+        END, "pets"."needs_treatment_since") AS "review_since",
+        CASE
+            WHEN (("pets"."status" = 'на лечении'::"text") OR ("pets"."needs_treatment_since" IS NOT NULL)) THEN 0
+            ELSE 1
+        END AS "review_rank"
    FROM ("public"."pets"
      LEFT JOIN "public"."pet_internal" ON (("pet_internal"."pet_id" = "pets"."id")));
 
