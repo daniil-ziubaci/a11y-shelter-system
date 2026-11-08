@@ -19,7 +19,6 @@ export async function createClient() {
               cookieStore.set(name, value, options),
             );
           } catch {
-            // Из серверного компонента cookies писать нельзя, это нормально
           }
         },
       },
