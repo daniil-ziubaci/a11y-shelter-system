@@ -52,10 +52,10 @@ export async function ShelterFooter({
 
   return (
     <footer className="mt-auto w-full bg-(--surface)">
-      <div className="mx-auto grid w-full max-w-5xl gap-8 px-4 py-8 md:grid-cols-3 md:gap-x-12">
+      <div className="mx-auto grid w-full max-w-5xl gap-8 px-4 pb-8 pt-7.5 md:grid-cols-3 md:gap-x-12">
         <section
           aria-labelledby="footer-contact-heading"
-          className="flex flex-col gap-3"
+          className="flex flex-col gap-5"
         >
           <h2 id="footer-contact-heading" className="text-xl font-bold">
             {t("contactHeading")}
@@ -74,12 +74,12 @@ export async function ShelterFooter({
         </section>
         <section
           aria-labelledby="footer-about-heading"
-          className="flex flex-col gap-3 border-t border-(--border) pt-8 md:border-t-0 md:pt-0"
+          className="flex flex-col gap-4 border-t border-(--border) pt-8 md:border-t-0 md:pt-0"
         >
           <h2 id="footer-about-heading" className="text-xl font-bold">
             {name}
           </h2>
-          <dl className="flex flex-col gap-3 text-pretty">
+          <dl className="flex flex-col gap-5 text-pretty [&_dd]:mt-1">
             {city && (
               <div>
                 <dt className="text-sm text-(--muted)">{t("cityLabel")}</dt>
