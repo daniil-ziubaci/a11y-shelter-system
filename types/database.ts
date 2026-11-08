@@ -223,7 +223,6 @@ export type Database = {
           shelter_id: string;
           translations: Json;
           unit: string;
-          urgent_since: string | null;
         };
         Insert: {
           category: string;
@@ -236,7 +235,6 @@ export type Database = {
           shelter_id: string;
           translations?: Json;
           unit: string;
-          urgent_since?: string | null;
         };
         Update: {
           category?: string;
@@ -249,7 +247,6 @@ export type Database = {
           shelter_id?: string;
           translations?: Json;
           unit?: string;
-          urgent_since?: string | null;
         };
         Relationships: [
           {
@@ -484,8 +481,7 @@ export type Tables<
 
 export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
-    | keyof DefaultSchema["Tables"]
-    | { schema: keyof DatabaseWithoutInternals },
+    keyof DefaultSchema["Tables"] | { schema: keyof DatabaseWithoutInternals },
   TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals;
   }
@@ -509,8 +505,7 @@ export type TablesInsert<
 
 export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
-    | keyof DefaultSchema["Tables"]
-    | { schema: keyof DatabaseWithoutInternals },
+    keyof DefaultSchema["Tables"] | { schema: keyof DatabaseWithoutInternals },
   TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals;
   }
@@ -534,8 +529,7 @@ export type TablesUpdate<
 
 export type Enums<
   DefaultSchemaEnumNameOrOptions extends
-    | keyof DefaultSchema["Enums"]
-    | { schema: keyof DatabaseWithoutInternals },
+    keyof DefaultSchema["Enums"] | { schema: keyof DatabaseWithoutInternals },
   EnumName extends (DefaultSchemaEnumNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals;
   }
