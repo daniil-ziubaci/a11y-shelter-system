@@ -8,7 +8,7 @@ const QUALITIES = [80, 70, 60, 50, 40];
 export async function makePreviewJpeg(input: Buffer): Promise<Buffer> {
   const base = sharp(input).rotate().resize(WIDTH, HEIGHT, {
     fit: "cover",
-    position: sharp.strategy.attention,
+    position: "centre",
   });
 
   let result = await base
