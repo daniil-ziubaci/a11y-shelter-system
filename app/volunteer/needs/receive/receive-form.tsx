@@ -29,7 +29,7 @@ export function ReceiveForm({ items }: { items: ReceiveItem[] }) {
   return (
     <form
       action={formAction}
-      className="flex flex-col gap-4 rounded-2xl border border-(--border) bg-(--surface) p-4 shadow-md sm:mx-auto sm:w-[calc(50%-0.5rem)] sm:p-6"
+      className="flex flex-col gap-4 rounded-2xl border-[1.2px] border-(--border-strong) bg-(--surface) p-4 shadow-md sm:mx-auto sm:w-[calc(50%-0.5rem)] sm:p-6"
     >
       <div className="flex flex-col gap-1">
         <label htmlFor="itemId" className={labelClass}>

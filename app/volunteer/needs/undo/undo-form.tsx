@@ -19,7 +19,7 @@ export function UndoForm({ latest }: { latest: LatestPurchase | null }) {
       {latest ? (
         <form
           action={formAction}
-          className="flex flex-col gap-2 rounded-2xl border border-(--border) bg-(--surface) p-4 shadow-md"
+          className="flex flex-col gap-2 rounded-2xl border-[1.2px] border-(--border-strong) bg-(--surface) p-4 shadow-md"
         >
           <input type="hidden" name="logId" value={latest.id} />
           <h2 className="font-bold">Последняя запись</h2>

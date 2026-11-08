@@ -162,7 +162,7 @@ export async function PetList({
 
   return (
     <>
-      <div className="flex flex-col gap-3 rounded-2xl border border-(--border) bg-(--surface) p-3 shadow-md sm:mx-auto sm:w-[calc(50%-0.5rem)]">
+      <div className="flex flex-col gap-3 rounded-2xl border-[1.2px] border-(--border-strong) bg-(--surface) p-3 shadow-md sm:mx-auto sm:w-[calc(50%-0.5rem)]">
         <form
           action="/volunteer"
           method="get"
@@ -184,7 +184,7 @@ export async function PetList({
               defaultValue={search}
               enterKeyHint="search"
               autoComplete="off"
-              className="h-10 min-w-0 flex-1 rounded-lg border border-(--border-strong) bg-(--surface) px-3 text-base"
+              className="h-10 min-w-0 flex-1 rounded-lg border border-(--accent) bg-(--accent-soft) px-3 text-base"
             />
             <button
               type="submit"
