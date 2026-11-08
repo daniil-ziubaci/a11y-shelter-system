@@ -1,4 +1,4 @@
-export const VOLUNTEER_SORTS = ["name", "new", "stale"] as const;
+const VOLUNTEER_SORTS = ["name", "new", "stale"] as const;
 
 export type VolunteerSort = (typeof VOLUNTEER_SORTS)[number];
 

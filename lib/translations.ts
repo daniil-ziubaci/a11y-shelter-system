@@ -1,6 +1,6 @@
 import type { Json } from "@/types/database";
 
-export type TranslationEntry = { text: string; hash: string };
+type TranslationEntry = { text: string; hash: string };
 export type Translations = Record<string, Record<string, TranslationEntry>>;
 
 function isRecord(value: unknown): value is Record<string, unknown> {

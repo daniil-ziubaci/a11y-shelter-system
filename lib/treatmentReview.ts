@@ -1,4 +1,4 @@
-export const TREATMENT_REVIEW_DAYS = 7;
+const TREATMENT_REVIEW_DAYS = 7;
 
 export function isTreatmentStale(since: string | null): boolean {
   if (!since) return false;

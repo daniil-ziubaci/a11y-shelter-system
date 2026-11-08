@@ -2,7 +2,7 @@ import { birthDateFromAge } from "@/lib/birthDateFromAge";
 import { findContactError } from "@/lib/findContactError";
 import { PET_SIZES } from "@/lib/petSizes";
 
-export type PetFields = {
+type PetFields = {
   name: string;
   species: string;
   sex: string;

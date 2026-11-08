@@ -2,7 +2,7 @@ import { findContactError } from "@/lib/findContactError";
 import { NEED_CATEGORIES } from "@/lib/needCategories";
 import { NEED_UNITS } from "@/lib/needUnits";
 
-export type PurchaseItemFields = {
+type PurchaseItemFields = {
   name: string;
   category: string;
   unit: string;

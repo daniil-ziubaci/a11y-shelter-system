@@ -1,7 +1,7 @@
 import { findContactError } from "@/lib/findContactError";
 import { NEED_CATEGORIES } from "@/lib/needCategories";
 
-export type PurchaseItemEdit = {
+type PurchaseItemEdit = {
   name: string;
   category: string;
   isUrgent: boolean;

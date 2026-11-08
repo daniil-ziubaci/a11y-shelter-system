@@ -38,7 +38,7 @@ function isUpperCase(character: string | undefined): boolean {
   return character !== undefined && character !== character.toLowerCase();
 }
 
-export function transliterate(text: string): string {
+function transliterate(text: string): string {
   const characters = Array.from(text);
 
   return characters
