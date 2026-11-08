@@ -28,26 +28,6 @@ $$;
 
 ALTER FUNCTION "public"."projects_set_updated_at"() OWNER TO "postgres";
 
-CREATE OR REPLACE FUNCTION "public"."purchase_items_set_urgent_since"() RETURNS "trigger"
-    LANGUAGE "plpgsql"
-    SET "search_path" TO ''
-    AS $$
-begin
-  if new.is_urgent then
-    if tg_op = 'UPDATE' and old.is_urgent then
-      new.urgent_since := old.urgent_since;
-    else
-      new.urgent_since := now();
-    end if;
-  else
-    new.urgent_since := null;
-  end if;
-  return new;
-end;
-$$;
-
-ALTER FUNCTION "public"."purchase_items_set_urgent_since"() OWNER TO "postgres";
-
 CREATE OR REPLACE FUNCTION "public"."receive_purchase"("p_item_id" "uuid", "p_amount" numeric) RETURNS numeric
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -326,15 +306,13 @@ CREATE TABLE IF NOT EXISTS "public"."purchase_items" (
     "remaining" numeric NOT NULL,
     "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
     "is_urgent" boolean DEFAULT false NOT NULL,
-    "urgent_since" timestamp with time zone,
     "translations" "jsonb" DEFAULT '{}'::"jsonb" NOT NULL,
     "is_archived" boolean DEFAULT false NOT NULL,
     CONSTRAINT "purchase_items_archived_only_when_closed" CHECK (((NOT "is_archived") OR ("remaining" = (0)::numeric))),
     CONSTRAINT "purchase_items_category_check" CHECK (("category" = ANY (ARRAY['корм'::"text", 'лекарства'::"text", 'гигиена'::"text", 'дезинфекция'::"text", 'расходники'::"text"]))),
     CONSTRAINT "purchase_items_name_check" CHECK (("length"("btrim"("name")) > 0)),
     CONSTRAINT "purchase_items_translations_check" CHECK ((("jsonb_typeof"("translations") = 'object'::"text") AND ("octet_length"(("translations")::"text") <= 20000))),
-    CONSTRAINT "purchase_items_unit_check" CHECK (("length"("btrim"("unit")) > 0)),
-    CONSTRAINT "purchase_items_urgent_since_check" CHECK ((("is_urgent" AND ("urgent_since" IS NOT NULL)) OR ((NOT "is_urgent") AND ("urgent_since" IS NULL))))
+    CONSTRAINT "purchase_items_unit_check" CHECK (("length"("btrim"("unit")) > 0))
 );
 
 ALTER TABLE "public"."purchase_items" OWNER TO "postgres";
@@ -466,7 +444,6 @@ CREATE OR REPLACE TRIGGER "projects_set_completed_at" BEFORE INSERT OR UPDATE ON
 
 CREATE OR REPLACE TRIGGER "projects_set_updated_at" BEFORE UPDATE ON "public"."projects" FOR EACH ROW EXECUTE FUNCTION "public"."projects_set_updated_at"();
 
-CREATE OR REPLACE TRIGGER "purchase_items_set_urgent_since" BEFORE INSERT OR UPDATE ON "public"."purchase_items" FOR EACH ROW EXECUTE FUNCTION "public"."purchase_items_set_urgent_since"();
 
 ALTER TABLE ONLY "public"."pet_internal"
     ADD CONSTRAINT "pet_internal_pet_id_fkey" FOREIGN KEY ("pet_id") REFERENCES "public"."pets"("id") ON DELETE CASCADE;
@@ -606,8 +583,6 @@ GRANT ALL ON FUNCTION "public"."pets_set_status_changed_at"() TO "service_role";
 REVOKE ALL ON FUNCTION "public"."projects_set_updated_at"() FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."projects_set_updated_at"() TO "service_role";
 
-REVOKE ALL ON FUNCTION "public"."purchase_items_set_urgent_since"() FROM PUBLIC;
-GRANT ALL ON FUNCTION "public"."purchase_items_set_urgent_since"() TO "service_role";
 
 REVOKE ALL ON FUNCTION "public"."receive_purchase"("p_item_id" "uuid", "p_amount" numeric) FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."receive_purchase"("p_item_id" "uuid", "p_amount" numeric) TO "service_role";
