@@ -249,7 +249,7 @@ export default async function PetPage({
       {otherPets.length > 0 && (
         <section
           aria-labelledby="other-pets-heading"
-          className="mt-3.75 -mb-4 flex flex-col gap-4 bg-(--accent-soft) pt-6.25 pb-10 shadow-[0_0_0_100vmax_var(--accent-soft)] [clip-path:inset(0_-100vmax)]"
+          className="mt-3.75 -mb-4 flex flex-col gap-6.5 bg-(--accent-soft) pt-6.25 pb-10 shadow-[0_0_0_100vmax_var(--accent-soft)] [clip-path:inset(0_-100vmax)]"
         >
           <div className="flex flex-wrap items-baseline justify-between gap-x-4">
             <h2 id="other-pets-heading" className="text-2xl font-bold">
