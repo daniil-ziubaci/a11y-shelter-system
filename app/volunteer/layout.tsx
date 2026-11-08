@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { logout } from "@/app/volunteer/actions";
 import { VolunteerNav } from "@/app/volunteer/volunteer-nav";
+import { AccountMenu } from "@/app/volunteer/account-menu";
 import { BackLink } from "@/app/volunteer/back-link";
 import { createClient } from "@/lib/supabase/server";
 
@@ -52,7 +53,7 @@ export default async function VolunteerLayout({
                   {shelterName}
                 </p>
               ))}
-            <details className="relative order-2 ml-auto">
+            <AccountMenu>
               <summary className="flex h-9 cursor-pointer list-none items-center gap-1 px-2 text-(--muted) [&::-webkit-details-marker]:hidden">
                 <span>Аккаунт</span>
                 <span aria-hidden="true">▾</span>
@@ -72,7 +73,7 @@ export default async function VolunteerLayout({
                   </button>
                 </form>
               </div>
-            </details>
+            </AccountMenu>
           </div>
           {showNav && <VolunteerNav />}
         </div>
