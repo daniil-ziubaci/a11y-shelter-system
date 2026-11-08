@@ -36,7 +36,7 @@ export async function SocialLinks({
       <p id="footer-social-heading" className="font-semibold">
         {t("socialHeading")}
       </p>
-      <ul className="flex flex-wrap gap-3">
+      <ul className="flex flex-wrap gap-5">
         {networks.map((network) => (
           <li key={network.name} className="flex">
             <a
