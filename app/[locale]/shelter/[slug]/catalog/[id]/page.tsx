@@ -263,7 +263,7 @@ export default async function PetPage({
                   ? `/shelter/${slug}/catalog?mode=treatment`
                   : `/shelter/${slug}/catalog`
               }
-              className="group inline-flex min-h-11 items-center gap-1.5 font-medium text-(--accent) transition-colors hover:text-(--foreground) motion-reduce:transition-none"
+              className="group -my-2 inline-flex min-h-11 items-center gap-1.5 font-medium text-(--accent) transition-colors hover:text-(--foreground) motion-reduce:transition-none"
             >
               {showTreatmentBlock ? t("toTreatment") : t("toCatalog")}
               <span
