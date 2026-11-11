@@ -218,6 +218,7 @@ export type Database = {
           id: string;
           is_archived: boolean;
           is_urgent: boolean;
+          note: string | null;
           name: string;
           remaining: number;
           shelter_id: string;
@@ -230,6 +231,7 @@ export type Database = {
           id?: string;
           is_archived?: boolean;
           is_urgent?: boolean;
+          note?: string | null;
           name: string;
           remaining: number;
           shelter_id: string;
@@ -242,6 +244,7 @@ export type Database = {
           id?: string;
           is_archived?: boolean;
           is_urgent?: boolean;
+          note?: string | null;
           name?: string;
           remaining?: number;
           shelter_id?: string;
@@ -329,6 +332,13 @@ export type Database = {
           contact_hours: string | null;
           contact_messenger: string | null;
           contact_phone: string | null;
+          facebook_url: string | null;
+          whatsapp_url: string | null;
+          payment_url: string | null;
+          paypal_email: string | null;
+          donation_text: string | null;
+          contact_email: string | null;
+          is_published: boolean;
           content_language: string;
           created_at: string;
           founded_year: number | null;
@@ -351,6 +361,13 @@ export type Database = {
           contact_hours?: string | null;
           contact_messenger?: string | null;
           contact_phone?: string | null;
+          facebook_url?: string | null;
+          whatsapp_url?: string | null;
+          payment_url?: string | null;
+          paypal_email?: string | null;
+          donation_text?: string | null;
+          contact_email?: string | null;
+          is_published?: boolean;
           content_language?: string;
           created_at?: string;
           founded_year?: number | null;
@@ -373,6 +390,13 @@ export type Database = {
           contact_hours?: string | null;
           contact_messenger?: string | null;
           contact_phone?: string | null;
+          facebook_url?: string | null;
+          whatsapp_url?: string | null;
+          payment_url?: string | null;
+          paypal_email?: string | null;
+          donation_text?: string | null;
+          contact_email?: string | null;
+          is_published?: boolean;
           content_language?: string;
           created_at?: string;
           founded_year?: number | null;
