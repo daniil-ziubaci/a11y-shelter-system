@@ -373,6 +373,9 @@ export type Database = {
       shelters: {
         Row: {
           about: string | null;
+          about_title: string | null;
+          about_title_en: string | null;
+          about_title_ro: string | null;
           address: string | null;
           adoption_info: string | null;
           city: string | null;
@@ -406,6 +409,9 @@ export type Database = {
         };
         Insert: {
           about?: string | null;
+          about_title?: string | null;
+          about_title_en?: string | null;
+          about_title_ro?: string | null;
           address?: string | null;
           adoption_info?: string | null;
           city?: string | null;
@@ -439,6 +445,9 @@ export type Database = {
         };
         Update: {
           about?: string | null;
+          about_title?: string | null;
+          about_title_en?: string | null;
+          about_title_ro?: string | null;
           address?: string | null;
           adoption_info?: string | null;
           city?: string | null;
