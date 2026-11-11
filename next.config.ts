@@ -5,10 +5,20 @@ const supabaseUrl = new URL(process.env.NEXT_PUBLIC_SUPABASE_URL!);
 
 const nextConfig: NextConfig = {
   async headers() {
+    const galleryCache = {
+      source: "/shelters/:path*",
+      headers: [
+        {
+          key: "Cache-Control",
+          value: "public, max-age=86400, stale-while-revalidate=604800",
+        },
+      ],
+    };
     if (process.env.ALLOW_INDEXING === "true") {
-      return [];
+      return [galleryCache];
     }
     return [
+      galleryCache,
       {
         source: "/:path*",
         headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }],
