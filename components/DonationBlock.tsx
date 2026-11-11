@@ -34,10 +34,12 @@ export async function DonationBlock({
       {paymentUrl && (
         <a
           href={paymentUrl}
+          target="_blank"
           rel="noopener noreferrer"
           className="inline-flex min-h-14 max-w-full items-center justify-start self-start rounded-full bg-(--accent) px-6 py-3 text-left text-lg font-semibold text-(--accent-contrast) hover:shadow-md"
         >
           {t("donationPay")}
+          <span className="sr-only"> {t("newTab")}</span>
         </a>
       )}
       {paypalEmail && (

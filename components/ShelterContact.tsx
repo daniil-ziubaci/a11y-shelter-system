@@ -24,26 +24,21 @@ export async function ShelterContact({
             {t("call", { phone })}
           </a>
         )}
-        {email && (
-          <a
-            href={`mailto:${email}`}
-            className="inline-flex min-h-14 max-w-full items-center justify-start break-all rounded-full border-2 border-(--accent) px-6 py-3 text-left text-lg font-semibold text-(--accent) hover:bg-(--hover)"
-          >
-            {t("email", { email })}
-          </a>
-        )}
         {messenger && (
           <a
             href={messenger}
             className="inline-flex min-h-14 max-w-full items-center justify-start rounded-full border-2 border-(--accent) px-6 py-3 text-left text-lg font-semibold text-(--accent) hover:bg-(--hover)"
+            target="_blank"
             rel="noopener noreferrer"
           >
             {t("messenger")}
+            <span className="sr-only"> {t("newTab")}</span>
           </a>
         )}
         {!phone && !email && !messenger && <p>{emptyText}</p>}
       </div>
       {phone && <p className="mt-3">{t("phoneNote")}</p>}
+      {email && <p className="mt-3">{t("emailLine", { email })}</p>}
     </>
   );
 }
