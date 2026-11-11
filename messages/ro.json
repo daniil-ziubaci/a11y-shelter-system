@@ -153,6 +153,7 @@
     "call": "Sunați: {phone}",
     "phoneNote": "Acesta este numărul pentru apeluri și mesaje pe Viber.",
     "emailLine": "E-mail: {email}",
+    "textHeading": "Despre adăpost",
     "newTab": "(se deschide într-o filă nouă)",
     "email": "Scrieți-ne pe e-mail: {email}",
     "messenger": "Scrieți adăpostului pe messenger",
@@ -288,5 +289,14 @@
   },
   "Adoption": {
     "heading": "Cum decurge cunoașterea"
+  },
+  "Gallery": {
+    "region": "Fotografii ale adăpostului",
+    "previous": "Fotografia anterioară",
+    "next": "Fotografia următoare",
+    "counter": "Fotografia {current} din {total}",
+    "show": "Afișează fotografia {number} din {total}",
+    "thumbsPrevious": "Miniaturi înapoi",
+    "thumbsNext": "Miniaturi înainte"
   }
 }

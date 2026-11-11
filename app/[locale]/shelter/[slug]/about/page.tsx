@@ -1,7 +1,9 @@
 import { ContentLanguageNote } from "@/components/ContentLanguageNote";
+import { ShelterGallery } from "@/components/ShelterGallery";
 import { toContentLanguage } from "@/lib/contentLanguage";
 import { Link } from "@/i18n/navigation";
 import { getShelter } from "@/lib/getShelter";
+import { getShelterPhotos } from "@/lib/getShelterPhotos";
 import {
   buildAlternates,
   buildSocialMetadata,
@@ -57,6 +59,7 @@ export default async function ShelterAboutPage({
       ? supabase.storage.from("pet-photos").getPublicUrl(shelter.photo_path)
           .data.publicUrl
       : null;
+  const photos = await getShelterPhotos(shelter.id, locale);
   const aboutParagraphs = shelter.about?.split(/\n{2,}/) ?? [];
   const contentLanguage = toContentLanguage(shelter.content_language);
   const jsonLd = JSON.stringify(
@@ -75,10 +78,17 @@ export default async function ShelterAboutPage({
 
       <section
         aria-labelledby="about-heading"
-        className="grid gap-6 lg:grid-cols-2 lg:items-stretch"
+        className="flex flex-col gap-6"
       >
-        {photoUrl && (
-          <div className="relative shadow-sm aspect-4/5 lg:aspect-auto overflow-hidden rounded-2xl border border-(--border) bg-(--surface)">
+        <h1
+          id="about-heading"
+          className="text-balance text-center text-2xl font-bold sm:text-3xl"
+        >
+          {shelter.aboutTitle}
+        </h1>
+        {photos.length > 0 && <ShelterGallery photos={photos} />}
+        {photos.length === 0 && photoUrl && (
+          <div className="relative aspect-4/3 overflow-hidden rounded-2xl border border-(--border) bg-(--surface) shadow-sm">
             <Image
               src={photoUrl}
               alt={shelter.photo_alt ?? ""}
@@ -89,15 +99,14 @@ export default async function ShelterAboutPage({
           </div>
         )}
         <div className="flex flex-col gap-4 rounded-2xl border border-(--border) bg-(--surface) p-6 shadow-sm">
-          <h1 id="about-heading" className="text-3xl font-bold">
-            {shelter.name}
-          </h1>
+          <h2 className="text-2xl font-bold">{t("textHeading")}</h2>
           {shelter.about && (
             <>
               <ContentLanguageNote
                 language={contentLanguage}
                 translated={shelter.translated.about}
               />
+              <div className="lg:columns-2 lg:gap-10 [&>p]:mb-4 [&>p:last-child]:mb-0">
               {aboutParagraphs.map((paragraph, index) => (
                 <p
                   key={index}
@@ -106,6 +115,7 @@ export default async function ShelterAboutPage({
                   {paragraph}
                 </p>
               ))}
+              </div>
             </>
           )}
         </div>

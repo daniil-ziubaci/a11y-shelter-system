@@ -18,8 +18,16 @@ export const getShelter = cache(async (slug: string, locale: string) => {
   if (error) {
     throw new Error("Не удалось загрузить приют из базы.");
   }
+  const name = pickShelterName(data, locale);
+  const aboutTitle =
+    (locale === "ru"
+      ? data.about_title
+      : locale === "ro"
+        ? data.about_title_ro
+        : data.about_title_en) ?? name;
   return {
     ...localizeShelter(data, locale),
-    name: pickShelterName(data, locale),
+    name,
+    aboutTitle,
   };
 });

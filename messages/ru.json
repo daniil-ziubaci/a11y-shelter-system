@@ -153,6 +153,7 @@
     "call": "Позвонить: {phone}",
     "phoneNote": "Это номер для звонков и для сообщений в Viber.",
     "emailLine": "Почта: {email}",
+    "textHeading": "О приюте",
     "newTab": "(откроется в новой вкладке)",
     "email": "Написать на почту: {email}",
     "messenger": "Написать приюту в мессенджере",
@@ -288,5 +289,14 @@
   },
   "Adoption": {
     "heading": "Как проходит знакомство"
+  },
+  "Gallery": {
+    "region": "Фотографии приюта",
+    "previous": "Предыдущее фото",
+    "next": "Следующее фото",
+    "counter": "Фото {current} из {total}",
+    "show": "Показать фото {number} из {total}",
+    "thumbsPrevious": "Миниатюры назад",
+    "thumbsNext": "Миниатюры вперёд"
   }
 }

@@ -153,6 +153,7 @@
     "call": "Call: {phone}",
     "phoneNote": "This number is for calls and for Viber messages.",
     "emailLine": "Email: {email}",
+    "textHeading": "About the shelter",
     "newTab": "(opens in a new tab)",
     "email": "Email us: {email}",
     "messenger": "Write on a messenger",
@@ -288,5 +289,14 @@
   },
   "Adoption": {
     "heading": "How meeting an animal works"
+  },
+  "Gallery": {
+    "region": "Shelter photos",
+    "previous": "Previous photo",
+    "next": "Next photo",
+    "counter": "Photo {current} of {total}",
+    "show": "Show photo {number} of {total}",
+    "thumbsPrevious": "Scroll thumbnails back",
+    "thumbsNext": "Scroll thumbnails forward"
   }
 }
