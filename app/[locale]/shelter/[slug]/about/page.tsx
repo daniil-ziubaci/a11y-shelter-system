@@ -75,16 +75,16 @@ export default async function ShelterAboutPage({
 
       <section
         aria-labelledby="about-heading"
-        className="grid gap-6 lg:grid-cols-2 lg:items-start"
+        className="grid gap-6 lg:grid-cols-2 lg:items-stretch"
       >
         {photoUrl && (
-          <div className="relative shadow-sm aspect-4/3 overflow-hidden rounded-2xl border border-(--border) bg-(--surface)">
+          <div className="relative shadow-sm aspect-4/5 lg:aspect-auto overflow-hidden rounded-2xl border border-(--border) bg-(--surface)">
             <Image
               src={photoUrl}
               alt={shelter.photo_alt ?? ""}
               fill
               sizes="(min-width: 1024px) 50vw, 100vw"
-              className="object-cover"
+              className="object-contain"
             />
           </div>
         )}
