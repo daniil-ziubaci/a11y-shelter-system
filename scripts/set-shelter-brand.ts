@@ -6,11 +6,11 @@ import sharp from "sharp";
 
 const url = process.env.SUPABASE_URL;
 const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-const [slug, logoFile, iconFile] = process.argv.slice(2);
+const [slug, iconFile] = process.argv.slice(2);
 
-if (!url || !serviceKey || !slug || !logoFile || !iconFile) {
+if (!url || !serviceKey || !slug || !iconFile) {
   console.error(
-    "Использование: node --env-file=.env.coordinator scripts/set-shelter-brand.ts slug логотип.png значок.png",
+    "Использование: node --env-file=.env.coordinator scripts/set-shelter-brand.ts slug значок.png",
   );
   process.exit(1);
 }
@@ -30,33 +30,37 @@ if (shelterError || !shelter) {
   process.exit(1);
 }
 
-const logoSource = await readFile(logoFile).catch(() => null);
 const iconSource = await readFile(iconFile).catch(() => null);
 
-if (!logoSource || !iconSource) {
-  console.error("Не удалось прочитать один из файлов.");
+if (!iconSource) {
+  console.error("Не удалось прочитать файл.");
   process.exit(1);
 }
 
-async function square(source: Buffer, size: number, opaque = false) {
-  let image = sharp(source).resize(size, size, {
-    fit: "contain",
-    background: { r: 255, g: 255, b: 255, alpha: opaque ? 1 : 0 },
-  });
-  if (opaque) {
-    image = image.flatten({ background: "#ffffff" });
+async function resized(source: Buffer, size: number, rounded = true) {
+  const image = sharp(source).resize(size, size, { fit: "cover" });
+  if (!rounded) {
+    return image.png({ compressionLevel: 9 }).toBuffer();
   }
-  return image.png({ compressionLevel: 9 }).toBuffer();
+  const radius = Math.round(size * 0.2);
+  const mask = Buffer.from(
+    `<svg width="${size}" height="${size}"><rect width="${size}" height="${size}" rx="${radius}" ry="${radius}"/></svg>`,
+  );
+  return image
+    .ensureAlpha()
+    .composite([{ input: mask, blend: "dest-in" }])
+    .png({ compressionLevel: 9 })
+    .toBuffer();
 }
 
 let files: Record<string, Buffer>;
 try {
   files = {
-    "logo.png": await square(logoSource, 96),
-    "icon-32.png": await square(iconSource, 32),
-    "icon-48.png": await square(iconSource, 48),
-    "icon-192.png": await square(iconSource, 192),
-    "apple-icon.png": await square(iconSource, 180, true),
+    "logo.png": await resized(iconSource, 128),
+    "icon-32.png": await resized(iconSource, 32),
+    "icon-48.png": await resized(iconSource, 48),
+    "icon-192.png": await resized(iconSource, 192),
+    "apple-icon.png": await resized(iconSource, 180),
   };
 } catch {
   console.error("Нужны изображения png, jpeg или webp.");
