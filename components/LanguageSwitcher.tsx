@@ -11,13 +11,49 @@ const labels: Record<string, string> = {
   en: "English",
 };
 
-export function LanguageSwitcher() {
+const displayOrder = ["ro", "ru", "en"];
+
+export function LanguageSwitcher({
+  variant = "dropdown",
+  onNavigate,
+}: {
+  variant?: "dropdown" | "list";
+  onNavigate?: () => void;
+}) {
   const t = useTranslations("Nav");
   const locale = useLocale();
   const pathname = usePathname();
 
   const searchParams = useSearchParams();
   const query = Object.fromEntries(searchParams.entries());
+
+  const codes = [...routing.locales].sort(
+    (a, b) => displayOrder.indexOf(a) - displayOrder.indexOf(b),
+  );
+
+  if (variant === "list") {
+    return (
+      <nav aria-label={t("language")}>
+        <ul className="grid grid-cols-3 gap-2">
+          {codes.map((code) => (
+            <li key={code}>
+              <Link
+                href={{ pathname, query }}
+                locale={code}
+                lang={code}
+                hrefLang={code}
+                onClick={onNavigate}
+                aria-current={locale === code ? "true" : undefined}
+                className={`flex min-h-12 items-center justify-center rounded-md border px-3 font-medium transition-colors duration-200 ${locale === code ? "border-(--accent) bg-(--accent) font-bold text-(--accent-contrast)" : "border-(--border) hover:bg-(--hover) hover:text-(--accent)"}`}
+              >
+                {labels[code]}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    );
+  }
 
   return (
     <nav aria-label={t("language")}>
@@ -32,7 +68,7 @@ export function LanguageSwitcher() {
           </span>
         </summary>
         <ul className="absolute right-0 z-20 mt-1 min-w-40 rounded-lg border border-(--border) bg-(--surface) p-1 shadow-lg">
-          {routing.locales.map((code) => (
+          {codes.map((code) => (
             <li key={code}>
               <Link
                 href={{ pathname, query }}

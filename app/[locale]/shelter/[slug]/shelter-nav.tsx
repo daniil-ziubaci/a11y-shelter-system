@@ -2,6 +2,7 @@
 
 import { usePathname } from "@/i18n/navigation";
 import { ScrollTopLink } from "@/components/ScrollTopLink";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useTranslations } from "next-intl";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useId, useRef, useState } from "react";
@@ -97,6 +98,10 @@ export function ShelterNav({ slug }: { slug: string }) {
             </ScrollTopLink>
           </li>
         ))}
+
+        <li className="mt-2 border-t border-(--border) pt-3 lg:hidden">
+          <LanguageSwitcher variant="list" onNavigate={() => setOpen(false)} />
+        </li>
 
         <li className="mt-2 border-t border-(--border) pt-3 lg:hidden">
           <a
