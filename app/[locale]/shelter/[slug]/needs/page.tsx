@@ -74,10 +74,10 @@ export default async function ShelterNeedsPage({
   function buildQuery(head: boolean) {
     let query = supabase
       .from("purchase_items")
-      .select("id, name, category, unit, remaining, is_urgent, translations", {
-        count: "exact",
-        head,
-      })
+      .select(
+        "id, name, category, unit, remaining, is_urgent, note, translations",
+        { count: "exact", head },
+      )
       .eq("shelter_id", shelter.id)
       .gt("remaining", 0);
     if (category) {
@@ -270,6 +270,11 @@ export default async function ShelterNeedsPage({
                       ? t(`categories.${categoryKey}`)
                       : item.category}
                   </p>
+                  {item.note && (
+                    <p lang={contentLanguage} className="wrap-anywhere">
+                      {item.note}
+                    </p>
+                  )}
                 </div>
                 <div className="mt-auto flex flex-col gap-3">
                   <p className="text-lg font-bold">

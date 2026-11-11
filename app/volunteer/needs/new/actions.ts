@@ -43,7 +43,7 @@ export async function createNeed(
   if (!parsed.ok) {
     return fail(parsed.error);
   }
-  const { name, category, unit, quantity, isUrgent } = parsed.fields;
+  const { name, category, unit, quantity, isUrgent, note } = parsed.fields;
 
   const itemId = crypto.randomUUID();
   const { error: insertError } = await supabase.from("purchase_items").insert({
@@ -54,6 +54,7 @@ export async function createNeed(
     unit,
     remaining: quantity,
     is_urgent: isUrgent,
+    note,
   });
   if (insertError) {
     return fail("Не удалось сохранить позицию. Попробуйте ещё раз.");

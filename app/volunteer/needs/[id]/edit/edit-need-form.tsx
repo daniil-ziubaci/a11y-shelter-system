@@ -19,6 +19,7 @@ type EditNeedItem = {
   name: string;
   category: string;
   is_urgent: boolean;
+  note: string | null;
 };
 
 export function EditNeedForm({
@@ -64,19 +65,40 @@ export function EditNeedForm({
         <label htmlFor="category" className={labelClass}>
           Категория
         </label>
-        <SelectWrap><select
-          id="category"
-          name="category"
-          defaultValue={state?.values.category ?? item.category}
-          required
-          className={selectClass}
-        >
-          {NEED_CATEGORIES.map((category) => (
-            <option key={category} value={category}>
-              {category[0].toUpperCase() + category.slice(1)}
-            </option>
-          ))}
-        </select></SelectWrap>
+        <SelectWrap>
+          <select
+            id="category"
+            name="category"
+            defaultValue={state?.values.category ?? item.category}
+            required
+            className={selectClass}
+          >
+            {NEED_CATEGORIES.map((category) => (
+              <option key={category} value={category}>
+                {category[0].toUpperCase() + category.slice(1)}
+              </option>
+            ))}
+          </select>
+        </SelectWrap>
+      </div>
+
+      <div className="flex flex-col gap-1">
+        <label htmlFor="note" className={labelClass}>
+          Примечание (необязательно)
+        </label>
+        <textarea
+          id="note"
+          name="note"
+          rows={3}
+          maxLength={300}
+          defaultValue={state?.values.note ?? item.note ?? ""}
+          aria-describedby="note-hint"
+          className={fieldClass}
+        />
+        <p id="note-hint" className={hintClass}>
+          Что именно нужно или что не подходит, например марка корма. Номера
+          телефонов и ссылки писать нельзя.
+        </p>
       </div>
 
       <div className="flex flex-col gap-2">

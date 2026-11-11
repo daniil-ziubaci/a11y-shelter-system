@@ -8,6 +8,7 @@ type PurchaseItemFields = {
   unit: string;
   quantity: number;
   isUrgent: boolean;
+  note: string | null;
 };
 
 export type ParsePurchaseItemFieldsResult =
@@ -53,10 +54,26 @@ export function parsePurchaseItemFields(
     };
   }
 
+  const note = text("note");
+  if (note.length > 300) {
+    return { ok: false, error: "Примечание не длиннее 300 символов." };
+  }
+  const noteProblem = findContactError([["Примечание", note]]);
+  if (noteProblem) {
+    return { ok: false, error: noteProblem };
+  }
+
   const isUrgent = formData.get("is_urgent") === "on";
 
   return {
     ok: true,
-    fields: { name, category, unit, quantity, isUrgent },
+    fields: {
+      name,
+      category,
+      unit,
+      quantity,
+      isUrgent,
+      note: note || null,
+    },
   };
 }

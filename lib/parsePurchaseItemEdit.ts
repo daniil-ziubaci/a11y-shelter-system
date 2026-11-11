@@ -5,6 +5,7 @@ type PurchaseItemEdit = {
   name: string;
   category: string;
   isUrgent: boolean;
+  note: string | null;
 };
 
 export type ParsePurchaseItemEditResult =
@@ -37,7 +38,19 @@ export function parsePurchaseItemEdit(
     return { ok: false, error: "Выберите категорию." };
   }
 
+  const note = text("note");
+  if (note.length > 300) {
+    return { ok: false, error: "Примечание не длиннее 300 символов." };
+  }
+  const noteProblem = findContactError([["Примечание", note]]);
+  if (noteProblem) {
+    return { ok: false, error: noteProblem };
+  }
+
   const isUrgent = formData.get("is_urgent") === "on";
 
-  return { ok: true, fields: { name, category, isUrgent } };
+  return {
+    ok: true,
+    fields: { name, category, isUrgent, note: note || null },
+  };
 }

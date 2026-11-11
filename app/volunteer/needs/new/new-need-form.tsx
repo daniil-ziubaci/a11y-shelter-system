@@ -48,44 +48,48 @@ export function NewNeedForm() {
         <label htmlFor="category" className={labelClass}>
           Категория
         </label>
-        <SelectWrap><select
-          id="category"
-          name="category"
-          defaultValue={state?.values.category ?? ""}
-          required
-          className={selectClass}
-        >
-          <option value="" disabled>
-            Выберите категорию
-          </option>
-          {NEED_CATEGORIES.map((category) => (
-            <option key={category} value={category}>
-              {category[0].toUpperCase() + category.slice(1)}
+        <SelectWrap>
+          <select
+            id="category"
+            name="category"
+            defaultValue={state?.values.category ?? ""}
+            required
+            className={selectClass}
+          >
+            <option value="" disabled>
+              Выберите категорию
             </option>
-          ))}
-        </select></SelectWrap>
+            {NEED_CATEGORIES.map((category) => (
+              <option key={category} value={category}>
+                {category[0].toUpperCase() + category.slice(1)}
+              </option>
+            ))}
+          </select>
+        </SelectWrap>
       </div>
 
       <div className="flex flex-col gap-1">
         <label htmlFor="unit" className={labelClass}>
           Единица измерения
         </label>
-        <SelectWrap><select
-          id="unit"
-          name="unit"
-          defaultValue={state?.values.unit ?? ""}
-          required
-          className={selectClass}
-        >
-          <option value="" disabled>
-            Выберите единицу
-          </option>
-          {NEED_UNITS.map((unit) => (
-            <option key={unit} value={unit}>
-              {unit}
+        <SelectWrap>
+          <select
+            id="unit"
+            name="unit"
+            defaultValue={state?.values.unit ?? ""}
+            required
+            className={selectClass}
+          >
+            <option value="" disabled>
+              Выберите единицу
             </option>
-          ))}
-        </select></SelectWrap>
+            {NEED_UNITS.map((unit) => (
+              <option key={unit} value={unit}>
+                {unit}
+              </option>
+            ))}
+          </select>
+        </SelectWrap>
       </div>
 
       <div className="flex flex-col gap-1">
@@ -105,6 +109,25 @@ export function NewNeedForm() {
         />
         <p id="quantity-hint" className={hintClass}>
           Сколько нужно купить, например 2,5. Единица выбрана выше.
+        </p>
+      </div>
+
+      <div className="flex flex-col gap-1">
+        <label htmlFor="note" className={labelClass}>
+          Примечание (необязательно)
+        </label>
+        <textarea
+          id="note"
+          name="note"
+          rows={3}
+          maxLength={300}
+          defaultValue={state?.values.note}
+          aria-describedby="note-hint"
+          className={fieldClass}
+        />
+        <p id="note-hint" className={hintClass}>
+          Что именно нужно или что не подходит, например марка корма. Номера
+          телефонов и ссылки писать нельзя.
         </p>
       </div>
 

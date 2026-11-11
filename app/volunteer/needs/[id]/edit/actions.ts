@@ -46,11 +46,11 @@ export async function updateNeed(
   if (!parsed.ok) {
     return fail(parsed.error);
   }
-  const { name, category, isUrgent } = parsed.fields;
+  const { name, category, isUrgent, note } = parsed.fields;
 
   const { data: updated, error: updateError } = await supabase
     .from("purchase_items")
-    .update({ name, category, is_urgent: isUrgent })
+    .update({ name, category, is_urgent: isUrgent, note })
     .eq("id", itemId)
     .eq("shelter_id", membership.shelter_id)
     .select("id")
