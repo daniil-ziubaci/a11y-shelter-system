@@ -4,6 +4,42 @@ import { getShelter } from "@/lib/getShelter";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { ShelterFooter } from "@/components/ShelterFooter";
 import { getTranslations } from "next-intl/server";
+import Image from "next/image";
+import type { Metadata } from "next";
+import { brandUrl } from "@/lib/brandUrl";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string; locale: string }>;
+}): Promise<Metadata> {
+  const { slug, locale } = await params;
+  const shelter = await getShelter(slug, locale);
+  if (!shelter.brand_path) return {};
+  const path = shelter.brand_path;
+  return {
+    icons: {
+      icon: [
+        {
+          url: brandUrl(path, "icon-32.png"),
+          sizes: "32x32",
+          type: "image/png",
+        },
+        {
+          url: brandUrl(path, "icon-48.png"),
+          sizes: "48x48",
+          type: "image/png",
+        },
+        {
+          url: brandUrl(path, "icon-192.png"),
+          sizes: "192x192",
+          type: "image/png",
+        },
+      ],
+      apple: brandUrl(path, "apple-icon.png"),
+    },
+  };
+}
 
 export default async function ShelterLayout({
   children,
@@ -25,15 +61,29 @@ export default async function ShelterLayout({
         {t("skipToContent")}
       </a>
       <header className="sticky top-0 z-30 w-full bg-(--background) shadow-md">
-        <div className="relative mx-auto flex w-full max-w-5xl items-center justify-between gap-x-4 px-4 py-1">
+        <div className="relative mx-auto flex w-full max-w-5xl items-center justify-between gap-x-4 px-4 py-1 lg:grid lg:grid-cols-[1fr_auto_1fr]">
           <ScrollTopLink
             href={`/shelter/${slug}`}
-            className="py-2 text-lg font-bold"
+            className="flex items-center gap-2 py-0 text-base font-bold sm:text-lg lg:justify-self-start"
           >
-            {shelter.name}
+            {shelter.brand_path && (
+              <Image
+                src={brandUrl(shelter.brand_path, "logo.png")}
+                alt=""
+                width={56}
+                height={56}
+                unoptimized
+                className="size-12 shrink-0 rounded-lg border-[1.2px] border-(--border-strong)"
+              />
+            )}
+            <span className="max-w-48 text-balance leading-tight">
+              {shelter.name}
+            </span>
           </ScrollTopLink>
-          <div className="flex items-center gap-3 lg:order-3">
-            <LanguageSwitcher />
+          <div className="flex items-center gap-3 lg:order-3 lg:justify-self-end">
+            <div className="hidden lg:block">
+              <LanguageSwitcher />
+            </div>
             <div className="lg:hidden">
               <ShelterNav slug={slug} />
             </div>
