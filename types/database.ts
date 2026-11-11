@@ -353,6 +353,7 @@ export type Database = {
           photo_path: string | null;
           slug: string;
           telegram_url: string | null;
+          tiktok_url: string | null;
           translations: Json;
           viber_url: string | null;
         };
@@ -385,6 +386,7 @@ export type Database = {
           photo_path?: string | null;
           slug: string;
           telegram_url?: string | null;
+          tiktok_url?: string | null;
           translations?: Json;
           viber_url?: string | null;
         };
@@ -417,6 +419,7 @@ export type Database = {
           photo_path?: string | null;
           slug?: string;
           telegram_url?: string | null;
+          tiktok_url?: string | null;
           translations?: Json;
           viber_url?: string | null;
         };
