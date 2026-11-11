@@ -323,6 +323,53 @@ export type Database = {
           },
         ];
       };
+      shelter_photos: {
+        Row: {
+          alt: string;
+          alt_en: string | null;
+          alt_ro: string | null;
+          created_at: string;
+          id: string;
+          path: string;
+          position: number;
+          shelter_id: string;
+          source_name: string;
+          thumb_path: string;
+        };
+        Insert: {
+          alt: string;
+          alt_en?: string | null;
+          alt_ro?: string | null;
+          created_at?: string;
+          id?: string;
+          path: string;
+          position?: number;
+          shelter_id: string;
+          source_name: string;
+          thumb_path: string;
+        };
+        Update: {
+          alt?: string;
+          alt_en?: string | null;
+          alt_ro?: string | null;
+          created_at?: string;
+          id?: string;
+          path?: string;
+          position?: number;
+          shelter_id?: string;
+          source_name?: string;
+          thumb_path?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "shelter_photos_shelter_id_fkey";
+            columns: ["shelter_id"];
+            isOneToOne: false;
+            referencedRelation: "shelters";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       shelters: {
         Row: {
           about: string | null;
