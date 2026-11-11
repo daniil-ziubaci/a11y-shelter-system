@@ -19,7 +19,7 @@ export async function ShelterFooter({
   contentLanguage,
   instagram,
   facebook,
-  whatsapp,
+  tiktok,
   viber,
   telegram,
 }: {
@@ -38,7 +38,7 @@ export async function ShelterFooter({
   contentLanguage: string;
   instagram: string | null;
   facebook: string | null;
-  whatsapp: string | null;
+  tiktok: string | null;
   viber: string | null;
   telegram: string | null;
 }) {
@@ -78,7 +78,7 @@ export async function ShelterFooter({
           <SocialLinks
             instagram={instagram}
             facebook={facebook}
-            whatsapp={whatsapp}
+            tiktok={tiktok}
             viber={viber}
             telegram={telegram}
           />

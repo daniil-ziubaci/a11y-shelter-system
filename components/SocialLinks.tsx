@@ -2,7 +2,7 @@ import { getTranslations } from "next-intl/server";
 import {
   siInstagram,
   siFacebook,
-  siWhatsapp,
+  siTiktok,
   siViber,
   siTelegram,
 } from "simple-icons";
@@ -10,13 +10,13 @@ import {
 export async function SocialLinks({
   instagram,
   facebook,
-  whatsapp,
+  tiktok,
   viber,
   telegram,
 }: {
   instagram: string | null;
   facebook: string | null;
-  whatsapp: string | null;
+  tiktok: string | null;
   viber: string | null;
   telegram: string | null;
 }) {
@@ -34,7 +34,7 @@ export async function SocialLinks({
       color: siFacebook.hex,
       url: facebook,
     },
-    { name: "WhatsApp", icon: siWhatsapp, color: "128C7E", url: whatsapp },
+    { name: "TikTok", icon: siTiktok, color: siTiktok.hex, url: tiktok },
     { name: "Viber", icon: siViber, color: siViber.hex, url: viber },
     { name: "Telegram", icon: siTelegram, color: "1E84B6", url: telegram },
   ].flatMap((network) =>
@@ -61,6 +61,7 @@ export async function SocialLinks({
               aria-label={t("socialLink", { network: network.name })}
               className="inline-flex size-14 items-center justify-center rounded-full transition-opacity duration-200 hover:opacity-70 motion-reduce:transition-none"
               style={{ color: `#${network.color}` }}
+              target="_blank"
               rel="noopener noreferrer"
             >
               <svg
