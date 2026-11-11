@@ -9,9 +9,9 @@ import { readTranslations, type Translations } from "@/lib/translations";
 import type { Json } from "@/types/database";
 
 const SHELTER_CONTEXT: Record<string, string> = {
-  ru: "Сайт приюта для бездомных животных. Текст из раздела «О приюте»: рассказ о приюте, правила передачи животных, юридическая информация, часы связи.",
-  ro: "Site-ul unui adăpost pentru animale fără stăpân. Text din secțiunea «Despre adăpost»: povestea adăpostului, regulile de adopție, informații juridice, programul de contact.",
-  en: "Website of a shelter for stray animals. Text from the About page: the story of the shelter, adoption rules, legal information, contact hours.",
+  ru: "Сайт приюта для бездомных животных. Тексты: раздел «О приюте» (рассказ о приюте, правила передачи животных, юридическая информация, часы связи) и обращение к дарителям о помощи и пожертвованиях.",
+  ro: "Site-ul unui adăpost pentru animale fără stăpân. Texte din secțiunea «Despre adăpost» (povestea adăpostului, regulile de adopție, informații juridice, programul de contact) și un mesaj către donatori despre ajutor și donații.",
+  en: "Website of a shelter for stray animals. Texts from the About page (the story of the shelter, adoption rules, legal information, contact hours) and a message to donors about help and donations.",
 };
 
 type ShelterTexts = {
@@ -20,6 +20,7 @@ type ShelterTexts = {
   legal_info: string | null;
   contact_hours: string | null;
   photo_alt: string | null;
+  donation_text: string | null;
   city: string | null;
   translations: Json;
 };
@@ -58,6 +59,7 @@ export async function shelterTranslations(
       legal_info: shelter.legal_info ?? "",
       contact_hours: shelter.contact_hours ?? "",
       photo_alt: shelter.photo_alt ?? "",
+      donation_text: shelter.donation_text ?? "",
     },
     previous: readTranslations(shelter.translations),
     context: SHELTER_CONTEXT,

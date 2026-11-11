@@ -20,7 +20,7 @@ async function translateShelters(
   const { data: shelters } = await supabase
     .from("shelters")
     .select(
-      "id, content_language, about, adoption_info, legal_info, contact_hours, photo_alt, city, translations",
+      "id, content_language, about, adoption_info, legal_info, contact_hours, photo_alt, city, donation_text, translations",
     );
   for (const shelter of shelters ?? []) {
     languages.set(shelter.id, shelter.content_language);
@@ -142,7 +142,7 @@ async function translateItems(
   const items = await fetchAll((from, to) =>
     supabase
       .from("purchase_items")
-      .select("id, shelter_id, name, translations")
+      .select("id, shelter_id, name, note, translations")
       .gt("remaining", 0)
       .order("id")
       .range(from, to),

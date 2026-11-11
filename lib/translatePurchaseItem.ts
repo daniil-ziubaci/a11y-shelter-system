@@ -10,12 +10,12 @@ import {
 import type { Json } from "@/types/database";
 
 const ITEM_CONTEXT: Record<string, string> = {
-  ru: "Сайт приюта для бездомных животных. Текст это название вещи в списке нужд приюта, например корм, лекарство или наполнитель.",
-  ro: "Site-ul unui adăpost pentru animale fără stăpân. Textul este numele unui lucru din lista de nevoi a adăpostului, de exemplu hrană, medicament sau așternut.",
-  en: "Website of a shelter for stray animals. The text is the name of an item on the shelter's needs list, for example food, medicine or litter.",
+  ru: "Сайт приюта для бездомных животных. Тексты это название вещи в списке нужд приюта (например корм, лекарство или наполнитель) и необязательное примечание к ней: какой именно товар нужен или что не подходит.",
+  ro: "Site-ul unui adăpost pentru animale fără stăpân. Textele sunt numele unui lucru din lista de nevoi a adăpostului (de exemplu hrană, medicament sau așternut) și o notă opțională despre el: ce anume este necesar sau ce nu se potrivește.",
+  en: "Website of a shelter for stray animals. The texts are the name of an item on the shelter's needs list (for example food, medicine or litter) and an optional note about it: what exactly is needed or what does not fit.",
 };
 
-type ItemTexts = { name: string; translations: Json };
+type ItemTexts = { name: string; note: string | null; translations: Json };
 
 export function itemTranslations(
   item: ItemTexts,
@@ -23,7 +23,9 @@ export function itemTranslations(
 ): Promise<Translations> {
   return buildTranslations({
     sourceLanguage,
-    texts: { name: item.name },
+    texts: item.note
+      ? { name: item.name, note: item.note }
+      : { name: item.name },
     previous: readTranslations(item.translations),
     context: ITEM_CONTEXT,
   });
@@ -34,7 +36,7 @@ export async function translatePurchaseItem(itemId: string): Promise<void> {
     const supabase = await createClient();
     const { data: item } = await supabase
       .from("purchase_items")
-      .select("name, translations, shelter_id")
+      .select("name, note, translations, shelter_id")
       .eq("id", itemId)
       .maybeSingle();
     if (!item) {

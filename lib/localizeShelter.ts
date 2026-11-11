@@ -8,6 +8,7 @@ type ShelterTexts = {
   legal_info: string | null;
   contact_hours: string | null;
   photo_alt: string | null;
+  donation_text: string | null;
   city: string | null;
   translations: Json;
 };
@@ -38,6 +39,7 @@ export function localizeShelter<T extends ShelterTexts>(
   const hours = pick("contact_hours", shelter.contact_hours);
   const alt = pick("photo_alt", shelter.photo_alt);
   const city = pick("city", shelter.city);
+  const donationText = pick("donation_text", shelter.donation_text);
 
   return {
     ...shelter,
@@ -47,6 +49,7 @@ export function localizeShelter<T extends ShelterTexts>(
     contact_hours: hours.text,
     photo_alt: alt.text,
     city: city.text,
+    donation_text: donationText.text,
     translated: {
       about: about.translated,
       adoptionInfo: adoptionInfo.translated,
@@ -54,6 +57,7 @@ export function localizeShelter<T extends ShelterTexts>(
       hours: hours.translated,
       alt: alt.translated,
       city: city.translated,
+      donationText: donationText.translated,
     },
   };
 }

@@ -271,7 +271,12 @@ export default async function ShelterNeedsPage({
                       : item.category}
                   </p>
                   {item.note && (
-                    <p lang={contentLanguage} className="wrap-anywhere">
+                    <p
+                      lang={
+                        item.noteTranslated ? pageLanguage : contentLanguage
+                      }
+                      className="wrap-anywhere"
+                    >
                       {item.note}
                     </p>
                   )}
@@ -312,7 +317,7 @@ export default async function ShelterNeedsPage({
         text={shelter.donation_text}
         paymentUrl={shelter.payment_url}
         paypalEmail={shelter.paypal_email}
-        lang={contentLanguage}
+        lang={shelter.translated.donationText ? pageLanguage : contentLanguage}
       />
     </main>
   );
