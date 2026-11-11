@@ -192,6 +192,15 @@
     "loadError": "Nu am putut încărca proiectele. Încearcă mai târziu."
   },
   "Needs": {
+    "donationHeading": "Ajutor cu bani",
+    "helpWaysIntro": "Alte modalități de a ajuta:",
+    "helpHandsLink": "Ajutor prin muncă",
+    "helpMoneyLink": "Ajutor cu bani",
+    "handsHeading": "Ajutor prin muncă",
+    "handsText": "Plimbări cu câinii, curățenie, reparații de padocuri și de cuști. Ce ajutor este necesar acum și când să veniți, adăpostul vă spune telefonic.",
+    "handsCall": "Sunați: {phone}",
+    "donationPay": "Transfer în contul adăpostului",
+    "donationPaypal": "PayPal-ul adăpostului:",
     "title": "De ce are nevoie adăpostul — {shelter}",
     "description": "Lista a ceea ce are nevoie acum adăpostul „{shelter}”: hrană, medicamente, igienă și consumabile. Alegeți un articol și ajutați.",
     "heading": "De ce are nevoie adăpostul",

@@ -1,5 +1,7 @@
 import { getShelter } from "@/lib/getShelter";
 import { ContentLanguageNote } from "@/components/ContentLanguageNote";
+import { DonationBlock } from "@/components/DonationBlock";
+import { HelpHandsBlock } from "@/components/HelpHandsBlock";
 import { localizeItem } from "@/lib/localizeItem";
 import { toContentLanguage } from "@/lib/contentLanguage";
 import { NEED_CATEGORIES, getCategoryKey } from "@/lib/needCategories";
@@ -96,6 +98,11 @@ export default async function ShelterNeedsPage({
     .range(0, shown - 1);
   const items = rawItems?.map((item) => localizeItem(item, locale));
 
+  const hasHands = Boolean(shelter.contact_phone);
+  const hasMoney = Boolean(
+    shelter.donation_text || shelter.payment_url || shelter.paypal_email,
+  );
+
   function buildHref(
     nextCategory?: string,
     nextShown = NEEDS_PAGE_SIZE,
@@ -149,6 +156,28 @@ export default async function ShelterNeedsPage({
           ),
         })}
       </p>
+      {(hasHands || hasMoney) && (
+        <p className="-mt-2 text-center text-lg">
+          {t("helpWaysIntro")}{" "}
+          {hasHands && (
+            <a
+              href="#help-hands"
+              className="font-semibold text-(--accent) underline underline-offset-2"
+            >
+              {t("helpHandsLink")}
+            </a>
+          )}
+          {hasHands && hasMoney && ", "}
+          {hasMoney && (
+            <a
+              href="#help-money"
+              className="font-semibold text-(--accent) underline underline-offset-2"
+            >
+              {t("helpMoneyLink")}
+            </a>
+          )}
+        </p>
+      )}
       <nav aria-label={t("filtersLabel")}>
         <div className="flex flex-wrap gap-2">
           <Link
@@ -272,6 +301,14 @@ export default async function ShelterNeedsPage({
           </Link>
         </div>
       )}
+
+      <HelpHandsBlock phone={shelter.contact_phone} />
+      <DonationBlock
+        text={shelter.donation_text}
+        paymentUrl={shelter.payment_url}
+        paypalEmail={shelter.paypal_email}
+        lang={contentLanguage}
+      />
     </main>
   );
 }

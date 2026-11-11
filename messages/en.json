@@ -192,6 +192,15 @@
     "loadError": "Could not load the projects. Please try again later."
   },
   "Needs": {
+    "donationHeading": "Donate money",
+    "helpWaysIntro": "Other ways to help:",
+    "helpHandsLink": "Help with your hands",
+    "helpMoneyLink": "Help with money",
+    "handsHeading": "Help with your hands",
+    "handsText": "Walking dogs, cleaning, repairing enclosures and kennels. The shelter tells you by phone what help is needed now and when to come.",
+    "handsCall": "Call: {phone}",
+    "donationPay": "Send money to the shelter's bank account",
+    "donationPaypal": "Shelter's PayPal:",
     "title": "What the shelter needs — {shelter}",
     "description": "What the shelter \"{shelter}\" needs right now: food, medicine, hygiene and supplies. Pick an item and help.",
     "heading": "What the shelter needs",
