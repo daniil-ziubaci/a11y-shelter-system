@@ -1,9 +1,12 @@
 const categoryKeys: Record<string, string> = {
   корм: "food",
   лекарства: "medicine",
-  гигиена: "hygiene",
-  дезинфекция: "disinfection",
   расходники: "supplies",
+  гигиена: "hygiene",
+  амуниция: "gear",
+  инвентарь: "tools",
+  территория: "grounds",
+  рабочим: "workers",
 };
 
 export function getCategoryKey(category: string): string | undefined {

@@ -22,7 +22,7 @@ insert into public.purchase_items (id, shelter_id, name, category, unit, remaini
   ('d0000000-0000-0000-0000-000000000002', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'Наполнитель', 'гигиена', 'кг', -4),
   ('d0000000-0000-0000-0000-000000000003', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'Шприцы', 'расходники', 'шт', 0),
   ('d0000000-0000-0000-0000-000000000004', 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'Корм для кошек', 'корм', 'кг', 5),
-  ('d0000000-0000-0000-0000-000000000005', 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'Дезсредство', 'дезинфекция', 'л', -3);
+  ('d0000000-0000-0000-0000-000000000005', 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'Дезсредство', 'гигиена', 'л', -3);
 
 set local role anon;
 

@@ -211,9 +211,12 @@
     "categories": {
       "food": "Hrană",
       "medicine": "Medicamente",
-      "hygiene": "Igienă",
-      "disinfection": "Dezinfectare",
-      "supplies": "Consumabile"
+      "supplies": "Consumabile",
+      "hygiene": "Igienă și curățenie",
+      "gear": "Accesorii și confort",
+      "tools": "Unelte și reparații",
+      "grounds": "Teritoriu și adăposturi",
+      "workers": "Ajutor pentru muncitori"
     },
     "units": {
       "kg": "kg",

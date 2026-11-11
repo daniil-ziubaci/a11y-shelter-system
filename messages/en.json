@@ -211,9 +211,12 @@
     "categories": {
       "food": "Food",
       "medicine": "Medicine",
-      "hygiene": "Hygiene",
-      "disinfection": "Disinfection",
-      "supplies": "Supplies"
+      "supplies": "Supplies",
+      "hygiene": "Hygiene and cleaning",
+      "gear": "Gear and comfort",
+      "tools": "Tools and repairs",
+      "grounds": "Grounds and kennels",
+      "workers": "Help for workers"
     },
     "units": {
       "kg": "kg",
