@@ -25,6 +25,8 @@ insert into public.pets (
   'Other', 'кошка', 'мальчик', '2024-01-01', false, 'здоров', 'тест', '/test.jpg', 'тест'
 );
 
+update public.shelters set is_published = true;
+
 set local role authenticated;
 
 set local request.jwt.claims to '{"sub": "11111111-1111-1111-1111-111111111111", "aal": "aal2"}';

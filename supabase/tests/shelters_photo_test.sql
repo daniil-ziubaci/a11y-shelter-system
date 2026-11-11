@@ -41,6 +41,8 @@ select throws_ok(
   'description of 301 characters is rejected'
 );
 
+update public.shelters set is_published = true;
+
 set local role anon;
 
 set local request.jwt.claims to '{}';
