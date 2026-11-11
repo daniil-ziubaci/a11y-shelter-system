@@ -51,6 +51,7 @@ export default async function ShelterLayout({
         slug={slug}
         name={shelter.name}
         phone={shelter.contact_phone}
+        email={shelter.contact_email}
         messenger={shelter.contact_messenger}
         hours={shelter.contact_hours}
         address={shelter.address}
@@ -65,6 +66,8 @@ export default async function ShelterLayout({
         }
         contentLanguage={shelter.content_language}
         instagram={shelter.instagram_url}
+        facebook={shelter.facebook_url}
+        whatsapp={shelter.whatsapp_url}
         viber={shelter.viber_url}
         telegram={shelter.telegram_url}
       />

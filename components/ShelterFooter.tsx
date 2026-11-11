@@ -7,6 +7,7 @@ export async function ShelterFooter({
   slug,
   name,
   phone,
+  email,
   messenger,
   hours,
   address,
@@ -17,12 +18,15 @@ export async function ShelterFooter({
   legalInfoLanguage,
   contentLanguage,
   instagram,
+  facebook,
+  whatsapp,
   viber,
   telegram,
 }: {
   slug: string;
   name: string;
   phone: string | null;
+  email: string | null;
   messenger: string | null;
   hours: string | null;
   address: string | null;
@@ -33,6 +37,8 @@ export async function ShelterFooter({
   legalInfoLanguage: string;
   contentLanguage: string;
   instagram: string | null;
+  facebook: string | null;
+  whatsapp: string | null;
   viber: string | null;
   telegram: string | null;
 }) {
@@ -65,11 +71,14 @@ export async function ShelterFooter({
           </div>
           <ShelterContact
             phone={phone}
+            email={email}
             messenger={messenger}
             emptyText={t("noContact")}
           />
           <SocialLinks
             instagram={instagram}
+            facebook={facebook}
+            whatsapp={whatsapp}
             viber={viber}
             telegram={telegram}
           />

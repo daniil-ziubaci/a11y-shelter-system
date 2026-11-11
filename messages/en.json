@@ -151,6 +151,8 @@
     "descriptionFallback": "Contacts and information about the “{name}” shelter.",
     "city": "City:",
     "call": "Call: {phone}",
+    "phoneNote": "This number is for calls and for Viber messages.",
+    "email": "Email us: {email}",
     "messenger": "Write on a messenger",
     "joinCallHeading": "You can change a life",
     "joinAdoptTitle": "Take a friend home",

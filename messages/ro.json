@@ -151,6 +151,8 @@
     "descriptionFallback": "Contacte și informații despre adăpostul „{name}”.",
     "city": "Oraș:",
     "call": "Sunați: {phone}",
+    "phoneNote": "Acesta este numărul pentru apeluri și mesaje pe Viber.",
+    "email": "Scrieți-ne pe e-mail: {email}",
     "messenger": "Scrieți adăpostului pe messenger",
     "joinCallHeading": "Poți schimba o viață",
     "joinAdoptTitle": "Adoptă un prieten",

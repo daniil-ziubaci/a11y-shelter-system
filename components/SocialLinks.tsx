@@ -1,12 +1,22 @@
 import { getTranslations } from "next-intl/server";
-import { siInstagram, siTelegram, siViber } from "simple-icons";
+import {
+  siInstagram,
+  siFacebook,
+  siWhatsapp,
+  siViber,
+  siTelegram,
+} from "simple-icons";
 
 export async function SocialLinks({
   instagram,
+  facebook,
+  whatsapp,
   viber,
   telegram,
 }: {
   instagram: string | null;
+  facebook: string | null;
+  whatsapp: string | null;
   viber: string | null;
   telegram: string | null;
 }) {
@@ -18,6 +28,13 @@ export async function SocialLinks({
       color: siInstagram.hex,
       url: instagram,
     },
+    {
+      name: "Facebook",
+      icon: siFacebook,
+      color: siFacebook.hex,
+      url: facebook,
+    },
+    { name: "WhatsApp", icon: siWhatsapp, color: "128C7E", url: whatsapp },
     { name: "Viber", icon: siViber, color: siViber.hex, url: viber },
     { name: "Telegram", icon: siTelegram, color: "1E84B6", url: telegram },
   ].flatMap((network) =>
