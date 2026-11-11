@@ -1,6 +1,6 @@
 import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
-import { localizeName } from "@/lib/transliterate";
+import { pickShelterName } from "@/lib/transliterate";
 import { localizeShelter } from "@/lib/localizeShelter";
 import { notFound } from "next/navigation";
 
@@ -20,6 +20,6 @@ export const getShelter = cache(async (slug: string, locale: string) => {
   }
   return {
     ...localizeShelter(data, locale),
-    name: localizeName(data.name, locale),
+    name: pickShelterName(data, locale),
   };
 });

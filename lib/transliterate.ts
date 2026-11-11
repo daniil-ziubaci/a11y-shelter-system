@@ -68,3 +68,14 @@ function transliterate(text: string): string {
 export function localizeName(name: string, locale: string): string {
   return locale === "ru" ? name : transliterate(name);
 }
+
+export function pickShelterName(
+  shelter: { name: string; name_en: string | null; name_ro: string | null },
+  locale: string,
+): string {
+  if (locale === "ru") return shelter.name;
+  if (locale === "ro") {
+    return shelter.name_ro ?? shelter.name_en ?? transliterate(shelter.name);
+  }
+  return shelter.name_en ?? transliterate(shelter.name);
+}
