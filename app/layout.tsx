@@ -16,6 +16,13 @@ if (!siteUrl) {
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
+  icons: {
+    icon: [
+      { url: "/icon.svg", type: "image/svg+xml" },
+      { url: "/favicon.ico", sizes: "32x32" },
+    ],
+    apple: "/apple-icon.png",
+  },
   title: "Приют для животных",
   description: "Каталог животных, которые ищут дом, и помощь приюту.",
 };
