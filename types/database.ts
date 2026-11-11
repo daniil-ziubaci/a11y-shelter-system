@@ -338,6 +338,9 @@ export type Database = {
           paypal_email: string | null;
           donation_text: string | null;
           contact_email: string | null;
+          name_en: string | null;
+          name_ro: string | null;
+          brand_path: string | null;
           is_published: boolean;
           content_language: string;
           created_at: string;
@@ -367,6 +370,9 @@ export type Database = {
           paypal_email?: string | null;
           donation_text?: string | null;
           contact_email?: string | null;
+          name_en?: string | null;
+          name_ro?: string | null;
+          brand_path?: string | null;
           is_published?: boolean;
           content_language?: string;
           created_at?: string;
@@ -396,6 +402,9 @@ export type Database = {
           paypal_email?: string | null;
           donation_text?: string | null;
           contact_email?: string | null;
+          name_en?: string | null;
+          name_ro?: string | null;
+          brand_path?: string | null;
           is_published?: boolean;
           content_language?: string;
           created_at?: string;
