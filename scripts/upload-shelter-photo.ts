@@ -3,7 +3,9 @@ import type { Database } from "@/types/database";
 import { createClient } from "@supabase/supabase-js";
 import { readFile } from "node:fs/promises";
 import { basename } from "node:path";
-import { processPhoto } from "../lib/processPhoto.ts";
+import { previewCopyOf } from "../lib/photoUrls.ts";
+import { makePreviewJpeg } from "./lib/previewImage.ts";
+import { processPhoto } from "./lib/processPhoto.ts";
 
 const url = process.env.SUPABASE_URL;
 const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -63,6 +65,18 @@ const { error: uploadError } = await supabase.storage
 
 if (uploadError) {
   console.error(`Не удалось загрузить файл: ${uploadError.message}`);
+  process.exit(1);
+}
+
+const { error: previewError } = await supabase.storage
+  .from("pet-photos")
+  .upload(previewCopyOf(photoPath), await makePreviewJpeg(processed), {
+    contentType: "image/jpeg",
+    cacheControl: "31536000",
+  });
+
+if (previewError) {
+  console.error(`Не удалось загрузить превью: ${previewError.message}`);
   process.exit(1);
 }
 

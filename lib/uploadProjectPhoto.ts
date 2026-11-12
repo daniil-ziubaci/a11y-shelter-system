@@ -1,5 +1,5 @@
+import { checkPhoto } from "@/lib/checkPhoto";
 import { createClient } from "@/lib/supabase/server";
-import { processPhoto } from "@/lib/processPhoto";
 
 type UploadResult = { ok: true; path: string } | { ok: false; error: string };
 
@@ -8,19 +8,20 @@ export async function uploadProjectPhoto(
   shelterId: string,
   file: File,
 ): Promise<UploadResult> {
-  const processed = await processPhoto(file);
-  if (!processed) {
+  const photo = await checkPhoto(file, { maxSide: 1600 });
+  if (!photo) {
     return {
       ok: false,
-      error: "Не удалось обработать фото. Подойдёт JPEG, PNG или WebP.",
+      error:
+        "Фото не подготовилось. Выберите его заново и дождитесь надписи «Выбрано».",
     };
   }
 
-  const path = `${shelterId}/projects/${crypto.randomUUID()}.webp`;
+  const path = `${shelterId}/projects/${crypto.randomUUID()}.${photo.extension}`;
   const { error } = await supabase.storage
     .from("pet-photos")
-    .upload(path, processed, {
-      contentType: "image/webp",
+    .upload(path, photo.bytes, {
+      contentType: photo.contentType,
       cacheControl: "31536000",
     });
   if (error) {

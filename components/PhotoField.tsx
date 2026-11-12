@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useFormStatus } from "react-dom";
 import { useEffect, useRef, useState } from "react";
 import { hintClass, labelClass } from "@/lib/formClasses";
-import { resizePhoto } from "@/lib/resizeImage";
+import { preparePhotos } from "@/lib/resizeImage";
 
 type Preview = { url: string; name: string; size: number };
 
@@ -15,6 +15,7 @@ export function PhotoField({
   hint,
   currentUrl,
   required,
+  copies = false,
 }: {
   id: string;
   name: string;
@@ -22,9 +23,14 @@ export function PhotoField({
   hint: string;
   currentUrl?: string | null;
   required?: boolean;
+  /** Also prepare the card copy and the link preview (pet photos). */
+  copies?: boolean;
 }) {
   const [preview, setPreview] = useState<Preview | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const cardRef = useRef<HTMLInputElement>(null);
+  const previewRef = useRef<HTMLInputElement>(null);
+  const [failed, setFailed] = useState(false);
   const { pending } = useFormStatus();
   const [preparing, setPreparing] = useState(false);
 
@@ -41,7 +47,10 @@ export function PhotoField({
     if (!form) {
       return;
     }
-    const clear = () => setPreview(null);
+    const clear = () => {
+      setPreview(null);
+      setFailed(false);
+    };
     form.addEventListener("reset", clear);
     return () => form.removeEventListener("reset", clear);
   }, []);
@@ -58,6 +67,11 @@ export function PhotoField({
     status = `Выбрано: ${preview.name}, ${megabytes} МБ. После сохранения это фото заменит текущее.`;
   } else if (currentUrl) {
     status = "Сейчас загружено это фото.";
+  }
+
+  if (failed) {
+    status =
+      "Не удалось подготовить фото. Попробуйте другой снимок в формате JPEG, PNG или WebP.";
   }
 
   if (preparing) {
@@ -97,23 +111,41 @@ export function PhotoField({
           const original = input.files?.[0];
           if (!original) {
             setPreview(null);
+            setFailed(false);
             return;
           }
           setPreparing(true);
+          setFailed(false);
           input.setCustomValidity("Подождите, фото ещё готовится.");
-          const file = await resizePhoto(original).catch(() => original);
-          const transfer = new DataTransfer();
-          transfer.items.add(file);
-          input.files = transfer.files;
+          const prepared = await preparePhotos(original, copies).catch(
+            () => null,
+          );
           input.setCustomValidity("");
-          setPreview({
-            url: URL.createObjectURL(file),
-            name: file.name,
-            size: file.size,
-          });
           setPreparing(false);
+          if (!prepared) {
+            input.value = "";
+            setFiles(cardRef.current, null);
+            setFiles(previewRef.current, null);
+            setPreview(null);
+            setFailed(true);
+            return;
+          }
+          setFiles(input, prepared.full);
+          setFiles(cardRef.current, prepared.card);
+          setFiles(previewRef.current, prepared.preview);
+          setPreview({
+            url: URL.createObjectURL(prepared.full),
+            name: prepared.full.name,
+            size: prepared.full.size,
+          });
         }}
       />
+      {copies && (
+        <>
+          <input ref={cardRef} name={`${name}Card`} type="file" hidden />
+          <input ref={previewRef} name={`${name}Preview`} type="file" hidden />
+        </>
+      )}
       <label
         htmlFor={id}
         className="flex h-10 cursor-pointer items-center justify-center self-start rounded-lg border border-(--border-strong) bg-(--surface) px-4 font-medium peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-(--focus)"
@@ -125,4 +157,17 @@ export function PhotoField({
       </p>
     </div>
   );
+}
+
+function setFiles(input: HTMLInputElement | null, file: File | null) {
+  if (!input) {
+    return;
+  }
+  if (!file) {
+    input.value = "";
+    return;
+  }
+  const transfer = new DataTransfer();
+  transfer.items.add(file);
+  input.files = transfer.files;
 }

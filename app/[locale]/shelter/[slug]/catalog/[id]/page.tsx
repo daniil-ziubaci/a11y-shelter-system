@@ -1,3 +1,4 @@
+import { previewCopyOf } from "@/lib/photoUrls";
 import { toPet } from "@/lib/toPet";
 import { ContentLanguageNote } from "@/components/ContentLanguageNote";
 import { toContentLanguage } from "@/lib/contentLanguage";
@@ -58,7 +59,7 @@ export async function generateMetadata({
       title,
       description,
       siteName: shelter.name,
-      image: { url: `/api/og/pet/${id}`, alt: pet.photo.alt },
+      image: { url: previewCopyOf(pet.photo.url), alt: pet.photo.alt },
     }),
   };
 }
