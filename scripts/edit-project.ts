@@ -26,6 +26,7 @@ const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 type Options = {
   title?: string;
   description?: string;
+  photoAlt?: string;
   pinned?: boolean;
   toTop: boolean;
   apply: boolean;
@@ -33,7 +34,7 @@ type Options = {
 
 function usage(): never {
   console.error(
-    'Использование: node --env-file=.env.coordinator scripts/edit-project.ts slug "текущее название" [--title "…"] [--description "…"] [--to-top] [--pin | --unpin] [--apply]',
+    'Использование: node --env-file=.env.coordinator scripts/edit-project.ts slug "текущее название" [--title "…"] [--description "…"] [--photo-alt "…"] [--to-top] [--pin | --unpin] [--apply]',
   );
   process.exit(1);
 }
@@ -46,6 +47,8 @@ for (let i = 0; i < rest.length; i += 1) {
   const arg = rest[i];
   if (arg === "--apply") options.apply = true;
   else if (arg === "--to-top") options.toTop = true;
+  else if (arg === "--photo-alt" && rest[i + 1] !== undefined)
+    options.photoAlt = rest[++i].trim();
   else if (arg === "--pin") options.pinned = true;
   else if (arg === "--unpin") options.pinned = false;
   else if (arg === "--title" && rest[i + 1] !== undefined)
@@ -57,11 +60,12 @@ for (let i = 0; i < rest.length; i += 1) {
 if (
   options.title === undefined &&
   options.description === undefined &&
+  options.photoAlt === undefined &&
   options.pinned === undefined &&
   !options.toTop
 ) {
   console.error(
-    "Не указано, что менять: --title, --description, --to-top, --pin или --unpin.",
+    "Не указано, что менять: --title, --description, --photo-alt, --to-top, --pin или --unpin.",
   );
   process.exit(1);
 }
@@ -79,9 +83,16 @@ if (
 ) {
   problems.push("Описание должно быть от 1 до 1000 символов.");
 }
+if (
+  options.photoAlt !== undefined &&
+  (options.photoAlt.length < 1 || options.photoAlt.length > 200)
+) {
+  problems.push("Описание фото должно быть от 1 до 200 символов.");
+}
 for (const [label, text] of [
   ["название", options.title],
   ["описание", options.description],
+  ["описание фото", options.photoAlt],
 ] as const) {
   const found = text ? findContact(text) : null;
   if (found) {
@@ -113,7 +124,9 @@ if (shelterError || !shelter) {
 
 const { data: projects, error: projectsError } = await supabase
   .from("projects")
-  .select("id, title, description, is_pinned, status, is_archived, created_at")
+  .select(
+    "id, title, description, photo_path, photo_alt, progress_total, progress_done, progress_unit, is_pinned, status, is_archived, created_at",
+  )
   .eq("shelter_id", shelter.id)
   .order("created_at");
 if (projectsError || !projects) {
@@ -141,9 +154,17 @@ if (matches.length !== 1) {
   process.exit(1);
 }
 
+// Texts saved from Windows keep "\r\n"; a bare "\r" would make the
+// terminal overwrite the line, so show line breaks as they will appear.
+const quote = (text: string) =>
+  text.replace(/\r\n?/g, "\n").replace(/^/gm, "    | ");
+
 const project = matches[0];
 const changes: Partial<
-  Pick<typeof project, "title" | "description" | "is_pinned" | "created_at">
+  Pick<
+    typeof project,
+    "title" | "description" | "photo_alt" | "is_pinned" | "created_at"
+  >
 > = {};
 console.log(`Проект «${project.title}» в «${shelter.name}»:`);
 if (options.title !== undefined && options.title !== project.title) {
@@ -156,13 +177,34 @@ if (
 ) {
   changes.description = options.description;
   console.log("  описание было:");
-  console.log(project.description.replace(/^/gm, "    | "));
+  console.log(quote(project.description));
   console.log("  описание станет:");
-  console.log(options.description.replace(/^/gm, "    | "));
+  console.log(quote(options.description));
 }
 if (changes.description === undefined) {
   console.log("  описание (без изменений):");
-  console.log(project.description.replace(/^/gm, "    | "));
+  console.log(quote(project.description));
+}
+if (project.photo_path) {
+  if (
+    options.photoAlt !== undefined &&
+    options.photoAlt !== project.photo_alt
+  ) {
+    changes.photo_alt = options.photoAlt;
+    console.log(
+      `  описание фото: «${project.photo_alt}» → «${options.photoAlt}»`,
+    );
+  } else {
+    console.log(`  описание фото (без изменений): «${project.photo_alt}»`);
+  }
+} else if (options.photoAlt !== undefined) {
+  console.error("У проекта нет фото, описание фото задать нельзя.");
+  process.exit(1);
+}
+if (project.progress_total !== null) {
+  console.log(
+    `  прогресс (без изменений): ${project.progress_done} из ${project.progress_total} ${project.progress_unit}`,
+  );
 }
 if (options.pinned !== undefined && options.pinned !== project.is_pinned) {
   changes.is_pinned = options.pinned;
