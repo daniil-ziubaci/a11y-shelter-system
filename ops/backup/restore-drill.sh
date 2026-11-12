@@ -11,6 +11,9 @@
 # Environment:
 #   BACKUP_PASSPHRASE  the passphrase the backups are encrypted with
 #   SUPABASE_CLI       how to call the Supabase CLI (default: supabase)
+#   SUPABASE_URL       the live project; its storage version is used for the
+#                      throwaway Supabase so it matches what a new project gets
+#   STORAGE_VERSION    use this storage version instead (for example v1.89.13)
 
 set -euo pipefail
 
@@ -42,6 +45,17 @@ mkdir -p "$work/project"
 (
   cd "$work/project"
   $supabase init > /dev/null
+  version="${STORAGE_VERSION:-}"
+  if [ -z "$version" ] && [ -n "${SUPABASE_URL:-}" ]; then
+    version="$(curl -fsS --max-time 20 "$SUPABASE_URL/storage/v1/version" || true)"
+  fi
+  if [[ "$version" =~ ^v?[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+    mkdir -p supabase/.temp
+    echo "v${version#v}" > supabase/.temp/storage-version
+    echo "Storage version: v${version#v} (same as the live project)"
+  else
+    echo "Storage version: CLI default (live version unknown)"
+  fi
   $supabase start -x studio,imgproxy,edge-runtime,logflare,vector,realtime,supavisor,mailpit,postgres-meta > /dev/null
 )
 env_file="$work/supabase.env"

@@ -39,6 +39,90 @@ if [ -s "$work/roles.log" ]; then
   cat "$work/roles.log" >&2
 fi
 
+echo "== Fitting the data to Supabase's own schemas in the target"
+# Supabase updates its own schemas (auth, storage, ...) on its own schedule,
+# so the target can be older or newer than the project the backup came from:
+# a table or column that existed there may be missing here. The site's data
+# (schema public) is never changed. In other schemas, an EMPTY missing table
+# or a missing column that is NULL in every row is left out with a warning;
+# anything that would lose data stops the restore instead.
+psql "$TARGET_DB_URL" --no-psqlrc -At -F $'\t' > "$work/target.tsv" <<'SQL'
+select n.nspname || '.' || c.relname,
+       coalesce(string_agg(a.attname, ',' order by a.attnum), '')
+from pg_class c
+join pg_namespace n on n.oid = c.relnamespace
+left join pg_attribute a
+  on a.attrelid = c.oid and a.attnum > 0 and not a.attisdropped
+where c.relkind in ('r', 'p', 'S') and n.nspname <> 'public'
+group by 1
+SQL
+python3 - "$work/data.sql" "$work/target.tsv" "$work/data.fit.sql" <<'PY'
+import re
+import sys
+
+data_path, target_path, out_path = sys.argv[1:4]
+target = {}
+for line in open(target_path, encoding="utf-8"):
+    name, _, columns = line.rstrip("\n").partition("\t")
+    target[name] = set(filter(None, columns.split(",")))
+
+copy_re = re.compile(r'^COPY "([^"]+)"\."([^"]+)" \((.*)\) FROM stdin;$')
+setval_re = re.compile(r"""^SELECT pg_catalog\.setval\('"([^"]+)"\."([^"]+)"'""")
+lines = open(data_path, encoding="utf-8").read().split("\n")
+out = []
+problems = []
+i = 0
+while i < len(lines):
+    line = lines[i]
+    seq = setval_re.match(line)
+    if seq and seq.group(1) != "public" and f"{seq.group(1)}.{seq.group(2)}" not in target:
+        print(f"Warning: skipped counter of missing {seq.group(1)}.{seq.group(2)}", file=sys.stderr)
+        i += 1
+        continue
+    copy = copy_re.match(line)
+    if not copy or copy.group(1) == "public":
+        out.append(line)
+        i += 1
+        continue
+    schema, table = copy.group(1), copy.group(2)
+    columns = [c.strip().strip('"') for c in copy.group(3).split(",")]
+    end = lines.index("\\.", i + 1)
+    rows = lines[i + 1:end]
+    name = f"{schema}.{table}"
+    if name not in target:
+        if rows:
+            problems.append(f"{name} is missing in the target but has {len(rows)} rows in the backup")
+        else:
+            print(f"Warning: skipped empty {name}, which the target does not have", file=sys.stderr)
+        i = end + 1
+        continue
+    keep = [n for n, c in enumerate(columns) if c in target[name]]
+    if len(keep) == len(columns):
+        out.extend(lines[i:end + 1])
+        i = end + 1
+        continue
+    dropped = [columns[n] for n in range(len(columns)) if n not in keep]
+    split_rows = [row.split("\t") for row in rows]
+    lossy = [c for n, c in enumerate(columns) if n not in keep and any(r[n] != "\\N" for r in split_rows)]
+    if lossy:
+        problems.append(f"{name}: target has no column(s) {', '.join(lossy)}, which hold data in the backup")
+        i = end + 1
+        continue
+    print(f"Warning: {name}: left out empty column(s) {', '.join(dropped)} the target does not have", file=sys.stderr)
+    out.append(f'COPY "{schema}"."{table}" (' + ", ".join(f'"{columns[n]}"' for n in keep) + ") FROM stdin;")
+    out.extend("\t".join(r[n] for n in keep) for r in split_rows)
+    out.append("\\.")
+    i = end + 1
+
+if problems:
+    print("The backup does not fit this Supabase project without losing data:", file=sys.stderr)
+    for problem in problems:
+        print(f"  - {problem}", file=sys.stderr)
+    print("Restore into a Supabase project at least as new as the one backed up.", file=sys.stderr)
+    sys.exit(1)
+open(out_path, "w", encoding="utf-8").write("\n".join(out))
+PY
+
 echo "== Restoring schema and data (all or nothing)"
 # A new Supabase project grants ALL on every new table, function and sequence
 # in public to anon and authenticated (default privileges of postgres). The
@@ -54,7 +138,7 @@ PGOPTIONS='-c client_min_messages=warning' \
   --command 'ALTER DEFAULT PRIVILEGES FOR ROLE postgres IN SCHEMA public REVOKE ALL ON SEQUENCES FROM anon, authenticated' \
   --file "$work/schema.sql" \
   --command 'SET session_replication_role = replica' \
-  --file "$work/data.sql" \
+  --file "$work/data.fit.sql" \
   --command 'SET session_replication_role = origin' \
   --file "$work/storage_policies.sql" > /dev/null
 

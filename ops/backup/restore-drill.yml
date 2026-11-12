@@ -28,4 +28,5 @@ jobs:
       - name: Restore the latest backup into a throwaway Supabase and check it
         env:
           BACKUP_PASSPHRASE: ${{ secrets.BACKUP_PASSPHRASE }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
         run: ./restore-drill.sh
