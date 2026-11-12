@@ -1,0 +1,24 @@
+// Cloudflare Workers configuration for the site (built with OpenNext).
+// Deploys come from Workers Builds connected to this repository; variables
+// and secrets live in the Cloudflare dashboard (keep_vars keeps them).
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "a11y-shelter-system",
+  "main": "cloudflare/worker.js",
+  "compatibility_date": "2026-11-11",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  },
+  "keep_vars": true,
+  "observability": {
+    "enabled": true
+  },
+  // Same jobs Vercel ran (vercel.json): nightly translation and a daily
+  // request to the database, so Supabase Free does not pause the project.
+  // cloudflare/worker.js maps each schedule to its route.
+  "triggers": {
+    "crons": ["0 2 * * *", "0 14 * * *"]
+  }
+}
