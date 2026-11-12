@@ -18,6 +18,12 @@
     "statsLooking": "Looking for a home",
     "statsAdopted": "Adopted"
   },
+  "Shelters": {
+    "title": "Animal shelters",
+    "description": "Animal shelters: dogs and cats looking for a home and how you can help each shelter.",
+    "heading": "Animal shelters",
+    "intro": "Choose a shelter to find a friend or see how you can help."
+  },
   "Footer": {
     "contactHeading": "How to contact the shelter",
     "contactIntro": "Call or write to the shelter volunteer.",

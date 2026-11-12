@@ -18,6 +18,12 @@
     "statsLooking": "Caută o casă",
     "statsAdopted": "Adoptate"
   },
+  "Shelters": {
+    "title": "Adăposturi pentru animale",
+    "description": "Adăposturi pentru animale: câini și pisici care caută o casă și cum puteți ajuta fiecare adăpost.",
+    "heading": "Adăposturi pentru animale",
+    "intro": "Alegeți un adăpost pentru a găsi un prieten sau pentru a afla cum puteți ajuta."
+  },
   "Footer": {
     "contactHeading": "Cum poți contacta adăpostul",
     "contactIntro": "Sună sau scrie voluntarului adăpostului.",
