@@ -261,7 +261,7 @@
     },
     "recipients": {
       "heading": "Cine mai primește datele",
-      "text": "Site-ul funcționează pe serviciile Vercel (aplicația) și Supabase (baza de date, autentificarea și fișierele). Baza de date se află în Uniunea Europeană, la Frankfurt. Ambele companii sunt americane, de aceea condițiile de prelucrare a datelor și posibilul transfer în afara UE sunt încă în curs de verificare; rezultatul va apărea aici. Dacă vor fi conectate alte servicii, de exemplu urmărirea erorilor, le vom adăuga în această listă."
+      "text": "Site-ul funcționează pe serviciile Cloudflare (aplicația) și Supabase (baza de date, autentificarea și fișierele). Baza de date se află în Uniunea Europeană, la Frankfurt. Ambele companii sunt americane, de aceea condițiile de prelucrare a datelor și posibilul transfer în afara UE sunt încă în curs de verificare; rezultatul va apărea aici. Dacă vor fi conectate alte servicii, de exemplu urmărirea erorilor, le vom adăuga în această listă."
     },
     "operator": {
       "heading": "Cine răspunde de date",

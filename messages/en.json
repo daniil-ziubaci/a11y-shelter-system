@@ -261,7 +261,7 @@
     },
     "recipients": {
       "heading": "Who else receives data",
-      "text": "The site runs on Vercel (the application) and Supabase (database, sign-in and files). The database is in the European Union, in Frankfurt. Both companies are American, so their data-processing terms and any transfer outside the EU are still being checked; the result will appear here. If other services are connected, for example error tracking, we will add them to this list."
+      "text": "The site runs on Cloudflare (the application) and Supabase (database, sign-in and files). The database is in the European Union, in Frankfurt. Both companies are American, so their data-processing terms and any transfer outside the EU are still being checked; the result will appear here. If other services are connected, for example error tracking, we will add them to this list."
     },
     "operator": {
       "heading": "Who is responsible for the data",
