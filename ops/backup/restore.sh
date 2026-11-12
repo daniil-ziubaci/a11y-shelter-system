@@ -46,7 +46,8 @@ echo "== Restoring schema and data (all or nothing)"
 # revokes, so restored objects would end up with wider access than the
 # original. Turning the defaults off first makes the restored grants exact;
 # schema.sql sets the standard defaults again at its end.
-psql "$TARGET_DB_URL" --no-psqlrc --single-transaction \
+PGOPTIONS='-c client_min_messages=warning' \
+  psql "$TARGET_DB_URL" --no-psqlrc --single-transaction \
   --variable ON_ERROR_STOP=1 \
   --command 'ALTER DEFAULT PRIVILEGES FOR ROLE postgres IN SCHEMA public REVOKE ALL ON TABLES FROM anon, authenticated' \
   --command 'ALTER DEFAULT PRIVILEGES FOR ROLE postgres IN SCHEMA public REVOKE ALL ON FUNCTIONS FROM anon, authenticated' \
