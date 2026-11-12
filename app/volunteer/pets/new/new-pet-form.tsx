@@ -54,8 +54,8 @@ export function NewPetForm() {
           defaultValue={state?.values.enclosure}
         />
         <p id="enclosure-hint" className={hintClass}>
-          Коротко, например: 3 или необязательно. Видно только волонтёрам, на сайте
-          не показывается.
+          Коротко, например: 3 или необязательно. Видно только волонтёрам, на
+          сайте не показывается.
         </p>
       </div>
 
@@ -186,6 +186,7 @@ export function NewPetForm() {
       </fieldset>
 
       <PhotoField
+        copies
         id="photo"
         name="photo"
         label="Фото"

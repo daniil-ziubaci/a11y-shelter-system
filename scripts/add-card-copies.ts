@@ -1,7 +1,7 @@
 import type { Database } from "@/types/database";
 import { createClient } from "@supabase/supabase-js";
 import { cardCopyOf } from "../lib/photoUrls.ts";
-import { makeCardCopy } from "../lib/processPhoto.ts";
+import { makeCardCopy } from "./lib/processPhoto.ts";
 
 const url = process.env.SUPABASE_URL;
 const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;

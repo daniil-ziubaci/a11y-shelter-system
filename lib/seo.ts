@@ -1,3 +1,4 @@
+import { previewCopyOf, publicPhotoUrl } from "@/lib/photoUrls";
 import { routing } from "@/i18n/routing";
 import type { Metadata } from "next";
 
@@ -72,5 +73,8 @@ export function getShelterPreviewImage(shelter: {
   if (!shelter.photo_path || !shelter.photo_alt) {
     return undefined;
   }
-  return { url: `/api/og/shelter/${shelter.slug}`, alt: shelter.photo_alt };
+  return {
+    url: publicPhotoUrl(previewCopyOf(shelter.photo_path)),
+    alt: shelter.photo_alt,
+  };
 }

@@ -4,7 +4,6 @@ import { redirect } from "next/navigation";
 import { after } from "next/server";
 import { translatePet } from "@/lib/translatePet";
 import { createClient } from "@/lib/supabase/server";
-import { processPhoto } from "@/lib/processPhoto";
 import { uploadPetPhoto } from "@/lib/uploadPetPhoto";
 import { parsePetFields } from "@/lib/parsePetFields";
 import { saveEnclosure } from "@/lib/saveEnclosure";
@@ -67,21 +66,20 @@ export async function createPet(
   if (!(photo instanceof File) || photo.size === 0) {
     return fail("Выберите фото животного.");
   }
-  const processed = await processPhoto(photo);
-  if (!processed) {
-    return fail("Не удалось обработать фото. Загрузите JPEG, PNG или WebP.");
-  }
 
   const petId = crypto.randomUUID();
-  const photoPath = `${membership.shelter_id}/animals/${petId}/photo.webp`;
-  const uploaded = await uploadPetPhoto(supabase, photoPath, processed);
-  if (!uploaded) {
-    return fail("Не удалось загрузить фото. Попробуйте ещё раз.");
+  const uploaded = await uploadPetPhoto(
+    supabase,
+    `${membership.shelter_id}/animals/${petId}/photo`,
+    formData,
+  );
+  if (!uploaded.ok) {
+    return fail(uploaded.error);
   }
 
   const { data: urlData } = supabase.storage
     .from("pet-photos")
-    .getPublicUrl(photoPath);
+    .getPublicUrl(uploaded.path);
   const { error: insertError } = await supabase.from("pets").insert({
     id: petId,
     shelter_id: membership.shelter_id,

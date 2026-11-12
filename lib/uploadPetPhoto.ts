@@ -1,36 +1,48 @@
-import { cardCopyOf } from "@/lib/photoUrls";
-import { makeCardCopy } from "@/lib/processPhoto";
+import { checkPhoto } from "@/lib/checkPhoto";
 import { createClient } from "@/lib/supabase/server";
 
 type Supabase = Awaited<ReturnType<typeof createClient>>;
 
-const UPLOAD_OPTIONS = {
-  contentType: "image/webp",
-  cacheControl: "31536000",
-};
+type UploadResult = { ok: true; path: string } | { ok: false; error: string };
 
+const NOT_PREPARED =
+  "Фото не подготовилось. Выберите его заново и дождитесь надписи «Выбрано».";
+
+// basePath has no extension: it is added from the format the browser produced.
+// The card copy and the link preview are stored next to the photo
+// (see cardCopyOf and previewCopyOf in lib/photoUrls.ts).
 export async function uploadPetPhoto(
   supabase: Supabase,
-  photoPath: string,
-  full: Buffer,
-) {
-  const card = await makeCardCopy(full).catch(() => null);
-  if (!card) {
-    return false;
+  basePath: string,
+  formData: FormData,
+): Promise<UploadResult> {
+  const full = await checkPhoto(formData.get("photo"), { maxSide: 1600 });
+  const card = await checkPhoto(formData.get("photoCard"), { maxSide: 800 });
+  const preview = await checkPhoto(formData.get("photoPreview"), {
+    maxSide: 1200,
+    formats: ["jpeg"],
+  });
+  if (!full || !card || !preview || card.format !== full.format) {
+    return { ok: false, error: NOT_PREPARED };
   }
+
   const bucket = supabase.storage.from("pet-photos");
-  const { error: fullError } = await bucket.upload(
-    photoPath,
-    full,
-    UPLOAD_OPTIONS,
-  );
-  if (fullError) {
-    return false;
+  const files = [
+    { path: `${basePath}.${full.extension}`, photo: full },
+    { path: `${basePath}-card.${card.extension}`, photo: card },
+    { path: `${basePath}-og.jpg`, photo: preview },
+  ];
+  for (const { path, photo } of files) {
+    const { error } = await bucket.upload(path, photo.bytes, {
+      contentType: photo.contentType,
+      cacheControl: "31536000",
+    });
+    if (error) {
+      return {
+        ok: false,
+        error: "Не удалось загрузить фото. Попробуйте ещё раз.",
+      };
+    }
   }
-  const { error: cardError } = await bucket.upload(
-    cardCopyOf(photoPath),
-    card,
-    UPLOAD_OPTIONS,
-  );
-  return !cardError;
+  return { ok: true, path: files[0].path };
 }

@@ -36,6 +36,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const sheltersWithProjects = new Set(projects.map((p) => p.shelter_id));
 
+  // With several shelters the root of each language lists them;
+  // with one it only redirects, so it is not a page of its own.
+  if (shelters.length > 1) {
+    paths.push("");
+  }
+
   for (const shelter of shelters) {
     const base = `/shelter/${shelter.slug}`;
     paths.push(base, `${base}/catalog`, `${base}/needs`, `${base}/about`);

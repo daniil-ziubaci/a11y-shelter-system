@@ -2,7 +2,6 @@
 
 import { parsePetFields } from "@/lib/parsePetFields";
 import { saveEnclosure } from "@/lib/saveEnclosure";
-import { processPhoto } from "@/lib/processPhoto";
 import { uploadPetPhoto } from "@/lib/uploadPetPhoto";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
@@ -59,18 +58,16 @@ export async function updatePet(
   const photo = formData.get("photo");
 
   if (photo instanceof File && photo.size > 0) {
-    const processed = await processPhoto(photo);
-    if (!processed) {
-      return fail("Не удалось обработать фото. Загрузите JPEG, PNG или WebP.");
+    const uploaded = await uploadPetPhoto(
+      supabase,
+      `${membership.shelter_id}/animals/${petId}/${crypto.randomUUID()}`,
+      formData,
+    );
+    if (!uploaded.ok) {
+      return fail(uploaded.error);
     }
 
-    const photoPath = `${membership.shelter_id}/animals/${petId}/${crypto.randomUUID()}.webp`;
-    const uploaded = await uploadPetPhoto(supabase, photoPath, processed);
-    if (!uploaded) {
-      return fail("Не удалось загрузить фото. Попробуйте ещё раз.");
-    }
-
-    photoUrl = supabase.storage.from("pet-photos").getPublicUrl(photoPath)
+    photoUrl = supabase.storage.from("pet-photos").getPublicUrl(uploaded.path)
       .data.publicUrl;
   }
   const { data: updated, error: updateError } = await supabase
