@@ -119,17 +119,41 @@ status="$(curl -s -o /dev/null -w '%{http_code}' -X POST "$api/rest/v1/shelters"
   -H "apikey: $ANON_KEY" -H "Content-Type: application/json" -d '{"slug":"drill","name":"drill"}')"
 check "$([ "$status" = 401 ] || [ "$status" = 403 ] && echo ok)" "anonymous insert is refused (HTTP $status)"
 
+# The photos the site used at backup time: storage.objects rows in the dump.
+python3 - "$work/dump/data.sql" > "$work/used.txt" <<'PY'
+import re
+import sys
+
+copy_re = re.compile(r'^COPY "storage"\."objects" \((.*)\) FROM stdin;$')
+lines = open(sys.argv[1], encoding="utf-8").read().split("\n")
+for i, line in enumerate(lines):
+    match = copy_re.match(line)
+    if not match:
+        continue
+    columns = [c.strip().strip('"') for c in match.group(1).split(",")]
+    bucket_at, name_at = columns.index("bucket_id"), columns.index("name")
+    for row in lines[i + 1:lines.index("\\.", i + 1)]:
+        fields = row.split("\t")
+        if fields[bucket_at] == "pet-photos":
+            name = re.sub(r"\\(.)", lambda m: {"t": "\t", "n": "\n"}.get(m.group(1), m.group(1)), fields[name_at])
+            print(name)
+    break
+PY
 total=0
 same=0
-while IFS= read -r -d '' file; do
-  name="${file#photos/}"
-  encoded="$(python3 -c 'import sys, urllib.parse; print(urllib.parse.quote(sys.argv[1]))' "$name")"
+while IFS= read -r name; do
+  [ -n "$name" ] || continue
   total=$((total + 1))
+  [ -f "photos/$name" ] || continue
+  encoded="$(python3 -c 'import sys, urllib.parse; print(urllib.parse.quote(sys.argv[1]))' "$name")"
   served="$(curl -fsS "$api/storage/v1/object/public/pet-photos/$encoded" | sha256sum | cut -d' ' -f1)" || served=""
-  stored="$(sha256sum "$file" | cut -d' ' -f1)"
+  stored="$(sha256sum "photos/$name" | cut -d' ' -f1)"
   [ "$served" = "$stored" ] && same=$((same + 1))
-done < <(find photos -type f ! -name '*.part' -print0)
-check "$([ "$total" -gt 0 ] && [ "$same" = "$total" ] && echo ok)" "photos served byte for byte: $same of $total"
+done < "$work/used.txt"
+check "$([ "$total" -gt 0 ] && [ "$same" = "$total" ] && echo ok)" "photos used by the site served byte for byte: $same of $total"
+kept="$(find photos -type f ! -name '*.part' | wc -l)"
+uploaded="$(sql "select count(*) from storage.objects where bucket_id = 'pet-photos'")"
+check "$([ "$uploaded" = "$total" ] && echo ok)" "storage holds only the used photos ($uploaded; photos/ keeps $kept, including deleted ones)"
 
 missing=0
 pets=0

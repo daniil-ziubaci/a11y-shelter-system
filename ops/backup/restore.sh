@@ -143,10 +143,42 @@ PGOPTIONS='-c client_min_messages=warning' \
   --file "$work/storage_policies.sql" > /dev/null
 
 echo "== Uploading photos"
+# Only the files that were in storage when the backup was made (the rows of
+# storage.objects in the dump). photos/ also keeps files deleted from the
+# site since, in case one was deleted by mistake; those are not uploaded.
+python3 - "$work/data.sql" > "$work/used.txt" <<'PY'
+import re
+import sys
+
+copy_re = re.compile(r'^COPY "storage"\."objects" \((.*)\) FROM stdin;$')
+lines = open(sys.argv[1], encoding="utf-8").read().split("\n")
+for i, line in enumerate(lines):
+    match = copy_re.match(line)
+    if not match:
+        continue
+    columns = [c.strip().strip('"') for c in match.group(1).split(",")]
+    bucket_at, name_at = columns.index("bucket_id"), columns.index("name")
+    for row in lines[i + 1:lines.index("\\.", i + 1)]:
+        fields = row.split("\t")
+        if fields[bucket_at] == "pet-photos":
+            name = re.sub(r"\\(.)", lambda m: {"t": "\t", "n": "\n"}.get(m.group(1), m.group(1)), fields[name_at])
+            print(name)
+    break
+PY
+used="$(wc -l < "$work/used.txt")"
+present="$(find "$photos" -type f ! -name '*.part' | wc -l)"
 total=0
 failed=0
-while IFS= read -r -d '' file; do
-  name="${file#"$photos"/}"
+missing=0
+while IFS= read -r name; do
+  [ -n "$name" ] || continue
+  total=$((total + 1))
+  file="$photos/$name"
+  if [ ! -f "$file" ]; then
+    echo "Missing in the backup: $name" >&2
+    missing=$((missing + 1))
+    continue
+  fi
   case "$name" in
     *.webp) type=image/webp ;;
     *.jpg | *.jpeg) type=image/jpeg ;;
@@ -156,7 +188,6 @@ while IFS= read -r -d '' file; do
     *) type=application/octet-stream ;;
   esac
   encoded="$(python3 -c 'import sys, urllib.parse; print(urllib.parse.quote(sys.argv[1]))' "$name")"
-  total=$((total + 1))
   if ! curl -fsS --retry 3 -o /dev/null -X POST \
     -H "Authorization: Bearer $TARGET_SERVICE_KEY" \
     -H "apikey: $TARGET_SERVICE_KEY" \
@@ -168,7 +199,8 @@ while IFS= read -r -d '' file; do
     echo "Could not upload: $name" >&2
     failed=$((failed + 1))
   fi
-done < <(find "$photos" -type f ! -name '*.part' -print0)
+done < "$work/used.txt"
 
-echo "Photos uploaded: $((total - failed)) of $total"
-[ "$failed" -eq 0 ]
+echo "Photos uploaded: $((total - failed - missing)) of $used used by the site"
+echo "Not uploaded (deleted from the site earlier, kept in photos/): $((present - (total - missing)))"
+[ "$failed" -eq 0 ] && [ "$missing" -eq 0 ]
