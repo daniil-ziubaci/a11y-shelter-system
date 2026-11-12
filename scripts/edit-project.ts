@@ -1,6 +1,11 @@
 import type { Database } from "@/types/database";
 import { createClient } from "@supabase/supabase-js";
-import { findContact } from "../lib/findContact.ts";
+import {
+  checkProjectTexts,
+  parseProgress,
+  readMultiline,
+  type Progress,
+} from "./lib/projectTexts.ts";
 
 // Coordinator edits of a project: new title, new description, order, pin.
 //
@@ -19,6 +24,8 @@ import { findContact } from "../lib/findContact.ts";
 //
 //   node --env-file=.env.coordinator scripts/edit-project.ts live-life "Тёплые вольеры" --title "Тёплые будки" --to-top
 //   node --env-file=.env.coordinator scripts/edit-project.ts live-life "Ремонт" --description "Что делаем:\n- Будки" --apply
+//   node --env-file=.env.coordinator scripts/edit-project.ts live-life "Тёплые будки" --progress "5/20 будок"
+//   node --env-file=.env.coordinator scripts/edit-project.ts live-life "Тёплые будки" --no-progress
 
 const url = process.env.SUPABASE_URL;
 const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -27,6 +34,7 @@ type Options = {
   title?: string;
   description?: string;
   photoAlt?: string;
+  progress?: Progress | null;
   pinned?: boolean;
   toTop: boolean;
   apply: boolean;
@@ -34,7 +42,7 @@ type Options = {
 
 function usage(): never {
   console.error(
-    'Использование: node --env-file=.env.coordinator scripts/edit-project.ts slug "текущее название" [--title "…"] [--description "…"] [--photo-alt "…"] [--to-top] [--pin | --unpin] [--apply]',
+    'Использование: node --env-file=.env.coordinator scripts/edit-project.ts slug "текущее название" [--title "…"] [--description "…"] [--photo-alt "…"] [--progress "5/20 будок" | --no-progress] [--to-top] [--pin | --unpin] [--apply]',
   );
   process.exit(1);
 }
@@ -49,58 +57,42 @@ for (let i = 0; i < rest.length; i += 1) {
   else if (arg === "--to-top") options.toTop = true;
   else if (arg === "--photo-alt" && rest[i + 1] !== undefined)
     options.photoAlt = rest[++i].trim();
-  else if (arg === "--pin") options.pinned = true;
+  else if (arg === "--no-progress") options.progress = null;
+  else if (arg === "--progress" && rest[i + 1] !== undefined) {
+    const progress = parseProgress(rest[++i]);
+    if (typeof progress === "string") {
+      console.error(progress);
+      process.exit(1);
+    }
+    options.progress = progress;
+  } else if (arg === "--pin") options.pinned = true;
   else if (arg === "--unpin") options.pinned = false;
   else if (arg === "--title" && rest[i + 1] !== undefined)
     options.title = rest[++i].trim();
   else if (arg === "--description" && rest[i + 1] !== undefined)
-    options.description = rest[++i].replace(/\\n/g, "\n").trim();
+    options.description = readMultiline(rest[++i]);
   else usage();
 }
 if (
   options.title === undefined &&
   options.description === undefined &&
   options.photoAlt === undefined &&
+  options.progress === undefined &&
   options.pinned === undefined &&
   !options.toTop
 ) {
   console.error(
-    "Не указано, что менять: --title, --description, --photo-alt, --to-top, --pin или --unpin.",
+    "Не указано, что менять: --title, --description, --photo-alt, --progress, --no-progress, --to-top, --pin или --unpin.",
   );
   process.exit(1);
 }
 
-const problems: string[] = [];
-if (
-  options.title !== undefined &&
-  (options.title.length < 1 || options.title.length > 120)
-) {
-  problems.push("Название должно быть от 1 до 120 символов.");
-}
-if (
-  options.description !== undefined &&
-  (options.description.length < 1 || options.description.length > 1000)
-) {
-  problems.push("Описание должно быть от 1 до 1000 символов.");
-}
-if (
-  options.photoAlt !== undefined &&
-  (options.photoAlt.length < 1 || options.photoAlt.length > 200)
-) {
-  problems.push("Описание фото должно быть от 1 до 200 символов.");
-}
-for (const [label, text] of [
-  ["название", options.title],
-  ["описание", options.description],
-  ["описание фото", options.photoAlt],
-] as const) {
-  const found = text ? findContact(text) : null;
-  if (found) {
-    problems.push(
-      `Уберите из поля «${label}» контакт «${found.match}»: контакты приюта показываются только внизу страницы.`,
-    );
-  }
-}
+const problems = checkProjectTexts({
+  title: options.title,
+  description: options.description,
+  photoAlt: options.photoAlt,
+  progressUnit: options.progress?.unit,
+});
 if (problems.length > 0) {
   for (const problem of problems) console.error(problem);
   process.exit(1);
@@ -163,7 +155,14 @@ const project = matches[0];
 const changes: Partial<
   Pick<
     typeof project,
-    "title" | "description" | "photo_alt" | "is_pinned" | "created_at"
+    | "title"
+    | "description"
+    | "photo_alt"
+    | "progress_total"
+    | "progress_done"
+    | "progress_unit"
+    | "is_pinned"
+    | "created_at"
   >
 > = {};
 console.log(`Проект «${project.title}» в «${shelter.name}»:`);
@@ -201,10 +200,31 @@ if (project.photo_path) {
   console.error("У проекта нет фото, описание фото задать нельзя.");
   process.exit(1);
 }
-if (project.progress_total !== null) {
-  console.log(
-    `  прогресс (без изменений): ${project.progress_done} из ${project.progress_total} ${project.progress_unit}`,
-  );
+const progressText = (
+  done: number | null,
+  total: number | null,
+  unit: string | null,
+) => (total === null ? "нет" : `${done} из ${total} ${unit}`);
+const currentProgress = progressText(
+  project.progress_done,
+  project.progress_total,
+  project.progress_unit,
+);
+if (options.progress !== undefined) {
+  const next = options.progress;
+  const nextText = next
+    ? progressText(next.done, next.total, next.unit)
+    : "нет";
+  if (nextText !== currentProgress) {
+    changes.progress_total = next?.total ?? null;
+    changes.progress_done = next?.done ?? null;
+    changes.progress_unit = next?.unit ?? null;
+    console.log(`  прогресс: ${currentProgress} → ${nextText}`);
+  } else {
+    console.log(`  прогресс (без изменений): ${currentProgress}`);
+  }
+} else if (project.progress_total !== null) {
+  console.log(`  прогресс (без изменений): ${currentProgress}`);
 }
 if (options.pinned !== undefined && options.pinned !== project.is_pinned) {
   changes.is_pinned = options.pinned;
