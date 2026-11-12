@@ -27,6 +27,10 @@ const nextConfig: NextConfig = {
   },
 
   images: {
+    // Photos are already resized when uploaded (1600 px WebP, 800 px cards),
+    // and Cloudflare Workers has no free image optimizer: serve them as
+    // stored, so they never depend on the host's optimization limits.
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: "https",
