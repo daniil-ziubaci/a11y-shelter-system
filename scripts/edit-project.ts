@@ -1,5 +1,7 @@
 import type { Database } from "@/types/database";
 import { createClient } from "@supabase/supabase-js";
+import { textHash } from "../lib/hashText.ts";
+import { readTranslations, type Translations } from "../lib/translations.ts";
 import {
   checkProjectTexts,
   parseProgress,
@@ -22,10 +24,16 @@ import {
 // Translations refresh on their own: the site shows the new original text
 // until the nightly translation run.
 //
+// --fix-translation ro "было" "стало" corrects a phrase in the automatic
+// translation (DeepL sometimes picks the wrong word). The fix stays until the
+// Russian text of that field changes; then the field is translated again.
+// It can be repeated and cannot be combined with --title or --description.
+//
 //   node --env-file=.env.coordinator scripts/edit-project.ts live-life "Тёплые вольеры" --title "Тёплые будки" --to-top
 //   node --env-file=.env.coordinator scripts/edit-project.ts live-life "Ремонт" --description "Что делаем:\n- Будки" --apply
 //   node --env-file=.env.coordinator scripts/edit-project.ts live-life "Тёплые будки" --progress "5/20 будок"
 //   node --env-file=.env.coordinator scripts/edit-project.ts live-life "Тёплые будки" --no-progress
+//   node --env-file=.env.coordinator scripts/edit-project.ts live-life "Ремонт" --fix-translation en "Renovation" "Repairs"
 
 const url = process.env.SUPABASE_URL;
 const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -37,12 +45,15 @@ type Options = {
   progress?: Progress | null;
   pinned?: boolean;
   toTop: boolean;
+  fixes: { language: string; from: string; to: string }[];
   apply: boolean;
 };
 
+const LANGUAGES = ["ro", "en"];
+
 function usage(): never {
   console.error(
-    'Использование: node --env-file=.env.coordinator scripts/edit-project.ts slug "текущее название" [--title "…"] [--description "…"] [--photo-alt "…"] [--progress "5/20 будок" | --no-progress] [--to-top] [--pin | --unpin] [--apply]',
+    'Использование: node --env-file=.env.coordinator scripts/edit-project.ts slug "текущее название" [--title "…"] [--description "…"] [--photo-alt "…"] [--progress "5/20 будок" | --no-progress] [--to-top] [--pin | --unpin] [--fix-translation ro|en "было" "стало"] [--apply]',
   );
   process.exit(1);
 }
@@ -50,7 +61,7 @@ function usage(): never {
 const [slug, currentTitle, ...rest] = process.argv.slice(2);
 if (!url || !serviceKey || !slug || !currentTitle) usage();
 
-const options: Options = { apply: false, toTop: false };
+const options: Options = { apply: false, toTop: false, fixes: [] };
 for (let i = 0; i < rest.length; i += 1) {
   const arg = rest[i];
   if (arg === "--apply") options.apply = true;
@@ -71,7 +82,21 @@ for (let i = 0; i < rest.length; i += 1) {
     options.title = rest[++i].trim();
   else if (arg === "--description" && rest[i + 1] !== undefined)
     options.description = readMultiline(rest[++i]);
-  else usage();
+  else if (arg === "--fix-translation" && rest[i + 3] !== undefined) {
+    const [language, from, to] = rest.slice(i + 1, i + 4);
+    i += 3;
+    if (!LANGUAGES.includes(language)) {
+      console.error(
+        `Язык перевода «${language}» неизвестен. Можно: ${LANGUAGES.join(", ")}.`,
+      );
+      process.exit(1);
+    }
+    if (!from.trim() || !to.trim()) {
+      console.error("В --fix-translation обе фразы должны быть непустыми.");
+      process.exit(1);
+    }
+    options.fixes.push({ language, from, to });
+  } else usage();
 }
 if (
   options.title === undefined &&
@@ -79,10 +104,25 @@ if (
   options.photoAlt === undefined &&
   options.progress === undefined &&
   options.pinned === undefined &&
-  !options.toTop
+  !options.toTop &&
+  options.fixes.length === 0
 ) {
   console.error(
-    "Не указано, что менять: --title, --description, --photo-alt, --progress, --no-progress, --to-top, --pin или --unpin.",
+    "Не указано, что менять: --title, --description, --photo-alt, --progress, --no-progress, --to-top, --pin, --unpin или --fix-translation.",
+  );
+  process.exit(1);
+}
+if (
+  options.fixes.length > 0 &&
+  (options.title !== undefined ||
+    options.description !== undefined ||
+    options.photoAlt !== undefined ||
+    options.progress !== undefined)
+) {
+  // A new Russian text makes the translation outdated, and the night run
+  // would replace the corrected one anyway.
+  console.error(
+    "--fix-translation нельзя совмещать с правкой текста. Сначала измените текст, дождитесь ночного перевода, потом поправьте перевод.",
   );
   process.exit(1);
 }
@@ -117,7 +157,7 @@ if (shelterError || !shelter) {
 const { data: projects, error: projectsError } = await supabase
   .from("projects")
   .select(
-    "id, title, description, photo_path, photo_alt, progress_total, progress_done, progress_unit, is_pinned, status, is_archived, created_at",
+    "id, title, description, photo_path, photo_alt, progress_total, progress_done, progress_unit, is_pinned, status, is_archived, created_at, translations",
   )
   .eq("shelter_id", shelter.id)
   .order("created_at");
@@ -164,7 +204,7 @@ const changes: Partial<
     | "is_pinned"
     | "created_at"
   >
-> = {};
+> & { translations?: Translations } = {};
 console.log(`Проект «${project.title}» в «${shelter.name}»:`);
 if (options.title !== undefined && options.title !== project.title) {
   changes.title = options.title;
@@ -254,6 +294,59 @@ if (options.toTop) {
   }
 }
 
+if (options.fixes.length > 0) {
+  const sources: Record<string, string> = {
+    title: project.title,
+    description: project.description,
+    progress_unit: project.progress_unit ?? "",
+    photo_alt: project.photo_alt ?? "",
+  };
+  const fieldNames: Record<string, string> = {
+    title: "название",
+    description: "описание",
+    progress_unit: "единица прогресса",
+    photo_alt: "описание фото",
+  };
+  const translations = readTranslations(project.translations);
+  let failed = false;
+  for (const { language, from, to } of options.fixes) {
+    let found = 0;
+    let outdated = false;
+    for (const [field, source] of Object.entries(sources)) {
+      const entry = translations[field]?.[language];
+      if (!entry || !entry.text.includes(from)) continue;
+      // Only a translation of the current Russian text is shown on the site;
+      // an outdated one is replaced at night, so fixing it would be lost.
+      if (entry.hash !== textHash("", source)) {
+        console.error(
+          `  ${language}, ${fieldNames[field]}: перевод устарел (русский текст изменился). Дождитесь ночного перевода и повторите.`,
+        );
+        outdated = true;
+        continue;
+      }
+      found += 1;
+      const text = entry.text.split(from).join(to);
+      console.log(`  перевод ${language}, ${fieldNames[field]} было:`);
+      console.log(quote(entry.text));
+      console.log(`  перевод ${language}, ${fieldNames[field]} станет:`);
+      console.log(quote(text));
+      translations[field] = {
+        ...translations[field],
+        [language]: { text, hash: entry.hash },
+      };
+    }
+    if (outdated) failed = true;
+    else if (found === 0) {
+      console.error(
+        `  в переводе ${language} нет фразы «${from}» (регистр букв важен).`,
+      );
+      failed = true;
+    }
+  }
+  if (failed) process.exit(1);
+  changes.translations = translations;
+}
+
 if (Object.keys(changes).length === 0) {
   console.log("  менять нечего: всё уже так.");
   process.exit(0);
@@ -273,4 +366,8 @@ if (error || !updated) {
   console.error(`Не сохранено: ${error?.message ?? "проект не найден"}`);
   process.exit(1);
 }
-console.log("Сохранено. Переводы на другие языки обновятся этой ночью.");
+console.log(
+  options.fixes.length > 0 && Object.keys(changes).length === 1
+    ? "Сохранено. Исправленный перевод уже на сайте (обновите страницу через минуту)."
+    : "Сохранено. Переводы на другие языки обновятся этой ночью.",
+);

@@ -70,3 +70,20 @@ export function sameTranslations(a: Translations, b: Translations): boolean {
   }
   return true;
 }
+
+// How many field translations in `next` are new compared with `previous`
+// (missing before, or made for a different source text).
+export function countNewEntries(
+  next: Translations,
+  previous: Translations,
+): number {
+  let added = 0;
+  for (const [field, byLanguage] of Object.entries(next)) {
+    for (const [language, entry] of Object.entries(byLanguage)) {
+      if (previous[field]?.[language]?.hash !== entry.hash) {
+        added += 1;
+      }
+    }
+  }
+  return added;
+}
