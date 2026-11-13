@@ -1,0 +1,73 @@
+---
+import { PetForm } from "@/islands/PetForm";
+import PanelLayout from "@/layouts/PanelLayout.astro";
+import { monthsSince } from "@/lib/monthsSince";
+import { isPost, readForm } from "@/lib/panel";
+import { savePet } from "@/lib/petSave";
+import { PET_STATUS_TREATMENT } from "@/lib/petStatuses";
+
+const id = Astro.params.id ?? "";
+const supabase = Astro.locals.supabase;
+let error: string | null = null;
+let values: Record<string, string> | null = null;
+
+const { data: pet, error: loadError } = /^[0-9a-f-]{36}$/i.test(id)
+  ? await supabase.from("pets").select("*").eq("id", id).maybeSingle()
+  : { data: null, error: null };
+
+if (pet && isPost(Astro)) {
+  const form = await readForm(Astro);
+  if (form) {
+    const result = await savePet(Astro, form, pet.id);
+    if (result.ok) return Astro.redirect("/volunteer", 303);
+    error = result.error;
+    values = result.values;
+  }
+}
+
+const { data: internal, error: internalError } = pet
+  ? await supabase.from("pet_internal").select("enclosure").eq("pet_id", pet.id).maybeSingle()
+  : { data: null, error: null };
+const totalMonths = pet ? Math.max(0, monthsSince(pet.birth_date)) : 0;
+const exact = pet ? !pet.is_age_approximate : false;
+const initial = pet && {
+  name: values?.name ?? pet.name,
+  enclosure: values?.enclosure ?? internal?.enclosure ?? "",
+  species: values?.species ?? pet.species,
+  sex: values?.sex ?? pet.sex,
+  size: values?.size ?? pet.size ?? "",
+  birthDate: values?.birthDate ?? (exact ? pet.birth_date : ""),
+  ageYears: values?.ageYears ?? (exact ? "" : String(Math.floor(totalMonths / 12))),
+  ageMonths: values?.ageMonths ?? (exact ? "" : String(totalMonths % 12)),
+  photoAlt: values?.photoAlt ?? pet.photo_alt,
+  health: values?.health ?? pet.health,
+  description: values?.description ?? pet.description,
+  treatmentStatus: pet.status === PET_STATUS_TREATMENT || values?.treatmentStatus === "on",
+  needsTreatment: values ? values.needsTreatment === "on" : pet.needs_treatment_since !== null,
+};
+---
+
+<PanelLayout title={pet ? `Редактирование: ${pet.name}` : "Редактирование животного"}>
+  <main class="mx-auto flex w-full max-w-5xl flex-col gap-4 px-4 pt-1 pb-8">
+    {
+      loadError || internalError ? (
+        <p role="alert">Не удалось загрузить животное.</p>
+      ) : !pet || !initial ? (
+        <p role="alert">Животное не найдено.</p>
+      ) : (
+        <>
+          <h1 class="text-3xl font-bold wrap-break-word sm:mx-auto sm:w-1/2 sm:text-center">Редактирование: {pet.name}</h1>
+          <PetForm
+            client:load
+            action={`/volunteer/pets/${pet.id}/edit`}
+            mode="edit"
+            initial={initial}
+            error={error}
+            photoUrl={pet.photo_url}
+            inTreatment={pet.status === PET_STATUS_TREATMENT}
+          />
+        </>
+      )
+    }
+  </main>
+</PanelLayout>

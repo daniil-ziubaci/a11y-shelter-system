@@ -1,0 +1,156 @@
+---
+import { getTranslator, type Locale } from "@/lib/i18n";
+
+export type GalleryPhoto = { id: string; src: string; thumbSrc: string; alt: string };
+
+interface Props {
+  locale: Locale;
+  photos: GalleryPhoto[];
+}
+
+const { locale, photos } = Astro.props;
+const t = getTranslator(locale, "Gallery");
+const total = photos.length;
+const first = photos[0];
+const arrow =
+  "absolute top-1/2 inline-flex size-10 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-white/90 text-neutral-900 transition-colors duration-200 hover:bg-neutral-900 hover:text-white motion-reduce:transition-none";
+const stripButton =
+  "inline-flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-full border border-neutral-900 text-neutral-900 transition-colors duration-200 hover:bg-neutral-900 hover:text-white disabled:cursor-default disabled:border-neutral-300 disabled:text-neutral-300 disabled:hover:bg-transparent disabled:hover:text-neutral-300 motion-reduce:transition-none";
+const back = "M19 12H5M12 5l-7 7 7 7";
+const forward = "M5 12h14M12 5l7 7-7 7";
+const counter = (index: number) => t("counter", { current: index + 1, total });
+---
+
+{
+  first && (
+    <section
+      aria-label={t("region")}
+      class="flex flex-col gap-3"
+      data-gallery
+      data-counter={t("counter", { current: "{current}", total })}
+    >
+      <div class="relative aspect-4/3 touch-pan-y overflow-hidden rounded-2xl border border-(--border-strong) bg-neutral-900 shadow-md sm:aspect-video" data-stage>
+        <img src={first.src} alt="" aria-hidden="true" class="absolute inset-0 size-full scale-125 object-cover blur-2xl brightness-50" data-backdrop />
+        <img src={first.src} alt={first.alt} fetchpriority="high" class="absolute inset-0 size-full object-contain" data-main />
+        {total > 1 && (
+          <>
+            <button type="button" aria-label={t("previous")} class={`${arrow} left-3`} data-step="-1" hidden>
+              <svg aria-hidden="true" viewBox="0 0 24 24" class="size-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d={back} />
+              </svg>
+            </button>
+            <button type="button" aria-label={t("next")} class={`${arrow} right-3`} data-step="1" hidden>
+              <svg aria-hidden="true" viewBox="0 0 24 24" class="size-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d={forward} />
+              </svg>
+            </button>
+          </>
+        )}
+        <p aria-live="polite" class="absolute right-3 bottom-3 rounded-full bg-black/70 px-3 py-1 text-sm text-white">
+          <span aria-hidden="true" data-position>1 / {total}</span>
+          <span class="sr-only" data-spoken>{counter(0)}</span>
+        </p>
+      </div>
+      {
+        total > 1 && (
+          <div class="flex items-center gap-3">
+            <ul class="no-scrollbar relative flex min-w-0 flex-1 gap-3 overflow-x-auto p-1" data-strip>
+              {photos.map((photo, i) => (
+                <li class="shrink-0">
+                  <a
+                    href={photo.src}
+                    aria-label={t("show", { number: i + 1, total })}
+                    aria-current={i === 0 ? "true" : undefined}
+                    data-index={i}
+                    data-src={photo.src}
+                    data-alt={photo.alt}
+                    class:list={[
+                      "relative block size-22 cursor-pointer overflow-hidden rounded-lg border-2 transition-opacity duration-200 motion-reduce:transition-none",
+                      "border-transparent opacity-60 hover:opacity-100 aria-current:border-(--accent) aria-current:opacity-100",
+                    ]}
+                  >
+                    <img src={photo.thumbSrc} alt="" loading="lazy" decoding="async" class="absolute inset-0 size-full object-cover" />
+                  </a>
+                </li>
+              ))}
+            </ul>
+            {total > 7 && (
+              <div class="hidden shrink-0 gap-2 sm:flex">
+                <button type="button" aria-label={t("thumbsPrevious")} class={stripButton} data-scroll="-1" disabled>
+                  <svg aria-hidden="true" viewBox="0 0 24 24" class="size-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d={back} />
+                  </svg>
+                </button>
+                <button type="button" aria-label={t("thumbsNext")} class={stripButton} data-scroll="1">
+                  <svg aria-hidden="true" viewBox="0 0 24 24" class="size-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d={forward} />
+                  </svg>
+                </button>
+              </div>
+            )}
+          </div>
+        )
+      }
+    </section>
+  )
+}
+
+<script>
+  for (const gallery of document.querySelectorAll<HTMLElement>("[data-gallery]")) {
+    const thumbs = [...gallery.querySelectorAll<HTMLAnchorElement>("a[data-index]")];
+    const main = gallery.querySelector<HTMLImageElement>("[data-main]");
+    const backdrop = gallery.querySelector<HTMLImageElement>("[data-backdrop]");
+    const position = gallery.querySelector<HTMLElement>("[data-position]");
+    const spoken = gallery.querySelector<HTMLElement>("[data-spoken]");
+    const strip = gallery.querySelector<HTMLElement>("[data-strip]");
+    const stage = gallery.querySelector<HTMLElement>("[data-stage]");
+    if (!main || !backdrop || !position || !spoken || !strip || !stage || thumbs.length < 2) continue;
+    const template = gallery.dataset.counter ?? "";
+    const behavior = (): ScrollBehavior => (matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth");
+    let index = 0;
+    const show = (next: number) => {
+      index = (next + thumbs.length) % thumbs.length;
+      const thumb = thumbs[index];
+      main.src = thumb.dataset.src ?? "";
+      main.alt = thumb.dataset.alt ?? "";
+      backdrop.src = main.src;
+      position.textContent = `${index + 1} / ${thumbs.length}`;
+      spoken.textContent = template.replace("{current}", String(index + 1));
+      thumbs.forEach((item, i) => (i === index ? item.setAttribute("aria-current", "true") : item.removeAttribute("aria-current")));
+      const item = thumb.parentElement;
+      if (item) strip.scrollTo({ left: item.offsetLeft - (strip.clientWidth - item.clientWidth) / 2, behavior: behavior() });
+    };
+    thumbs.forEach((thumb, i) =>
+      thumb.addEventListener("click", (event) => {
+        event.preventDefault();
+        show(i);
+      }),
+    );
+    for (const button of gallery.querySelectorAll<HTMLButtonElement>("[data-step]")) {
+      button.hidden = false;
+      button.addEventListener("click", () => show(index + Number(button.dataset.step)));
+    }
+    const scrollButtons = [...gallery.querySelectorAll<HTMLButtonElement>("[data-scroll]")];
+    const updateEdges = () => {
+      scrollButtons.forEach((button) => {
+        button.disabled =
+          button.dataset.scroll === "-1" ? strip.scrollLeft <= 1 : strip.scrollLeft + strip.clientWidth >= strip.scrollWidth - 1;
+      });
+    };
+    scrollButtons.forEach((button) =>
+      button.addEventListener("click", () =>
+        strip.scrollBy({ left: Number(button.dataset.scroll) * strip.clientWidth * 0.8, behavior: behavior() }),
+      ),
+    );
+    strip.addEventListener("scroll", updateEdges, { passive: true });
+    updateEdges();
+    let startX: number | null = null;
+    stage.addEventListener("touchstart", (event) => (startX = event.touches[0].clientX), { passive: true });
+    stage.addEventListener("touchend", (event) => {
+      if (startX === null) return;
+      const delta = event.changedTouches[0].clientX - startX;
+      startX = null;
+      if (Math.abs(delta) > 40) show(index + (delta < 0 ? 1 : -1));
+    });
+  }
+</script>

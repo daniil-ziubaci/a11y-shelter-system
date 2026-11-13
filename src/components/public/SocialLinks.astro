@@ -1,0 +1,51 @@
+---
+import { siFacebook, siInstagram, siTelegram, siTiktok, siViber } from "simple-icons";
+import { getTranslator, type Locale } from "@/lib/i18n";
+
+interface Props {
+  locale: Locale;
+  instagram: string | null;
+  facebook: string | null;
+  tiktok: string | null;
+  viber: string | null;
+  telegram: string | null;
+}
+
+const { locale, instagram, facebook, tiktok, viber, telegram } = Astro.props;
+const t = getTranslator(locale, "Footer");
+const networks = [
+  { name: "Instagram", path: siInstagram.path, color: siInstagram.hex, url: instagram },
+  { name: "Facebook", path: siFacebook.path, color: siFacebook.hex, url: facebook },
+  { name: "TikTok", path: siTiktok.path, color: siTiktok.hex, url: tiktok },
+  { name: "Viber", path: siViber.path, color: siViber.hex, url: viber },
+  { name: "Telegram", path: siTelegram.path, color: "1E84B6", url: telegram },
+].filter((network) => network.url);
+---
+
+{
+  networks.length > 0 && (
+    <nav aria-labelledby="footer-social-heading" class="flex flex-col gap-3 pb-1.5">
+      <p id="footer-social-heading" class="font-semibold">
+        {t("socialHeading")}
+      </p>
+      <ul class="flex flex-wrap gap-5">
+        {networks.map((network) => (
+          <li class="flex">
+            <a
+              href={network.url}
+              aria-label={t("socialLink", { network: network.name })}
+              class="inline-flex size-14 items-center justify-center rounded-full transition-opacity duration-200 hover:opacity-70 motion-reduce:transition-none"
+              style={`color: #${network.color}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor" class="size-14">
+                <path d={network.path} />
+              </svg>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  )
+}

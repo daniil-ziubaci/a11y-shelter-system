@@ -1,0 +1,29 @@
+---
+import AuthPage from "@/components/panel/AuthPage.astro";
+import CodeForm from "@/components/panel/CodeForm.astro";
+import PanelLayout from "@/layouts/PanelLayout.astro";
+import { isPost, readForm } from "@/lib/panel";
+import { verifyTotp } from "@/lib/twoFactor";
+
+const supabase = Astro.locals.supabase;
+let error: string | null = null;
+if (isPost(Astro)) {
+  const form = await readForm(Astro);
+  error = form ? await verifyTotp(supabase, form) : "Введите шестизначный код.";
+  if (!error) {
+    return Astro.redirect("/volunteer/needs", 303);
+  }
+}
+const { data } = await supabase.auth.mfa.listFactors();
+const factor = data?.totp[0];
+if (!factor) {
+  return Astro.redirect("/volunteer/2fa", 303);
+}
+---
+
+<PanelLayout title="Подтверждение входа">
+  <AuthPage hasHeader title="Подтверждение входа">
+    <p class="text-(--muted)">Введите шестизначный код из приложения-аутентификатора.</p>
+    <CodeForm factorId={factor.id} error={error} action="/volunteer/2fa/verify" />
+  </AuthPage>
+</PanelLayout>

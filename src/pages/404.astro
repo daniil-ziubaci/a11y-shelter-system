@@ -1,0 +1,12 @@
+---
+import NotFound from "@/components/public/NotFound.astro";
+import Base from "@/layouts/Base.astro";
+import { DEFAULT_LOCALE, getTranslator } from "@/lib/i18n";
+
+Astro.response.status = 404;
+const t = getTranslator(DEFAULT_LOCALE, "NotFound");
+---
+
+<Base title={t("title")} noindex>
+  <NotFound locale={DEFAULT_LOCALE} />
+</Base>

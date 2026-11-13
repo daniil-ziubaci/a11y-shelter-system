@@ -1,0 +1,30 @@
+---
+const path = Astro.url.pathname;
+const links = [
+  { href: "/volunteer/needs", label: "Приёмка" },
+  { href: "/volunteer/needs/open", label: "Нужно купить" },
+  { href: "/volunteer/needs/stock", label: "Запас" },
+  { href: "/volunteer/needs/closed", label: "Закрытые" },
+];
+const pill =
+  "inline-flex min-h-10 items-center rounded-full border border-(--border-strong) bg-(--surface) px-4 aria-[current=page]:border-transparent aria-[current=page]:bg-(--accent) aria-[current=page]:text-white";
+---
+
+<div class="flex flex-col gap-3">
+  <nav aria-label="Разделы плана закупок">
+    <ul class="flex flex-wrap gap-2 sm:justify-center">
+      {
+        links.map((link) => (
+          <li>
+            <a href={link.href} aria-current={path === link.href ? "page" : undefined} class={pill}>
+              {link.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+  <a href="/volunteer/needs/new" class="flex h-10 items-center justify-center rounded-lg border border-(--border-strong) bg-(--surface) px-4 font-medium sm:self-center">
+    Добавить позицию
+  </a>
+</div>

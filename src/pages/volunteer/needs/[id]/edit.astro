@@ -1,0 +1,52 @@
+---
+import NeedForm from "@/components/panel/NeedForm.astro";
+import PanelLayout from "@/layouts/PanelLayout.astro";
+import { saveNeed } from "@/lib/needSave";
+import { isPost, readForm } from "@/lib/panel";
+
+const id = Astro.params.id ?? "";
+const supabase = Astro.locals.supabase;
+const { data: item, error: loadError } = /^[0-9a-f-]{36}$/i.test(id)
+  ? await supabase.from("purchase_items").select("id, name, category, is_urgent, note").eq("id", id).maybeSingle()
+  : { data: null, error: null };
+let error: string | null = null;
+let values: Record<string, string> | null = null;
+if (item && isPost(Astro)) {
+  const form = await readForm(Astro);
+  if (form) {
+    const result = await saveNeed(Astro, form, item.id);
+    if (result.ok) return Astro.redirect(result.redirect, 303);
+    error = result.error;
+    values = result.values;
+  }
+}
+const from = Astro.url.searchParams.get("from") ?? values?.from ?? undefined;
+---
+
+<PanelLayout title={item ? `Редактирование: ${item.name}` : "Редактирование позиции плана закупок"}>
+  <main class="mx-auto flex w-full max-w-5xl flex-col gap-4 px-4 pt-1 pb-8">
+    {
+      loadError ? (
+        <p role="alert">Не удалось загрузить позицию.</p>
+      ) : !item ? (
+        <p role="alert">Позиция не найдена.</p>
+      ) : (
+        <>
+          <h1 class="text-3xl font-bold wrap-break-word sm:mx-auto sm:w-1/2 sm:text-center">Редактирование: {item.name}</h1>
+          <NeedForm
+            action={`/volunteer/needs/${item.id}/edit`}
+            mode="edit"
+            error={error}
+            from={from}
+            values={{
+              name: values?.name ?? item.name,
+              category: values?.category ?? item.category,
+              note: values?.note ?? item.note ?? "",
+              isUrgent: values ? values.is_urgent === "on" : item.is_urgent,
+            }}
+          />
+        </>
+      )
+    }
+  </main>
+</PanelLayout>

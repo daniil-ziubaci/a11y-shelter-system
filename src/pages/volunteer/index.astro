@@ -1,0 +1,337 @@
+---
+import PanelLayout from "@/layouts/PanelLayout.astro";
+import { getTranslator } from "@/lib/i18n";
+import { formatAge } from "@/lib/formatAge";
+import { hintClass } from "@/lib/formClasses";
+import { monthsSince } from "@/lib/monthsSince";
+import { isPost, isVolunteer, NOT_A_VOLUNTEER, readForm, refreshPublicPages, text } from "@/lib/panel";
+import { parsePage, VOLUNTEER_PAGE_SIZE } from "@/lib/parsePage";
+import { parseVolunteerSort } from "@/lib/parseVolunteerSort";
+import { parseVolunteerStatus, VOLUNTEER_STATUS_FILTERS } from "@/lib/parseVolunteerStatus";
+import { PET_SIZE_LABELS } from "@/lib/petSizes";
+import { getPetReviewCutoff, isPetStatusStale, PET_STATUS_REVIEW_DAYS } from "@/lib/petStatusReview";
+import { PET_STATUS_TREATMENT, PET_STATUSES, PUBLIC_PET_STATUSES } from "@/lib/petStatuses";
+import { cardCopyOf } from "@/lib/photoUrls";
+import { isTreatmentStale } from "@/lib/treatmentReview";
+import type { VolunteerPet } from "@/lib/volunteerPet";
+
+const supabase = Astro.locals.supabase;
+const volunteer = await isVolunteer(supabase, Astro.locals.claims?.sub);
+
+if (volunteer && isPost(Astro)) {
+  const form = await readForm(Astro);
+  const petId = form ? text(form, "petId") : "";
+  const status = form ? text(form, "status") : "";
+  const back = form ? text(form, "back") : "";
+  const backTo = back.startsWith("/volunteer") ? back : "/volunteer";
+  if (petId && (PET_STATUSES as readonly string[]).includes(status)) {
+    if (status === PET_STATUS_TREATMENT) {
+      const { data: current } = await supabase.from("pets").select("status").eq("id", petId).maybeSingle();
+      if (current && current.status !== PET_STATUS_TREATMENT) {
+        return Astro.redirect(`/volunteer/pets/${encodeURIComponent(petId)}/edit`, 303);
+      }
+    }
+    const { error } = await supabase.from("pets").update({ status }).eq("id", petId);
+    if (error) throw new Error("Не удалось изменить статус.");
+    refreshPublicPages(Astro);
+  }
+  return Astro.redirect(backTo, 303);
+}
+
+const params = Astro.url.searchParams;
+const search = params.get("q")?.trim() ?? "";
+const statusFilter = parseVolunteerStatus(params.get("status") ?? undefined);
+const sort = parseVolunteerSort(params.get("sort") ?? undefined);
+const speciesParam = params.get("species");
+const treatmentParam = params.get("treatment");
+const statuses = statusFilter ? [...VOLUNTEER_STATUS_FILTERS[statusFilter]] : [...PUBLIC_PET_STATUSES];
+
+function buildQuery(head: boolean) {
+  let query = supabase
+    .from("volunteer_pets")
+    .select(
+      "id, name, status, status_changed_at, needs_treatment_since, photo_url, birth_date, is_age_approximate, sex, species, size, enclosure",
+      { count: "exact", head },
+    )
+    .in("status", statuses);
+  for (const word of search ? search.split(/\s+/).slice(0, 5) : []) {
+    query = query.ilike("search_text", `%${word.replace(/[\\%_]/g, "\\$&")}%`);
+  }
+  if (speciesParam === "dog") query = query.eq("species", "собака");
+  if (speciesParam === "cat") query = query.eq("species", "кошка");
+  if (treatmentParam === "1") query = query.not("needs_treatment_since", "is", null);
+  if (sort === "stale") query = query.lt("review_since", getPetReviewCutoff());
+  return query;
+}
+
+let total = 0;
+let pets: VolunteerPet[] = [];
+let failed = false;
+let page = 1;
+let lastPage = 1;
+let from = 0;
+if (volunteer) {
+  const { count, error: countError } = await buildQuery(true);
+  total = count ?? 0;
+  lastPage = Math.max(1, Math.ceil(total / VOLUNTEER_PAGE_SIZE));
+  page = Math.min(parsePage(params.get("page") ?? undefined), lastPage);
+  from = (page - 1) * VOLUNTEER_PAGE_SIZE;
+  const base = buildQuery(false);
+  const sorted =
+    sort === "new"
+      ? base.order("created_at", { ascending: false })
+      : sort === "stale"
+        ? base.order("review_rank", { ascending: true }).order("review_since", { ascending: true })
+        : base;
+  const { data, error } = await sorted
+    .order("name")
+    .order("id")
+    .range(from, from + VOLUNTEER_PAGE_SIZE - 1)
+    .overrideTypes<VolunteerPet[], { merge: false }>();
+  failed = Boolean(error || countError || !data);
+  pets = data ?? [];
+}
+
+const tAge = getTranslator("ru", "Age");
+const current = {
+  q: search || undefined,
+  species: speciesParam === "dog" || speciesParam === "cat" ? speciesParam : undefined,
+  status: statusFilter,
+  treatment: treatmentParam === "1" ? "1" : undefined,
+  sort,
+};
+type HrefState = { q?: string; species?: string; status?: string; sort?: string; treatment?: string; page?: number };
+function buildHref(next: HrefState) {
+  const query = new URLSearchParams();
+  if (next.q) query.set("q", next.q);
+  if (next.species) query.set("species", next.species);
+  if (next.status) query.set("status", next.status);
+  if (next.sort && next.sort !== "name") query.set("sort", next.sort);
+  if (next.treatment) query.set("treatment", next.treatment);
+  if (next.page && next.page > 1) query.set("page", String(next.page));
+  const result = query.toString();
+  return result ? `/volunteer?${result}` : "/volunteer";
+}
+const pill =
+  "inline-flex min-h-11 items-center rounded-full border border-(--border-strong) bg-(--surface) px-4 aria-current:bg-(--accent) aria-current:text-white";
+const statusLabels = { looking: "Ищут дом", pending: "В процессе", treatment: "Лечение: пока нельзя забрать", archive: "Архив" };
+const selected = [
+  current.species === "dog" ? "Собаки" : current.species === "cat" ? "Кошки" : null,
+  current.status ? statusLabels[current.status] : null,
+  current.treatment ? "Срочно нужна помощь с лечением" : null,
+].filter(Boolean);
+const filtersSummary = selected.length ? `Фильтры: ${selected.join(", ")}` : "Фильтры: вид, статус, лечение";
+const here = Astro.url.pathname + Astro.url.search;
+const statusOptions: [string | undefined, string][] = [
+  [undefined, "Активные"],
+  ["looking", "Ищут дом"],
+  ["pending", "В процессе"],
+  ["archive", "Архив"],
+];
+---
+
+<PanelLayout title="Животные приюта">
+  <main class="mx-auto flex w-full max-w-5xl flex-col gap-4 p-4 pt-4">
+    <h1 class="text-3xl font-bold sm:text-center">Животные приюта</h1>
+    {
+      !volunteer ? (
+        <p>{NOT_A_VOLUNTEER}</p>
+      ) : (
+        <>
+          <a
+            href="/volunteer/pets/new"
+            class="flex min-h-10 items-center justify-center rounded-lg border border-(--border-strong) bg-(--surface) px-4 font-medium sm:self-center"
+          >
+            Добавить животное
+          </a>
+          <div class="flex flex-col gap-3 rounded-2xl border border-(--border-strong) bg-(--surface) p-3 shadow-md sm:mx-auto sm:w-1/2">
+            <form action="/volunteer" method="get" role="search" class="flex flex-col gap-2">
+              <label for="pet-search" class="font-medium">Найти по имени или вольеру</label>
+              <p id="pet-search-hint" class={hintClass}>Можно вписать имя, вольер или и то и другое, в любом порядке.</p>
+              <div class="flex gap-2">
+                <input
+                  id="pet-search"
+                  aria-describedby="pet-search-hint"
+                  type="search"
+                  name="q"
+                  value={search}
+                  enterkeyhint="search"
+                  autocomplete="off"
+                  class="h-10 min-w-0 flex-1 rounded-lg border border-(--accent) bg-(--accent-soft) px-3 text-base"
+                />
+                <button type="submit" class="h-10 cursor-pointer rounded-lg border border-(--border-strong) bg-(--surface) px-4 font-medium">Показать</button>
+              </div>
+              <div class="flex items-center gap-2">
+                <label for="pet-sort" class="font-medium">Порядок</label>
+                <div class="relative min-w-0 flex-1">
+                  <select id="pet-sort" name="sort" class="h-10 w-full appearance-none rounded-lg border border-(--border-strong) bg-(--surface) pr-10 pl-3 text-base">
+                    <option value="name" selected={sort === "name"}>По имени</option>
+                    <option value="new" selected={sort === "new"}>Новые сверху</option>
+                    <option value="stale" selected={sort === "stale"}>Требуют проверки</option>
+                  </select>
+                  <span aria-hidden="true" class="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-(--muted)">▾</span>
+                </div>
+              </div>
+              {current.species && <input type="hidden" name="species" value={current.species} />}
+              {current.treatment && <input type="hidden" name="treatment" value={current.treatment} />}
+              {current.status && <input type="hidden" name="status" value={current.status} />}
+            </form>
+            <details class="group border-t border-(--border) pt-1">
+              <summary class="flex min-h-10 cursor-pointer items-center justify-between pr-3 font-medium">
+                {filtersSummary}
+                <span aria-hidden="true" class="text-(--muted) transition-transform group-open:rotate-180">▾</span>
+              </summary>
+              <nav aria-label="Фильтры" class="flex flex-col gap-3 py-3">
+                <div class="flex flex-wrap items-center gap-2">
+                  <span class="font-medium">Вид</span>
+                  <a href={buildHref({ ...current, species: undefined })} aria-current={current.species ? undefined : "true"} class={pill}>Все</a>
+                  <a href={buildHref({ ...current, species: "dog" })} aria-current={current.species === "dog" ? "true" : undefined} class={pill}>Собаки</a>
+                  <a href={buildHref({ ...current, species: "cat" })} aria-current={current.species === "cat" ? "true" : undefined} class={pill}>Кошки</a>
+                </div>
+                <div class="flex flex-wrap items-center gap-2">
+                  <span class="font-medium">Статус</span>
+                  {statusOptions.map(([key, label]) => (
+                    <a href={buildHref({ ...current, status: key })} aria-current={current.status === key ? "true" : undefined} class={pill}>
+                      {label}
+                    </a>
+                  ))}
+                </div>
+              </nav>
+              <div class="flex flex-wrap items-center gap-2 pb-3">
+                <span class="font-medium">Лечение</span>
+                <a
+                  href={buildHref({ ...current, status: current.status === "treatment" ? undefined : "treatment" })}
+                  aria-current={current.status === "treatment" ? "true" : undefined}
+                  class={pill}
+                >
+                  Лечение: пока нельзя забрать
+                </a>
+                <a href={buildHref({ ...current, treatment: current.treatment ? undefined : "1" })} aria-current={current.treatment ? "true" : undefined} class={pill}>
+                  Срочно нужна помощь с лечением
+                </a>
+              </div>
+            </details>
+          </div>
+          {failed ? (
+            <p role="alert">Не удалось загрузить список животных.</p>
+          ) : (
+            <>
+              <p role="status" class="sm:text-center">
+                {total === 0
+                  ? search || current.species || current.status
+                    ? "Никого не нашли."
+                    : "Животных пока нет."
+                  : total > VOLUNTEER_PAGE_SIZE
+                    ? `Показаны ${from + 1}–${from + pets.length} из ${total}`
+                    : `Найдено животных: ${total}`}
+              </p>
+              {total === 0 && (search || current.species || current.status) && (
+                <p class="sm:mx-auto sm:w-1/2 sm:text-center">
+                  Попробуйте часть имени, вольер или другой фильтр.{" "}
+                  <a href="/volunteer" class="inline-block py-2 underline">
+                    Сбросить поиск
+                  </a>
+                </p>
+              )}
+              <ul class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                {pets.map((pet) => (
+                  <li class="flex flex-col gap-2 rounded-2xl border border-(--border) bg-(--surface) p-3 shadow-md">
+                    <div class="flex flex-col gap-3 sm:flex-row">
+                      <div class="relative aspect-4/3 w-full shrink-0 overflow-hidden rounded-lg bg-(--hover) sm:w-48">
+                        <img src={cardCopyOf(pet.photo_url)} alt="" loading="lazy" class="absolute inset-0 size-full object-cover" />
+                      </div>
+                      <div class="flex min-w-0 flex-1 flex-col gap-2">
+                        <div class="flex items-start gap-3">
+                          <h2 class="shrink-0 text-2xl leading-tight font-bold whitespace-nowrap">{pet.name}</h2>
+                          <a
+                            href={`/volunteer/pets/${pet.id}/edit`}
+                            aria-label={`Редактировать: ${pet.name}`}
+                            class="ml-auto flex h-10 min-w-0 items-center rounded-lg border border-(--border-strong) bg-(--surface) px-3 text-sm font-medium"
+                          >
+                            <span class="truncate">Редактировать</span>
+                          </a>
+                        </div>
+                        <p>
+                          {pet.sex.charAt(0).toUpperCase() + pet.sex.slice(1)}, {formatAge(monthsSince(pet.birth_date), pet.is_age_approximate, tAge)}
+                          {pet.size ? `, размер: ${PET_SIZE_LABELS[pet.size] ?? pet.size}` : ""}
+                        </p>
+                        {pet.enclosure && <p>Вольер: {pet.enclosure}</p>}
+                        <form method="post" action="/volunteer" class="mt-auto flex gap-2">
+                          <input type="hidden" name="petId" value={pet.id} />
+                          <input type="hidden" name="back" value={here} />
+                          <div class="relative min-w-0 flex-1">
+                            <select
+                              name="status"
+                              aria-label={`Статус: ${pet.name}`}
+                              class="h-10 w-full appearance-none rounded-lg border border-(--accent) bg-(--accent-soft) pr-10 pl-3 text-base *:bg-(--surface)"
+                            >
+                              {PET_STATUSES.map((status) => (
+                                <option value={status} selected={status === pet.status}>
+                                  {status === PET_STATUS_TREATMENT ? "лечение" : status}
+                                </option>
+                              ))}
+                            </select>
+                            <span aria-hidden="true" class="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-(--muted)">▾</span>
+                          </div>
+                          <button
+                            type="submit"
+                            aria-label={`Сохранить статус: ${pet.name}`}
+                            class="h-10 cursor-pointer rounded-lg border border-(--border-strong) bg-(--surface) px-4 font-medium"
+                          >
+                            Сохранить
+                          </button>
+                        </form>
+                      </div>
+                    </div>
+                    {isPetStatusStale(pet.status, pet.status_changed_at) && (
+                      <p class="rounded-lg bg-(--pending-soft) px-3 py-2 font-semibold text-(--pending)">
+                        Проверьте, актуален ли статус: ему больше {PET_STATUS_REVIEW_DAYS} дней.
+                      </p>
+                    )}
+                    {(pet.status === PET_STATUS_TREATMENT || pet.needs_treatment_since) && (
+                      <div class="flex flex-col gap-0.5 border-t border-(--border) pt-2">
+                        {pet.status === PET_STATUS_TREATMENT && (
+                          <p class="rounded-lg bg-(--danger-soft) px-3 py-1 font-medium text-(--danger)">Лечение: пока нельзя забрать.</p>
+                        )}
+                        {pet.needs_treatment_since && (
+                          <p class="rounded-lg bg-(--danger-soft) px-3 py-1 font-medium text-(--danger)">
+                            Срочно нужна помощь с лечением, с{" "}
+                            {new Date(pet.needs_treatment_since).toLocaleDateString("ru-RU", { day: "numeric", month: "long" })}.
+                          </p>
+                        )}
+                        {pet.needs_treatment_since && isTreatmentStale(pet.needs_treatment_since) && (
+                          <p class="rounded-lg bg-(--pending-soft) px-3 py-2 font-semibold text-(--pending)">Проверьте, актуально ли: отметка стоит давно.</p>
+                        )}
+                      </div>
+                    )}
+                  </li>
+                ))}
+              </ul>
+              {lastPage > 1 && (
+                <nav aria-label="Страницы списка" class="flex items-center justify-between gap-2">
+                  {page > 1 ? (
+                    <a href={buildHref({ ...current, page: page - 1 })} class={pill}>
+                      Назад
+                    </a>
+                  ) : (
+                    <span />
+                  )}
+                  <span aria-current="page">
+                    Страница {page} из {lastPage}
+                  </span>
+                  {page < lastPage ? (
+                    <a href={buildHref({ ...current, page: page + 1 })} class={pill}>
+                      Далее
+                    </a>
+                  ) : (
+                    <span />
+                  )}
+                </nav>
+              )}
+            </>
+          )}
+        </>
+      )
+    }
+  </main>
+</PanelLayout>

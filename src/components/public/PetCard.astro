@@ -1,0 +1,84 @@
+---
+import PetBadges from "@/components/public/PetBadges.astro";
+import { formatAge } from "@/lib/formatAge";
+import { getTranslator, type Locale } from "@/lib/i18n";
+import type { Pet } from "@/lib/pet";
+import { getSexKey } from "@/lib/petLabels";
+import { getSizeKey } from "@/lib/petSizes";
+import { PET_STATUS_LOOKING } from "@/lib/petStatuses";
+import { cardCopyOf } from "@/lib/photoUrls";
+
+interface Props {
+  locale: Locale;
+  pet: Pet;
+  eager?: boolean;
+  headingLevel?: "h2" | "h3";
+}
+
+const { locale, pet, eager = false, headingLevel = "h2" } = Astro.props;
+const t = getTranslator(locale, "Pet");
+const tAge = getTranslator(locale, "Age");
+const sizeKey = pet.size ? getSizeKey(pet.size) : undefined;
+const Heading = headingLevel;
+---
+
+<article
+  class="group relative flex flex-col overflow-hidden rounded-2xl border border-(--border) bg-(--surface) shadow-sm transition duration-300 ease-out focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-(--focus) hover:shadow-2xl motion-safe:hover:-translate-y-1.5"
+>
+  <div class="relative aspect-4/3">
+    {
+      (pet.status !== PET_STATUS_LOOKING || pet.needsTreatmentSince) && (
+        <div class="absolute top-2.5 left-2.5 z-10 flex flex-col items-start gap-1.5">
+          <PetBadges locale={locale} status={pet.status} needsTreatmentSince={pet.needsTreatmentSince} />
+        </div>
+      )
+    }
+    <img
+      src={cardCopyOf(pet.photo.url)}
+      alt={pet.photo.alt}
+      width="800"
+      height="600"
+      loading={eager ? "eager" : "lazy"}
+      decoding="async"
+      class="absolute inset-0 size-full bg-(--hover) object-cover"
+    />
+  </div>
+  <div class="flex flex-1 flex-col justify-between gap-1 px-4 py-3">
+    <Heading class="text-xl font-bold transition-colors duration-200 group-focus-within:text-(--accent) group-hover:text-(--accent) motion-reduce:transition-none">
+      {pet.name}
+    </Heading>
+    <dl class="flex flex-wrap gap-x-3">
+      <div>
+        <dt class="sr-only">{t("sex")}</dt>
+        <dd class="first-letter:uppercase">{t(`sexValue.${getSexKey(pet.sex)}`)}</dd>
+      </div>
+      <div>
+        <dt class="sr-only">{t("age")}</dt>
+        <dd>{formatAge(pet.ageInMonths, pet.isAgeApproximate, tAge)}</dd>
+      </div>
+    </dl>
+    <div class="flex flex-wrap items-end gap-x-2 gap-y-1">
+      {
+        sizeKey && (
+          <dl class="flex gap-1 text-(--muted)">
+            <dt>{t("size")}</dt>
+            <dd>{t(`sizeValue.${sizeKey}`)}</dd>
+          </dl>
+        )
+      }
+      <a
+        href={`/${locale}/catalog/${pet.id}`}
+        aria-label={t("moreLabel", { name: pet.name })}
+        class="ml-auto font-medium whitespace-nowrap transition-colors duration-200 group-focus-within:text-(--accent) group-hover:text-(--accent) after:absolute after:inset-0 motion-reduce:transition-none"
+      >
+        {t("more")}
+        <span
+          aria-hidden="true"
+          class="ml-1 inline-block transition-transform duration-200 group-focus-within:translate-x-1 group-hover:translate-x-1 motion-reduce:transition-none"
+        >
+          →
+        </span>
+      </a>
+    </div>
+  </div>
+</article>

@@ -1,0 +1,41 @@
+---
+import { PetForm } from "@/islands/PetForm";
+import PanelLayout from "@/layouts/PanelLayout.astro";
+import { isPost, isVolunteer, NOT_A_VOLUNTEER, readForm } from "@/lib/panel";
+import { savePet } from "@/lib/petSave";
+
+const volunteer = await isVolunteer(Astro.locals.supabase, Astro.locals.claims?.sub);
+let error: string | null = null;
+let values: Record<string, string> = {};
+if (isPost(Astro) && volunteer) {
+  const form = await readForm(Astro);
+  if (form) {
+    const result = await savePet(Astro, form, null);
+    if (result.ok) return Astro.redirect("/volunteer", 303);
+    error = result.error;
+    values = result.values;
+  }
+}
+const initial = {
+  name: values.name ?? "",
+  enclosure: values.enclosure ?? "",
+  species: values.species ?? "",
+  sex: values.sex ?? "",
+  size: values.size ?? "",
+  birthDate: values.birthDate ?? "",
+  ageYears: values.ageYears ?? "",
+  ageMonths: values.ageMonths ?? "",
+  photoAlt: values.photoAlt ?? "",
+  health: values.health ?? "",
+  description: values.description ?? "",
+  treatmentStatus: values.treatmentStatus === "on",
+  needsTreatment: values.needsTreatment === "on",
+};
+---
+
+<PanelLayout title="Добавить животное">
+  <main class="mx-auto flex w-full max-w-5xl flex-col gap-4 px-4 pt-1 pb-8">
+    <h1 class="text-3xl font-bold wrap-break-word sm:mx-auto sm:w-1/2 sm:text-center">Добавить животное</h1>
+    {volunteer ? <PetForm client:load action="/volunteer/pets/new" mode="new" initial={initial} error={error} /> : <p role="alert">{NOT_A_VOLUNTEER}</p>}
+  </main>
+</PanelLayout>

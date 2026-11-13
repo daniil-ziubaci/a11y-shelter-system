@@ -1,0 +1,225 @@
+---
+import ContentLanguageNote from "@/components/public/ContentLanguageNote.astro";
+import PetCard from "@/components/public/PetCard.astro";
+import ShelterLayout from "@/layouts/ShelterLayout.astro";
+import { formatNumber, getTranslator } from "@/lib/i18n";
+import { localizeItem } from "@/lib/localizeItem";
+import { getCategoryKey } from "@/lib/needCategories";
+import { getUnitKey } from "@/lib/needUnits";
+import { contentLanguageOf, loadPublicPage } from "@/lib/page";
+import { PET_STATUS_ADOPTED, PET_STATUS_LOOKING, PUBLIC_PET_STATUSES } from "@/lib/petStatuses";
+import { getPublicClient } from "@/lib/supabase";
+import { toPet } from "@/lib/toPet";
+
+const page = await loadPublicPage(Astro);
+if (page instanceof Response) return page;
+const { locale, shelter } = page;
+
+const t = getTranslator(locale, "Home");
+const tn = getTranslator(locale, "Needs");
+const contentLanguage = contentLanguageOf(shelter);
+const supabase = getPublicClient();
+const countPets = (statuses: string[]) =>
+  supabase.from("pets").select("id", { count: "exact", head: true }).in("status", statuses);
+
+const [looking, treatment, urgent, total, lookingCount, adopted] = await Promise.all([
+  supabase
+    .from("pets")
+    .select("*")
+    .eq("status", PET_STATUS_LOOKING)
+    .is("needs_treatment_since", null)
+    .order("created_at", { ascending: false })
+    .order("name")
+    .limit(4),
+  supabase
+    .from("pets")
+    .select("*")
+    .in("status", PUBLIC_PET_STATUSES)
+    .not("needs_treatment_since", "is", null)
+    .order("needs_treatment_since", { ascending: true })
+    .order("name")
+    .limit(3),
+  supabase
+    .from("purchase_items")
+    .select("id, name, category, unit, remaining, translations")
+    .gt("remaining", 0)
+    .eq("is_urgent", true)
+    .order("created_at", { ascending: false })
+    .order("id")
+    .limit(5),
+  countPets(PUBLIC_PET_STATUSES),
+  countPets([PET_STATUS_LOOKING]),
+  countPets([PET_STATUS_ADOPTED]),
+]);
+
+const lookingPets = (looking.data ?? []).map((row) => toPet(row, locale));
+const treatmentPets = (treatment.data ?? []).map((row) => toPet(row, locale));
+const urgentItems = (urgent.data ?? []).map((item) => localizeItem(item, locale));
+const statsError = total.error || lookingCount.error || adopted.error;
+const totalCount = total.count ?? 0;
+const title = t("title", { shelter: shelter.name });
+const description = t("description", { shelter: shelter.name });
+const sectionLink =
+  "group inline-flex min-h-11 items-center gap-1.5 font-medium text-(--accent) transition-colors hover:text-(--foreground) motion-reduce:transition-none";
+const arrow = "inline-block transition-transform duration-200 group-hover:translate-x-1 motion-reduce:transition-none";
+const statCard = "flex flex-col-reverse rounded-2xl border border-(--border-strong) bg-(--surface) p-4 shadow-sm";
+---
+
+<ShelterLayout locale={locale} shelter={shelter} title={title} description={description} path="">
+  <main class="flex w-full flex-col">
+    <section class="bg-linear-to-br from-(--accent-wash)/60 via-(--accent-soft)/60 to-transparent px-4 pt-4 pb-6">
+      <div class="mx-auto flex max-w-5xl flex-col items-center gap-4 text-center">
+        <h1 class="text-3xl font-bold">{t("heading", { shelter: shelter.name })}</h1>
+        <p class="max-w-2xl text-lg text-(--muted)">{t("intro")}</p>
+        <div class="flex flex-wrap justify-center gap-2 sm:gap-3">
+          <a
+            href={`/${locale}/catalog`}
+            class="inline-flex min-h-14 items-center justify-center rounded-full bg-(--accent) px-6 py-3 text-center text-lg font-semibold whitespace-nowrap text-(--accent-contrast) hover:shadow-md"
+          >
+            {t("findHome")}
+          </a>
+          <a
+            href={`/${locale}/needs`}
+            class="inline-flex min-h-14 items-center justify-center rounded-full border border-(--accent) px-6 py-3 text-center text-lg font-semibold whitespace-nowrap text-(--accent) transition-colors duration-200 hover:bg-(--hover) motion-reduce:transition-none"
+          >
+            {t("howToHelp")}
+          </a>
+        </div>
+      </div>
+    </section>
+    <div class="mx-auto flex w-full max-w-5xl flex-col gap-10 px-4 pt-4 pb-10">
+      {looking.error && <p role="alert">{t("loadError")}</p>}
+      {
+        lookingPets.length > 0 && (
+          <section aria-labelledby="looking-heading" class="flex flex-col gap-4">
+            <div class="flex flex-wrap items-baseline justify-between gap-2">
+              <h2 id="looking-heading" class="text-2xl font-bold">
+                {t("lookingHeading")}
+              </h2>
+              <a href={`/${locale}/catalog`} class={sectionLink}>
+                {t("allCatalog")}
+                <span aria-hidden="true" class={arrow}>→</span>
+              </a>
+            </div>
+            <ul role="list" class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              {lookingPets.map((pet, index) => (
+                <li class="grid">
+                  <PetCard locale={locale} pet={pet} eager={index < 3} headingLevel="h3" />
+                </li>
+              ))}
+            </ul>
+          </section>
+        )
+      }
+      {treatment.error && <p role="alert">{t("loadError")}</p>}
+      {
+        treatmentPets.length > 0 && (
+          <section aria-labelledby="treatment-heading" class="flex flex-col gap-4">
+            <div class="flex flex-wrap items-baseline justify-between gap-2">
+              <h2 id="treatment-heading" class="text-2xl font-bold">
+                {t("treatmentHeading")}
+              </h2>
+              <a href={`/${locale}/catalog?mode=treatment`} class={sectionLink}>
+                {t("allTreatment")}
+                <span aria-hidden="true" class={arrow}>→</span>
+              </a>
+            </div>
+            <ul role="list" class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {treatmentPets.map((pet) => (
+                <li class="grid">
+                  <PetCard locale={locale} pet={pet} headingLevel="h3" />
+                </li>
+              ))}
+            </ul>
+          </section>
+        )
+      }
+      {urgent.error && <p role="alert">{t("loadError")}</p>}
+      {
+        urgentItems.length > 0 && (
+          <section aria-labelledby="urgent-heading" class="flex flex-col gap-4">
+            <div class="flex flex-wrap items-baseline justify-between gap-2">
+              <h2 id="urgent-heading" class="text-2xl font-bold">
+                {t("urgentHeading")}
+              </h2>
+              <a href={`/${locale}/needs?urgent=1`} class={sectionLink}>
+                {t("allUrgent")}
+                <span aria-hidden="true" class={arrow}>→</span>
+              </a>
+            </div>
+            <ContentLanguageNote
+              locale={locale}
+              language={contentLanguage}
+              translated={urgentItems.some((item) => item.translated)}
+            />
+            <ul role="list" class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {urgentItems.map((item) => {
+                const categoryKey = getCategoryKey(item.category);
+                const unitKey = getUnitKey(item.unit);
+                return (
+                  <li class="group relative flex min-w-0 flex-col gap-3 rounded-2xl border-2 border-(--danger) bg-(--surface) p-4 shadow-sm transition duration-300 ease-out focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-(--focus) hover:shadow-2xl motion-safe:hover:-translate-y-1.5">
+                    <div class="flex min-w-0 flex-col gap-1">
+                      <div class="flex items-start justify-between gap-2">
+                        <h3 lang={item.translated ? locale : contentLanguage} class="min-w-0 text-lg font-bold wrap-anywhere">
+                          {item.name}
+                        </h3>
+                        <p
+                          aria-hidden="true"
+                          class="shrink-0 rounded-full bg-(--danger-soft) px-3 py-0.5 text-sm font-semibold text-(--danger)"
+                        >
+                          🔥 {tn("urgent")}
+                        </p>
+                      </div>
+                      <p class="text-(--muted)">{categoryKey ? tn(`categories.${categoryKey}`) : item.category}</p>
+                    </div>
+                    <div class="mt-auto flex flex-col gap-3">
+                      <p class="text-lg font-bold">
+                        {tn("remaining", {
+                          amount: formatNumber(locale, item.remaining),
+                          unit: unitKey ? tn(`units.${unitKey}`) : item.unit,
+                        })}
+                      </p>
+                      <a
+                        href="#footer-contact-heading"
+                        aria-label={tn("helpLabel", { name: item.name })}
+                        class="flex min-h-14 items-center justify-center self-start rounded-full bg-(--accent) px-6 py-3 text-lg font-semibold text-(--accent-contrast) sm:after:absolute sm:after:inset-0"
+                      >
+                        {tn("help")}
+                      </a>
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          </section>
+        )
+      }
+      {statsError && <p role="alert">{t("loadError")}</p>}
+      {
+        !statsError && totalCount > 0 && (
+          <section aria-labelledby="stats-heading" class="flex flex-col gap-4">
+            <h2 id="stats-heading" class="text-2xl font-bold">
+              {t("statsHeading")}
+            </h2>
+            <dl class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+              <div class={statCard}>
+                <dt class="text-(--muted)">{t("statsTotal")}</dt>
+                <dd class="text-3xl font-bold">{formatNumber(locale, totalCount)}</dd>
+              </div>
+              <div class={statCard}>
+                <dt class="text-(--muted)">{t("statsLooking")}</dt>
+                <dd class="text-3xl font-bold">{formatNumber(locale, lookingCount.count ?? 0)}</dd>
+              </div>
+              {(adopted.count ?? 0) > 0 && (
+                <div class={statCard}>
+                  <dt class="text-(--muted)">{t("statsAdopted")}</dt>
+                  <dd class="text-3xl font-bold">{formatNumber(locale, adopted.count ?? 0)}</dd>
+                </div>
+              )}
+            </dl>
+          </section>
+        )
+      }
+    </div>
+  </main>
+</ShelterLayout>

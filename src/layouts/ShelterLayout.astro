@@ -1,0 +1,148 @@
+---
+import LanguageSwitcher from "@/components/public/LanguageSwitcher.astro";
+import ShelterFooter from "@/components/public/ShelterFooter.astro";
+import Base from "@/layouts/Base.astro";
+import { getTranslator, type Locale } from "@/lib/i18n";
+import { previewCopyOf } from "@/lib/photoUrls";
+import type { Shelter } from "@/lib/shelter";
+import { publicPhotoUrl } from "@/lib/supabase";
+
+interface Props {
+  locale: Locale;
+  shelter: Shelter;
+  title: string;
+  description?: string;
+  path: string;
+  image?: { url: string; alt: string } | null;
+}
+
+const { locale, shelter, title, description, path, image } = Astro.props;
+const t = getTranslator(locale, "Nav");
+const base = `/${locale}`;
+const pathname = Astro.url.pathname;
+const isTreatment = Astro.url.searchParams.get("mode") === "treatment";
+const links = [
+  { href: `${base}/catalog`, label: t("catalog"), current: pathname === `${base}/catalog` && !isTreatment },
+  { href: `${base}/needs`, label: t("needs"), current: pathname === `${base}/needs` },
+  { href: `${base}/catalog?mode=treatment`, label: t("treatment"), current: pathname === `${base}/catalog` && isTreatment },
+  { href: `${base}/projects`, label: t("projects"), current: pathname === `${base}/projects` },
+  { href: `${base}/about`, label: t("about"), current: pathname === `${base}/about` },
+];
+const shelterImage =
+  shelter.photo_path && shelter.photo_alt
+    ? { url: publicPhotoUrl(previewCopyOf(shelter.photo_path)), alt: shelter.photo_alt }
+    : undefined;
+const logo = shelter.brand_path ? publicPhotoUrl(`${shelter.brand_path}/logo.png`) : null;
+const linkClass =
+  "flex min-h-12 items-center rounded-md px-4 font-medium transition-colors duration-200 hover:bg-(--hover) hover:text-(--accent) motion-reduce:transition-none aria-[current=page]:bg-(--hover) aria-[current=page]:font-semibold aria-[current=page]:text-(--accent) max-lg:font-semibold lg:inline-flex lg:min-h-0 lg:rounded-md lg:px-2 lg:py-2 lg:text-base";
+---
+
+<Base
+  title={title}
+  description={description}
+  locale={locale}
+  path={path}
+  siteName={shelter.name}
+  image={image === null ? undefined : (image ?? shelterImage)}
+  brandPath={shelter.brand_path}
+>
+  <slot name="head" slot="head" />
+  <a
+    href="#content"
+    class="fixed top-4 left-4 z-50 -translate-y-24 rounded-md bg-(--surface) px-4 py-2 font-semibold text-(--accent) underline shadow-md focus:translate-y-0"
+  >
+    {t("skipToContent")}
+  </a>
+  <header class="sticky top-0 z-30 w-full bg-(--background) shadow-md">
+    <div class="relative mx-auto flex w-full max-w-5xl items-center justify-between gap-x-4 px-4 py-1 lg:grid lg:grid-cols-3">
+      <a href={base} class="flex items-center gap-2 py-0 text-base font-bold sm:text-lg lg:justify-self-start">
+        {logo && <img src={logo} alt="" width="48" height="48" class="size-12 shrink-0 rounded-lg border border-(--border-strong)" />}
+        <span class="max-w-48 leading-tight text-balance">{shelter.name}</span>
+      </a>
+      <nav aria-label={t("label")} class="lg:order-2 lg:justify-self-center" data-menu>
+        <button
+          type="button"
+          aria-expanded="false"
+          aria-controls="site-menu"
+          class="inline-flex min-h-11 items-center rounded-md border-2 border-(--accent) px-4 font-semibold text-(--accent) hover:bg-(--hover) lg:hidden"
+          hidden
+          data-menu-button
+        >
+          {t("menu")}
+        </button>
+        <ul
+          id="site-menu"
+          class="absolute inset-x-0 top-full flex max-h-svh flex-col gap-1 overflow-y-auto border-t border-(--border) bg-(--background) px-4 py-3 shadow-md data-[closed]:max-lg:hidden lg:static lg:max-h-none lg:flex-row lg:flex-wrap lg:gap-1 lg:overflow-visible lg:border-0 lg:bg-transparent lg:p-0 lg:shadow-none"
+          data-menu-list
+          data-closed
+        >
+          {
+            links.map((link) => (
+              <li>
+                <a href={link.href} aria-current={link.current ? "page" : undefined} class={linkClass}>
+                  {link.label}
+                </a>
+              </li>
+            ))
+          }
+          <li class="mt-2 border-t border-(--border) pt-3 lg:hidden">
+            <LanguageSwitcher locale={locale} variant="list" />
+          </li>
+          <li class="mt-2 border-t border-(--border) pt-3 lg:hidden">
+            <a
+              href="#footer-contact-heading"
+              class="flex min-h-12 w-full items-center justify-center rounded-full bg-(--accent) px-5 font-semibold text-(--accent-contrast) hover:shadow-md"
+            >
+              {t("contact")}
+            </a>
+          </li>
+        </ul>
+      </nav>
+      <div class="hidden lg:order-3 lg:block lg:justify-self-end">
+        <LanguageSwitcher locale={locale} />
+      </div>
+    </div>
+  </header>
+  <div id="content" tabindex="-1" class="focus:outline-none">
+    <slot />
+  </div>
+  <ShelterFooter locale={locale} shelter={shelter} />
+</Base>
+
+<script>
+  const nav = document.querySelector<HTMLElement>("[data-menu]");
+  const button = nav?.querySelector<HTMLButtonElement>("[data-menu-button]");
+  const list = nav?.querySelector<HTMLElement>("[data-menu-list]");
+  if (nav && button && list) {
+    const setOpen = (open: boolean) => {
+      button.setAttribute("aria-expanded", String(open));
+      list.toggleAttribute("data-closed", !open);
+    };
+    button.hidden = false;
+    setOpen(false);
+    button.addEventListener("click", () => setOpen(button.getAttribute("aria-expanded") !== "true"));
+    list.addEventListener("click", (event) => {
+      if ((event.target as HTMLElement).closest("a")) setOpen(false);
+    });
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && button.getAttribute("aria-expanded") === "true") {
+        setOpen(false);
+        button.focus();
+      }
+    });
+    document.addEventListener("pointerdown", (event) => {
+      if (!nav.contains(event.target as Node)) setOpen(false);
+    });
+  }
+  for (const details of document.querySelectorAll<HTMLDetailsElement>("details[data-dismissable]")) {
+    document.addEventListener("pointerdown", (event) => {
+      if (details.open && !details.contains(event.target as Node)) details.open = false;
+    });
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && details.open) {
+        details.open = false;
+        details.querySelector("summary")?.focus();
+      }
+    });
+  }
+</script>

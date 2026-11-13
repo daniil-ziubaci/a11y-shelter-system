@@ -1,0 +1,207 @@
+---
+import PanelLayout from "@/layouts/PanelLayout.astro";
+import { isPost, isVolunteer, NOT_A_VOLUNTEER, readForm, refreshPublicPages, text } from "@/lib/panel";
+import { isProjectStale, PROJECT_REVIEW_DAYS } from "@/lib/projectReview";
+import { PROJECT_STATUS_COMPLETED, PROJECT_STATUS_ONGOING, PROJECT_STATUSES } from "@/lib/projectStages";
+
+const supabase = Astro.locals.supabase;
+const volunteer = await isVolunteer(supabase, Astro.locals.claims?.sub);
+
+if (volunteer && isPost(Astro)) {
+  const form = await readForm(Astro);
+  const intent = form ? text(form, "intent") : "";
+  const projectId = form ? text(form, "projectId") : "";
+  const back = form ? text(form, "back") : "";
+  if (form && projectId) {
+    if (intent === "status") {
+      const status = text(form, "status");
+      if ((PROJECT_STATUSES as readonly string[]).includes(status)) {
+        const { error } = await supabase.from("projects").update({ status }).eq("id", projectId);
+        if (error) throw new Error("Не удалось изменить статус проекта.");
+      }
+    } else if (intent === "progress") {
+      const done = Number(text(form, "progressDone"));
+      const { data: project } = await supabase.from("projects").select("progress_total").eq("id", projectId).maybeSingle();
+      if (Number.isInteger(done) && done >= 0 && project?.progress_total != null && done <= project.progress_total) {
+        const { error } = await supabase
+          .from("projects")
+          .update({ progress_done: done, status: done === project.progress_total ? PROJECT_STATUS_COMPLETED : PROJECT_STATUS_ONGOING })
+          .eq("id", projectId);
+        if (error) throw new Error("Не удалось изменить счёт дел.");
+      }
+    } else if (intent === "archive") {
+      const { error } = await supabase.from("projects").update({ is_archived: text(form, "archived") === "1" }).eq("id", projectId);
+      if (error) throw new Error("Не удалось изменить проект.");
+    }
+    refreshPublicPages(Astro);
+  }
+  return Astro.redirect(back.startsWith("/volunteer/projects") ? back : "/volunteer/projects", 303);
+}
+
+const showArchived = Astro.url.searchParams.get("archived") === "1";
+const { data, error } = volunteer
+  ? await supabase
+      .from("projects")
+      .select("id, title, status, updated_at, progress_total, progress_done, progress_unit")
+      .eq("is_archived", showArchived)
+      .order("created_at", { ascending: false })
+  : { data: [], error: null };
+const projects = data ?? [];
+const groups = [
+  { heading: "Идут сейчас", items: projects.filter((p) => p.status === PROJECT_STATUS_ONGOING) },
+  { heading: "Завершены", items: projects.filter((p) => p.status !== PROJECT_STATUS_ONGOING) },
+].filter((group) => group.items.length > 0);
+const here = Astro.url.pathname + Astro.url.search;
+const title = showArchived ? "Убранные проекты" : "Проекты приюта";
+const card = "flex flex-col gap-3 rounded-2xl border border-(--border-strong) bg-(--surface) p-3 shadow-md";
+const smallButton = "h-10 cursor-pointer rounded-lg border border-(--border-strong) bg-(--surface) px-4 font-medium";
+const archiveButton = "h-10 w-full cursor-pointer rounded-lg px-3 text-sm font-medium text-(--muted) underline";
+---
+
+<PanelLayout title={title}>
+  <main class="mx-auto flex w-full max-w-5xl flex-col gap-4 px-4 pt-4 pb-6">
+    <h1 class="text-3xl font-bold sm:text-center">{title}</h1>
+    {
+      !volunteer ? (
+        <p>{NOT_A_VOLUNTEER}</p>
+      ) : showArchived ? (
+        <>
+          {error ? (
+            <p role="alert">Не удалось загрузить проекты.</p>
+          ) : projects.length === 0 ? (
+            <p class="text-(--muted) sm:text-center">Убранных проектов нет.</p>
+          ) : (
+            <ul class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              {projects.map((project) => (
+                <li class={card}>
+                  <h2 class="text-xl font-bold wrap-break-word">{project.title}</h2>
+                  <form method="post" action="/volunteer/projects">
+                    <input type="hidden" name="intent" value="archive" />
+                    <input type="hidden" name="projectId" value={project.id} />
+                    <input type="hidden" name="archived" value="0" />
+                    <input type="hidden" name="back" value={here} />
+                    <button type="submit" aria-label={`Вернуть в список: ${project.title}`} class={archiveButton}>
+                      Вернуть в список
+                    </button>
+                  </form>
+                </li>
+              ))}
+            </ul>
+          )}
+          <a href="/volunteer/projects" class="flex h-10 items-center justify-center text-(--muted) underline sm:self-center">
+            К проектам
+          </a>
+        </>
+      ) : (
+        <>
+          <a
+            href="/volunteer/projects/new"
+            class="flex h-10 items-center justify-center rounded-lg border border-(--border-strong) bg-(--surface) px-4 font-medium sm:self-center"
+          >
+            Добавить проект
+          </a>
+          {error ? (
+            <p role="alert">Не удалось загрузить проекты.</p>
+          ) : projects.length === 0 ? (
+            <p class="text-(--muted)">Проектов пока нет.</p>
+          ) : (
+            groups.map((group) => (
+              <section class="flex flex-col gap-3">
+                <h2 class="text-lg font-bold text-(--muted)">{group.heading}</h2>
+                <ul class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  {group.items.map((project) => {
+                    const hasProgress = project.progress_total !== null && project.progress_done !== null && Boolean(project.progress_unit);
+                    return (
+                      <li class={card}>
+                        <h3 class="text-xl font-bold wrap-break-word">{project.title}</h3>
+                        {project.status === PROJECT_STATUS_ONGOING && isProjectStale(project.updated_at) && (
+                          <p class="rounded-lg bg-(--pending-soft) px-3 py-2 font-semibold text-(--pending)">
+                            Проверьте, актуально ли: проект не обновлялся больше {PROJECT_REVIEW_DAYS} дней.
+                          </p>
+                        )}
+                        <div class="mt-auto flex flex-col gap-3">
+                          {hasProgress ? (
+                            <form method="post" action="/volunteer/projects" class="flex flex-col gap-1">
+                              <input type="hidden" name="intent" value="progress" />
+                              <input type="hidden" name="projectId" value={project.id} />
+                              <input type="hidden" name="back" value={here} />
+                              <label for={`done-${project.id}`} class="text-(--muted)">
+                                Сделано из {project.progress_total} {project.progress_unit}:
+                              </label>
+                              <div class="flex gap-2">
+                                <input
+                                  id={`done-${project.id}`}
+                                  name="progressDone"
+                                  type="number"
+                                  inputmode="numeric"
+                                  min="0"
+                                  max={project.progress_total ?? undefined}
+                                  value={project.progress_done ?? 0}
+                                  aria-label={`Сделано из ${project.progress_total} ${project.progress_unit}: ${project.title}`}
+                                  class="h-10 min-w-0 flex-1 rounded-lg border border-(--accent) bg-(--accent-soft) px-3 text-base"
+                                />
+                                <button type="submit" aria-label={`Сохранить счёт дел: ${project.title}`} class={smallButton}>
+                                  Сохранить
+                                </button>
+                              </div>
+                            </form>
+                          ) : (
+                            <form method="post" action="/volunteer/projects" class="flex gap-2">
+                              <input type="hidden" name="intent" value="status" />
+                              <input type="hidden" name="projectId" value={project.id} />
+                              <input type="hidden" name="back" value={here} />
+                              <div class="relative min-w-0 flex-1">
+                                <select
+                                  name="status"
+                                  aria-label={`Статус: ${project.title}`}
+                                  class="h-10 w-full appearance-none rounded-lg border border-(--accent) bg-(--accent-soft) pr-10 pl-3 text-base *:bg-(--surface)"
+                                >
+                                  {PROJECT_STATUSES.map((status) => (
+                                    <option value={status} selected={status === project.status}>
+                                      {status}
+                                    </option>
+                                  ))}
+                                </select>
+                                <span aria-hidden="true" class="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-(--muted)">
+                                  ▾
+                                </span>
+                              </div>
+                              <button type="submit" aria-label={`Сохранить статус: ${project.title}`} class={smallButton}>
+                                Сохранить
+                              </button>
+                            </form>
+                          )}
+                          <a
+                            href={`/volunteer/projects/${project.id}/edit`}
+                            aria-label={`Редактировать: ${project.title}`}
+                            class="flex h-10 w-full items-center justify-center rounded-lg border border-(--border-strong) bg-(--surface) px-3 text-sm font-medium"
+                          >
+                            Редактировать
+                          </a>
+                          {project.status !== PROJECT_STATUS_ONGOING && (
+                            <form method="post" action="/volunteer/projects">
+                              <input type="hidden" name="intent" value="archive" />
+                              <input type="hidden" name="projectId" value={project.id} />
+                              <input type="hidden" name="archived" value="1" />
+                              <input type="hidden" name="back" value={here} />
+                              <button type="submit" aria-label={`Убрать из списка: ${project.title}`} class={archiveButton}>
+                                Убрать из списка
+                              </button>
+                            </form>
+                          )}
+                        </div>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </section>
+            ))
+          )}
+          <a href="/volunteer/projects?archived=1" class="flex h-10 items-center justify-center text-(--muted) underline sm:self-center">
+            Показать убранные
+          </a>
+        </>
+      )
+    }
+  </main>
+</PanelLayout>

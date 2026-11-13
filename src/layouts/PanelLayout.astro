@@ -1,0 +1,130 @@
+---
+import Base from "@/layouts/Base.astro";
+import { loadShelterRow } from "@/lib/shelter";
+
+interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+const claims = Astro.locals.claims;
+const showNav = claims?.aal === "aal2";
+const account = claims?.email?.split("@")[0] ?? "";
+const path = Astro.url.pathname;
+let shelterName: string | null = null;
+if (claims) {
+  const { data } = await Astro.locals.supabase.from("shelter").select("name").maybeSingle();
+  shelterName = data?.name ?? (await loadShelterRow())?.name ?? null;
+}
+const sections = [
+  { href: "/volunteer/needs", label: "Закупки", inSection: path.startsWith("/volunteer/needs") },
+  { href: "/volunteer", label: "Животные", inSection: path === "/volunteer" || path.startsWith("/volunteer/pets") },
+  { href: "/volunteer/projects", label: "Проекты", inSection: path.startsWith("/volunteer/projects") },
+];
+const inner = /^\/volunteer\/(pets|needs|projects)\/(new|[^/]+\/edit)$/.exec(path);
+const backHref = inner ? (inner[1] === "pets" ? "/volunteer" : `/volunteer/${inner[1]}`) : null;
+const showSections = showNav && !path.startsWith("/volunteer/2fa");
+---
+
+<Base title={title} noindex>
+  <a href="#volunteer-content" class="sr-only focus:not-sr-only focus:inline-block focus:p-2 focus:underline">Перейти к содержимому</a>
+  <header class="sticky top-0 z-30 w-full bg-(--background) shadow-md">
+    <div class="mx-auto flex max-w-5xl flex-col gap-1 px-4 pt-1.5 pb-3">
+      <div class="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
+        {
+          shelterName && (
+            <a
+              href="/ru"
+              aria-label={`${shelterName}: страница приюта на сайте, откроется в новой вкладке`}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="order-1 min-w-0 truncate text-base font-bold hover:underline"
+            >
+              {shelterName}
+            </a>
+          )
+        }
+        {
+          claims && (
+            <details class="relative order-2 ml-auto" data-dismissable>
+              <summary class="flex h-9 cursor-pointer items-center gap-1 px-2 text-(--muted)">
+                <span>Аккаунт</span>
+                <span aria-hidden="true">▾</span>
+              </summary>
+              <div class="absolute top-full right-0 mt-1 min-w-48 rounded-xl border border-(--border) bg-(--surface) p-2 shadow-md">
+                {account && <p class="truncate px-2 py-1 text-sm text-(--muted)">{account}</p>}
+                <form method="post" action="/volunteer/logout">
+                  <button type="submit" class="h-10 w-full cursor-pointer rounded-lg px-2 text-left font-medium hover:bg-(--hover)">
+                    Выйти
+                  </button>
+                </form>
+              </div>
+            </details>
+          )
+        }
+      </div>
+      {
+        showSections && (
+          <nav aria-label="Разделы панели волонтёра">
+            <ul class="grid grid-cols-3 gap-2">
+              {sections.map((link) => (
+                <li>
+                  <a
+                    href={link.href}
+                    aria-current={path === link.href ? "page" : link.inSection ? "true" : undefined}
+                    class:list={[
+                      "flex min-h-10 items-center justify-center rounded-lg border px-2 text-center font-medium",
+                      link.inSection ? "border-transparent bg-(--accent) text-white" : "border-(--border-strong) bg-(--surface)",
+                    ]}
+                  >
+                    {link.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        )
+      }
+    </div>
+  </header>
+  {
+    showSections && backHref && (
+      <div class="mx-auto w-full max-w-5xl px-4 pt-4">
+        <a href={backHref} class="group flex h-10 w-full items-center gap-3 text-lg font-medium tracking-wide text-(--accent) sm:mx-auto sm:w-1/2">
+          <span aria-hidden="true" class="text-2xl leading-none transition-transform motion-safe:group-hover:-translate-x-2 motion-safe:group-focus-visible:-translate-x-2">
+            ←
+          </span>
+          Назад
+        </a>
+      </div>
+    )
+  }
+  <div id="volunteer-content" tabindex="-1">
+    <slot />
+  </div>
+</Base>
+
+<script>
+  for (const form of document.querySelectorAll<HTMLFormElement>("form[method='post']")) {
+    form.addEventListener("submit", (event) => {
+      const button = (event as SubmitEvent).submitter;
+      if (!(button instanceof HTMLButtonElement) || event.defaultPrevented) return;
+      const pending = button.dataset.pending;
+      setTimeout(() => {
+        button.disabled = true;
+        if (pending) button.textContent = pending;
+      });
+    });
+  }
+  for (const details of document.querySelectorAll<HTMLDetailsElement>("details[data-dismissable]")) {
+    document.addEventListener("pointerdown", (event) => {
+      if (details.open && !details.contains(event.target as Node)) details.open = false;
+    });
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && details.open) {
+        details.open = false;
+        details.querySelector("summary")?.focus();
+      }
+    });
+  }
+</script>

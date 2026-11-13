@@ -1,0 +1,216 @@
+---
+import ContentLanguageNote from "@/components/public/ContentLanguageNote.astro";
+import PetBadges from "@/components/public/PetBadges.astro";
+import PetCard from "@/components/public/PetCard.astro";
+import ShelterLayout from "@/layouts/ShelterLayout.astro";
+import { getAnimalKey } from "@/lib/animalKey";
+import { formatAge } from "@/lib/formatAge";
+import { getTranslator } from "@/lib/i18n";
+import { getLifeStage } from "@/lib/lifeStage";
+import { contentLanguageOf, loadPublicPage } from "@/lib/page";
+import { getSexKey } from "@/lib/petLabels";
+import { getSizeKey } from "@/lib/petSizes";
+import { PET_STATUS_LOOKING, PET_STATUS_PENDING, PET_STATUS_REMOVED, PET_STATUS_TREATMENT, PUBLIC_PET_STATUSES } from "@/lib/petStatuses";
+import { previewCopyOf } from "@/lib/photoUrls";
+import { getPublicClient } from "@/lib/supabase";
+import { toPet } from "@/lib/toPet";
+import { truncateText } from "@/lib/truncateText";
+
+const page = await loadPublicPage(Astro);
+if (page instanceof Response) return page;
+const { locale, shelter } = page;
+const id = Astro.params.id ?? "";
+if (!/^[0-9a-f-]{36}$/i.test(id)) return Astro.rewrite(`/${locale}/404`);
+
+const supabase = getPublicClient();
+const { data, error } = await supabase.from("pets").select("*").eq("id", id).neq("status", PET_STATUS_REMOVED).maybeSingle();
+if (error) throw new Error("Не удалось загрузить питомца из базы.");
+if (!data) return Astro.rewrite(`/${locale}/404`);
+
+const isTreatmentRelated = data.needs_treatment_since !== null || data.status === PET_STATUS_TREATMENT;
+const pet = toPet(data, locale);
+
+function otherPets(onlyTreatment: boolean) {
+  let query = supabase.from("pets").select("*").in("status", PUBLIC_PET_STATUSES).neq("id", id);
+  if (onlyTreatment) {
+    query = query
+      .or(`needs_treatment_since.not.is.null,status.eq."${PET_STATUS_TREATMENT}"`)
+      .order("needs_treatment_since", { ascending: true, nullsFirst: false });
+  }
+  return query.order("status_rank").order("created_at", { ascending: true }).limit(4);
+}
+
+const [treatmentRows, regularRows] = await Promise.all([
+  isTreatmentRelated ? otherPets(true) : Promise.resolve({ data: [] }),
+  otherPets(false),
+]);
+const treatmentPets = (treatmentRows.data ?? []).map((row) => toPet(row, locale));
+const showTreatmentBlock = treatmentPets.length > 0;
+const others = showTreatmentBlock ? treatmentPets : (regularRows.data ?? []).map((row) => toPet(row, locale));
+
+const t = getTranslator(locale, "Pet");
+const tAge = getTranslator(locale, "Age");
+const tAnimal = getTranslator(locale, "Animal");
+const tAdoption = getTranslator(locale, "Adoption");
+const contentLanguage = contentLanguageOf(shelter);
+const sizeKey = pet.size ? getSizeKey(pet.size) : undefined;
+const animal = tAnimal(getAnimalKey(pet.species, pet.sex, getLifeStage(pet.ageInMonths)));
+const title = t(pet.status === PET_STATUS_TREATMENT ? "titleInShelter" : "titleWithShelter", {
+  name: pet.name,
+  animal,
+  shelter: shelter.name,
+});
+const catalogHref = isTreatmentRelated ? `/${locale}/catalog?mode=treatment` : `/${locale}/catalog`;
+const helpButtonBase = "inline-flex min-h-14 items-center justify-center rounded-full px-6 py-3 text-lg font-semibold";
+const crumb = "inline-flex items-center py-1 text-(--muted) transition-colors hover:text-(--foreground) motion-reduce:transition-none";
+const fact = "rounded-lg border border-(--border) bg-(--surface) px-4 py-3";
+---
+
+<ShelterLayout
+  locale={locale}
+  shelter={shelter}
+  title={title}
+  description={truncateText(pet.description, 155)}
+  path={`/catalog/${id}`}
+  image={{ url: previewCopyOf(pet.photo.url), alt: pet.photo.alt }}
+>
+  <main class="mx-auto flex w-full max-w-5xl flex-col gap-6 p-4">
+    <nav aria-label={t("breadcrumbLabel")}>
+      <ol class="flex flex-wrap items-center gap-x-2 text-base">
+        <li class="flex items-center gap-x-2">
+          <a href={`/${locale}`} class={crumb}>{t("breadcrumbHome")}</a>
+          <span aria-hidden="true">/</span>
+        </li>
+        <li class="flex items-center gap-x-2">
+          <a href={catalogHref} class={crumb}>{isTreatmentRelated ? t("breadcrumbTreatment") : t("breadcrumbCatalog")}</a>
+          <span aria-hidden="true">/</span>
+        </li>
+        <li aria-current="page" class="font-semibold text-(--accent)">{pet.name}</li>
+      </ol>
+    </nav>
+    <div class="grid gap-6 lg:grid-cols-2 lg:items-start">
+      <div class="relative aspect-4/3 w-full overflow-hidden rounded-lg border border-(--border) bg-(--surface)">
+        <img src={pet.photo.url} alt={pet.photo.alt} width="1600" height="1200" fetchpriority="high" class="absolute inset-0 size-full object-contain" />
+      </div>
+      <div class="flex flex-col gap-3">
+        {
+          (pet.status !== PET_STATUS_LOOKING || pet.needsTreatmentSince) && (
+            <div class="flex flex-wrap items-center gap-2">
+              <PetBadges locale={locale} status={pet.status} needsTreatmentSince={pet.needsTreatmentSince} />
+            </div>
+          )
+        }
+        <h1 class="text-4xl font-bold sm:text-5xl">{pet.name}</h1>
+        <dl class="flex flex-wrap gap-2">
+          <div class={fact}>
+            <dt class="text-sm text-(--muted)">{t("sex")}</dt>
+            <dd class="font-semibold whitespace-nowrap first-letter:uppercase">{t(`sexValue.${getSexKey(pet.sex)}`)}</dd>
+          </div>
+          <div class={fact}>
+            <dt class="text-sm text-(--muted)">{t("age")}</dt>
+            <dd class="font-semibold whitespace-nowrap first-letter:uppercase">{formatAge(pet.ageInMonths, pet.isAgeApproximate, tAge)}</dd>
+          </div>
+          {
+            sizeKey && (
+              <div class={fact}>
+                <dt class="text-sm text-(--muted)">{t("size")}</dt>
+                <dd class="font-semibold whitespace-nowrap first-letter:uppercase">{t(`sizeValue.${sizeKey}`)}</dd>
+              </div>
+            )
+          }
+        </dl>
+        <div class="flex flex-col gap-2 rounded-lg border border-(--border) bg-(--surface) p-4">
+          <h2 class="text-xl font-bold">{t("aboutTitle")}</h2>
+          <ContentLanguageNote locale={locale} language={contentLanguage} translated={pet.translated.description} />
+          <p lang={pet.translated.description ? locale : contentLanguage}>{pet.description}</p>
+        </div>
+        <div class="flex flex-col gap-2 rounded-lg border border-(--border) bg-(--surface) p-4">
+          <h2 class="text-xl font-bold">{t("health")}</h2>
+          {
+            pet.translated.health !== pet.translated.description && (
+              <ContentLanguageNote locale={locale} language={contentLanguage} translated={pet.translated.health} />
+            )
+          }
+          <p lang={pet.translated.health ? locale : contentLanguage}>{pet.health}</p>
+        </div>
+        {
+          pet.status === PET_STATUS_PENDING && (
+            <p class="rounded-lg border border-(--border) bg-(--accent-soft) px-4 py-3">{t("adoptPending")}</p>
+          )
+        }
+        <div class="mt-4 flex flex-wrap gap-3">
+          {
+            pet.status !== PET_STATUS_TREATMENT && (
+              <a
+                href="#footer-contact-heading"
+                aria-label={t("adoptLabel", { name: pet.name })}
+                class="inline-flex min-h-14 items-center justify-center rounded-full bg-(--accent) px-6 py-3 text-lg font-semibold text-(--accent-contrast) hover:shadow-md"
+              >
+                {t("adopt")}
+              </a>
+            )
+          }
+          {
+            isTreatmentRelated ? (
+              <a
+                href="#footer-contact-heading"
+                aria-label={t("helpTreatmentLabel", { name: pet.name })}
+                class={`${helpButtonBase} border-2 border-(--danger) bg-(--surface) text-(--danger) hover:bg-(--danger-soft)`}
+              >
+                {t("helpTreatment")}
+              </a>
+            ) : (
+              <a
+                href={`/${locale}/needs`}
+                aria-label={t("helpLabel", { name: pet.name })}
+                class={`${helpButtonBase} border-2 border-(--accent) text-(--accent) hover:bg-(--hover)`}
+              >
+                {t("help")}
+              </a>
+            )
+          }
+        </div>
+      </div>
+    </div>
+    {
+      shelter.adoption_info && (
+        <section aria-labelledby="adoption-heading" class="flex max-w-2xl flex-col gap-2">
+          <h2 id="adoption-heading" class="text-xl font-bold">
+            {tAdoption("heading")}
+          </h2>
+          <ContentLanguageNote locale={locale} language={contentLanguage} translated={shelter.translated.adoptionInfo} />
+          <p class="whitespace-pre-line" lang={shelter.translated.adoptionInfo ? locale : contentLanguage}>
+            {shelter.adoption_info}
+          </p>
+        </section>
+      )
+    }
+  </main>
+  {
+    others.length > 0 && (
+      <section aria-labelledby="other-pets-heading" class="bg-(--accent-soft)">
+        <div class="mx-auto flex w-full max-w-5xl flex-col gap-6 px-4 pt-6 pb-10">
+          <div class="flex flex-wrap items-baseline justify-between gap-x-4">
+            <h2 id="other-pets-heading" class="text-2xl font-bold">
+              {showTreatmentBlock ? t("otherTreatmentHeading") : t("otherHeading")}
+            </h2>
+            <a
+              href={showTreatmentBlock ? `/${locale}/catalog?mode=treatment` : `/${locale}/catalog`}
+              class="group -my-2 inline-flex min-h-11 items-center gap-1.5 font-medium text-(--accent) transition-colors hover:text-(--foreground) motion-reduce:transition-none"
+            >
+              {showTreatmentBlock ? t("toTreatment") : t("toCatalog")}
+              <span aria-hidden="true" class="inline-block transition-transform duration-200 group-hover:translate-x-1 motion-reduce:transition-none">
+                →
+              </span>
+            </a>
+          </div>
+          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {others.map((other) => (
+              <PetCard locale={locale} pet={other} headingLevel="h3" />
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+</ShelterLayout>

@@ -1,0 +1,15 @@
+---
+interface Props {
+  title: string;
+  shelterName?: string | null;
+  hasHeader?: boolean;
+}
+
+const { title, shelterName, hasHeader = false } = Astro.props;
+---
+
+<main class:list={["mx-auto flex w-full max-w-md flex-col gap-4 px-4 pb-8", hasHeader ? "pt-4" : "pt-10"]}>
+  {shelterName && <p class="text-center font-medium wrap-break-word text-(--muted)">{shelterName}</p>}
+  <h1 class="text-center text-3xl font-bold wrap-break-word">{title}</h1>
+  <slot />
+</main>

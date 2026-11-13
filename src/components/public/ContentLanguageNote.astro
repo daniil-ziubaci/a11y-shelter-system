@@ -1,0 +1,15 @@
+---
+import { getTranslator, type Locale } from "@/lib/i18n";
+import type { ContentLanguage } from "@/lib/contentLanguage";
+
+interface Props {
+  locale: Locale;
+  language: ContentLanguage;
+  translated?: boolean;
+}
+
+const { locale, language, translated = false } = Astro.props;
+const t = getTranslator(locale, "ContentLanguage");
+---
+
+{language !== locale && <p class="text-sm text-(--muted)">{translated ? t("translated") : t("note", { language })}</p>}

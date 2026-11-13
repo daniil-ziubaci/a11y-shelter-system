@@ -1,0 +1,101 @@
+---
+import AuthPage from "@/components/panel/AuthPage.astro";
+import PanelLayout from "@/layouts/PanelLayout.astro";
+import { cardClass, errorClass, primaryButtonClass, secondaryButtonClass } from "@/lib/formClasses";
+import { isPost, readForm } from "@/lib/panel";
+import { verifyTotp } from "@/lib/twoFactor";
+
+const supabase = Astro.locals.supabase;
+let enrollment: { factorId: string; qrCode: string; secret: string } | null = null;
+let error: string | null = null;
+let codeError: string | null = null;
+
+if (isPost(Astro)) {
+  const form = await readForm(Astro);
+  if (form?.get("intent") === "verify") {
+    codeError = await verifyTotp(supabase, form);
+    if (!codeError) {
+      return Astro.redirect("/volunteer/needs", 303);
+    }
+    const factorId = String(form.get("factorId") ?? "");
+    const { data: factors } = await supabase.auth.mfa.listFactors();
+    const pending = factors?.all.find((factor) => factor.id === factorId && factor.status === "unverified");
+    const qrCode = String(form.get("qrCode") ?? "");
+    const secret = String(form.get("secret") ?? "");
+    if (pending && qrCode.startsWith("data:image/svg+xml") && /^[A-Z2-7]+$/.test(secret)) {
+      enrollment = { factorId, qrCode, secret };
+    }
+  } else {
+    const { data: factors } = await supabase.auth.mfa.listFactors();
+    for (const factor of factors?.all ?? []) {
+      if (factor.status === "unverified") {
+        await supabase.auth.mfa.unenroll({ factorId: factor.id });
+      }
+    }
+    const { data, error: enrollError } = await supabase.auth.mfa.enroll({ factorType: "totp" });
+    if (enrollError || !data) {
+      error = "Не удалось начать настройку. Попробуйте ещё раз.";
+    } else {
+      enrollment = { factorId: data.id, qrCode: data.totp.qr_code, secret: data.totp.secret };
+    }
+  }
+}
+
+const { data: factors } = await supabase.auth.mfa.listFactors();
+const isEnabled = (factors?.totp.length ?? 0) > 0;
+---
+
+<PanelLayout title="Настройка двухфакторного входа">
+  <AuthPage hasHeader title="Настройка двухфакторного входа">
+    {
+      isEnabled ? (
+        <p class="text-center">Двухфакторный вход уже настроен.</p>
+      ) : enrollment ? (
+        <div class="flex flex-col gap-4">
+          <div role="group" aria-label="Подключение приложения-аутентификатора" class={`${cardClass} items-center`}>
+            <div class="w-fit rounded-xl border border-(--border) bg-white p-3">
+              <img
+                src={enrollment.qrCode}
+                alt="QR-код для приложения-аутентификатора. Если отсканировать не получается, используйте ключ ниже."
+                width="200"
+                height="200"
+              />
+            </div>
+            <details class="flex w-full flex-col items-center gap-2">
+              <summary class={`${secondaryButtonClass} inline-flex items-center`}>Показать ключ</summary>
+              <p class="mt-2 w-full rounded-lg bg-(--hover) px-3 py-2 font-mono break-all select-all">
+                Ключ для ввода вручную: {enrollment.secret}
+              </p>
+            </details>
+          </div>
+          <form method="post" action="/volunteer/2fa" class={cardClass}>
+            <p role="alert" class={errorClass}>{codeError}</p>
+            <input type="hidden" name="intent" value="verify" />
+            <input type="hidden" name="factorId" value={enrollment.factorId} />
+            <input type="hidden" name="qrCode" value={enrollment.qrCode} />
+            <input type="hidden" name="secret" value={enrollment.secret} />
+            <div class="flex flex-col gap-1">
+              <label for="code" class="font-medium">Код из приложения</label>
+              <input id="code" name="code" type="text" inputmode="numeric" autocomplete="one-time-code" required class="h-12 w-full rounded-lg border border-(--accent) bg-(--accent-soft) px-3 text-center text-2xl tracking-widest" />
+            </div>
+            <button type="submit" class={primaryButtonClass} data-pending="Проверяем…">Подтвердить</button>
+          </form>
+        </div>
+      ) : (
+        <>
+          <div class="flex flex-col gap-2 text-(--muted)">
+            <p>
+              Чтобы войти в панель приюта, нужен пароль и короткий код из приложения. Так посторонний не попадёт в панель, даже если узнает ваш пароль.
+            </p>
+            <p>Установите на телефон бесплатное приложение Google Authenticator, нажмите «Начать настройку» и наведите камеру приложения на QR-код.</p>
+          </div>
+          <form method="post" action="/volunteer/2fa" class="flex flex-col items-center gap-4">
+            <p role="alert" class={errorClass}>{error}</p>
+            <input type="hidden" name="intent" value="start" />
+            <button type="submit" class={primaryButtonClass} data-pending="Готовим…">Начать настройку</button>
+          </form>
+        </>
+      )
+    }
+  </AuthPage>
+</PanelLayout>

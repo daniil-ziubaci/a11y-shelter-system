@@ -1,0 +1,27 @@
+---
+import type { ContentLanguage } from "@/lib/contentLanguage";
+import { parseDescription } from "@/lib/parseDescription";
+
+interface Props {
+  text: string;
+  language: ContentLanguage;
+}
+
+const { text, language } = Astro.props;
+---
+
+<div lang={language} class="flex flex-col gap-3">
+  {
+    parseDescription(text).map((block) =>
+      block.type === "list" ? (
+        <ul class="list-disc pl-6">
+          {block.items.map((item) => (
+            <li>{item}</li>
+          ))}
+        </ul>
+      ) : (
+        <p class="whitespace-pre-line">{block.lines.join("\n")}</p>
+      ),
+    )
+  }
+</div>

@@ -1,0 +1,74 @@
+---
+import { getTranslator, LOCALES, type Locale } from "@/lib/i18n";
+import { switchLocalePath } from "@/lib/routes";
+
+interface Props {
+  locale: Locale;
+  variant?: "dropdown" | "list";
+}
+
+const { locale, variant = "dropdown" } = Astro.props;
+const t = getTranslator(locale, "Nav");
+const LABELS: Record<Locale, string> = { ru: "Русский", ro: "Română", en: "English" };
+const ORDER: Locale[] = ["ro", "ru", "en"];
+const codes = [...LOCALES].sort((a, b) => ORDER.indexOf(a) - ORDER.indexOf(b));
+---
+
+{
+  variant === "list" ? (
+    <nav aria-label={t("language")}>
+      <ul class="grid grid-cols-3 gap-2">
+        {codes.map((code) => (
+          <li>
+            <a
+              href={switchLocalePath(Astro.url, code)}
+              lang={code}
+              hreflang={code}
+              aria-current={locale === code ? "true" : undefined}
+              class:list={[
+                "flex min-h-12 items-center justify-center rounded-md border px-3 font-medium transition-colors duration-200",
+                locale === code
+                  ? "border-(--accent) bg-(--accent) font-bold text-(--accent-contrast)"
+                  : "border-(--border) hover:bg-(--hover) hover:text-(--accent)",
+              ]}
+            >
+              {LABELS[code]}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  ) : (
+    <nav aria-label={t("language")}>
+      <details class="relative" data-dismissable>
+        <summary
+          aria-label={`${t("language")}: ${LABELS[locale]}`}
+          class="flex min-h-11 cursor-pointer items-center gap-1 rounded-md px-2 py-2 text-sm font-medium transition-colors duration-200 hover:bg-(--hover) hover:text-(--accent) md:text-base"
+        >
+          {LABELS[locale]}
+          <span aria-hidden="true" class="text-xs">
+            ▾
+          </span>
+        </summary>
+        <ul class="absolute right-0 z-20 mt-1 min-w-40 rounded-lg border border-(--border) bg-(--surface) p-1 shadow-lg">
+          {codes.map((code) => (
+            <li>
+              <a
+                href={switchLocalePath(Astro.url, code)}
+                lang={code}
+                hreflang={code}
+                aria-current={locale === code ? "true" : undefined}
+                class:list={[
+                  "flex min-h-11 items-center px-3 py-2 transition-colors duration-200 hover:text-(--accent)",
+                  locale === code && "font-bold text-(--accent)",
+                ]}
+              >
+                {LABELS[code]}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </details>
+    </nav>
+  )
+}

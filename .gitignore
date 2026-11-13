@@ -13,9 +13,9 @@
 # testing
 /coverage
 
-# next.js
-/.next/
-/out/
+# Astro build output
+/dist/
+/.astro/
 
 # production
 /build
@@ -33,12 +33,8 @@ yarn-error.log*
 # env files (can opt-in for committing if needed)
 .env*
 
-# vercel
-.vercel
-
 # typescript
 *.tsbuildinfo
-next-env.d.ts
 
 # local migration check snapshots
 /snapshots/
@@ -48,7 +44,6 @@ next-env.d.ts
 test-results/
 playwright-report/
 
-# Cloudflare (OpenNext build, wrangler state, local secrets)
-/.open-next/
+# Cloudflare (wrangler state, local secrets)
 /.wrangler/
 .dev.vars*

@@ -1,0 +1,274 @@
+---
+import PetCard from "@/components/public/PetCard.astro";
+import Rich from "@/components/public/Rich.astro";
+import ShelterLayout from "@/layouts/ShelterLayout.astro";
+import { getTranslator } from "@/lib/i18n";
+import { loadPublicPage } from "@/lib/page";
+import { CATALOG_PAGE_SIZE, parsePage } from "@/lib/parsePage";
+import { getSizeFromKey } from "@/lib/petSizes";
+import { PET_STATUS_TREATMENT, PUBLIC_PET_STATUSES } from "@/lib/petStatuses";
+import { getPublicClient } from "@/lib/supabase";
+import { toPet } from "@/lib/toPet";
+
+const page = await loadPublicPage(Astro);
+if (page instanceof Response) return page;
+const { locale, shelter } = page;
+
+const params = Astro.url.searchParams;
+const species = params.get("species") ?? undefined;
+const mode = params.get("mode") ?? undefined;
+const group = params.get("group") ?? undefined;
+const isTreatment = mode === "treatment";
+const isBlocked = isTreatment && group === "blocked";
+const rawSex = params.get("sex") ?? undefined;
+const rawAge = params.get("age") ?? undefined;
+const rawSize = params.get("size") ?? undefined;
+const sex = isTreatment ? undefined : rawSex;
+const age = isTreatment ? undefined : rawAge;
+const size = isTreatment ? undefined : rawSize;
+const q = params.get("q") ?? undefined;
+const search = (q ?? "").trim().slice(0, 50);
+const requestedPage = parsePage(params.get("page") ?? undefined);
+const t = getTranslator(locale, "Catalog");
+
+const today = new Date();
+const twelveMonthsAgo = new Date(today);
+twelveMonthsAgo.setMonth(today.getMonth() - 12);
+const sevenYearsAgo = new Date(today);
+sevenYearsAgo.setMonth(today.getMonth() - 84);
+const day = (date: Date) => date.toISOString().slice(0, 10);
+const supabase = getPublicClient();
+
+function buildQuery(head: boolean) {
+  let query = supabase.from("pets").select("*", { count: "exact", head }).in("status", PUBLIC_PET_STATUSES);
+  if (isBlocked) {
+    query = query.eq("status", PET_STATUS_TREATMENT).order("status_changed_at", { ascending: true }).order("name");
+  } else if (isTreatment) {
+    query = query.not("needs_treatment_since", "is", null).order("needs_treatment_since", { ascending: true }).order("name");
+  } else {
+    query = query.order("status_rank").order("created_at", { ascending: false }).order("name");
+  }
+  if (search) query = query.ilike("name_search", `%${search.replace(/[\\%_]/g, "\\$&")}%`);
+  if (species === "cat") query = query.eq("species", "кошка");
+  if (species === "dog") query = query.eq("species", "собака");
+  if (sex === "male") query = query.eq("sex", "мальчик");
+  if (sex === "female") query = query.eq("sex", "девочка");
+  if (age === "young") query = query.gt("birth_date", day(twelveMonthsAgo));
+  if (age === "adult") query = query.lte("birth_date", day(twelveMonthsAgo)).gt("birth_date", day(sevenYearsAgo));
+  if (age === "senior") query = query.lte("birth_date", day(sevenYearsAgo));
+  const sizeValue = species === "dog" && size ? getSizeFromKey(size) : undefined;
+  if (sizeValue) query = query.eq("size", sizeValue);
+  return query;
+}
+
+const from = (requestedPage - 1) * CATALOG_PAGE_SIZE;
+const [counted, loaded] = await Promise.all([buildQuery(true), buildQuery(false).range(from, from + CATALOG_PAGE_SIZE - 1)]);
+if (counted.error || loaded.error) {
+  throw new Error("Не удалось загрузить питомцев из базы.");
+}
+const total = counted.count ?? 0;
+const lastPage = Math.max(1, Math.ceil(total / CATALOG_PAGE_SIZE));
+
+function buildHref(newSpecies?: string, newSex?: string, newAge?: string, newSize: string | null | undefined = size) {
+  const query = new URLSearchParams();
+  if (newSpecies) query.set("species", newSpecies);
+  if (newSex) query.set("sex", newSex);
+  if (newAge) query.set("age", newAge);
+  if (newSize && newSpecies === "dog") query.set("size", newSize);
+  if (isTreatment) query.set("mode", "treatment");
+  if (isBlocked) query.set("group", "blocked");
+  if (search) query.set("q", search);
+  const text = query.toString();
+  return `/${locale}/catalog${text ? `?${text}` : ""}`;
+}
+
+function buildPageHref(number: number) {
+  const href = buildHref(species, sex, age);
+  return number === 1 ? href : `${href}${href.includes("?") ? "&" : "?"}page=${number}`;
+}
+
+if (requestedPage > lastPage) {
+  return Astro.redirect(lastPage > 1 ? buildPageHref(lastPage) : buildHref(species, rawSex, rawAge, rawSize), 307);
+}
+
+const pets = (loaded.data ?? []).map((row) => toPet(row, locale));
+const pageNumbers = Array.from({ length: lastPage }, (_, i) => i + 1).filter(
+  (n) => n === 1 || n === lastPage || Math.abs(n - requestedPage) <= 1,
+);
+const filterLink =
+  "inline-flex min-h-11 items-center rounded-full border border-transparent bg-(--hover) px-3 py-2 transition-colors duration-200 hover:border-(--accent) motion-reduce:transition-none aria-current:border-(--accent) aria-current:bg-(--accent) aria-current:font-semibold aria-current:text-(--accent-contrast)";
+const pageLink = `${filterLink} aria-[current=page]:border-(--accent) aria-[current=page]:bg-(--accent) aria-[current=page]:font-semibold aria-[current=page]:text-(--accent-contrast)`;
+const legend =
+  "mb-2 cursor-default text-sm font-semibold text-(--muted) sm:float-left sm:mb-0 sm:w-24 sm:pt-2.5 sm:text-base";
+const searchPart = (search ? `&q=${encodeURIComponent(search)}` : "") + (species === "cat" || species === "dog" ? `&species=${species}` : "");
+const prefix = isBlocked ? "treatmentBlocked" : "treatment";
+const query = isBlocked ? "?mode=treatment&group=blocked" : isTreatment ? "?mode=treatment" : "";
+const pageQuery = requestedPage > 1 ? `${query ? "&" : "?"}page=${requestedPage}` : "";
+const baseTitle = t(isTreatment ? `${prefix}Title` : "title", { shelter: shelter.name });
+const title = requestedPage > 1 ? t("titleWithPage", { title: baseTitle, page: requestedPage }) : baseTitle;
+const description = t(isTreatment ? `${prefix}Description` : "description", { shelter: shelter.name });
+const current = (value: boolean) => (value ? "true" : undefined);
+const filters = isTreatment
+  ? []
+  : [
+      {
+        legend: t("sex"),
+        options: [
+          { href: buildHref(species, undefined, age), label: t("all"), current: sex === undefined },
+          { href: buildHref(species, "male", age), label: t("males"), current: sex === "male" },
+          { href: buildHref(species, "female", age), label: t("females"), current: sex === "female" },
+        ],
+      },
+      {
+        legend: t("age"),
+        options: [
+          { href: buildHref(species, sex, undefined), label: t("all"), current: age === undefined },
+          { href: buildHref(species, sex, "young"), label: t("young"), current: age === "young" },
+          { href: buildHref(species, sex, "adult"), label: t("adult"), current: age === "adult" },
+          { href: buildHref(species, sex, "senior"), label: t("senior"), current: age === "senior" },
+        ],
+      },
+      ...(species === "dog"
+        ? [
+            {
+              legend: t("size"),
+              options: [
+                { href: buildHref(species, sex, age, null), label: t("all"), current: !size },
+                { href: buildHref(species, sex, age, "small"), label: t("sizeSmall"), current: size === "small" },
+                { href: buildHref(species, sex, age, "medium"), label: t("sizeMedium"), current: size === "medium" },
+                { href: buildHref(species, sex, age, "large"), label: t("sizeLarge"), current: size === "large" },
+              ],
+            },
+          ]
+        : []),
+    ];
+---
+
+<ShelterLayout locale={locale} shelter={shelter} title={title} description={description} path={`/catalog${query}${pageQuery}`}>
+  {search && <meta slot="head" name="robots" content="noindex, follow" />}
+  <main class="mx-auto flex w-full max-w-5xl flex-col gap-6 px-4 pt-4 pb-10">
+    <h1 class="text-center text-3xl font-bold">
+      {isBlocked ? t("treatmentBlockedHeading") : isTreatment ? t("treatmentHeading") : t("heading", { shelter: shelter.name })}
+    </h1>
+    {!isTreatment && <p class="-mt-3 text-center text-lg text-(--muted)">{t("subheading")}</p>}
+    {
+      isTreatment && (
+        <p class="-mt-3 text-center text-lg text-(--muted)">
+          <Rich text={t(isBlocked ? "treatmentIntroBlocked" : "treatmentIntroHelp")} links={{ link: "#footer-contact-heading" }} />
+        </p>
+      )
+    }
+    <div class="flex flex-col gap-4 rounded-2xl border border-(--border) bg-(--surface) p-4 shadow-sm">
+      <form role="search" action={`/${locale}/catalog`} method="get" class="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-0">
+        <label for="catalog-search" class="text-sm font-semibold text-(--muted) sm:w-24 sm:text-base">{t("searchLabel")}</label>
+        <div class="flex max-w-95 min-w-0 flex-1 gap-2">
+          <input
+            id="catalog-search"
+            type="search"
+            name="q"
+            value={search}
+            maxlength="50"
+            class="min-h-10 min-w-0 flex-1 rounded-full border border-(--border-strong) bg-(--surface) px-4 focus-visible:outline-offset-0! focus-visible:outline-(--accent)!"
+          />
+          <button type="submit" class="min-h-10 cursor-pointer rounded-full bg-(--accent) px-4 text-(--accent-contrast) hover:shadow-md">
+            {t("searchButton")}
+          </button>
+        </div>
+        {species && <input type="hidden" name="species" value={species} />}
+        {sex && <input type="hidden" name="sex" value={sex} />}
+        {age && <input type="hidden" name="age" value={age} />}
+        {species === "dog" && size && <input type="hidden" name="size" value={size} />}
+        {isTreatment && <input type="hidden" name="mode" value="treatment" />}
+        {isBlocked && <input type="hidden" name="group" value="blocked" />}
+      </form>
+      <nav aria-label={t("filtersLabel")}>
+        <div class="flex flex-col gap-4">
+          <fieldset class="min-w-0">
+            <legend class={legend}>{t("species")}</legend>
+            <div class="flex flex-wrap gap-2">
+              <a href={buildHref(undefined, sex, age)} aria-current={current(species === undefined)} class={filterLink}>{t("all")}</a>
+              <a href={buildHref("dog", sex, age)} aria-current={current(species === "dog")} class={filterLink}>{t("dogs")}</a>
+              <a href={buildHref("cat", sex, age)} aria-current={current(species === "cat")} class={filterLink}>{t("cats")}</a>
+            </div>
+          </fieldset>
+          {
+            isTreatment && (
+              <fieldset class="min-w-0">
+                <legend class={legend}>{t("treatmentLegend")}</legend>
+                <div class="flex flex-wrap gap-2">
+                  <a href={`/${locale}/catalog?mode=treatment${searchPart}`} aria-current={current(!isBlocked)} class={filterLink}>
+                    {t("treatmentGroupHelp")}
+                  </a>
+                  <a href={`/${locale}/catalog?mode=treatment&group=blocked${searchPart}`} aria-current={current(isBlocked)} class={filterLink}>
+                    {t("treatmentGroupBlocked")}
+                  </a>
+                </div>
+              </fieldset>
+            )
+          }
+          {
+            filters.map((filter) => (
+              <fieldset class="min-w-0">
+                <legend class={legend}>{filter.legend}</legend>
+                <div class="flex flex-wrap gap-2">
+                  {filter.options.map((option) => (
+                    <a href={option.href} aria-current={current(option.current)} class={filterLink}>
+                      {option.label}
+                    </a>
+                  ))}
+                </div>
+              </fieldset>
+            ))
+          }
+        </div>
+      </nav>
+    </div>
+    <p role="status" class="-mb-1 text-(--muted)">
+      {
+        total === 0
+          ? t("none")
+          : total <= CATALOG_PAGE_SIZE
+            ? t("found", { count: total })
+            : t("shown", { from: from + 1, to: from + pets.length, total })
+      }
+    </p>
+    {
+      pets.length > 0 && (
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {pets.map((pet, index) => (
+            <PetCard locale={locale} pet={pet} eager={index < 3} />
+          ))}
+        </div>
+      )
+    }
+    {
+      lastPage > 1 && (
+        <nav aria-label={t("paginationLabel")} class="flex flex-wrap items-center justify-center gap-2">
+          {requestedPage > 1 && (
+            <a href={buildPageHref(requestedPage - 1)} class={pageLink}>
+              {t("previousPage")}
+            </a>
+          )}
+          {pageNumbers.map((n, i) => (
+            <>
+              {i > 0 && n - pageNumbers[i - 1] > 1 && <span aria-hidden="true">…</span>}
+              <a
+                href={buildPageHref(n)}
+                aria-current={n === requestedPage ? "page" : undefined}
+                aria-label={t("pageLabel", { page: n })}
+                class={pageLink}
+              >
+                {n}
+              </a>
+            </>
+          ))}
+          {requestedPage < lastPage && (
+            <a href={buildPageHref(requestedPage + 1)} class={pageLink}>
+              {t("nextPage")}
+            </a>
+          )}
+        </nav>
+      )
+    }
+  </main>
+</ShelterLayout>

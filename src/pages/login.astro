@@ -1,0 +1,50 @@
+---
+import AuthPage from "@/components/panel/AuthPage.astro";
+import PanelLayout from "@/layouts/PanelLayout.astro";
+import { cardClass, errorClass, fieldClass, labelClass, primaryButtonClass } from "@/lib/formClasses";
+import { isPost, readForm } from "@/lib/panel";
+
+let error: string | null = null;
+let email = "";
+if (isPost(Astro)) {
+  const form = await readForm(Astro);
+  const rawEmail = form?.get("email");
+  const password = form?.get("password");
+  if (typeof rawEmail !== "string" || typeof password !== "string") {
+    error = "Введите почту и пароль.";
+  } else {
+    email = rawEmail;
+    const { error: signInError } = await Astro.locals.supabase.auth.signInWithPassword({ email: rawEmail, password });
+    if (!signInError) {
+      return Astro.redirect("/volunteer/needs", 303);
+    }
+    error = "Неверная почта или пароль.";
+  }
+}
+const inviteExpired = Astro.url.searchParams.get("error") === "invite";
+---
+
+<PanelLayout title="Вход для волонтёров">
+  <AuthPage title="Вход для волонтёров">
+    {
+      inviteExpired && (
+        <p role="alert" class={errorClass}>
+          Ссылка приглашения устарела или уже использована. Попросите координатора отправить новую.
+        </p>
+      )
+    }
+    <form method="post" action="/login" class={cardClass}>
+      <p role="alert" class={errorClass}>{error}</p>
+      <div class="flex flex-col gap-1">
+        <label for="email" class={labelClass}>Почта</label>
+        <input id="email" name="email" type="email" value={email} autocomplete="email" autocapitalize="none" spellcheck="false" required class={fieldClass} />
+      </div>
+      <div class="flex flex-col gap-1">
+        <label for="password" class={labelClass}>Пароль</label>
+        <input id="password" name="password" type="password" autocomplete="current-password" required class={fieldClass} />
+      </div>
+      <button type="submit" class={primaryButtonClass} data-pending="Входим…">Войти</button>
+    </form>
+    <a href="/ru/privacy" class="flex h-10 items-center justify-center text-(--muted) underline">Политика конфиденциальности</a>
+  </AuthPage>
+</PanelLayout>

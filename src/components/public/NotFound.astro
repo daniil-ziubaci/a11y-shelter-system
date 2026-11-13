@@ -1,0 +1,21 @@
+---
+import { getTranslator, type Locale } from "@/lib/i18n";
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = getTranslator(locale, "NotFound");
+---
+
+<main class="mx-auto flex w-full max-w-3xl flex-col items-center gap-4 p-8 text-center">
+  <h1 class="text-3xl font-bold">{t("heading")}</h1>
+  <p>{t("text")}</p>
+  <a
+    href={`/${locale}`}
+    class="inline-flex min-h-11 items-center justify-center rounded-full bg-(--accent) px-5 py-2 font-semibold text-(--accent-contrast) hover:shadow-md"
+  >
+    {t("home")}
+  </a>
+</main>

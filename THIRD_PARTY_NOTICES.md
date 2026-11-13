@@ -1,6 +1,6 @@
 Third-party notices
 
-Site icon (app/icon.svg, app/apple-icon.png, app/favicon.ico): the paw shape is from Tabler Icons (https://github.com/tabler/tabler-icons), used under the MIT License below.
+Site icon (public/icon.svg, public/apple-icon.png, public/favicon.ico): the paw shape is from Tabler Icons (https://github.com/tabler/tabler-icons), used under the MIT License below.
 
 MIT License
 
@@ -23,3 +23,5 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+Font Nunito (src/assets/fonts/nunito-*.woff2, subsets cyrillic, latin-ext and latin of the variable font from Google Fonts): Copyright 2014 The Nunito Project Authors (https://github.com/googlefonts/nunito), licensed under the SIL Open Font License, Version 1.1 (https://openfontlicense.org/open-font-license-official-text/).

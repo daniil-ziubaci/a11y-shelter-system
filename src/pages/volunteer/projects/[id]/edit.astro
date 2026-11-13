@@ -1,0 +1,61 @@
+---
+import { ProjectForm } from "@/islands/ProjectForm";
+import PanelLayout from "@/layouts/PanelLayout.astro";
+import { isPost, readForm } from "@/lib/panel";
+import { saveProject } from "@/lib/projectSave";
+import { publicPhotoUrl } from "@/lib/supabase";
+
+const id = Astro.params.id ?? "";
+const supabase = Astro.locals.supabase;
+const { data: project, error: loadError } = /^[0-9a-f-]{36}$/i.test(id)
+  ? await supabase
+      .from("projects")
+      .select("id, title, description, help_kinds, photo_path, photo_alt, progress_total, progress_done, progress_unit")
+      .eq("id", id)
+      .maybeSingle()
+  : { data: null, error: null };
+let error: string | null = null;
+let values: Record<string, string> | null = null;
+if (project && isPost(Astro)) {
+  const form = await readForm(Astro);
+  if (form) {
+    const result = await saveProject(Astro, form, project);
+    if (result.ok) return Astro.redirect("/volunteer/projects", 303);
+    error = result.error;
+    values = result.values;
+  }
+}
+const initial = project && {
+  title: values?.title ?? project.title,
+  description: values?.description ?? project.description,
+  photoAlt: values?.photoAlt ?? project.photo_alt ?? "",
+  helpKinds: values ? (values.help_kinds ?? "").split(",") : project.help_kinds,
+  progressTotal: values?.progressTotal ?? (project.progress_total === null ? "" : String(project.progress_total)),
+  progressDone: values?.progressDone ?? (project.progress_done === null ? "" : String(project.progress_done)),
+  progressUnit: values?.progressUnit ?? project.progress_unit ?? "",
+};
+---
+
+<PanelLayout title={project ? `Редактирование: ${project.title}` : "Редактирование проекта"}>
+  <main class="mx-auto flex w-full max-w-5xl flex-col gap-4 px-4 pt-1 pb-8">
+    {
+      loadError ? (
+        <p role="alert">Не удалось загрузить проект.</p>
+      ) : !project || !initial ? (
+        <p role="alert">Проект не найден.</p>
+      ) : (
+        <>
+          <h1 class="text-3xl font-bold wrap-break-word sm:mx-auto sm:w-1/2 sm:text-center">Редактирование: {project.title}</h1>
+          <ProjectForm
+            client:load
+            action={`/volunteer/projects/${project.id}/edit`}
+            mode="edit"
+            initial={initial}
+            error={error}
+            photoUrl={project.photo_path ? publicPhotoUrl(project.photo_path) : null}
+          />
+        </>
+      )
+    }
+  </main>
+</PanelLayout>

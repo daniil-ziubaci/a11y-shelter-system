@@ -1,0 +1,45 @@
+---
+import NeedForm from "@/components/panel/NeedForm.astro";
+import PanelLayout from "@/layouts/PanelLayout.astro";
+import { saveNeed } from "@/lib/needSave";
+import { isPost, isVolunteer, NOT_A_VOLUNTEER, readForm } from "@/lib/panel";
+
+const volunteer = await isVolunteer(Astro.locals.supabase, Astro.locals.claims?.sub);
+let error: string | null = null;
+let values: Record<string, string> = {};
+if (volunteer && isPost(Astro)) {
+  const form = await readForm(Astro);
+  if (form) {
+    const result = await saveNeed(Astro, form, null);
+    if (result.ok) return Astro.redirect(result.redirect, 303);
+    error = result.error;
+    values = result.values;
+  }
+}
+const heading = "Добавить позицию в план закупок";
+---
+
+<PanelLayout title={heading}>
+  <main class="mx-auto flex w-full max-w-5xl flex-col gap-4 px-4 pt-1 pb-8">
+    <h1 class="text-3xl font-bold wrap-break-word sm:mx-auto sm:w-1/2 sm:text-center">{heading}</h1>
+    {
+      volunteer ? (
+        <NeedForm
+          action="/volunteer/needs/new"
+          mode="new"
+          error={error}
+          values={{
+            name: values.name ?? "",
+            category: values.category ?? "",
+            unit: values.unit ?? "",
+            quantity: values.quantity ?? "",
+            note: values.note ?? "",
+            isUrgent: values.is_urgent === "on",
+          }}
+        />
+      ) : (
+        <p role="alert">{NOT_A_VOLUNTEER}</p>
+      )
+    }
+  </main>
+</PanelLayout>

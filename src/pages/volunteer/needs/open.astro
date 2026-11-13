@@ -1,0 +1,11 @@
+---
+import NeedSection from "@/components/panel/NeedSection.astro";
+import { takeFlash } from "@/lib/flash";
+import { handleNeedPost } from "@/lib/needActions";
+import { isPost } from "@/lib/panel";
+
+if (isPost(Astro)) return handleNeedPost(Astro);
+const flash = takeFlash(Astro.cookies);
+---
+
+<NeedSection flash={flash} kind="open" heading="План закупок: нужно купить" emptyText="Открытых нужд нет." />

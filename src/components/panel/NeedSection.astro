@@ -1,0 +1,153 @@
+---
+import NeedsNav from "@/components/panel/NeedsNav.astro";
+import PanelLayout from "@/layouts/PanelLayout.astro";
+import type { Flash } from "@/lib/flash";
+import { formatRemaining } from "@/lib/formatRemaining";
+import { isVolunteer, NOT_A_VOLUNTEER } from "@/lib/panel";
+
+interface Props {
+  kind: "open" | "stock" | "closed";
+  heading: string;
+  emptyText: string;
+  archived?: boolean;
+  flash: Flash | null;
+}
+
+const { kind, heading, emptyText, archived = false, flash } = Astro.props;
+const supabase = Astro.locals.supabase;
+const volunteer = await isVolunteer(supabase, Astro.locals.claims?.sub);
+const { data, error } = volunteer
+  ? await supabase
+      .from("purchase_items")
+      .select("id, name, unit, remaining, is_urgent")
+      .eq("is_archived", archived)
+      .order("is_urgent", { ascending: false })
+      .order("created_at", { ascending: false })
+      .order("id")
+  : { data: [], error: null };
+const filters = {
+  open: (remaining: number) => remaining > 0,
+  stock: (remaining: number) => remaining < 0,
+  closed: (remaining: number) => remaining === 0,
+};
+const items = (data ?? []).filter((item) => filters[kind](item.remaining));
+const here = Astro.url.pathname + Astro.url.search;
+---
+
+<PanelLayout title={heading}>
+  <main class="mx-auto flex w-full max-w-5xl flex-col gap-4 px-4 pt-4 pb-6">
+    <h1 class="text-3xl font-bold sm:text-center">{heading}</h1>
+    {
+      !volunteer ? (
+        <p>{NOT_A_VOLUNTEER}</p>
+      ) : (
+        <>
+          <NeedsNav />
+          {error ? (
+            <p role="alert">Не удалось загрузить план закупок.</p>
+          ) : items.length === 0 ? (
+            <p class="text-(--muted)">{emptyText}</p>
+          ) : (
+            <ul class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              {items.map((item) => {
+                const urgent = kind === "open" && item.is_urgent;
+                const result = flash?.key === `consume-${item.id}` ? flash : null;
+                return (
+                  <li
+                    class:list={[
+                      "relative flex flex-col gap-3 rounded-2xl bg-(--surface) p-3 shadow-md",
+                      urgent ? "border-2 border-(--danger)" : "border border-(--border-strong)",
+                    ]}
+                  >
+                    <div class:list={["flex flex-col", urgent && "pr-24"]}>
+                      {urgent && (
+                        <span class="absolute top-3 right-3 rounded-full bg-(--danger-soft) px-2 py-0.5 text-sm font-semibold text-(--danger)">
+                          <span aria-hidden="true">🔥 </span>
+                          Срочно
+                        </span>
+                      )}
+                      <span class="text-lg font-bold wrap-break-word">{item.name}</span>
+                      <span class="text-(--muted)">{formatRemaining(item.remaining, item.unit)}</span>
+                    </div>
+                    <div class="mt-auto flex flex-col gap-2">
+                      <details class="group rounded-lg border border-(--accent) bg-(--accent-soft)" open={Boolean(result)}>
+                        <summary aria-label={`Расход: ${item.name}`} class="flex h-10 cursor-pointer items-center justify-between px-3 font-medium">
+                          Расход
+                          <span aria-hidden="true" class="text-(--muted) transition-transform group-open:rotate-180">▾</span>
+                        </summary>
+                        <form method="post" action={Astro.url.pathname} class="flex flex-col gap-2 p-3 pt-1">
+                          <input type="hidden" name="intent" value="consume" />
+                          <input type="hidden" name="itemId" value={item.id} />
+                          <input type="hidden" name="back" value={here} />
+                          <label for={`consumption-${item.id}`} class="font-medium">
+                            {kind === "closed" ? "Закончилось? Сколько нужно снова:" : "Сколько израсходовали:"}
+                          </label>
+                          <input
+                            id={`consumption-${item.id}`}
+                            name="amount"
+                            type="text"
+                            inputmode="decimal"
+                            autocomplete="off"
+                            value={result && !result.ok ? result.value : undefined}
+                            required
+                            class="h-10 w-full rounded-lg border border-(--border-strong) bg-(--surface) px-3 text-base"
+                          />
+                          {result && !result.ok && (
+                            <p role="alert" class="font-medium text-(--danger)">
+                              {result.message}
+                            </p>
+                          )}
+                          <button
+                            type="submit"
+                            aria-label={`Записать расход: ${item.name}`}
+                            data-pending="Записываем…"
+                            class="h-10 w-full cursor-pointer rounded-lg bg-(--accent) px-6 font-semibold text-white disabled:cursor-wait disabled:opacity-60"
+                          >
+                            Записать
+                          </button>
+                          <p role="status" class="font-medium empty:hidden">
+                            {result?.ok ? result.message : ""}
+                          </p>
+                        </form>
+                      </details>
+                      <a
+                        href={`/volunteer/needs/${item.id}/edit?from=${kind}`}
+                        aria-label={`Редактировать: ${item.name}`}
+                        class="flex h-10 w-full items-center justify-center rounded-lg border border-(--border-strong) bg-(--surface) px-3 text-sm font-medium"
+                      >
+                        Редактировать
+                      </a>
+                      {kind === "closed" && (
+                        <form method="post" action={Astro.url.pathname}>
+                          <input type="hidden" name="intent" value="archive" />
+                          <input type="hidden" name="itemId" value={item.id} />
+                          <input type="hidden" name="archived" value={archived ? "0" : "1"} />
+                          <input type="hidden" name="back" value={here} />
+                          <button
+                            type="submit"
+                            aria-label={`${archived ? "Вернуть в список" : "Убрать из списка"}: ${item.name}`}
+                            class="h-10 w-full cursor-pointer rounded-lg px-3 text-sm font-medium text-(--muted) underline"
+                          >
+                            {archived ? "Вернуть в список" : "Убрать из списка"}
+                          </button>
+                        </form>
+                      )}
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+          {kind === "closed" && (
+            <a
+              href={archived ? "/volunteer/needs/closed" : "/volunteer/needs/closed?archived=1"}
+              class="flex h-10 items-center justify-center text-(--muted) underline sm:self-center"
+            >
+              {archived ? "К закрытым" : "Показать убранные"}
+            </a>
+          )}
+        </>
+      )
+    }
+  </main>
+</PanelLayout>

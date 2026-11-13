@@ -1,0 +1,103 @@
+---
+import { fieldClass, hintClass, labelClass, primaryButtonClass, radioRowClass, selectClass } from "@/lib/formClasses";
+import { NEED_CATEGORIES } from "@/lib/needCategories";
+import { NEED_UNITS } from "@/lib/needUnits";
+
+interface Props {
+  action: string;
+  mode: "new" | "edit";
+  values: { name: string; category: string; unit?: string; quantity?: string; note: string; isUrgent: boolean };
+  error: string | null;
+  from?: string;
+}
+
+const { action, mode, values, error, from } = Astro.props;
+const contacts =
+  "Не пишите в текстах телефоны, почты, ссылки, адреса и фамилии людей. Если они есть, текст не сохранится: удалите их, и всё остальное останется.";
+const capital = (text: string) => text[0].toUpperCase() + text.slice(1);
+---
+
+<form method="post" action={action} class="flex flex-col gap-6 rounded-2xl border border-(--border) bg-(--surface) p-4 shadow-md sm:mx-auto sm:w-1/2 sm:p-6">
+  {from && <input type="hidden" name="from" value={from} />}
+  <div class="flex flex-col gap-1">
+    <label for="name" class={labelClass}>Название</label>
+    <input id="name" name="name" type="text" autocomplete="off" maxlength="100" value={values.name} aria-describedby="name-hint name-contacts" required class={fieldClass} />
+    <p id="name-hint" class={hintClass}>
+      {mode === "new" ? "Например, «Корм для щенков»." : "Единицу и количество здесь изменить нельзя: количество меняется приёмкой товара."}
+    </p>
+    <p id="name-contacts" class={hintClass}>{contacts}</p>
+  </div>
+  <div class="flex flex-col gap-1">
+    <label for="category" class={labelClass}>Категория</label>
+    <div class="relative">
+      <select id="category" name="category" required class={selectClass}>
+        {mode === "new" && <option value="" disabled selected={!values.category}>Выберите категорию</option>}
+        {NEED_CATEGORIES.map((category) => <option value={category} selected={values.category === category}>{capital(category)}</option>)}
+      </select>
+      <span aria-hidden="true" class="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-(--muted)">▾</span>
+    </div>
+  </div>
+  {
+    mode === "new" && (
+      <>
+        <div class="flex flex-col gap-1">
+          <label for="unit" class={labelClass}>
+            Единица измерения
+          </label>
+          <div class="relative">
+            <select id="unit" name="unit" required class={selectClass}>
+              <option value="" disabled selected={!values.unit}>
+                Выберите единицу
+              </option>
+              {NEED_UNITS.map((unit) => (
+                <option value={unit} selected={values.unit === unit}>
+                  {unit}
+                </option>
+              ))}
+            </select>
+            <span aria-hidden="true" class="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-(--muted)">▾</span>
+          </div>
+        </div>
+        <div class="flex flex-col gap-1">
+          <label for="quantity" class={labelClass}>
+            Нужное количество
+          </label>
+          <input
+            id="quantity"
+            name="quantity"
+            type="text"
+            inputmode="decimal"
+            autocomplete="off"
+            value={values.quantity}
+            aria-describedby="quantity-hint"
+            required
+            class={fieldClass}
+          />
+          <p id="quantity-hint" class={hintClass}>
+            Сколько нужно купить, например 2,5. Единица выбрана выше.
+          </p>
+        </div>
+      </>
+    )
+  }
+  <div class="flex flex-col gap-1">
+    <label for="note" class={labelClass}>Примечание (необязательно)</label>
+    <textarea id="note" name="note" rows="3" maxlength="300" aria-describedby="note-hint" class={fieldClass}>{values.note}</textarea>
+    <p id="note-hint" class={hintClass}>Что именно нужно или что не подходит, например марка корма. Номера телефонов и ссылки писать нельзя.</p>
+  </div>
+  <div class="flex flex-col gap-2">
+    <label for="is_urgent" class={`${radioRowClass} self-start`}>
+      <input id="is_urgent" name="is_urgent" type="checkbox" checked={values.isUrgent} aria-describedby="is-urgent-hint" class="h-5 w-5 shrink-0 cursor-pointer" />
+      <span>Срочно нужно</span>
+    </label>
+    <p id="is-urgent-hint" class={hintClass}>
+      {
+        mode === "new"
+          ? "Срочные позиции показываются в списке первыми. Если срочным станет всё, отметка перестанет что-то значить."
+          : "Срочные позиции показываются в списке первыми. Снимите отметку, когда срочность прошла."
+      }
+    </p>
+  </div>
+  <p role="alert" class="font-medium text-(--danger) empty:hidden">{error}</p>
+  <button type="submit" class={primaryButtonClass} data-pending="Сохраняем…">{mode === "new" ? "Добавить позицию" : "Сохранить"}</button>
+</form>

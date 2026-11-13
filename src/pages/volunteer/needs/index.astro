@@ -1,0 +1,134 @@
+---
+import NeedsNav from "@/components/panel/NeedsNav.astro";
+import PanelLayout from "@/layouts/PanelLayout.astro";
+import { takeFlash } from "@/lib/flash";
+import { fieldClass, hintClass, labelClass, primaryButtonClass, selectClass } from "@/lib/formClasses";
+import { formatRemaining } from "@/lib/formatRemaining";
+import { handleNeedPost } from "@/lib/needActions";
+import { isPost, isVolunteer, NOT_A_VOLUNTEER } from "@/lib/panel";
+
+if (isPost(Astro)) return handleNeedPost(Astro);
+const flash = takeFlash(Astro.cookies);
+const supabase = Astro.locals.supabase;
+const volunteer = await isVolunteer(supabase, Astro.locals.claims?.sub);
+const windowStart = new Date(Date.now() - 10 * 60 * 1000).toISOString();
+const [itemsResult, latestResult] = volunteer
+  ? await Promise.all([
+      supabase
+        .from("purchase_items")
+        .select("id, name, unit, remaining")
+        .eq("is_archived", false)
+        .order("is_urgent", { ascending: false })
+        .order("created_at", { ascending: false })
+        .order("id"),
+      supabase
+        .from("purchase_log")
+        .select("id, amount, purchase_items(name, unit)")
+        .gte("created_at", windowStart)
+        .order("created_at", { ascending: false })
+        .order("id", { ascending: false })
+        .limit(1)
+        .maybeSingle(),
+    ])
+  : [null, null];
+const items = itemsResult?.data ?? [];
+const latestRow = latestResult?.data;
+const latest =
+  latestRow && latestRow.purchase_items
+    ? {
+        id: latestRow.id,
+        label: `${latestRow.amount.toLocaleString("ru-RU")} ${latestRow.purchase_items.unit}, ${latestRow.purchase_items.name}`,
+      }
+    : null;
+const receive = flash?.key === "receive" ? flash : null;
+const undo = flash?.key === "undo" ? flash : null;
+const heading = "План закупок: приёмка товара";
+---
+
+<PanelLayout title={heading}>
+  <main class="mx-auto flex w-full max-w-5xl flex-col gap-4 px-4 pt-4 pb-6">
+    <h1 class="text-3xl font-bold wrap-break-word sm:mx-auto sm:w-1/2 sm:text-center">{heading}</h1>
+    {
+      !volunteer ? (
+        <p>{NOT_A_VOLUNTEER}</p>
+      ) : (
+        <>
+          <NeedsNav />
+          {itemsResult?.error ? (
+            <p role="alert">Не удалось загрузить план закупок.</p>
+          ) : (
+            <>
+              <form method="post" action="/volunteer/needs" class="flex flex-col gap-4 rounded-2xl border border-(--border-strong) bg-(--surface) p-4 shadow-md sm:mx-auto sm:w-1/2 sm:p-6">
+                <input type="hidden" name="intent" value="receive" />
+                <div class="flex flex-col gap-1">
+                  <label for="itemId" class={labelClass}>Позиция</label>
+                  <div class="relative">
+                    <select id="itemId" name="itemId" required class={selectClass}>
+                      <option value="" disabled selected>
+                        Выберите позицию
+                      </option>
+                      {items.map((item) => (
+                        <option value={item.id}>
+                          {item.name}: {formatRemaining(item.remaining, item.unit)}
+                        </option>
+                      ))}
+                    </select>
+                    <span aria-hidden="true" class="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-(--muted)">▾</span>
+                  </div>
+                </div>
+                <div class="flex flex-col gap-1">
+                  <label for="amount" class={labelClass}>Сколько получили</label>
+                  <input
+                    id="amount"
+                    name="amount"
+                    type="text"
+                    inputmode="decimal"
+                    autocomplete="off"
+                    value={receive && !receive.ok ? receive.value : undefined}
+                    aria-describedby="amount-hint"
+                    required
+                    class={fieldClass}
+                  />
+                  <p id="amount-hint" class={hintClass}>Обычное число, например 2,5. Единица берётся из позиции.</p>
+                </div>
+                {receive && !receive.ok && (
+                  <p role="alert" class="font-medium text-(--danger)">
+                    {receive.message}
+                  </p>
+                )}
+                <button type="submit" class={primaryButtonClass} data-pending="Записываем…">Записать</button>
+                <p role="status" class="font-medium empty:hidden">
+                  {receive?.ok ? receive.message : ""}
+                </p>
+              </form>
+              <div class="flex flex-col gap-2 sm:mx-auto sm:w-1/2">
+                {latest ? (
+                  <form method="post" action="/volunteer/needs" class="flex flex-col gap-2 rounded-2xl border border-(--border-strong) bg-(--surface) p-4 shadow-md">
+                    <input type="hidden" name="intent" value="undo" />
+                    <input type="hidden" name="logId" value={latest.id} />
+                    <h2 class="font-bold">Последняя запись</h2>
+                    <p class="wrap-break-word">{latest.label}</p>
+                    <p class="text-sm text-(--muted)">Ошиблись? Запись можно отменить в течение 10 минут.</p>
+                    <button
+                      type="submit"
+                      aria-label={`Отменить запись: ${latest.label}`}
+                      data-pending="Отменяем…"
+                      class="mt-1 h-10 w-full cursor-pointer rounded-lg border-2 border-(--danger) bg-(--danger-soft) px-4 font-semibold text-(--danger) disabled:cursor-wait disabled:opacity-60"
+                    >
+                      Отменить запись
+                    </button>
+                  </form>
+                ) : (
+                  <p class="text-center text-(--muted)">Нечего отменять.</p>
+                )}
+                <p role="status" class="text-center font-medium empty:hidden">
+                  {undo?.message ?? ""}
+                </p>
+              </div>
+            </>
+          )}
+        </>
+      )
+    }
+  </main>
+</PanelLayout>
