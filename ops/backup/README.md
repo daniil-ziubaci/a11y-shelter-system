@@ -67,7 +67,7 @@
 
    Строка `Skipped role settings: … log_min_messages` — это нормально: служебная настройка Supabase, к проекту она не относится.
 
-4. Переключите сайт на новый проект: замените `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` и `SUPABASE_SERVICE_ROLE_KEY` в настройках хостинга. В Supabase → Authentication → URL Configuration укажите адрес сайта.
+4. Переключите сайт на новый проект: замените `SUPABASE_URL`, `SUPABASE_ANON_KEY` и `SUPABASE_SERVICE_ROLE_KEY` в Cloudflare → Worker → Settings → Variables and Secrets (Runtime). В Supabase → Authentication → URL Configuration укажите адрес сайта.
 5. Адреса фото животных в базе указывают на старый проект. Замените их одним запросом в SQL Editor нового проекта:
 
    ```sql
