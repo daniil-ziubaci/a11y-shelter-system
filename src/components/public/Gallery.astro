@@ -69,7 +69,7 @@ const counter = (index: number) => t("counter", { current: index + 1, total });
                     data-alt={photo.alt}
                     class:list={[
                       "relative block size-22 cursor-pointer overflow-hidden rounded-lg border-2 transition-opacity duration-200 motion-reduce:transition-none",
-                      "border-transparent opacity-60 hover:opacity-100 aria-current:border-(--accent) aria-current:opacity-100",
+                      "border-transparent opacity-60 hover:opacity-100 aria-current:border-gallery-current aria-current:opacity-100",
                     ]}
                   >
                     <img src={photo.thumbSrc} alt="" loading="lazy" decoding="async" class="absolute inset-0 size-full object-cover" />
