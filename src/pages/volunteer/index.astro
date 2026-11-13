@@ -238,7 +238,7 @@ const statusOptions: [string | undefined, string][] = [
                   <li class="flex flex-col gap-2 rounded-2xl border border-(--border) bg-(--surface) p-3 shadow-md">
                     <div class="flex flex-col gap-3 sm:flex-row">
                       <div class="relative aspect-4/3 w-full shrink-0 overflow-hidden rounded-lg bg-(--hover) sm:w-48">
-                        <img src={cardCopyOf(pet.photo_url)} alt="" loading="lazy" class="absolute inset-0 size-full object-cover" />
+                        <img src={cardCopyOf(pet.photo_url)} data-fallback={pet.photo_url} alt="" loading="lazy" class="absolute inset-0 size-full object-cover" />
                       </div>
                       <div class="flex min-w-0 flex-1 flex-col gap-2">
                         <div class="flex items-start gap-3">

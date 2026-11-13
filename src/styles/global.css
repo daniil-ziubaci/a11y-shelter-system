@@ -91,6 +91,10 @@ body {
   font-size: 1.125rem;
 }
 
+img[data-broken] {
+  opacity: 0;
+}
+
 summary::-webkit-details-marker {
   display: none;
 }

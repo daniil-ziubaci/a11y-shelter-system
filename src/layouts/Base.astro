@@ -80,6 +80,24 @@ const brand = (file: string) => (brandPath ? publicPhotoUrl(`${brandPath}/${file
         </>
       )
     }
+    <script is:inline>
+      document.addEventListener(
+        "error",
+        (event) => {
+          const image = event.target;
+          if (!(image instanceof HTMLImageElement)) return;
+          const fallback = image.dataset.fallback;
+          if (fallback) {
+            delete image.dataset.fallback;
+            image.removeAttribute("srcset");
+            image.src = fallback;
+            return;
+          }
+          image.dataset.broken = "";
+        },
+        true,
+      );
+    </script>
     <slot name="head" />
   </head>
   <body class="flex min-h-full flex-col">
