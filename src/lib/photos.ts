@@ -59,9 +59,24 @@ export function storagePathOf(url: string): string | null {
   return index === -1 ? null : decodeURIComponent(url.slice(index + BUCKET_PATH.length));
 }
 
-function removeFiles(astro: AstroGlobal, paths: string[]): void {
+async function isPhotoInUse(admin: Supabase, path: string): Promise<boolean> {
+  const urlPattern = `%${BUCKET_PATH}${path.replace(/[\\%_]/g, "\\$&")}`;
+  const counts = await Promise.all([
+    admin.from("pets").select("id", { count: "exact", head: true }).like("photo_url", urlPattern),
+    admin.from("projects").select("id", { count: "exact", head: true }).eq("photo_path", path),
+    admin.from("shelter").select("id", { count: "exact", head: true }).eq("photo_path", path),
+  ]);
+  return counts.some(({ count, error }) => error !== null || count === null || count > 0);
+}
+
+function removeFiles(astro: AstroGlobal, mainPath: string, paths: string[]): void {
   afterResponse(astro, async () => {
-    const { error } = await getAdminClient().storage.from("pet-photos").remove(paths);
+    const admin = getAdminClient();
+    if (await isPhotoInUse(admin, mainPath)) {
+      console.warn("old photo kept: still used or the check failed", mainPath);
+      return;
+    }
+    const { error } = await admin.storage.from("pet-photos").remove(paths);
     if (error) throw error;
   });
 }
@@ -69,10 +84,10 @@ function removeFiles(astro: AstroGlobal, paths: string[]): void {
 export function removeReplacedPetPhoto(astro: AstroGlobal, oldUrl: string, newUrl: string): void {
   const path = storagePathOf(oldUrl);
   if (!path || oldUrl === newUrl) return;
-  removeFiles(astro, [path, cardCopyOf(path), previewCopyOf(path)]);
+  removeFiles(astro, path, [path, cardCopyOf(path), previewCopyOf(path)]);
 }
 
 export function removeReplacedProjectPhoto(astro: AstroGlobal, oldPath: string, newPath: string): void {
   if (oldPath === newPath) return;
-  removeFiles(astro, [oldPath]);
+  removeFiles(astro, oldPath, [oldPath]);
 }
