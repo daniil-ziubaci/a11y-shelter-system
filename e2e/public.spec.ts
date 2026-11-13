@@ -86,3 +86,14 @@ test("mobile menu opens, closes with Escape and returns focus", async ({ page })
   await expect(button).toHaveAttribute("aria-expanded", "false");
   await expect(button).toBeFocused();
 });
+
+test("gallery serves a smaller photo to phones and switches photos", async ({ page }) => {
+  await page.setViewportSize({ width: 375, height: 812 });
+  await page.goto("/ru/about");
+  const main = page.locator("[data-main]");
+  await expect.poll(() => main.evaluate((img: HTMLImageElement) => img.currentSrc)).toMatch(/\/01-(480|800)\.webp$/);
+  await page.getByRole("link", { name: "Показать фото 2 из 6" }).click();
+  await expect.poll(() => main.evaluate((img: HTMLImageElement) => img.currentSrc)).toMatch(/\/02(-480|-800)?\.webp$/);
+  await expect(main).toHaveAttribute("alt", "Фото приюта 02");
+  await expect(page.getByText("Фото 2 из 6")).toBeAttached();
+});
