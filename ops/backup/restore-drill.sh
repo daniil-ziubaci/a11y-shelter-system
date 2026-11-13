@@ -14,12 +14,21 @@
 #   SUPABASE_URL       the live project; its storage version is used for the
 #                      throwaway Supabase so it matches what a new project gets
 #   STORAGE_VERSION    use this storage version instead (for example v1.89.13)
+#   PHOTO_BUCKET       storage bucket with the site's photos (default: pet-photos)
+#   BACKUP_DIR         folder with db/ and photos/ (default: current directory)
 
 set -euo pipefail
 
 : "${BACKUP_PASSPHRASE:?BACKUP_PASSPHRASE is not set}"
 supabase="${SUPABASE_CLI:-supabase}"
-repo="$(pwd)"
+repo="$(cd "$(dirname "$0")" && pwd)"
+bucket="${PHOTO_BUCKET:-pet-photos}"
+if [[ ! "$bucket" =~ ^[a-z0-9_-]+$ ]]; then
+  echo "PHOTO_BUCKET may contain only a-z, 0-9, _ and -" >&2
+  exit 1
+fi
+export PHOTO_BUCKET="$bucket"
+cd "${BACKUP_DIR:-.}"
 shopt -s nullglob
 archives=(db/*.tar.gz.gpg)
 shopt -u nullglob
@@ -95,8 +104,9 @@ rows_in_dump() {
   ' "$work/dump/data.sql"
 }
 
-for table in auth.users public.shelters public.shelter_members public.pets \
-  public.purchase_items public.projects public.shelter_photos; do
+mapfile -t site_tables < <(grep -oE '^COPY "public"\."[^"]+"' "$work/dump/data.sql" | sed -E 's/^COPY "public"\."([^"]+)"/public.\1/')
+check "$([ "${#site_tables[@]}" -gt 0 ] && echo ok)" "the backup holds ${#site_tables[@]} tables of the site"
+for table in auth.users "${site_tables[@]}"; do
   schema="${table%%.*}"
   name="${table#*.}"
   expected="$(rows_in_dump "\"$schema\".\"$name\"")"
@@ -115,12 +125,13 @@ check "$([ "$expected_policies" -gt 0 ] && [ "$policies" = "$expected_policies" 
 
 anon_writes="$(sql "select count(*) from information_schema.role_table_grants where table_schema = 'public' and grantee = 'anon' and privilege_type in ('INSERT', 'UPDATE', 'DELETE', 'TRUNCATE')")"
 check "$([ "$anon_writes" = 0 ] && echo ok)" "anonymous visitors have no write grants ($anon_writes)"
-status="$(curl -s -o /dev/null -w '%{http_code}' -X POST "$api/rest/v1/shelters" \
-  -H "apikey: $ANON_KEY" -H "Content-Type: application/json" -d '{"slug":"drill","name":"drill"}')"
+probe="${site_tables[0]#public.}"
+status="$(curl -s -o /dev/null -w '%{http_code}' -X POST "$api/rest/v1/$probe" \
+  -H "apikey: $ANON_KEY" -H "Content-Type: application/json" -d '{}')"
 check "$([ "$status" = 401 ] || [ "$status" = 403 ] && echo ok)" "anonymous insert is refused (HTTP $status)"
 
 # The photos the site used at backup time: storage.objects rows in the dump.
-python3 - "$work/dump/data.sql" > "$work/used.txt" <<'PY'
+python3 - "$work/dump/data.sql" "$bucket" > "$work/used.txt" <<'PY'
 import re
 import sys
 
@@ -134,7 +145,7 @@ for i, line in enumerate(lines):
     bucket_at, name_at = columns.index("bucket_id"), columns.index("name")
     for row in lines[i + 1:lines.index("\\.", i + 1)]:
         fields = row.split("\t")
-        if fields[bucket_at] == "pet-photos":
+        if fields[bucket_at] == sys.argv[2]:
             name = re.sub(r"\\(.)", lambda m: {"t": "\t", "n": "\n"}.get(m.group(1), m.group(1)), fields[name_at])
             print(name)
     break
@@ -146,13 +157,13 @@ while IFS= read -r name; do
   total=$((total + 1))
   [ -f "photos/$name" ] || continue
   encoded="$(python3 -c 'import sys, urllib.parse; print(urllib.parse.quote(sys.argv[1]))' "$name")"
-  served="$(curl -fsS "$api/storage/v1/object/public/pet-photos/$encoded" | sha256sum | cut -d' ' -f1)" || served=""
+  served="$(curl -fsS "$api/storage/v1/object/public/$bucket/$encoded" | sha256sum | cut -d' ' -f1)" || served=""
   stored="$(sha256sum "photos/$name" | cut -d' ' -f1)"
   [ "$served" = "$stored" ] && same=$((same + 1))
 done < "$work/used.txt"
 check "$([ "$total" -gt 0 ] && [ "$same" = "$total" ] && echo ok)" "photos used by the site served byte for byte: $same of $total"
 kept="$(find photos -type f ! -name '*.part' | wc -l)"
-uploaded="$(sql "select count(*) from storage.objects where bucket_id = 'pet-photos'")"
+uploaded="$(sql "select count(*) from storage.objects where bucket_id = '$bucket'")"
 check "$([ "$uploaded" = "$total" ] && echo ok)" "storage holds only the used photos ($uploaded; photos/ keeps $kept, including deleted ones)"
 
 missing=0

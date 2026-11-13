@@ -20,6 +20,18 @@ jobs:
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
+        with:
+          repository: ${{ secrets.BACKUP_REPOSITORY || github.repository }}
+          token: ${{ secrets.BACKUP_REPOSITORY_TOKEN || github.token }}
+          path: backups
+
+      - uses: actions/checkout@v4
+        with:
+          path: tools
+          sparse-checkout: |
+            backup.sh
+            restore.sh
+            restore-drill.sh
 
       - uses: supabase/setup-cli@v1
         with:
@@ -29,4 +41,6 @@ jobs:
         env:
           BACKUP_PASSPHRASE: ${{ secrets.BACKUP_PASSPHRASE }}
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-        run: ./restore-drill.sh
+          PHOTO_BUCKET: ${{ secrets.PHOTO_BUCKET || 'pet-photos' }}
+          BACKUP_DIR: ${{ github.workspace }}/backups/${{ secrets.BACKUP_DIR || '.' }}
+        run: tools/restore-drill.sh

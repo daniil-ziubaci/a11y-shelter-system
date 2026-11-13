@@ -8,7 +8,7 @@
 #   db/YYYY-MM-DD.tar.gz.gpg  roles, schema, data (including sign-in users) and
 #                             storage access policies, encrypted with
 #                             BACKUP_PASSPHRASE (AES-256)
-#   photos/<path>             public files of the pet-photos bucket; only new
+#   photos/<path>             public files of the photo bucket; only new
 #                             files are downloaded, deleted ones are kept
 #
 # Environment:
@@ -16,6 +16,7 @@
 #   SUPABASE_URL       https://<project>.supabase.co
 #   BACKUP_PASSPHRASE  long random passphrase, also kept in a password manager
 #   BACKUP_DIR         where db/ and photos/ live (default: current directory)
+#   PHOTO_BUCKET       storage bucket with the site's photos (default: pet-photos)
 #   KEEP_DAYS          database copies to keep in the working tree (default 60;
 #                      older ones stay in git history)
 
@@ -26,6 +27,11 @@ set -euo pipefail
 : "${BACKUP_PASSPHRASE:?BACKUP_PASSPHRASE is not set}"
 backup_dir="${BACKUP_DIR:-.}"
 keep_days="${KEEP_DAYS:-60}"
+bucket="${PHOTO_BUCKET:-pet-photos}"
+if [[ ! "$bucket" =~ ^[a-z0-9_-]+$ ]]; then
+  echo "PHOTO_BUCKET may contain only a-z, 0-9, _ and -" >&2
+  exit 1
+fi
 supabase="${SUPABASE_CLI:-supabase}"
 
 stamp="$(date -u +%Y-%m-%d)"
@@ -40,14 +46,21 @@ $supabase db dump --db-url "$SUPABASE_DB_URL" -f "$work/dump/data.sql" \
   --use-copy --data-only \
   -x "storage.buckets_vectors" -x "storage.vector_indexes"
 
-# A dump that silently lost a table is worse than a failed run.
-for table in '"auth"."users"' '"public"."shelters"' '"public"."pets"' \
-  '"public"."shelter_members"' '"storage"."objects"'; do
+# A dump that silently lost a table is worse than a failed run: every table
+# of the site's schema must have its rows section, whatever the schema is.
+mapfile -t site_tables < <(grep -oE '^CREATE TABLE IF NOT EXISTS "public"\."[^"]+"' "$work/dump/schema.sql" |
+  sed 's/^CREATE TABLE IF NOT EXISTS //')
+if [ "${#site_tables[@]}" -eq 0 ]; then
+  echo "Schema dump has no tables in public" >&2
+  exit 1
+fi
+for table in '"auth"."users"' '"storage"."objects"' "${site_tables[@]}"; do
   if ! grep -q "^COPY $table " "$work/dump/data.sql"; then
     echo "Data dump has no rows section for $table" >&2
     exit 1
   fi
 done
+echo "Tables in the dump: auth.users, storage.objects and ${#site_tables[@]} of the site"
 
 # The schema dump leaves out Supabase's own schemas, including the access
 # policies on storage.objects that let volunteers upload photos. Save them
@@ -92,8 +105,8 @@ done
 
 echo "== Photos"
 mkdir -p "$backup_dir/photos"
-psql "$SUPABASE_DB_URL" --no-psqlrc -At -c \
-  "select name from storage.objects where bucket_id = 'pet-photos' order by name" \
+psql "$SUPABASE_DB_URL" --no-psqlrc -At \
+  -c "select name from storage.objects where bucket_id = '$bucket' order by name" \
   > "$work/objects.txt"
 
 total=0
@@ -114,7 +127,7 @@ while IFS= read -r name; do
   mkdir -p "$(dirname "$target")"
   encoded="$(python3 -c 'import sys, urllib.parse; print(urllib.parse.quote(sys.argv[1]))' "$name")"
   if curl -fsS --retry 3 --max-time 120 -o "$target.part" \
-    "$SUPABASE_URL/storage/v1/object/public/pet-photos/$encoded"; then
+    "$SUPABASE_URL/storage/v1/object/public/$bucket/$encoded"; then
     mv "$target.part" "$target"
     added=$((added + 1))
   else

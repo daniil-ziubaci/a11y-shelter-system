@@ -227,3 +227,39 @@ $ npx tsc --noEmit -p .               → без ошибок (теперь и s
 ```
 
 Не проверено с `--apply`: `load-gallery` (переписал бы файлы галереи в репозитории), `reset-2fa` (сброс проверен только как план), `edit-project --fix-translation` (нет переводов DeepL в тестовых данных).
+
+## Этап 6. Резервные копии
+
+Сделано:
+
+- `backup.sh` и `restore-drill.sh` больше не перечисляют таблицы старой схемы: список берётся из самой копии (все таблицы `public` из `schema.sql`), поэтому один и тот же код копирует и проверяет и старый проект, и новый.
+- Новые необязательные секреты: `BACKUP_REPOSITORY` и `BACKUP_REPOSITORY_TOKEN` (куда коммитить копии), `BACKUP_DIR` (подпапка), `PHOTO_BUCKET` (по умолчанию `pet-photos`). Проект Supabase уже задавался секретами `SUPABASE_DB_URL` и `SUPABASE_URL`.
+- Workflow берут скрипты из репозитория копий (`tools/`), а копии кладут в `BACKUP_REPOSITORY` или в тот же репозиторий.
+- Проба «аноним не может вставить строку» отправляет пустую строку (раньше — поле `slug`, которого в новой схеме нет, и PostgREST отвечал 400 до проверки прав).
+- В `ops/backup/README.md` — раздел «Переход на новый проект `live-life`»: что сменить руками.
+
+Проверка (локально):
+
+```
+$ BACKUP_DIR=backup-new ops/backup/backup.sh          # новая схема
+Tables in the dump: auth.users, storage.objects and 8 of the site
+Photos in storage: 113, new: 113, failed: 0
+$ BACKUP_DIR=backup-new ops/backup/restore-drill.sh
+PASS  the backup holds 8 tables of the site
+PASS  auth.users: 3 of 3 rows
+PASS  public.gallery_photos: 6 of 6 rows   … public.pets 34, pet_internal 13, projects 6, purchase_items 31, purchase_log 5, shelter 1, volunteers 3
+PASS  sign-in passwords kept for 3 of 3 users
+PASS  storage policies: 2 of 2 (volunteers can upload photos)
+PASS  anonymous visitors have no write grants (0)
+PASS  anonymous insert is refused (HTTP 401)
+PASS  photos used by the site served byte for byte: 113 of 113
+PASS  every pet photo opens (34 pets, 0 missing)
+RESTORE DRILL PASSED
+$ BACKUP_DIR=backup ops/backup/restore-drill.sh        # копия старой схемы (этап 1)
+PASS  the backup holds 8 tables of the site
+RESTORE DRILL PASSED
+```
+
+Первый прогон тревоги на новой схеме упал на пробе анонимной вставки (HTTP 400, см. выше); после исправления — `PASSED`.
+
+Не проверено: запуск workflow на GitHub Actions (нет доступа к приватному репозиторию копий).

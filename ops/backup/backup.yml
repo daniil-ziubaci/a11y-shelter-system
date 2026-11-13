@@ -20,6 +20,18 @@ jobs:
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
+        with:
+          repository: ${{ secrets.BACKUP_REPOSITORY || github.repository }}
+          token: ${{ secrets.BACKUP_REPOSITORY_TOKEN || github.token }}
+          path: backups
+
+      - uses: actions/checkout@v4
+        with:
+          path: tools
+          sparse-checkout: |
+            backup.sh
+            restore.sh
+            restore-drill.sh
 
       - uses: supabase/setup-cli@v1
         with:
@@ -30,13 +42,16 @@ jobs:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           BACKUP_PASSPHRASE: ${{ secrets.BACKUP_PASSPHRASE }}
-        run: ./backup.sh
+          PHOTO_BUCKET: ${{ secrets.PHOTO_BUCKET || 'pet-photos' }}
+          BACKUP_DIR: ${{ github.workspace }}/backups/${{ secrets.BACKUP_DIR || '.' }}
+        run: tools/backup.sh
 
       - name: Commit the backup
+        working-directory: backups
         run: |
           git config user.name "backup bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A db photos
+          git add -A .
           if git diff --cached --quiet; then
             echo "Nothing changed"
             exit 0

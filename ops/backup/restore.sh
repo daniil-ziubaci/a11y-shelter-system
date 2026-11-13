@@ -9,6 +9,7 @@
 #   TARGET_URL          https://<new-project>.supabase.co
 #   TARGET_SERVICE_KEY  service_role key of the new project (uploads photos)
 #   BACKUP_PASSPHRASE   the passphrase the backup was encrypted with
+#   PHOTO_BUCKET        storage bucket with the site's photos (default: pet-photos)
 
 set -euo pipefail
 
@@ -18,6 +19,11 @@ photos="${2:?usage: restore.sh <db archive> <photos dir>}"
 : "${TARGET_URL:?TARGET_URL is not set}"
 : "${TARGET_SERVICE_KEY:?TARGET_SERVICE_KEY is not set}"
 : "${BACKUP_PASSPHRASE:?BACKUP_PASSPHRASE is not set}"
+bucket="${PHOTO_BUCKET:-pet-photos}"
+if [[ ! "$bucket" =~ ^[a-z0-9_-]+$ ]]; then
+  echo "PHOTO_BUCKET may contain only a-z, 0-9, _ and -" >&2
+  exit 1
+fi
 
 work="$(mktemp -d)"
 trap 'rm -rf "${work:?}"' EXIT
@@ -146,7 +152,7 @@ echo "== Uploading photos"
 # Only the files that were in storage when the backup was made (the rows of
 # storage.objects in the dump). photos/ also keeps files deleted from the
 # site since, in case one was deleted by mistake; those are not uploaded.
-python3 - "$work/data.sql" > "$work/used.txt" <<'PY'
+python3 - "$work/data.sql" "$bucket" > "$work/used.txt" <<'PY'
 import re
 import sys
 
@@ -160,7 +166,7 @@ for i, line in enumerate(lines):
     bucket_at, name_at = columns.index("bucket_id"), columns.index("name")
     for row in lines[i + 1:lines.index("\\.", i + 1)]:
         fields = row.split("\t")
-        if fields[bucket_at] == "pet-photos":
+        if fields[bucket_at] == sys.argv[2]:
             name = re.sub(r"\\(.)", lambda m: {"t": "\t", "n": "\n"}.get(m.group(1), m.group(1)), fields[name_at])
             print(name)
     break
@@ -195,7 +201,7 @@ while IFS= read -r name; do
     -H "Cache-Control: max-age=31536000" \
     -H "x-upsert: true" \
     --data-binary "@$file" \
-    "$TARGET_URL/storage/v1/object/pet-photos/$encoded"; then
+    "$TARGET_URL/storage/v1/object/$bucket/$encoded"; then
     echo "Could not upload: $name" >&2
     failed=$((failed + 1))
   fi
