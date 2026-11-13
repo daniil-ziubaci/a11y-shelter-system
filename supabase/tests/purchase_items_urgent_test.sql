@@ -2,12 +2,11 @@ begin;
 
 select plan(10);
 
-insert into public.shelters (id, slug, name) values
-  ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'shelter-a', 'Shelter A');
+insert into public.shelter (name, is_published) values ('Shelter A', true);
 
-insert into public.purchase_items (id, shelter_id, name, category, unit, remaining, is_urgent) values
-  ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'Обычная', 'корм', 'kg', 5, false),
-  ('cccccccc-cccc-cccc-cccc-cccccccccccc', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'Срочная', 'корм', 'kg', 5, true);
+insert into public.purchase_items (id, name, category, unit, remaining, is_urgent) values
+  ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'Обычная', 'корм', 'kg', 5, false),
+  ('cccccccc-cccc-cccc-cccc-cccccccccccc', 'Срочная', 'корм', 'kg', 5, true);
 
 select has_column('public', 'purchase_items', 'is_urgent', 'колонка is_urgent есть');
 

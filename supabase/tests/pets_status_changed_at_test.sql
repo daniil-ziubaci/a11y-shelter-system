@@ -2,14 +2,12 @@ begin;
 
 select plan(5);
 
-insert into public.shelters (id, slug, name) values
-  ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'shelter-a', 'Shelter A');
+insert into public.shelter (name, is_published) values ('Shelter A', true);
 
 insert into public.pets (
-  id, shelter_id, name, species, sex, birth_date, is_age_approximate, health, description, photo_url, photo_alt
+  id, name, species, sex, birth_date, is_age_approximate, health, description, photo_url, photo_alt
 ) values (
   'dddddddd-dddd-dddd-dddd-dddddddddddd',
-  'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
   'Status', 'кошка', 'мальчик', '2024-01-01', false, 'здоров', 'тест', '/test.jpg', 'тест'
 );
 

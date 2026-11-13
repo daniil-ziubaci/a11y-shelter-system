@@ -2,11 +2,10 @@ begin;
 
 select plan(16);
 
-insert into public.shelters (id, slug, name) values
-  ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'shelter-a', 'Shelter A');
+insert into public.shelter (name, is_published) values ('Shelter A', true);
 
-insert into public.projects (id, shelter_id, title, description) values
-  ('d0000000-0000-0000-0000-000000000001', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'Проект', 'Описание');
+insert into public.projects (id, title, description) values
+  ('d0000000-0000-0000-0000-000000000001', 'Проект', 'Описание');
 
 select is(
   (select progress_total is null and progress_done is null and progress_unit is null
@@ -16,74 +15,74 @@ select is(
 );
 
 select lives_ok(
-  $$insert into public.projects (id, shelter_id, title, description, progress_total, progress_done, progress_unit) values
-    ('d0000000-0000-0000-0000-000000000002', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'П2', 'Описание', 20, 2, 'вольеров')$$,
+  $$insert into public.projects (id, title, description, progress_total, progress_done, progress_unit) values
+    ('d0000000-0000-0000-0000-000000000002', 'П2', 'Описание', 20, 2, 'вольеров')$$,
   'project can have progress 2 of 20'
 );
 
 select lives_ok(
-  $$insert into public.projects (id, shelter_id, title, description, progress_total, progress_done, progress_unit) values
-    ('d0000000-0000-0000-0000-000000000003', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'П3', 'Описание', 20, 0, 'вольеров')$$,
+  $$insert into public.projects (id, title, description, progress_total, progress_done, progress_unit) values
+    ('d0000000-0000-0000-0000-000000000003', 'П3', 'Описание', 20, 0, 'вольеров')$$,
   'progress can start at zero'
 );
 
 select lives_ok(
-  $$insert into public.projects (id, shelter_id, title, description, progress_total, progress_done, progress_unit) values
-    ('d0000000-0000-0000-0000-000000000004', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'П4', 'Описание', 20, 20, 'вольеров')$$,
+  $$insert into public.projects (id, title, description, progress_total, progress_done, progress_unit) values
+    ('d0000000-0000-0000-0000-000000000004', 'П4', 'Описание', 20, 20, 'вольеров')$$,
   'progress can be complete'
 );
 
 select throws_ok(
-  $$insert into public.projects (id, shelter_id, title, description, progress_total) values
-    ('d0000000-0000-0000-0000-000000000005', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'П5', 'Описание', 20)$$,
+  $$insert into public.projects (id, title, description, progress_total) values
+    ('d0000000-0000-0000-0000-000000000005', 'П5', 'Описание', 20)$$,
   '23514', null, 'total alone is rejected'
 );
 
 select throws_ok(
-  $$insert into public.projects (id, shelter_id, title, description, progress_done) values
-    ('d0000000-0000-0000-0000-000000000006', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'П6', 'Описание', 2)$$,
+  $$insert into public.projects (id, title, description, progress_done) values
+    ('d0000000-0000-0000-0000-000000000006', 'П6', 'Описание', 2)$$,
   '23514', null, 'done alone is rejected'
 );
 
 select throws_ok(
-  $$insert into public.projects (id, shelter_id, title, description, progress_unit) values
-    ('d0000000-0000-0000-0000-000000000007', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'П7', 'Описание', 'вольеров')$$,
+  $$insert into public.projects (id, title, description, progress_unit) values
+    ('d0000000-0000-0000-0000-000000000007', 'П7', 'Описание', 'вольеров')$$,
   '23514', null, 'unit alone is rejected'
 );
 
 select throws_ok(
-  $$insert into public.projects (id, shelter_id, title, description, progress_total, progress_done, progress_unit) values
-    ('d0000000-0000-0000-0000-000000000008', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'П8', 'Описание', 0, 0, 'вольеров')$$,
+  $$insert into public.projects (id, title, description, progress_total, progress_done, progress_unit) values
+    ('d0000000-0000-0000-0000-000000000008', 'П8', 'Описание', 0, 0, 'вольеров')$$,
   '23514', null, 'total of zero is rejected'
 );
 
 select throws_ok(
-  $$insert into public.projects (id, shelter_id, title, description, progress_total, progress_done, progress_unit) values
-    ('d0000000-0000-0000-0000-000000000009', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'П9', 'Описание', 1001, 1, 'вольеров')$$,
+  $$insert into public.projects (id, title, description, progress_total, progress_done, progress_unit) values
+    ('d0000000-0000-0000-0000-000000000009', 'П9', 'Описание', 1001, 1, 'вольеров')$$,
   '23514', null, 'total above 1000 is rejected'
 );
 
 select throws_ok(
-  $$insert into public.projects (id, shelter_id, title, description, progress_total, progress_done, progress_unit) values
-    ('d0000000-0000-0000-0000-000000000010', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'П10', 'Описание', 20, 21, 'вольеров')$$,
+  $$insert into public.projects (id, title, description, progress_total, progress_done, progress_unit) values
+    ('d0000000-0000-0000-0000-000000000010', 'П10', 'Описание', 20, 21, 'вольеров')$$,
   '23514', null, 'done above total is rejected'
 );
 
 select throws_ok(
-  $$insert into public.projects (id, shelter_id, title, description, progress_total, progress_done, progress_unit) values
-    ('d0000000-0000-0000-0000-000000000011', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'П11', 'Описание', 20, -1, 'вольеров')$$,
+  $$insert into public.projects (id, title, description, progress_total, progress_done, progress_unit) values
+    ('d0000000-0000-0000-0000-000000000011', 'П11', 'Описание', 20, -1, 'вольеров')$$,
   '23514', null, 'negative done is rejected'
 );
 
 select throws_ok(
-  $$insert into public.projects (id, shelter_id, title, description, progress_total, progress_done, progress_unit) values
-    ('d0000000-0000-0000-0000-000000000012', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'П12', 'Описание', 20, 2, '   ')$$,
+  $$insert into public.projects (id, title, description, progress_total, progress_done, progress_unit) values
+    ('d0000000-0000-0000-0000-000000000012', 'П12', 'Описание', 20, 2, '   ')$$,
   '23514', null, 'blank unit is rejected'
 );
 
 select throws_ok(
-  $$insert into public.projects (id, shelter_id, title, description, progress_total, progress_done, progress_unit) values
-    ('d0000000-0000-0000-0000-000000000013', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'П13', 'Описание', 20, 2, repeat('в', 31))$$,
+  $$insert into public.projects (id, title, description, progress_total, progress_done, progress_unit) values
+    ('d0000000-0000-0000-0000-000000000013', 'П13', 'Описание', 20, 2, repeat('в', 31))$$,
   '23514', null, 'unit longer than 30 characters is rejected'
 );
 

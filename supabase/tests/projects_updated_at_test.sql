@@ -1,13 +1,11 @@
 begin;
 select plan(5);
 
-insert into public.shelters (id, name, slug)
-values ('00000000-0000-0000-0000-0000000000a1', 'Тест', 'updated-at-test');
+insert into public.shelter (name, is_published) values ('Тест', true);
 
-insert into public.projects (id, shelter_id, title, description)
+insert into public.projects (id, title, description)
 values (
   '00000000-0000-0000-0000-0000000000b1',
-  '00000000-0000-0000-0000-0000000000a1',
   'Проект',
   'Описание'
 );

@@ -4,26 +4,21 @@ select plan(5);
 
 select has_column('public', 'volunteer_pets', 'review_since', 'volunteer_pets has review_since');
 
-insert into public.shelters (id, slug, name) values
-  ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'shelter-a', 'Shelter A');
+insert into public.shelter (name, is_published) values ('Shelter A', true);
 
 alter table public.pets disable trigger user;
 
 insert into public.pets (
-  id, shelter_id, name, species, sex, birth_date, is_age_approximate, health, description, photo_url, photo_alt,
+  id, name, species, sex, birth_date, is_age_approximate, health, description, photo_url, photo_alt,
   status, status_changed_at, needs_treatment_since
 ) values
-  ('d1111111-1111-1111-1111-111111111111', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-   'Pending old', 'кошка', 'мальчик', '2024-01-01', false, 'здоров', 'тест', '/test.jpg', 'тест',
+  ('d1111111-1111-1111-1111-111111111111', 'Pending old', 'кошка', 'мальчик', '2024-01-01', false, 'здоров', 'тест', '/test.jpg', 'тест',
    'в процессе', now() - interval '10 days', null),
-  ('d2222222-2222-2222-2222-222222222222', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-   'Looking with mark', 'кошка', 'мальчик', '2024-01-01', false, 'здоров', 'тест', '/test.jpg', 'тест',
+  ('d2222222-2222-2222-2222-222222222222', 'Looking with mark', 'кошка', 'мальчик', '2024-01-01', false, 'здоров', 'тест', '/test.jpg', 'тест',
    'ищет дом', now() - interval '30 days', now() - interval '5 days'),
-  ('d3333333-3333-3333-3333-333333333333', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-   'Treatment both', 'кошка', 'мальчик', '2024-01-01', false, 'здоров', 'тест', '/test.jpg', 'тест',
+  ('d3333333-3333-3333-3333-333333333333', 'Treatment both', 'кошка', 'мальчик', '2024-01-01', false, 'здоров', 'тест', '/test.jpg', 'тест',
    'на лечении', now() - interval '3 days', now() - interval '8 days'),
-  ('d4444444-4444-4444-4444-444444444444', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-   'Looking quiet', 'кошка', 'мальчик', '2024-01-01', false, 'здоров', 'тест', '/test.jpg', 'тест',
+  ('d4444444-4444-4444-4444-444444444444', 'Looking quiet', 'кошка', 'мальчик', '2024-01-01', false, 'здоров', 'тест', '/test.jpg', 'тест',
    'ищет дом', now() - interval '30 days', null);
 
 select is(

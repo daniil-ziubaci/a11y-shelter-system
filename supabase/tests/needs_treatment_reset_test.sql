@@ -5,17 +5,14 @@ select plan(10);
 insert into auth.users (id) values
   ('11111111-1111-1111-1111-111111111111');
 
-insert into public.shelters (id, slug, name) values
-  ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'shelter-a', 'Shelter A');
+insert into public.shelter (name, is_published) values ('Shelter A', true);
 
-insert into public.shelter_members (user_id, shelter_id) values
-  ('11111111-1111-1111-1111-111111111111', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa');
+insert into public.volunteers (user_id) values ('11111111-1111-1111-1111-111111111111');
 
 insert into public.pets (
-  id, shelter_id, name, species, sex, birth_date, is_age_approximate, health, description, photo_url, photo_alt
+  id, name, species, sex, birth_date, is_age_approximate, health, description, photo_url, photo_alt
 ) values (
   'dddddddd-dddd-dddd-dddd-dddddddddddd',
-  'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
   'Reset', 'кошка', 'мальчик', '2024-01-01', false, 'здоров', 'тест', '/test.jpg', 'тест'
 );
 
@@ -98,11 +95,10 @@ select is(
 );
 
 insert into public.pets (
-  id, shelter_id, name, species, sex, birth_date, is_age_approximate, health, description, photo_url, photo_alt,
+  id, name, species, sex, birth_date, is_age_approximate, health, description, photo_url, photo_alt,
   status, needs_treatment_since
 ) values (
   'eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee',
-  'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
   'Created adopted', 'кошка', 'мальчик', '2024-01-01', false, 'здоров', 'тест', '/test.jpg', 'тест',
   'пристроен', '2000-01-01 00:00:00+00'
 );

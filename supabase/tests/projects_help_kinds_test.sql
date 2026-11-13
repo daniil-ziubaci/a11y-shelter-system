@@ -2,11 +2,10 @@ begin;
 
 select plan(10);
 
-insert into public.shelters (id, slug, name) values
-  ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'shelter-a', 'Shelter A');
+insert into public.shelter (name, is_published) values ('Shelter A', true);
 
-insert into public.projects (id, shelter_id, title, description) values
-  ('d0000000-0000-0000-0000-000000000001', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'Проект', 'Описание');
+insert into public.projects (id, title, description) values
+  ('d0000000-0000-0000-0000-000000000001', 'Проект', 'Описание');
 
 select is(
   (select help_kinds from public.projects where id = 'd0000000-0000-0000-0000-000000000001'),
@@ -15,36 +14,36 @@ select is(
 );
 
 select lives_ok(
-  $$insert into public.projects (id, shelter_id, title, description, help_kinds) values
-    ('d0000000-0000-0000-0000-000000000002', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'Проект 2', 'Описание', array['things'])$$,
+  $$insert into public.projects (id, title, description, help_kinds) values
+    ('d0000000-0000-0000-0000-000000000002', 'Проект 2', 'Описание', array['things'])$$,
   'project can ask for things only'
 );
 
 select lives_ok(
-  $$insert into public.projects (id, shelter_id, title, description, help_kinds) values
-    ('d0000000-0000-0000-0000-000000000003', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'Проект 3', 'Описание', array['things', 'money'])$$,
+  $$insert into public.projects (id, title, description, help_kinds) values
+    ('d0000000-0000-0000-0000-000000000003', 'Проект 3', 'Описание', array['things', 'money'])$$,
   'project can ask for things and money'
 );
 
 select throws_ok(
-  $$insert into public.projects (id, shelter_id, title, description, help_kinds) values
-    ('d0000000-0000-0000-0000-000000000004', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'Проект 4', 'Описание', '{}')$$,
+  $$insert into public.projects (id, title, description, help_kinds) values
+    ('d0000000-0000-0000-0000-000000000004', 'Проект 4', 'Описание', '{}')$$,
   '23514',
   null,
   'empty help_kinds is rejected'
 );
 
 select throws_ok(
-  $$insert into public.projects (id, shelter_id, title, description, help_kinds) values
-    ('d0000000-0000-0000-0000-000000000005', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'Проект 5', 'Описание', array['things', 'cars'])$$,
+  $$insert into public.projects (id, title, description, help_kinds) values
+    ('d0000000-0000-0000-0000-000000000005', 'Проект 5', 'Описание', array['things', 'cars'])$$,
   '23514',
   null,
   'unknown help kind is rejected'
 );
 
 select throws_ok(
-  $$insert into public.projects (id, shelter_id, title, description, help_kinds) values
-    ('d0000000-0000-0000-0000-000000000006', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'Проект 6', 'Описание', null)$$,
+  $$insert into public.projects (id, title, description, help_kinds) values
+    ('d0000000-0000-0000-0000-000000000006', 'Проект 6', 'Описание', null)$$,
   '23502',
   null,
   'null help_kinds is rejected'

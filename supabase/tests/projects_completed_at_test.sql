@@ -2,11 +2,10 @@ begin;
 
 select plan(8);
 
-insert into public.shelters (id, slug, name) values
-  ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'shelter-a', 'Shelter A');
+insert into public.shelter (name, is_published) values ('Shelter A', true);
 
-insert into public.projects (id, shelter_id, title, description) values
-  ('d0000000-0000-0000-0000-000000000001', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'Проект', 'Описание');
+insert into public.projects (id, title, description) values
+  ('d0000000-0000-0000-0000-000000000001', 'Проект', 'Описание');
 
 select is(
   (select completed_at from public.projects where id = 'd0000000-0000-0000-0000-000000000001'),
@@ -63,8 +62,8 @@ select is(
   'finishing again sets a fresh date'
 );
 
-insert into public.projects (id, shelter_id, title, description, status) values
-  ('d0000000-0000-0000-0000-000000000002', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'Готовый', 'Описание', 'завершён');
+insert into public.projects (id, title, description, status) values
+  ('d0000000-0000-0000-0000-000000000002', 'Готовый', 'Описание', 'завершён');
 
 select is(
   (select completed_at = now() from public.projects where id = 'd0000000-0000-0000-0000-000000000002'),
@@ -72,8 +71,8 @@ select is(
   'project created as finished gets the current time'
 );
 
-insert into public.projects (id, shelter_id, title, description, status, completed_at) values
-  ('d0000000-0000-0000-0000-000000000003', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'В работе', 'Описание', 'идёт', '2000-01-01 00:00:00+00');
+insert into public.projects (id, title, description, status, completed_at) values
+  ('d0000000-0000-0000-0000-000000000003', 'В работе', 'Описание', 'идёт', '2000-01-01 00:00:00+00');
 
 select is(
   (select completed_at from public.projects where id = 'd0000000-0000-0000-0000-000000000003'),
