@@ -102,3 +102,7 @@ summary {
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
+
+@utility grid-cols-header {
+  grid-template-columns: 1fr auto 1fr;
+}
