@@ -1,4 +1,5 @@
 ---
+import { GALLERY_SIZES, gallerySrcset } from "@/lib/galleryImages";
 import { getTranslator, type Locale } from "@/lib/i18n";
 
 export type GalleryPhoto = { id: string; src: string; thumbSrc: string; alt: string };
@@ -31,7 +32,7 @@ const counter = (index: number) => t("counter", { current: index + 1, total });
     >
       <div class="relative aspect-4/3 touch-pan-y overflow-hidden rounded-2xl border border-(--border-strong) bg-neutral-900 shadow-md sm:aspect-video" data-stage>
         <img src={first.thumbSrc} alt="" aria-hidden="true" class="absolute inset-0 size-full scale-125 object-cover blur-2xl brightness-50" data-backdrop />
-        <img src={first.src} alt={first.alt} fetchpriority="high" class="absolute inset-0 size-full object-contain" data-main />
+        <img src={first.src} srcset={gallerySrcset(first.src)} sizes={GALLERY_SIZES} alt={first.alt} fetchpriority="high" decoding="async" class="absolute inset-0 size-full object-contain" data-main />
         {total > 1 && (
           <>
             <button type="button" aria-label={t("previous")} class={`${arrow} left-3`} data-step="-1" hidden>
@@ -63,6 +64,7 @@ const counter = (index: number) => t("counter", { current: index + 1, total });
                     aria-current={i === 0 ? "true" : undefined}
                     data-index={i}
                     data-src={photo.src}
+                    data-srcset={gallerySrcset(photo.src)}
                     data-thumb={photo.thumbSrc}
                     data-alt={photo.alt}
                     class:list={[
@@ -112,6 +114,7 @@ const counter = (index: number) => t("counter", { current: index + 1, total });
     const show = (next: number) => {
       index = (next + thumbs.length) % thumbs.length;
       const thumb = thumbs[index];
+      main.srcset = thumb.dataset.srcset ?? "";
       main.src = thumb.dataset.src ?? "";
       main.alt = thumb.dataset.alt ?? "";
       backdrop.src = thumb.dataset.thumb ?? main.src;

@@ -2,6 +2,7 @@ import { mkdir, readdir, readFile, rm } from "node:fs/promises";
 import { join, parse } from "node:path";
 import type { Database } from "@/lib/database";
 import sharp from "sharp";
+import { GALLERY_WIDTHS, galleryCopyOf } from "../src/lib/galleryImages.ts";
 import { connect, splitArgs, stopUnlessApply } from "./lib/connect.ts";
 
 const { apply, args } = splitArgs(process.argv.slice(2));
@@ -40,6 +41,13 @@ async function convert(source: Buffer, name: string) {
     .resize({ width: 1200, height: 1200, fit: "inside", withoutEnlargement: true })
     .webp({ quality: 72, effort: 6 })
     .toFile(join(outDir, `${name}.webp`));
+  for (const width of GALLERY_WIDTHS) {
+    await base
+      .clone()
+      .resize({ width, height: width, fit: "inside", withoutEnlargement: true })
+      .webp({ quality: 72, effort: 6 })
+      .toFile(join(outDir, `${name}-${width}.webp`));
+  }
   await base
     .clone()
     .resize(192, 192, { fit: "cover" })
@@ -85,7 +93,11 @@ if (cleanupError) {
 }
 
 const wanted = new Set(
-  rows.flatMap((row) => [parse(row.path).base, parse(row.thumb_path).base]),
+  rows.flatMap((row) => [
+    parse(row.path).base,
+    parse(row.thumb_path).base,
+    ...GALLERY_WIDTHS.map((width) => parse(galleryCopyOf(row.path, width)).base),
+  ]),
 );
 
 for (const file of await readdir(outDir)) {
