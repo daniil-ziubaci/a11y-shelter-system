@@ -5,6 +5,7 @@ import { LEGACY_SLUG, PUBLIC_SECTIONS } from "@/lib/routes";
 import { createSessionClient } from "@/lib/supabase";
 
 const SESSION_PATHS = /^\/(volunteer|login|auth)(\/|$)/;
+const PRIVATE_PATHS = /^\/(volunteer|login|auth|api)(\/|$)/;
 const TWO_FACTOR_PATHS = new Set(["/volunteer/2fa", "/volunteer/2fa/verify"]);
 
 function redirect(location: string, status: 301 | 302 | 303 | 307 | 308) {
@@ -70,12 +71,12 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
     if (path.startsWith("/volunteer")) {
       if (!context.locals.claims) {
-        return withHeaders(context.redirect("/login", 303), supabaseHeaders);
+        return withHeaders(context.redirect("/login", 303), supabaseHeaders, true);
       }
       if (context.locals.claims.aal !== "aal2" && !TWO_FACTOR_PATHS.has(path)) {
         const { data: factors } = await context.locals.supabase.auth.mfa.listFactors();
         const target = (factors?.totp.length ?? 0) > 0 ? "/volunteer/2fa/verify" : "/volunteer/2fa";
-        return withHeaders(context.redirect(target, 303), supabaseHeaders);
+        return withHeaders(context.redirect(target, 303), supabaseHeaders, true);
       }
     }
   } else {
@@ -83,10 +84,10 @@ export const onRequest = defineMiddleware(async (context, next) => {
   }
 
   const response = await next();
-  return withHeaders(response, supabaseHeaders);
+  return withHeaders(response, supabaseHeaders, PRIVATE_PATHS.test(path));
 });
 
-function withHeaders(response: Response, extra: Headers): Response {
+function withHeaders(response: Response, extra: Headers, noStore = false): Response {
   let result = response;
   const set = (name: string, value: string) => {
     try {
@@ -98,6 +99,9 @@ function withHeaders(response: Response, extra: Headers): Response {
   };
   for (const [name, value] of extra) {
     set(name, value);
+  }
+  if (noStore) {
+    set("Cache-Control", "no-store");
   }
   if (ALLOW_INDEXING !== "true") {
     set("X-Robots-Tag", "noindex, nofollow");
