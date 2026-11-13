@@ -6,7 +6,7 @@ import tseslint from "typescript-eslint";
 
 export default tseslint.config(
   {
-    ignores: [".next/", ".open-next/", "dist/", ".astro/", ".wrangler/", "node_modules/", "worker-configuration.d.ts", "src/lib/database.ts", "scripts/data/", "public/", "test-results/", "playwright-report/"],
+    ignores: ["dist/", ".astro/", ".wrangler/", "node_modules/", "worker-configuration.d.ts", "src/lib/database.ts", "scripts/data/", "public/", "test-results/", "playwright-report/"],
   },
   js.configs.recommended,
   ...tseslint.configs.recommended,
