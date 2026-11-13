@@ -106,3 +106,9 @@ summary {
 @utility grid-cols-header {
   grid-template-columns: 1fr auto 1fr;
 }
+
+@utility bg-hero {
+  background-image:
+    linear-gradient(to bottom, transparent 55%, var(--background)),
+    linear-gradient(to bottom right, color-mix(in srgb, var(--accent-wash) 60%, transparent), color-mix(in srgb, var(--accent-soft) 60%, transparent), transparent);
+}
