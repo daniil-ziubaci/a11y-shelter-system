@@ -48,7 +48,10 @@ export const onRequest = defineMiddleware(async (context, next) => {
   const path = url.pathname;
 
   if (path === "/") {
-    return redirect(`/${preferredLocale(request.headers.get("accept-language"))}`, 307);
+    const response = redirect(`/${preferredLocale(request.headers.get("accept-language"))}`, 307);
+    response.headers.set("Cache-Control", "no-store");
+    response.headers.set("Vary", "Accept-Language");
+    return withHeaders(response, new Headers());
   }
 
   const legacy = legacyRedirect(url);
