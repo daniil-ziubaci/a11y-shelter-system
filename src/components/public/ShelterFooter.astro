@@ -36,7 +36,7 @@ const legalLanguage = shelter.translated.legalInfo ? locale : shelter.content_la
         <h2 id="footer-contact-heading" class="text-xl font-bold">{t("contactHeading")}</h2>
         <p>{t("contactIntro")}</p>
       </div>
-      <div>
+      <Fragment>
         <div class="flex flex-wrap gap-3">
           {
             phone && (
@@ -65,7 +65,7 @@ const legalLanguage = shelter.translated.legalInfo ? locale : shelter.content_la
         </div>
         {phone && <p class="mt-3">{tAbout("phoneNote")}</p>}
         {email && <p class="mt-3">{tAbout("emailLine", { email })}</p>}
-      </div>
+      </Fragment>
       <SocialLinks
         locale={locale}
         instagram={shelter.instagram_url}
