@@ -1,31 +1,17 @@
-import type { Database } from "@/types/database";
-import { createClient } from "@supabase/supabase-js";
+import { connect } from "./lib/connect.ts";
 import { checkProjectTexts, readMultiline } from "./lib/projectTexts.ts";
 
-// Creates a project for a shelter, without a photo (a volunteer can add one
-// in the panel later). A new project is the newest, so it is listed first
-// among the unpinned projects; use edit-project.ts --to-top on another
-// project to put that one above it.
-//
-// --help says how people can help: things, money, or both (default).
-// Without --apply it only shows what would be created.
-//
-//   node --env-file=.env.coordinator scripts/create-project.ts live-life --title "Ремонт" --description "- Будки\n- Ремонт сетки" --help things,money
-
-const url = process.env.SUPABASE_URL;
-const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 const HELP_LABELS: Record<string, string> = { things: "Вещи", money: "Деньги" };
 
 function usage(): never {
   console.error(
-    'Использование: node --env-file=.env.coordinator scripts/create-project.ts slug --title "…" --description "…" [--help things,money] [--apply]',
+    'Использование: node --env-file=.env.coordinator scripts/create-project.ts --title "…" --description "…" [--help things,money] [--apply]',
   );
   process.exit(1);
 }
 
-const [slug, ...rest] = process.argv.slice(2);
-if (!url || !serviceKey || !slug || slug.startsWith("--")) usage();
+const rest = process.argv.slice(2);
 
 let title: string | undefined;
 let description: string | undefined;
@@ -57,26 +43,9 @@ if (problems.length > 0) {
   process.exit(1);
 }
 
-const supabase = createClient<Database>(url!, serviceKey!, {
-  auth: { autoRefreshToken: false, persistSession: false },
-});
+const supabase = connect('create-project.ts --title "…" --description "…" [--apply]');
 
-const { data: shelter, error: shelterError } = await supabase
-  .from("shelters")
-  .select("id, name")
-  .eq("slug", slug)
-  .maybeSingle();
-if (shelterError || !shelter) {
-  console.error(
-    `Приют «${slug}» не найден${shelterError ? `: ${shelterError.message}` : "."}`,
-  );
-  process.exit(1);
-}
-
-const { data: existing, error: existingError } = await supabase
-  .from("projects")
-  .select("title")
-  .eq("shelter_id", shelter.id);
+const { data: existing, error: existingError } = await supabase.from("projects").select("title");
 if (existingError || !existing) {
   console.error(existingError?.message ?? "Не удалось прочитать проекты.");
   process.exit(1);
@@ -87,12 +56,12 @@ if (
   existing.some((project) => normalize(project.title) === normalize(title!))
 ) {
   console.log(
-    `В «${shelter.name}» уже есть проект «${title}». Ничего не создано.`,
+    `Проект «${title}» уже есть. Ничего не создано.`,
   );
   process.exit(0);
 }
 
-console.log(`Новый проект в «${shelter.name}»:`);
+console.log("Новый проект:");
 console.log(`  название: «${title}»`);
 console.log("  описание:");
 console.log(description.replace(/^/gm, "    | "));
@@ -107,7 +76,6 @@ if (!apply) {
 }
 
 const { error } = await supabase.from("projects").insert({
-  shelter_id: shelter.id,
   title,
   description,
   help_kinds: helpKinds,

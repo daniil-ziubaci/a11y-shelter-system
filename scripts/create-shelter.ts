@@ -1,44 +1,30 @@
-import { createClient } from "@supabase/supabase-js";
+import { connect, splitArgs, stopUnlessApply } from "./lib/connect.ts";
 
-const [slug, name, city] = process.argv.slice(2);
-
-if (!slug || !name || !/^[a-z0-9]+(-[a-z0-9]+)*$/.test(slug)) {
-  console.error(
-    'Использование: node --env-file=.env.coordinator scripts/create-shelter.ts slug "Название" ["Город"]',
-  );
+const { apply, args } = splitArgs(process.argv.slice(2));
+const [name, city] = args;
+const usage = 'create-shelter.ts "Название" ["Город"] [--apply]';
+if (!name) {
+  console.error(`Использование: node --env-file=.env.coordinator scripts/${usage}`);
   process.exit(1);
 }
+const supabase = connect(usage);
 
-const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
-);
-
-const { data: existing, error: findError } = await supabase
-  .from("shelters")
-  .select("id")
-  .eq("slug", slug)
-  .maybeSingle();
-
-if (findError) {
-  console.error(findError.message);
-  process.exit(1);
-}
-
-if (existing) {
-  console.log(`Приют ${slug} уже есть: ${existing.id}`);
-  process.exit(0);
-}
-
-const { data, error } = await supabase
-  .from("shelters")
-  .insert({ slug, name, city: city ?? null })
-  .select("id")
-  .single();
-
+const { data: existing, error } = await supabase.from("shelter").select("name").maybeSingle();
 if (error) {
   console.error(error.message);
   process.exit(1);
 }
+if (existing) {
+  console.log(`Приют уже заведён: «${existing.name}». На сайте может быть только один приют.`);
+  process.exit(0);
+}
 
-console.log(`Создан приют ${slug}: ${data.id}`);
+console.log(`Будет заведён приют «${name}»${city ? `, город ${city}` : ""}. Он скрыт от посетителей, пока is_published = false.`);
+stopUnlessApply(apply);
+
+const { error: insertError } = await supabase.from("shelter").insert({ name, city: city ?? null });
+if (insertError) {
+  console.error(insertError.message);
+  process.exit(1);
+}
+console.log("Приют заведён.");

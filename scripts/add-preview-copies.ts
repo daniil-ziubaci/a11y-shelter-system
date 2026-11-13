@@ -1,70 +1,38 @@
-import type { Database } from "@/types/database";
-import { createClient } from "@supabase/supabase-js";
-import { previewCopyOf } from "../lib/photoUrls.ts";
+import { previewCopyOf } from "../src/lib/photoUrls.ts";
+import { connect, splitArgs, stopUnlessApply, storagePath } from "./lib/connect.ts";
 import { makePreviewJpeg } from "./lib/previewImage.ts";
 
-// One-off backfill: link previews (photo-og.jpg next to each photo) used to be
-// rendered on every request by /api/og/*. Now they are prepared at upload
-// time, so photos uploaded before that change need a stored preview.
-// Safe to run again: existing previews are skipped.
-
-const url = process.env.SUPABASE_URL;
-const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-if (!url || !serviceKey) {
-  console.error(
-    "Использование: node --env-file=.env.coordinator scripts/add-preview-copies.ts",
-  );
-  process.exit(1);
-}
-
-const supabase = createClient<Database>(url, serviceKey, {
-  auth: { autoRefreshToken: false, persistSession: false },
-});
+const { apply } = splitArgs(process.argv.slice(2));
+const supabase = connect("add-preview-copies.ts [--apply]");
 const bucket = supabase.storage.from("pet-photos");
-const marker = "/storage/v1/object/public/pet-photos/";
 
 const paths: string[] = [];
-
-const { data: shelters, error: sheltersError } = await supabase
-  .from("shelters")
-  .select("photo_path")
-  .not("photo_path", "is", null);
-if (sheltersError || !shelters) {
-  console.error(sheltersError?.message ?? "Не удалось прочитать приюты.");
+const { data: shelter, error: shelterError } = await supabase.from("shelter").select("photo_path").maybeSingle();
+if (shelterError) {
+  console.error(shelterError.message);
   process.exit(1);
 }
-for (const shelter of shelters) {
-  if (shelter.photo_path) paths.push(shelter.photo_path);
-}
+if (shelter?.photo_path) paths.push(shelter.photo_path);
 
-const pageSize = 1000;
-for (let from = 0; ; from += pageSize) {
-  const { data: pets, error: petsError } = await supabase
-    .from("pets")
-    .select("photo_url")
-    .not("photo_url", "is", null)
-    .order("id")
-    .range(from, from + pageSize - 1);
-  if (petsError || !pets) {
-    console.error(petsError?.message ?? "Не удалось прочитать животных.");
+for (let from = 0; ; from += 1000) {
+  const { data, error } = await supabase.from("pets").select("photo_url").order("id").range(from, from + 999);
+  if (error || !data) {
+    console.error(error?.message ?? "Не удалось прочитать животных.");
     process.exit(1);
   }
-  for (const pet of pets) {
-    const index = pet.photo_url?.indexOf(marker) ?? -1;
-    if (pet.photo_url && index !== -1) {
-      paths.push(
-        decodeURIComponent(pet.photo_url.slice(index + marker.length)),
-      );
-    }
+  for (const pet of data) {
+    const path = storagePath(pet.photo_url);
+    if (path) paths.push(path);
   }
-  if (pets.length < pageSize) break;
+  if (data.length < 1000) break;
 }
+
+console.log(`Фото: ${paths.length}. Для каждого будет сделано превью для ссылок 1200×630, если его ещё нет.`);
+stopUnlessApply(apply);
 
 let created = 0;
 let skipped = 0;
 let failed = 0;
-
 for (const path of paths) {
   const { data: file, error: downloadError } = await bucket.download(path);
   if (downloadError || !file) {
@@ -72,30 +40,19 @@ for (const path of paths) {
     failed += 1;
     continue;
   }
-  const preview = await makePreviewJpeg(
-    Buffer.from(await file.arrayBuffer()),
-  ).catch(() => null);
+  const preview = await makePreviewJpeg(Buffer.from(await file.arrayBuffer())).catch(() => null);
   if (!preview) {
     console.error(`Не удалось сделать превью ${path}`);
     failed += 1;
     continue;
   }
-  const { error: uploadError } = await bucket.upload(
-    previewCopyOf(path),
-    preview,
-    { contentType: "image/jpeg", cacheControl: "31536000" },
-  );
-  if (!uploadError) {
-    created += 1;
-  } else if (/already exists/i.test(uploadError.message)) {
-    skipped += 1;
-  } else {
+  const { error: uploadError } = await bucket.upload(previewCopyOf(path), preview, { contentType: "image/jpeg", cacheControl: "31536000" });
+  if (!uploadError) created += 1;
+  else if (/already exists/i.test(uploadError.message)) skipped += 1;
+  else {
     console.error(`Не загрузилось ${path}: ${uploadError.message}`);
     failed += 1;
   }
 }
-
-console.log(
-  `Превью созданы: ${created}, уже были: ${skipped}, ошибок: ${failed}`,
-);
+console.log(`Превью созданы: ${created}, уже были: ${skipped}, ошибок: ${failed}`);
 if (failed > 0) process.exit(1);

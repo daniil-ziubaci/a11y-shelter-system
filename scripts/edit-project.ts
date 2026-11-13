@@ -1,7 +1,6 @@
-import type { Database } from "@/types/database";
-import { createClient } from "@supabase/supabase-js";
-import { textHash } from "../lib/hashText.ts";
-import { readTranslations, type Translations } from "../lib/translations.ts";
+import { textHash } from "../src/lib/hashText.ts";
+import { readTranslations, type Translations } from "../src/lib/translations.ts";
+import { connect } from "./lib/connect.ts";
 import {
   checkProjectTexts,
   parseProgress,
@@ -9,34 +8,6 @@ import {
   type Progress,
 } from "./lib/projectTexts.ts";
 
-// Coordinator edits of a project: new title, new description, order, pin.
-//
-// --to-top shows the project first among the shelter's unpinned projects
-// (the site lists newer projects first; the creation date is used only for
-// that order and is shown nowhere). --pin marks a PERMANENT PROGRAM, such as
-// sterilization: the site labels it «постоянная программа» and lists it
-// before everything else. Only the coordinator pins, so there is no button
-// for it in the volunteer panel. Do not pin just to change the order.
-//
-// The project is found by its current title within the shelter. Without
-// --apply it only shows what would change. In --description, "\n" starts a
-// new line; lines starting with "- " are shown as a list on the site.
-// Translations refresh on their own: the site shows the new original text
-// until the nightly translation run.
-//
-// --fix-translation ro "было" "стало" corrects a phrase in the automatic
-// translation (DeepL sometimes picks the wrong word). The fix stays until the
-// Russian text of that field changes; then the field is translated again.
-// It can be repeated and cannot be combined with --title or --description.
-//
-//   node --env-file=.env.coordinator scripts/edit-project.ts live-life "Тёплые вольеры" --title "Тёплые будки" --to-top
-//   node --env-file=.env.coordinator scripts/edit-project.ts live-life "Ремонт" --description "Что делаем:\n- Будки" --apply
-//   node --env-file=.env.coordinator scripts/edit-project.ts live-life "Тёплые будки" --progress "5/20 будок"
-//   node --env-file=.env.coordinator scripts/edit-project.ts live-life "Тёплые будки" --no-progress
-//   node --env-file=.env.coordinator scripts/edit-project.ts live-life "Ремонт" --fix-translation en "Renovation" "Repairs"
-
-const url = process.env.SUPABASE_URL;
-const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 type Options = {
   title?: string;
@@ -53,13 +24,13 @@ const LANGUAGES = ["ro", "en"];
 
 function usage(): never {
   console.error(
-    'Использование: node --env-file=.env.coordinator scripts/edit-project.ts slug "текущее название" [--title "…"] [--description "…"] [--photo-alt "…"] [--progress "5/20 будок" | --no-progress] [--to-top] [--pin | --unpin] [--fix-translation ro|en "было" "стало"] [--apply]',
+    'Использование: node --env-file=.env.coordinator scripts/edit-project.ts "текущее название" [--title "…"] [--description "…"] [--photo-alt "…"] [--progress "5/20 будок" | --no-progress] [--to-top] [--pin | --unpin] [--fix-translation ro|en "было" "стало"] [--apply]',
   );
   process.exit(1);
 }
 
-const [slug, currentTitle, ...rest] = process.argv.slice(2);
-if (!url || !serviceKey || !slug || !currentTitle) usage();
+const [currentTitle, ...rest] = process.argv.slice(2);
+if (!currentTitle || currentTitle.startsWith("--")) usage();
 
 const options: Options = { apply: false, toTop: false, fixes: [] };
 for (let i = 0; i < rest.length; i += 1) {
@@ -119,8 +90,6 @@ if (
     options.photoAlt !== undefined ||
     options.progress !== undefined)
 ) {
-  // A new Russian text makes the translation outdated, and the night run
-  // would replace the corrected one anyway.
   console.error(
     "--fix-translation нельзя совмещать с правкой текста. Сначала измените текст, дождитесь ночного перевода, потом поправьте перевод.",
   );
@@ -138,28 +107,13 @@ if (problems.length > 0) {
   process.exit(1);
 }
 
-const supabase = createClient<Database>(url!, serviceKey!, {
-  auth: { autoRefreshToken: false, persistSession: false },
-});
-
-const { data: shelter, error: shelterError } = await supabase
-  .from("shelters")
-  .select("id, name")
-  .eq("slug", slug)
-  .maybeSingle();
-if (shelterError || !shelter) {
-  console.error(
-    `Приют «${slug}» не найден${shelterError ? `: ${shelterError.message}` : "."}`,
-  );
-  process.exit(1);
-}
+const supabase = connect('edit-project.ts "текущее название" … [--apply]');
 
 const { data: projects, error: projectsError } = await supabase
   .from("projects")
   .select(
     "id, title, description, photo_path, photo_alt, progress_total, progress_done, progress_unit, is_pinned, status, is_archived, created_at, translations",
   )
-  .eq("shelter_id", shelter.id)
   .order("created_at");
 if (projectsError || !projects) {
   console.error(projectsError?.message ?? "Не удалось прочитать проекты.");
@@ -174,8 +128,8 @@ const matches = projects.filter(
 if (matches.length !== 1) {
   console.error(
     matches.length === 0
-      ? `В «${shelter.name}» нет проекта «${currentTitle}». Есть:`
-      : `В «${shelter.name}» несколько проектов «${currentTitle}», уточните. Все проекты:`,
+      ? `Нет проекта «${currentTitle}». Есть:`
+      : `Несколько проектов «${currentTitle}», уточните. Все проекты:`,
   );
   for (const project of projects) {
     const state = project.is_archived ? "в архиве" : project.status;
@@ -186,8 +140,6 @@ if (matches.length !== 1) {
   process.exit(1);
 }
 
-// Texts saved from Windows keep "\r\n"; a bare "\r" would make the
-// terminal overwrite the line, so show line breaks as they will appear.
 const quote = (text: string) =>
   text.replace(/\r\n?/g, "\n").replace(/^/gm, "    | ");
 
@@ -205,7 +157,7 @@ const changes: Partial<
     | "created_at"
   >
 > & { translations?: Translations } = {};
-console.log(`Проект «${project.title}» в «${shelter.name}»:`);
+console.log(`Проект «${project.title}»:`);
 if (options.title !== undefined && options.title !== project.title) {
   changes.title = options.title;
   console.log(`  название: «${project.title}» → «${options.title}»`);
@@ -315,8 +267,6 @@ if (options.fixes.length > 0) {
     for (const [field, source] of Object.entries(sources)) {
       const entry = translations[field]?.[language];
       if (!entry || !entry.text.includes(from)) continue;
-      // Only a translation of the current Russian text is shown on the site;
-      // an outdated one is replaced at night, so fixing it would be lost.
       if (entry.hash !== textHash("", source)) {
         console.error(
           `  ${language}, ${fieldNames[field]}: перевод устарел (русский текст изменился). Дождитесь ночного перевода и повторите.`,

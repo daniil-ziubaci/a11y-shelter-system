@@ -1,20 +1,16 @@
 import { randomUUID } from "node:crypto";
-import type { Database } from "@/types/database";
-import { createClient } from "@supabase/supabase-js";
 import { readFile } from "node:fs/promises";
 import { basename } from "node:path";
-import { previewCopyOf } from "../lib/photoUrls.ts";
+import { previewCopyOf } from "../src/lib/photoUrls.ts";
+import { connect, splitArgs, stopUnlessApply } from "./lib/connect.ts";
 import { makePreviewJpeg } from "./lib/previewImage.ts";
 import { processPhoto } from "./lib/processPhoto.ts";
 
-const url = process.env.SUPABASE_URL;
-const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-const [slug, filePath, alt] = process.argv.slice(2);
+const { apply, args } = splitArgs(process.argv.slice(2));
+const [filePath, alt] = args;
 
-if (!url || !serviceKey || !slug || !filePath || !alt) {
-  console.error(
-    'Использование: node --env-file=.env.coordinator scripts/upload-shelter-photo.ts slug путь "описание"',
-  );
+if (!filePath || !alt) {
+  console.error('Использование: node --env-file=.env.coordinator scripts/upload-shelter-photo.ts путь "описание" [--apply]');
   process.exit(1);
 }
 
@@ -23,18 +19,12 @@ if (alt.length > 300) {
   process.exit(1);
 }
 
-const supabase = createClient<Database>(url, serviceKey, {
-  auth: { autoRefreshToken: false, persistSession: false },
-});
+const supabase = connect('upload-shelter-photo.ts путь "описание" [--apply]');
 
-const { data: shelter, error: shelterError } = await supabase
-  .from("shelters")
-  .select("id")
-  .eq("slug", slug)
-  .maybeSingle();
+const { data: shelter, error: shelterError } = await supabase.from("shelter").select("photo_path").maybeSingle();
 
 if (shelterError || !shelter) {
-  console.error(shelterError?.message ?? "Приют с таким slug не найден.");
+  console.error(shelterError?.message ?? "Приют ещё не заведён (scripts/create-shelter.ts).");
   process.exit(1);
 }
 
@@ -54,7 +44,9 @@ if (!processed) {
   process.exit(1);
 }
 
-const photoPath = `${shelter.id}/shelter/${randomUUID()}.webp`;
+const photoPath = `shelter/${randomUUID()}.webp`;
+console.log(`Фото приюта станет ${photoPath} с описанием «${alt}»${shelter.photo_path ? ` (вместо ${shelter.photo_path})` : ""}.`);
+stopUnlessApply(apply);
 
 const { error: uploadError } = await supabase.storage
   .from("pet-photos")
@@ -81,9 +73,9 @@ if (previewError) {
 }
 
 const { data: updated, error: updateError } = await supabase
-  .from("shelters")
+  .from("shelter")
   .update({ photo_path: photoPath, photo_alt: alt })
-  .eq("id", shelter.id)
+  .eq("id", true)
   .select("id")
   .maybeSingle();
 

@@ -1,32 +1,22 @@
 import { randomUUID } from "node:crypto";
 import { readFile } from "node:fs/promises";
-import type { Database } from "@/types/database";
-import { createClient } from "@supabase/supabase-js";
 import sharp from "sharp";
+import { connect, splitArgs, stopUnlessApply } from "./lib/connect.ts";
 
-const url = process.env.SUPABASE_URL;
-const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-const [slug, iconFile] = process.argv.slice(2);
+const { apply, args } = splitArgs(process.argv.slice(2));
+const [iconFile] = args;
 
-if (!url || !serviceKey || !slug || !iconFile) {
-  console.error(
-    "Использование: node --env-file=.env.coordinator scripts/set-shelter-brand.ts slug значок.png",
-  );
+if (!iconFile) {
+  console.error("Использование: node --env-file=.env.coordinator scripts/set-shelter-brand.ts значок.png [--apply]");
   process.exit(1);
 }
 
-const supabase = createClient<Database>(url, serviceKey, {
-  auth: { autoRefreshToken: false, persistSession: false },
-});
+const supabase = connect("set-shelter-brand.ts значок.png [--apply]");
 
-const { data: shelter, error: shelterError } = await supabase
-  .from("shelters")
-  .select("id, brand_path")
-  .eq("slug", slug)
-  .maybeSingle();
+const { data: shelter, error: shelterError } = await supabase.from("shelter").select("brand_path").maybeSingle();
 
 if (shelterError || !shelter) {
-  console.error(shelterError?.message ?? "Приют с таким slug не найден.");
+  console.error(shelterError?.message ?? "Приют ещё не заведён (scripts/create-shelter.ts).");
   process.exit(1);
 }
 
@@ -67,7 +57,9 @@ try {
   process.exit(1);
 }
 
-const folder = `${shelter.id}/brand/${randomUUID()}`;
+const folder = `brand/${randomUUID()}`;
+console.log(`Будут загружены логотип и значки (${Object.keys(files).join(", ")}) в ${folder}${shelter.brand_path ? `, старые из ${shelter.brand_path} удалены` : ""}.`);
+stopUnlessApply(apply);
 
 for (const [name, content] of Object.entries(files)) {
   const { error } = await supabase.storage
@@ -83,9 +75,9 @@ for (const [name, content] of Object.entries(files)) {
 }
 
 const { data: updated, error: updateError } = await supabase
-  .from("shelters")
+  .from("shelter")
   .update({ brand_path: folder })
-  .eq("id", shelter.id)
+  .eq("id", true)
   .select("id")
   .maybeSingle();
 

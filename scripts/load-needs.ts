@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
-import { createClient } from "@supabase/supabase-js";
-import { NEED_CATEGORIES } from "../lib/needCategories.ts";
-import { NEED_UNITS } from "../lib/needUnits.ts";
+import { NEED_CATEGORIES } from "../src/lib/needCategories.ts";
+import { NEED_UNITS } from "../src/lib/needUnits.ts";
+import { connect, splitArgs, stopUnlessApply } from "./lib/connect.ts";
 
 type Entry = {
   name: string;
@@ -12,13 +12,11 @@ type Entry = {
   note: string | null;
 };
 
-const dry = process.argv.includes("--dry");
-const [slug, file] = process.argv
-  .slice(2)
-  .filter((arg) => !arg.startsWith("--"));
+const { apply, args } = splitArgs(process.argv.slice(2));
+const [file] = args;
 
-if (!slug || !file) {
-  console.error("Использование: load-needs.ts slug файл.jsonl [--dry]");
+if (!file) {
+  console.error("Использование: node --env-file=.env.coordinator scripts/load-needs.ts файл.jsonl [--apply]");
   process.exit(1);
 }
 
@@ -67,25 +65,9 @@ if (problems.length > 0) {
   process.exit(1);
 }
 
-const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
-);
+const supabase = connect("load-needs.ts файл.jsonl [--apply]");
 
-const { data: shelter, error: shelterError } = await supabase
-  .from("shelters")
-  .select("id")
-  .eq("slug", slug)
-  .maybeSingle();
-if (shelterError || !shelter) {
-  console.error(`Приют ${slug} не найден.`);
-  process.exit(1);
-}
-
-const { data: existing, error: existingError } = await supabase
-  .from("purchase_items")
-  .select("id, name")
-  .eq("shelter_id", shelter.id);
+const { data: existing, error: existingError } = await supabase.from("purchase_items").select("id, name");
 if (existingError) {
   console.error("Не удалось прочитать позиции:", existingError.message);
   process.exit(1);
@@ -106,17 +88,13 @@ for (const [index, entry] of entries.entries()) {
 }
 console.log(`Создать: ${toCreate.length}, обновить: ${toUpdate.length}.`);
 
-if (dry) {
-  console.log("Режим --dry: в базу ничего не записано.");
-  process.exit(0);
-}
+stopUnlessApply(apply);
 
 if (toCreate.length > 0) {
   const base = Date.now();
   const { error } = await supabase.from("purchase_items").insert(
     toCreate.map(({ entry, index }) => ({
       id: crypto.randomUUID(),
-      shelter_id: shelter.id,
       name: entry.name.trim(),
       category: entry.category,
       unit: entry.unit,

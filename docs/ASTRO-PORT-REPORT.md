@@ -197,3 +197,33 @@ $ npx wrangler deploy --dry-run --outdir …
 ```
 
 Не проверено: выкладка на Cloudflare (нельзя трогать боевой Worker; для нового Worker нужен токен с правом записи), кэш Worker на хостинге.
+
+## Этап 5. Скрипты координатора
+
+Сделано: удалены `move-projects.ts`, `move-volunteer.ts`, `delete-shelter.ts`; остальные работают с одной строкой `shelter` и таблицей `volunteers`, slug больше не указывается. **Все** скрипты без `--apply` только показывают план (раньше `invite-volunteer`, `reset-2fa`, `create-shelter`, `set-shelter-brand`, `upload-shelter-photo`, `load-gallery` и `add-*-copies` действовали сразу, а `load-needs` использовал `--dry`). Общий вход — `scripts/lib/connect.ts`. Описание перенесено из комментариев в `scripts/README.md`. Новые пути в хранилище: `brand/<uuid>/…`, `shelter/<uuid>.webp`.
+
+Проверка на локальном Supabase (после переноса данных этапа 1):
+
+```
+$ node scripts/create-shelter.ts "Другой приют"
+  Приют уже заведён: «Приют «Живи»». На сайте может быть только один приют.
+$ node scripts/reset-2fa.ts vol2@example.org
+  Будет удалено факторов входа у vol2@example.org: 1.
+  Ничего не изменено. Чтобы применить, добавьте --apply.
+$ node scripts/edit-project.ts "Ремонт" --title "Ремонт вольеров" --to-top
+  название: «Ремонт» → «Ремонт вольеров» … Ничего не изменено. Чтобы применить, добавьте --apply.
+$ node scripts/load-gallery.ts папка
+  Фото: 1, папка сайта public/shelters/live-life/gallery. … Ничего не изменено.
+(так же без --apply: invite-volunteer, create-project, load-needs, set-shelter-brand, upload-shelter-photo, add-card-copies, add-preview-copies)
+
+$ node scripts/create-project.ts --title "Скрипт-проект" … --apply     → Создано.
+$ node scripts/load-needs.ts needs.jsonl --apply                        → Создать: 1, обновить: 0. Готово.
+$ node scripts/set-shelter-brand.ts icon.png --apply                    → Логотип и значки приюта обновлены: brand/37a3…; logo.png → 200
+$ node scripts/upload-shelter-photo.ts 99.jpg "Двор приюта" --apply     → Фото приюта обновлено: shelter/8ba8….webp
+$ node scripts/add-preview-copies.ts --apply                            → Превью созданы: 0, уже были: 35, ошибок: 0
+$ node scripts/invite-volunteer.ts new-volunteer@example.org --apply    → ссылка /auth/confirm?token_hash=…&type=invite
+$ curl <ссылка>                       → 303 /auth/set-password;  страница «Задайте пароль», «Приют «Живи»» → 200
+$ npx tsc --noEmit -p .               → без ошибок (теперь и scripts/)
+```
+
+Не проверено с `--apply`: `load-gallery` (переписал бы файлы галереи в репозитории), `reset-2fa` (сброс проверен только как план), `edit-project --fix-translation` (нет переводов DeepL в тестовых данных).

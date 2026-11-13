@@ -1,8 +1,4 @@
-import { findContact } from "../../lib/findContact.ts";
-
-// Same limits as the volunteer panel (lib/parseProjectFields.ts) and the
-// projects table constraints, so a coordinator script cannot save a text
-// the panel would refuse.
+import { findContact } from "../../src/lib/findContact.ts";
 
 export type ProjectTexts = {
   title?: string;
@@ -17,8 +13,6 @@ const LIMITS: Record<keyof ProjectTexts, [string, number]> = {
   photoAlt: ["описание фото", 200],
   progressUnit: ["единица прогресса", 30],
 };
-
-// In command-line arguments "\n" starts a new line.
 export function readMultiline(value: string): string {
   return value.replace(/\\n/g, "\n").trim();
 }
@@ -43,8 +37,6 @@ export function checkProjectTexts(texts: ProjectTexts): string[] {
 }
 
 export type Progress = { done: number; total: number; unit: string };
-
-// "20/150 будок" -> { done: 20, total: 150, unit: "будок" }
 export function parseProgress(value: string): Progress | string {
   const match = /^\s*(\d+)\s*\/\s*(\d+)\s+(.+?)\s*$/.exec(value);
   if (!match) {

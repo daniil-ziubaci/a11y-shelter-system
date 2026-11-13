@@ -1,34 +1,19 @@
 import { mkdir, readdir, readFile, rm } from "node:fs/promises";
 import { join, parse } from "node:path";
-import type { Database } from "@/types/database";
-import { createClient } from "@supabase/supabase-js";
+import type { Database } from "@/lib/database";
 import sharp from "sharp";
+import { connect, splitArgs, stopUnlessApply } from "./lib/connect.ts";
 
-const url = process.env.SUPABASE_URL;
-const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-const [slug, folder] = process.argv.slice(2);
+const { apply, args } = splitArgs(process.argv.slice(2));
+const [folder] = args;
+const GALLERY = "/shelters/live-life/gallery";
 
-if (!url || !serviceKey || !slug || !folder) {
-  console.error(
-    "Использование: node --env-file=.env.coordinator scripts/load-gallery.ts slug папка",
-  );
+if (!folder) {
+  console.error("Использование: node --env-file=.env.coordinator scripts/load-gallery.ts папка [--apply]");
   process.exit(1);
 }
 
-const supabase = createClient<Database>(url, serviceKey, {
-  auth: { autoRefreshToken: false, persistSession: false },
-});
-
-const { data: shelter, error: shelterError } = await supabase
-  .from("shelters")
-  .select("id")
-  .eq("slug", slug)
-  .maybeSingle();
-
-if (shelterError || !shelter) {
-  console.error(shelterError?.message ?? "Приют с таким slug не найден.");
-  process.exit(1);
-}
+const supabase = connect("load-gallery.ts папка [--apply]");
 
 type Entry = { file: string; alt: string; alt_en: string; alt_ro: string };
 
@@ -42,7 +27,10 @@ if (entries.length === 0) {
   process.exit(1);
 }
 
-const outDir = join("public", "shelters", slug, "gallery");
+const outDir = join("public", ...GALLERY.split("/").filter(Boolean));
+console.log(`Фото: ${entries.length}, папка сайта ${outDir}. Подписи и порядок заменят текущую галерею.`);
+for (const entry of entries) console.log(`  ${entry.file}: ${entry.alt}`);
+stopUnlessApply(apply);
 await mkdir(outDir, { recursive: true });
 
 async function convert(source: Buffer, name: string) {
@@ -59,17 +47,16 @@ async function convert(source: Buffer, name: string) {
     .toFile(join(outDir, `${name}-thumb.webp`));
 }
 
-const rows: Database["public"]["Tables"]["shelter_photos"]["Insert"][] = [];
+const rows: Database["public"]["Tables"]["gallery_photos"]["Insert"][] = [];
 
 for (const [position, entry] of entries.entries()) {
   const name = parse(entry.file).name;
   const source = await readFile(join(folder, entry.file));
   await convert(source, name);
   rows.push({
-    shelter_id: shelter.id,
     source_name: entry.file,
-    path: `/shelters/${slug}/gallery/${name}.webp`,
-    thumb_path: `/shelters/${slug}/gallery/${name}-thumb.webp`,
+    path: `${GALLERY}/${name}.webp`,
+    thumb_path: `${GALLERY}/${name}-thumb.webp`,
     alt: entry.alt,
     alt_en: entry.alt_en,
     alt_ro: entry.alt_ro,
@@ -79,8 +66,8 @@ for (const [position, entry] of entries.entries()) {
 }
 
 const { error: upsertError } = await supabase
-  .from("shelter_photos")
-  .upsert(rows, { onConflict: "shelter_id,source_name" });
+  .from("gallery_photos")
+  .upsert(rows, { onConflict: "source_name" });
 
 if (upsertError) {
   console.error(upsertError.message);
@@ -88,9 +75,8 @@ if (upsertError) {
 }
 
 const { error: cleanupError } = await supabase
-  .from("shelter_photos")
+  .from("gallery_photos")
   .delete()
-  .eq("shelter_id", shelter.id)
   .not("source_name", "in", `(${rows.map((row) => row.source_name).join(",")})`);
 
 if (cleanupError) {
