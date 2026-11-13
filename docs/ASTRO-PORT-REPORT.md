@@ -173,3 +173,27 @@ $ grep -rl '"sharp"' dist/server --include=*.mjs | wc -l
 $ npx eslint src/lib/zz-sharp-probe.ts     # пробный файл с import sharp
   error  'sharp' import is restricted from being used …  no-restricted-imports
 ```
+
+## Этап 4. Cloudflare
+
+Сделано:
+
+- `wrangler.jsonc`: `main: ./src/worker.ts` (свой вход: `fetch` из `@astrojs/cloudflare/handler` + `scheduled`), `nodejs_compat`, `keep_vars`, `observability`, расписания `0 2 * * *` и `0 14 * * *` как раньше. Адаптер сам дописывает в итоговый конфиг `assets` и `cache.enabled`; привязки KV для сессий и Images отключены (`session: false`, `imageService: "passthrough"`).
+- Переменные только в Runtime variables (сборке не нужны), `ops/cloudflare/README.md` обновлён: команды сборки `npm run build` / `npx wrangler deploy`, новые имена переменных.
+- `wrangler types` → `worker-configuration.d.ts` (типы `Env` и рантайма Workers).
+
+Проверки:
+
+```
+$ npx wrangler dev --test-scheduled
+$ curl "http://127.0.0.1:8788/cdn-cgi/handler/scheduled?cron=0+2+*+*+*"     → ok [200]
+  0 2 * * * /api/cron/translate -> 200 {"shelters":0,"items":0,"projects":0,"pets":0,"cleared":0,"deepl":"DEEPL_API_KEY не задан"}
+$ curl "http://127.0.0.1:8788/cdn-cgi/handler/scheduled?cron=0+14+*+*+*"    → ok [200]
+  0 14 * * * /api/health -> 200 {"status":"ok"}
+$ curl "http://127.0.0.1:8788/cdn-cgi/handler/scheduled?cron=5+5+*+*+*"     → exception [500]
+  Uncaught Error: No job for schedule "5 5 * * *"
+$ npx wrangler deploy --dry-run --outdir …
+  Total Upload: 2181.25 KiB / gzip: 497.97 KiB      (Next/OpenNext: около 1,8 МиБ gzip)
+```
+
+Не проверено: выкладка на Cloudflare (нельзя трогать боевой Worker; для нового Worker нужен токен с правом записи), кэш Worker на хостинге.
