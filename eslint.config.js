@@ -1,5 +1,6 @@
 import js from "@eslint/js";
 import astro from "eslint-plugin-astro";
+import globals from "globals";
 import jsxA11y from "eslint-plugin-jsx-a11y-x";
 import tseslint from "typescript-eslint";
 
@@ -11,6 +12,10 @@ export default tseslint.config(
   ...tseslint.configs.recommended,
   ...astro.configs["flat/recommended"],
   ...astro.configs["flat/jsx-a11y-recommended"],
+  {
+    files: ["ops/**/*.mjs"],
+    languageOptions: { globals: globals.node },
+  },
   {
     files: ["**/*.tsx"],
     plugins: { "jsx-a11y-x": jsxA11y },
