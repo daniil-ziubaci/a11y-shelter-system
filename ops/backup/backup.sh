@@ -17,8 +17,9 @@
 #   BACKUP_PASSPHRASE  long random passphrase, also kept in a password manager
 #   BACKUP_DIR         where db/ and photos/ live (default: current directory)
 #   PHOTO_BUCKET       storage bucket with the site's photos (default: pet-photos)
-#   KEEP_DAYS          database copies to keep in the working tree (default 60;
-#                      older ones stay in git history)
+#   KEEP_DAYS          database copies to keep in the working tree (default 60,
+#                      at least 7; older ones stay in git history; the 7 newest
+#                      copies are always kept)
 
 set -euo pipefail
 
@@ -27,6 +28,11 @@ set -euo pipefail
 : "${BACKUP_PASSPHRASE:?BACKUP_PASSPHRASE is not set}"
 backup_dir="${BACKUP_DIR:-.}"
 keep_days="${KEEP_DAYS:-60}"
+if [[ ! "$keep_days" =~ ^[0-9]+$ ]] || (( keep_days < 7 )); then
+  echo "KEEP_DAYS must be a whole number of days, at least 7" >&2
+  exit 1
+fi
+keep_newest=7
 bucket="${PHOTO_BUCKET:-pet-photos}"
 if [[ ! "$bucket" =~ ^[a-z0-9_-]+$ ]]; then
   echo "PHOTO_BUCKET may contain only a-z, 0-9, _ and -" >&2
@@ -94,9 +100,15 @@ echo "Saved $archive ($(du -h "$archive" | cut -f1))"
 
 # File dates are useless here (a fresh checkout gives every file today's
 # date), so the age comes from the name.
+# The newest copies are always kept, however old they are, so a long pause
+# in backups never leaves the folder with today's copy alone.
 oldest="$(date -u -d "-$keep_days days" +%Y-%m-%d)"
+newest="$(find "$backup_dir/db" -maxdepth 1 -name '????-??-??.tar.gz.gpg' -printf '%f\n' | sort -r | head -n "$keep_newest")"
 for old in "$backup_dir"/db/*.tar.gz.gpg; do
   day="$(basename "$old" .tar.gz.gpg)"
+  if grep -qxF "$day.tar.gz.gpg" <<<"$newest"; then
+    continue
+  fi
   if [[ "$day" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]] && [[ "$day" < "$oldest" ]]; then
     rm -f -- "$old"
     echo "Removed old copy $day (it stays in git history)"
