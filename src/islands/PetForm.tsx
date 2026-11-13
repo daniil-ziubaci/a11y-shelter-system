@@ -40,6 +40,8 @@ export function PetForm({
   const [species, setSpecies] = useState(initial.species);
   const [pending, setPending] = useState(false);
   const radio = "h-5 w-5 shrink-0 cursor-pointer";
+  const checkRow = mode === "new" ? radioRowClass : "flex min-h-12 cursor-pointer items-center gap-3";
+  const check = mode === "new" ? radio : "h-6 w-6 shrink-0 cursor-pointer";
 
   return (
     <form
@@ -187,26 +189,26 @@ export function PetForm({
             ? "Животное больное? Опишите здоровье выше и отметьте нужное: один пункт, оба или ни одного."
             : "Меняете лечение? Обновите описание здоровья и отметьте нужное: «пока нельзя забрать», «срочно нужна помощь» или оба пункта."}
         </p>
-        <label htmlFor="treatment-status" className={radioRowClass}>
+        <label htmlFor="treatment-status" className={checkRow}>
           <input
             type="checkbox"
             id="treatment-status"
             name="treatmentStatus"
             defaultChecked={initial.treatmentStatus}
             disabled={inTreatment}
-            className={radio}
+            className={check}
           />
           <span>Лечение: пока нельзя забрать</span>
         </label>
         {inTreatment && <p className={hintClass}>Чтобы снять этот статус, выберите другой в списке животных.</p>}
-        <label htmlFor="needs-treatment" className={radioRowClass}>
+        <label htmlFor="needs-treatment" className={checkRow}>
           <input
             type="checkbox"
             id="needs-treatment"
             name="needsTreatment"
             defaultChecked={initial.needsTreatment}
             aria-describedby={mode === "edit" ? "needs-treatment-hint" : undefined}
-            className={radio}
+            className={check}
           />
           <span>Срочно нужна помощь с лечением</span>
         </label>
