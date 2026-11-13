@@ -52,3 +52,4 @@ for (const path of paths) {
   );
 }
 ws.close();
+process.exit(0);
