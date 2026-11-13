@@ -124,3 +124,7 @@ summary {
 @utility border-urgent {
   border-width: 1.5px;
 }
+
+@utility w-half-gap {
+  width: calc(50% - 0.5rem);
+}

@@ -47,7 +47,7 @@ const heading = "План закупок: приёмка товара";
 
 <PanelLayout title={heading}>
   <main class="mx-auto flex w-full max-w-5xl flex-col gap-4 px-4 pt-4 pb-6">
-    <h1 class="text-3xl font-bold wrap-break-word sm:mx-auto sm:w-1/2 sm:text-center">{heading}</h1>
+    <h1 class="text-3xl font-bold wrap-break-word sm:mx-auto sm:w-half-gap sm:text-center">{heading}</h1>
     {
       !volunteer ? (
         <p>{NOT_A_VOLUNTEER}</p>
@@ -58,7 +58,7 @@ const heading = "План закупок: приёмка товара";
             <p role="alert">Не удалось загрузить план закупок.</p>
           ) : (
             <>
-              <form method="post" action="/volunteer/needs" class="flex flex-col gap-4 rounded-2xl border border-(--border-strong) bg-(--surface) p-4 shadow-md sm:mx-auto sm:w-1/2 sm:p-6">
+              <form method="post" action="/volunteer/needs" class="flex flex-col gap-4 rounded-2xl border border-(--border-strong) bg-(--surface) p-4 shadow-md sm:mx-auto sm:w-half-gap sm:p-6">
                 <input type="hidden" name="intent" value="receive" />
                 <div class="flex flex-col gap-1">
                   <label for="itemId" class={labelClass}>Позиция</label>
@@ -101,7 +101,7 @@ const heading = "План закупок: приёмка товара";
                   {receive?.ok ? receive.message : ""}
                 </p>
               </form>
-              <div class="flex flex-col gap-2 sm:mx-auto sm:w-1/2">
+              <div class="flex flex-col gap-2 sm:mx-auto sm:w-half-gap">
                 {latest ? (
                   <form method="post" action="/volunteer/needs" class="flex flex-col gap-2 rounded-2xl border border-(--border-strong) bg-(--surface) p-4 shadow-md">
                     <input type="hidden" name="intent" value="undo" />

@@ -32,7 +32,7 @@ const from = Astro.url.searchParams.get("from") ?? values?.from ?? undefined;
         <p role="alert">Позиция не найдена.</p>
       ) : (
         <>
-          <h1 class="text-3xl font-bold wrap-break-word sm:mx-auto sm:w-1/2 sm:text-center">Редактирование: {item.name}</h1>
+          <h1 class="text-3xl font-bold wrap-break-word sm:mx-auto sm:w-half-gap sm:text-center">Редактирование: {item.name}</h1>
           <NeedForm
             action={`/volunteer/needs/${item.id}/edit`}
             mode="edit"

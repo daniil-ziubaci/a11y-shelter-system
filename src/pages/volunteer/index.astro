@@ -144,7 +144,7 @@ const statusOptions: [string | undefined, string][] = [
           >
             Добавить животное
           </a>
-          <div class="flex flex-col gap-3 rounded-2xl border border-(--border-strong) bg-(--surface) p-3 shadow-md sm:mx-auto sm:w-1/2">
+          <div class="flex flex-col gap-3 rounded-2xl border border-(--border-strong) bg-(--surface) p-3 shadow-md sm:mx-auto sm:w-half-gap">
             <form action="/volunteer" method="get" role="search" class="flex flex-col gap-2">
               <label for="pet-search" class="font-medium">Найти по имени или вольеру</label>
               <p id="pet-search-hint" class={hintClass}>Можно вписать имя, вольер или и то и другое, в любом порядке.</p>
@@ -226,7 +226,7 @@ const statusOptions: [string | undefined, string][] = [
                     : `Найдено животных: ${total}`}
               </p>
               {total === 0 && (search || current.species || current.status) && (
-                <p class="sm:mx-auto sm:w-1/2 sm:text-center">
+                <p class="sm:mx-auto sm:w-half-gap sm:text-center">
                   Попробуйте часть имени, вольер или другой фильтр.{" "}
                   <a href="/volunteer" class="inline-block py-2 underline">
                     Сбросить поиск

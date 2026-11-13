@@ -30,7 +30,7 @@ const initial = {
 
 <PanelLayout title="Добавить проект">
   <main class="mx-auto flex w-full max-w-5xl flex-col gap-4 px-4 pt-1 pb-8">
-    <h1 class="text-3xl font-bold wrap-break-word sm:mx-auto sm:w-1/2 sm:text-center">Добавить проект</h1>
+    <h1 class="text-3xl font-bold wrap-break-word sm:mx-auto sm:w-half-gap sm:text-center">Добавить проект</h1>
     {volunteer ? <ProjectForm client:load action="/volunteer/projects/new" mode="new" initial={initial} error={error} /> : <p role="alert">{NOT_A_VOLUNTEER}</p>}
   </main>
 </PanelLayout>

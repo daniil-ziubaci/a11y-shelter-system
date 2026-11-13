@@ -47,7 +47,7 @@ export function PetForm({
       action={action}
       encType="multipart/form-data"
       onSubmit={() => setPending(true)}
-      className="flex flex-col gap-6 rounded-2xl border border-(--border) bg-(--surface) p-4 shadow-md sm:mx-auto sm:w-1/2 sm:p-6"
+      className="flex flex-col gap-6 rounded-2xl border border-(--border) bg-(--surface) p-4 shadow-md sm:mx-auto sm:w-half-gap sm:p-6"
     >
       <div className="flex flex-col gap-1">
         <label htmlFor="name" className={labelClass}>

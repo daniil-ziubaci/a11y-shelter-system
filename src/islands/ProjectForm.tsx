@@ -35,7 +35,7 @@ export function ProjectForm({
       action={action}
       encType="multipart/form-data"
       onSubmit={() => setPending(true)}
-      className="flex flex-col gap-6 rounded-2xl border border-(--border) bg-(--surface) p-4 shadow-md sm:mx-auto sm:w-1/2 sm:p-6"
+      className="flex flex-col gap-6 rounded-2xl border border-(--border) bg-(--surface) p-4 shadow-md sm:mx-auto sm:w-half-gap sm:p-6"
     >
       <p id="contacts-hint" className={hintClass}>
         Не пишите в текстах телефоны, почты, ссылки, адреса и фамилии людей. Если они есть, текст не сохранится: удалите их, и всё
