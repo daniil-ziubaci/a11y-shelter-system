@@ -117,3 +117,7 @@ summary {
   box-shadow: 0 0 0 100vmax var(--accent-soft);
   clip-path: inset(0 -100vmax);
 }
+
+@utility border-urgent {
+  border-width: 1.5px;
+}

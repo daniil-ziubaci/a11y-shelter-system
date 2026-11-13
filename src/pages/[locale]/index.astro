@@ -157,7 +157,7 @@ const statCard = "flex flex-col-reverse rounded-2xl border border-(--border-stro
                 const categoryKey = getCategoryKey(item.category);
                 const unitKey = getUnitKey(item.unit);
                 return (
-                  <li class="group relative flex min-w-0 flex-col gap-3 rounded-2xl border-2 border-(--danger) bg-(--surface) p-4 shadow-sm transition duration-300 ease-out focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-(--focus) hover:shadow-2xl motion-safe:hover:-translate-y-1.5">
+                  <li class="group relative flex min-w-0 flex-col gap-3 rounded-2xl border-urgent border-(--danger) bg-(--surface) p-4 shadow-sm transition duration-300 ease-out focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-(--focus) hover:shadow-2xl motion-safe:hover:-translate-y-1.5">
                     <div class="flex min-w-0 flex-col gap-1">
                       <div class="flex items-start justify-between gap-2">
                         <h3 lang={item.translated ? locale : contentLanguage} class="min-w-0 text-lg font-bold wrap-anywhere">

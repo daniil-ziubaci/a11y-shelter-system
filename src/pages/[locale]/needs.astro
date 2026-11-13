@@ -127,7 +127,7 @@ const title = t("title", { shelter: shelter.name });
                     id={`need-${index}`}
                     class:list={[
                       "group relative flex min-w-0 flex-col gap-3 rounded-2xl bg-(--surface) p-4 shadow-md transition duration-300 ease-out focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-(--focus) hover:shadow-2xl motion-safe:hover:-translate-y-1.5",
-                      item.is_urgent ? "border-2 border-(--danger)" : "border border-(--border-strong)",
+                      item.is_urgent ? "border-urgent border-(--danger)" : "border border-(--border-strong)",
                     ]}
                   >
                     <div class="flex min-w-0 flex-col gap-1">

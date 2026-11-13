@@ -56,7 +56,7 @@ const here = Astro.url.pathname + Astro.url.search;
                   <li
                     class:list={[
                       "relative flex flex-col gap-3 rounded-2xl bg-(--surface) p-3 shadow-md",
-                      urgent ? "border-2 border-(--danger)" : "border border-(--border-strong)",
+                      urgent ? "border-urgent border-(--danger)" : "border border-(--border-strong)",
                     ]}
                   >
                     <div class:list={["flex flex-col", urgent && "pr-24"]}>
