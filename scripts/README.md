@@ -26,3 +26,11 @@ node --env-file=.env.coordinator scripts/<скрипт>.ts …
 Убраны вместе с поддержкой нескольких приютов: `move-projects.ts`, `move-volunteer.ts`, `delete-shelter.ts`.
 
 `sharp` разрешён только здесь, в `scripts/`: эти скрипты работают на компьютере, а не на Cloudflare.
+
+## Тестовые данные для локальной проверки
+
+`seed-local.ts` заполняет **пустую локальную** базу (Supabase в Docker) тестовыми данными: приют «Живи», галерея, 12 собак с фото (из галереи), 10 нужд, 3 проекта и тестовый волонтёр `volunteer@example.org` с паролем `local-test-password`. Скрипт отказывается работать, если `SUPABASE_URL` указывает не на `127.0.0.1` или `localhost`, и если приют в базе уже есть.
+
+```bash
+node --env-file=.dev.vars scripts/seed-local.ts
+```
