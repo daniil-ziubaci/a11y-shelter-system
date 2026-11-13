@@ -1,0 +1,18 @@
+---
+import "../styles/fonts.css";
+import "../styles/global.css";
+interface Props { locale: string; head?: string }
+const { locale } = Astro.props;
+---
+<!doctype html>
+<html lang={locale} class="h-full antialiased" style='--font-nunito:"Nunito", "Nunito Fallback"'>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <slot name="head" />
+    <link rel="icon" href="/icon.svg" type="image/svg+xml" />
+  </head>
+  <body class="min-h-full flex flex-col">
+    <slot />
+  </body>
+</html>

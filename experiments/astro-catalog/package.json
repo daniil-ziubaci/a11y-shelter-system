@@ -1,0 +1,19 @@
+{
+  "name": "astro-catalog-experiment",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "astro build",
+    "preview": "wrangler dev --port 8788 --ip 127.0.0.1"
+  },
+  "dependencies": {
+    "@astrojs/cloudflare": "^14.4.7",
+    "@supabase/supabase-js": "^2.118.0",
+    "@tailwindcss/vite": "^4.3.2",
+    "astro": "^7.4.11",
+    "intl-messageformat": "^11.2.15",
+    "simple-icons": "^16.36.0",
+    "tailwindcss": "^4.3.2",
+    "wrangler": "^4.160.1"
+  }
+}

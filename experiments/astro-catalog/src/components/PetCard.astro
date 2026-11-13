@@ -1,0 +1,49 @@
+---
+import { getT } from "../lib/i18n";
+import { formatAge } from "@/lib/formatAge";
+import { cardCopyOf } from "@/lib/photoUrls";
+import { getSexKey, getStatusKey } from "@/lib/petLabels";
+import { getSizeKey } from "@/lib/petSizes";
+import { PET_STATUS_LOOKING, PET_STATUS_TREATMENT } from "@/lib/petStatuses";
+import type { Pet } from "@/types/pet";
+interface Props { pet: Pet; slug: string; locale: string; eager?: boolean }
+const { pet, slug, locale, eager = false } = Astro.props;
+const t = getT(locale, "Pet");
+const tAge = getT(locale, "Age");
+const sizeKey = pet.size ? getSizeKey(pet.size) : undefined;
+const showStatusBadge = pet.status !== PET_STATUS_LOOKING;
+const isInTreatment = pet.status === PET_STATUS_TREATMENT;
+const statusKey = getStatusKey(pet.status);
+---
+<article class="group relative flex flex-col overflow-hidden rounded-2xl border border-(--border) bg-(--surface) shadow-sm transition duration-300 ease-out hover:shadow-2xl motion-safe:hover:-translate-y-1.5 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-(--focus)">
+  <div class="relative aspect-4/3">
+    {(showStatusBadge || pet.needsTreatmentSince) && (
+      <div class="absolute top-2.5 left-2.5 z-10 flex flex-col items-start gap-1.5">
+        {pet.needsTreatmentSince && (
+          <p class="inline-flex items-center gap-1.5 rounded-full bg-(--danger-soft) px-2.5 py-0.5 text-sm font-medium text-(--danger) shadow-sm ring-1 ring-(--border)">
+            <span aria-hidden="true" class="size-1.5 shrink-0 rounded-full bg-(--danger)"></span>{t("needsTreatmentBadge")}
+          </p>
+        )}
+        {showStatusBadge && (
+          <p class={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-sm font-medium shadow-sm ring-1 ${isInTreatment ? "bg-(--hover) text-(--muted) ring-(--border-strong)" : "bg-(--pending-soft) text-(--pending) ring-(--border)"}`}>
+            <span aria-hidden="true" class={`size-1.5 shrink-0 rounded-full ${isInTreatment ? "bg-(--muted)" : "bg-(--pending)"}`}></span>{statusKey ? t(`status.${statusKey}`) : pet.status}
+          </p>
+        )}
+      </div>
+    )}
+    <img src={cardCopyOf(pet.photo.url)} alt={pet.photo.alt} loading={eager ? "eager" : "lazy"} decoding="async"
+      class="object-cover bg-(--hover)" style="position:absolute;height:100%;width:100%;left:0;top:0;right:0;bottom:0;color:transparent" />
+  </div>
+  <div class="flex flex-1 flex-col justify-between gap-1 px-4 py-3">
+    <h2 class="text-xl font-bold transition-colors duration-200 group-hover:text-(--accent) group-focus-within:text-(--accent) motion-reduce:transition-none">{pet.name}</h2>
+    <dl class="flex flex-wrap gap-x-3">
+      <div><dt class="sr-only">{t("sex")}</dt><dd class="first-letter:uppercase">{t(`sexValue.${getSexKey(pet.sex)}`)}</dd></div>
+      <div><dt class="sr-only">{t("age")}</dt><dd>{formatAge(pet.ageInMonths, pet.isAgeApproximate, tAge)}</dd></div>
+    </dl>
+    <div class="flex flex-wrap items-end gap-x-2 gap-y-1">
+      {sizeKey && <dl class="flex gap-1 text-(--muted)"><dt>{t("size")}</dt><dd>{t(`sizeValue.${sizeKey}`)}</dd></dl>}
+      <a href={`/${locale}/shelter/${slug}/catalog/${pet.id}`} aria-label={t("moreLabel", { name: pet.name })}
+        class="ml-auto whitespace-nowrap font-medium transition-colors duration-200 group-hover:text-(--accent) group-focus-within:text-(--accent) motion-reduce:transition-none after:absolute after:inset-0">{t("more")}<span aria-hidden="true" class="ml-1 inline-block transition-transform duration-200 group-hover:translate-x-1 group-focus-within:translate-x-1 motion-reduce:transition-none">→</span></a>
+    </div>
+  </div>
+</article>

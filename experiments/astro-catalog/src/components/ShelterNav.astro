@@ -1,0 +1,56 @@
+---
+import LanguageSwitcher from "./LanguageSwitcher.astro";
+import { getT } from "../lib/i18n";
+interface Props { locale: string; slug: string; path: string; search: string; isTreatment: boolean; id: string; }
+const { locale, slug, path, search, isTreatment, id } = Astro.props;
+const t = getT(locale, "Nav");
+const catalogPath = `/shelter/${slug}/catalog`;
+const links = [
+  { href: catalogPath, label: t("catalog"), current: path === catalogPath && !isTreatment },
+  { href: `/shelter/${slug}/needs`, label: t("needs"), current: path === `/shelter/${slug}/needs` },
+  { href: `${catalogPath}?mode=treatment`, label: t("treatment"), current: path === catalogPath && isTreatment },
+  { href: `/shelter/${slug}/projects`, label: t("projects"), current: path === `/shelter/${slug}/projects` },
+  { href: `/shelter/${slug}/about`, label: t("about"), current: path === `/shelter/${slug}/about` },
+];
+---
+<nav aria-label={t("label")} data-shelter-nav>
+  <button type="button" aria-expanded="false" aria-controls={id}
+    class="inline-flex min-h-11 items-center rounded-md border-2 border-(--accent) px-4 font-semibold text-(--accent) hover:bg-(--hover) lg:hidden">{t("menu")}</button>
+  <ul id={id}
+    class="hidden absolute inset-x-0 top-full max-h-[calc(100dvh-4rem)] flex-col gap-1 overflow-y-auto border-t border-(--border) bg-(--background) px-4 py-3 shadow-md lg:max-h-none lg:overflow-visible lg:static lg:flex lg:flex-row lg:flex-wrap lg:gap-1 lg:border-0 lg:bg-transparent lg:p-0 lg:shadow-none">
+    {links.map((link) => (
+      <li>
+        <a href={`/${locale}${link.href}`} aria-current={link.current ? "page" : undefined}
+          class="flex min-h-12 items-center rounded-md px-4 font-medium max-lg:font-semibold transition-colors duration-200 hover:bg-(--hover) hover:text-(--accent) motion-reduce:transition-none aria-[current=page]:bg-(--hover) aria-[current=page]:text-(--accent) aria-[current=page]:font-semibold lg:inline-flex lg:min-h-0 lg:rounded-md lg:px-2 lg:py-2 lg:text-base">{link.label}</a>
+      </li>
+    ))}
+    <li class="mt-2 border-t border-(--border) pt-3 lg:hidden">
+      <LanguageSwitcher variant="list" locale={locale} label={t("language")} path={path} search={search} />
+    </li>
+    <li class="mt-2 border-t border-(--border) pt-3 lg:hidden">
+      <a href="#footer-contact-heading"
+        class="flex min-h-12 w-full items-center justify-center rounded-full bg-(--accent) px-5 font-semibold text-(--accent-contrast) hover:shadow-md">{t("contact")}</a>
+    </li>
+  </ul>
+</nav>
+<script>
+  // Same behaviour as the React menu: toggle, close on Escape (focus back
+  // to the button), on a click outside and when a link inside is used.
+  for (const nav of document.querySelectorAll<HTMLElement>("[data-shelter-nav]")) {
+    const button = nav.querySelector("button")!;
+    const list = nav.querySelector("ul")!;
+    const setOpen = (open: boolean) => {
+      button.setAttribute("aria-expanded", String(open));
+      list.classList.toggle("hidden", !open);
+      list.classList.toggle("flex", open);
+    };
+    button.addEventListener("click", () => setOpen(button.getAttribute("aria-expanded") !== "true"));
+    list.addEventListener("click", (e) => { if ((e.target as Element).closest("a")) setOpen(false); });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && button.getAttribute("aria-expanded") === "true") { setOpen(false); button.focus(); }
+    });
+    document.addEventListener("pointerdown", (e) => {
+      if (button.getAttribute("aria-expanded") === "true" && !nav.contains(e.target as Node)) setOpen(false);
+    });
+  }
+</script>

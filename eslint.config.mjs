@@ -35,6 +35,8 @@ const eslintConfig = defineConfig([
     // Cloudflare build output and wrangler state.
     ".open-next/**",
     ".wrangler/**",
+    // Separate experiments with their own tooling.
+    "experiments/**",
   ]),
 ]);
 

@@ -1,0 +1,44 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+import ShelterNav from "./ShelterNav.astro";
+import LanguageSwitcher from "./LanguageSwitcher.astro";
+import ShelterFooter from "./ShelterFooter.astro";
+import { getT } from "../lib/i18n";
+import { brandUrl } from "@/lib/brandUrl";
+import type { Shelter } from "../lib/getShelter";
+interface Props { locale: string; slug: string; shelter: Shelter; path: string; search: string; isTreatment: boolean }
+const { locale, slug, shelter, path, search, isTreatment } = Astro.props;
+const t = getT(locale, "Nav");
+---
+<BaseLayout locale={locale}>
+  <Fragment slot="head">
+    <slot name="head" />
+    {shelter.brand_path && (
+      <>
+        <link rel="icon" href={brandUrl(shelter.brand_path, "icon-32.png")} sizes="32x32" type="image/png" />
+        <link rel="icon" href={brandUrl(shelter.brand_path, "icon-48.png")} sizes="48x48" type="image/png" />
+        <link rel="icon" href={brandUrl(shelter.brand_path, "icon-192.png")} sizes="192x192" type="image/png" />
+        <link rel="apple-touch-icon" href={brandUrl(shelter.brand_path, "apple-icon.png")} />
+      </>
+    )}
+  </Fragment>
+  <a href="#content" class="fixed left-4 top-4 z-50 -translate-y-24 rounded-md bg-(--surface) px-4 py-2 font-semibold text-(--accent) underline shadow-md focus:translate-y-0">{t("skipToContent")}</a>
+  <header class="sticky top-0 z-30 w-full bg-(--background) shadow-md">
+    <div class="relative mx-auto flex w-full max-w-5xl items-center justify-between gap-x-4 px-4 py-1 lg:grid lg:grid-cols-[1fr_auto_1fr]">
+      <a href={`/${locale}/shelter/${slug}`} class="flex items-center gap-2 py-0 text-base font-bold sm:text-lg lg:justify-self-start">
+        {shelter.brand_path && (
+          <img src={brandUrl(shelter.brand_path, "logo.png")} alt="" width="56" height="56" loading="lazy" decoding="async"
+            class="size-12 shrink-0 rounded-lg border-[1.2px] border-(--border-strong)" />
+        )}
+        <span class="max-w-48 text-balance leading-tight">{shelter.name}</span>
+      </a>
+      <div class="flex items-center gap-3 lg:order-3 lg:justify-self-end">
+        <div class="hidden lg:block"><LanguageSwitcher locale={locale} label={t("language")} path={path} search={search} /></div>
+        <div class="lg:hidden"><ShelterNav id="shelter-nav-mobile" locale={locale} slug={slug} path={path} search={search} isTreatment={isTreatment} /></div>
+      </div>
+      <div class="hidden lg:order-2 lg:block"><ShelterNav id="shelter-nav-desktop" locale={locale} slug={slug} path={path} search={search} isTreatment={isTreatment} /></div>
+    </div>
+  </header>
+  <div id="content" tabindex="-1" class="focus:outline-none"><slot /></div>
+  <ShelterFooter locale={locale} slug={slug} shelter={shelter} />
+</BaseLayout>

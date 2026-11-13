@@ -1,0 +1,36 @@
+---
+interface Props { locale: string; label: string; path: string; search: string; variant?: "dropdown" | "list"; }
+const { locale, label, path, search, variant = "dropdown" } = Astro.props;
+const labels: Record<string, string> = { ru: "Русский", ro: "Română", en: "English" };
+const codes = ["ro", "ru", "en"];
+const href = (code: string) => `/${code}${path}${search}`;
+---
+{variant === "list" ? (
+  <nav aria-label={label}>
+    <ul class="grid grid-cols-3 gap-2">
+      {codes.map((code) => (
+        <li>
+          <a href={href(code)} lang={code} hreflang={code} aria-current={locale === code ? "true" : undefined}
+            class={`flex min-h-12 items-center justify-center rounded-md border px-3 font-medium transition-colors duration-200 ${locale === code ? "border-(--accent) bg-(--accent) font-bold text-(--accent-contrast)" : "border-(--border) hover:bg-(--hover) hover:text-(--accent)"}`}>{labels[code]}</a>
+        </li>
+      ))}
+    </ul>
+  </nav>
+) : (
+  <nav aria-label={label}>
+    <details class="relative">
+      <summary aria-label={`${label}: ${labels[locale]}`}
+        class="flex min-h-11 cursor-pointer list-none items-center gap-1 rounded-md px-2 py-2 text-sm md:text-base font-medium transition-colors duration-200 hover:bg-(--hover) hover:text-(--accent) [&::-webkit-details-marker]:hidden">
+        {labels[locale]}<span aria-hidden="true" class="text-xs">▾</span>
+      </summary>
+      <ul class="absolute right-0 z-20 mt-1 min-w-40 rounded-lg border border-(--border) bg-(--surface) p-1 shadow-lg">
+        {codes.map((code) => (
+          <li>
+            <a href={href(code)} lang={code} hreflang={code} aria-current={locale === code ? "true" : undefined}
+              class={`flex min-h-11 items-center px-3 py-2 transition-colors duration-200 hover:text-(--accent) ${locale === code ? "font-bold text-(--accent)" : ""}`}>{labels[code]}</a>
+          </li>
+        ))}
+      </ul>
+    </details>
+  </nav>
+)}
