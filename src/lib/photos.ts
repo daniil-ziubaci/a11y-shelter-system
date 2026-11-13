@@ -1,7 +1,12 @@
+import type { AstroGlobal } from "astro";
 import { checkPhoto, type CheckedPhoto } from "@/lib/checkPhoto";
-import type { Supabase } from "@/lib/supabase";
+import { afterResponse } from "@/lib/panel";
+import { cardCopyOf, previewCopyOf } from "@/lib/photoUrls";
+import { getAdminClient, type Supabase } from "@/lib/supabase";
 
 type UploadResult = { ok: true; path: string } | { ok: false; error: string };
+
+const BUCKET_PATH = "/storage/v1/object/public/pet-photos/";
 
 const NOT_PREPARED = "Фото не подготовилось. Выберите его заново и дождитесь надписи «Выбрано».";
 const UPLOAD_FAILED = "Не удалось загрузить фото. Попробуйте ещё раз.";
@@ -47,4 +52,27 @@ export async function uploadProjectPhoto(supabase: Supabase, file: FormDataEntry
 
 export function hasFile(value: FormDataEntryValue | null): boolean {
   return value instanceof File && value.size > 0;
+}
+
+export function storagePathOf(url: string): string | null {
+  const index = url.indexOf(BUCKET_PATH);
+  return index === -1 ? null : decodeURIComponent(url.slice(index + BUCKET_PATH.length));
+}
+
+function removeFiles(astro: AstroGlobal, paths: string[]): void {
+  afterResponse(astro, async () => {
+    const { error } = await getAdminClient().storage.from("pet-photos").remove(paths);
+    if (error) throw error;
+  });
+}
+
+export function removeReplacedPetPhoto(astro: AstroGlobal, oldUrl: string, newUrl: string): void {
+  const path = storagePathOf(oldUrl);
+  if (!path || oldUrl === newUrl) return;
+  removeFiles(astro, [path, cardCopyOf(path), previewCopyOf(path)]);
+}
+
+export function removeReplacedProjectPhoto(astro: AstroGlobal, oldPath: string, newPath: string): void {
+  if (oldPath === newPath) return;
+  removeFiles(astro, [oldPath]);
 }

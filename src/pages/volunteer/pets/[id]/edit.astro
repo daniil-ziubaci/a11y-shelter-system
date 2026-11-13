@@ -18,7 +18,7 @@ const { data: pet, error: loadError } = /^[0-9a-f-]{36}$/i.test(id)
 if (pet && isPost(Astro)) {
   const form = await readForm(Astro);
   if (form) {
-    const result = await savePet(Astro, form, pet.id);
+    const result = await savePet(Astro, form, { id: pet.id, photo_url: pet.photo_url });
     if (result.ok) return Astro.redirect("/volunteer", 303);
     error = result.error;
     values = result.values;

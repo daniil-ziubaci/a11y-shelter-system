@@ -1,7 +1,7 @@
 import type { AstroGlobal } from "astro";
 import { afterResponse, formValues, refreshPublicPages } from "@/lib/panel";
 import { parseProjectFields } from "@/lib/parseProjectFields";
-import { hasFile, uploadProjectPhoto } from "@/lib/photos";
+import { hasFile, removeReplacedProjectPhoto, uploadProjectPhoto } from "@/lib/photos";
 import { PROJECT_STATUS_COMPLETED, PROJECT_STATUS_ONGOING } from "@/lib/projectStages";
 import { translateProject } from "@/lib/translate";
 
@@ -55,6 +55,7 @@ export async function saveProject(
     if (error) return fail("Не удалось сохранить проект. Попробуйте ещё раз.");
     if (!data) return fail("Проект не найден или недоступен.");
     projectId = existing.id;
+    if (existing.photo_path && photoFields.photo_path) removeReplacedProjectPhoto(astro, existing.photo_path, photoFields.photo_path);
   } else {
     const { data, error } = await supabase.from("projects").insert(row).select("id").single();
     if (error || !data) return fail("Не удалось сохранить проект. Попробуйте ещё раз.");

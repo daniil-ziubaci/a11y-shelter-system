@@ -2,7 +2,7 @@ import type { AstroGlobal } from "astro";
 import { afterResponse, formValues, refreshPublicPages } from "@/lib/panel";
 import { parsePetFields } from "@/lib/parsePetFields";
 import { PET_STATUS_TREATMENT } from "@/lib/petStatuses";
-import { hasFile, uploadPetPhoto } from "@/lib/photos";
+import { hasFile, removeReplacedPetPhoto, uploadPetPhoto } from "@/lib/photos";
 import type { Supabase } from "@/lib/supabase";
 import { translatePet } from "@/lib/translate";
 
@@ -17,7 +17,12 @@ async function saveEnclosure(supabase: Supabase, petId: string, enclosure: strin
   return !error;
 }
 
-export async function savePet(astro: AstroGlobal, formData: FormData, existingId: string | null): Promise<PetSaveResult> {
+export async function savePet(
+  astro: AstroGlobal,
+  formData: FormData,
+  existing: { id: string; photo_url: string } | null,
+): Promise<PetSaveResult> {
+  const existingId = existing?.id ?? null;
   const values = formValues(formData);
   const fail = (error: string): PetSaveResult => ({ ok: false, error, values });
   const supabase = astro.locals.supabase;
@@ -60,6 +65,7 @@ export async function savePet(astro: AstroGlobal, formData: FormData, existingId
   if (existingId) {
     const { data, error } = await supabase.from("pets").update(row).eq("id", petId).select("id").maybeSingle();
     if (error || !data) return fail("Не удалось сохранить животное. Попробуйте ещё раз.");
+    if (photoUrl && existing) removeReplacedPetPhoto(astro, existing.photo_url, photoUrl);
   } else {
     const { error } = await supabase.from("pets").insert({ ...row, id: petId, photo_url: photoUrl ?? "" });
     if (error) return fail("Не удалось сохранить животное. Попробуйте ещё раз.");
