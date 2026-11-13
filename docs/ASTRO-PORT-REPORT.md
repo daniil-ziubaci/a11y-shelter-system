@@ -107,3 +107,69 @@ volunteer of the other shelter: not moved (refused)
 ```
 
 Не проверено: перенос из настоящей копии боевого проекта (нет доступа и нельзя по заданию) и на хостинге Supabase (нет ключей нового проекта `live-life`).
+
+## Этап 2. Приложение на Astro
+
+Сделано:
+
+- Astro 7.4.11, `output: "server"`, `@astrojs/cloudflare` 14.4.7, `@astrojs/react` 7.1.8, Tailwind 4 через `@tailwindcss/vite`. Next, next-intl и OpenNext удалены.
+- Многоязычность: встроенный `i18n` Astro (`ru`, `ro`, `en`, `routing: "manual"`), маршрут `src/pages/[locale]/…`, сообщения прежние (`src/messages/*.json`), небольшой форматтер ICU (`plural`, `select`, теги ссылок) в `src/lib/i18n.ts`.
+- Адреса: `/` → 307 на язык из `Accept-Language` (как раньше); `/{язык}` — теперь сама главная (200 вместо 307); все `/{язык}/shelter/live-life/…` → **301** на адрес без slug с теми же параметрами; `/shelter/live-life/…` → 301 на `/ru/…`; `/privacy`, `/catalog` и др. без языка → 307 на `/ru/…`; другой slug → 404; `/{язык}/` → 301 без косой черты (было 308).
+- Публичные страницы — серверный HTML. JavaScript только у меню (~1 КБ) и галереи на «О приюте» (обычный скрипт, не React). Без JS меню на телефоне закрыто, ссылки остаются в подвале. Шрифт Nunito теперь свой (`src/assets/fonts`, OFL), без запросов к Google.
+- Кэш: публичные страницы помечены `Astro.cache.set({ maxAge: 60, swr: 60, tags: ["public"] })` (поставщик `cacheCloudflare()` адаптера: заголовки `Cloudflare-CDN-Cache-Control` и `Cache-Tag`), любое сохранение в панели сбрасывает тег `public` (`cache.purge`). Строка приюта дополнительно кэшируется в памяти Worker на 60 с. Панель и API — `no-store` (адаптер ставит его сам, если маршрут не просит кэша). **Не проверено**: работает ли кэш Worker на `*.workers.dev` и на бесплатном тарифе; локально кэш выключен (в `wrangler dev` страницы рендерятся каждый раз). Без кэша сайт работает так же, только без экономии.
+- Панель: обычные HTML-формы с POST на ту же страницу (работают без JS), после успеха 303 и сообщение через короткую cookie (повторная отправка при обновлении страницы не записывает закупку дважды). React-острова: поле фото (уменьшение в браузере) и формы животного и проекта (`client:load`). 2FA (настройка и ввод кода) — серверные формы, ключ показывается через `<details>`.
+- Сессии Supabase: `@supabase/ssr` в `src/middleware.ts` для `/volunteer`, `/login`, `/auth`; без входа → `/login`, без `aal2` → `/volunteer/2fa` или `/2fa/verify` (303 вместо 307). Формы защищены проверкой `Origin` (`security.checkOrigin`).
+- Доступность: уникальные `title` (проверяется тестом), ошибки форм `role="alert"`, итоги действий `role="status"`, `aria-label` у повторяющихся ссылок и кнопок («Подробнее: Барсик», «Сохранить статус: Рекс»), внешние ссылки в новой вкладке с пометкой для скринридера, `X-Robots-Tag: noindex, nofollow` и `<meta name="robots" content="noindex">` в панели, пока `ALLOW_INDEXING≠true`.
+- Переменные: `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `SITE_URL`, `CRON_SECRET`, `DEEPL_API_KEY`, `ALLOW_INDEXING`. Все объявлены в `astro:env` как `access: "secret"`, поэтому читаются только во время работы; сборке переменные не нужны.
+- Мелкие отличия в вёрстке: Tailwind без произвольных значений (`border-[1.2px]` → `border`, `w-[calc(50%-0.5rem)]` → `w-1/2` и т.п.); карточки животных на главной теперь `h3` под `h2` раздела.
+
+Проверки (локальный Supabase с данными, перенесёнными этапом 1; `astro build` + `wrangler dev`):
+
+```
+$ npx astro check
+Result (141 files): - 20 errors   ← все в scripts/ (старые импорты), исправлены на этапе 5
+$ npx tsc --noEmit -p .            ← src/ без ошибок, ошибки только scripts/ (этап 5)
+$ npx eslint .                     ← без замечаний
+$ npx playwright test e2e/public.spec.ts --project=desktop
+  ✓ ru: pages pass axe and have unique titles
+  ✓ ro: pages pass axe and have unique titles
+  ✓ en: pages pass axe and have unique titles
+  ✓ site is not indexed while ALLOW_INDEXING is off
+  ✓ external links open in a new tab and say so
+  ✓ repeated links and buttons have distinct accessible names
+  ✓ old addresses with the shelter slug redirect permanently
+  ✓ mobile menu opens, closes with Escape and returns focus
+  8 passed
+$ npx playwright test e2e/panel.spec.ts --project=desktop
+  ✓ wrong password and wrong code are refused with an alert
+  ✓ a volunteer without a second factor sets one up     (первый прогон; дальше пропускается: фактор уже есть)
+  ✓ a volunteer adds and edits an animal with a photo
+  ✓ a volunteer records a purchase, undoes it and records consumption
+  ✓ a volunteer adds a project with a photo and completes it
+  ✓ the nightly translation needs the cron secret and reports DeepL
+  ✓ logging out ends the session
+$ npx playwright test e2e/panel.spec.ts -g axe --project=desktop --project=phone-375
+  ✓ [desktop] panel pages pass axe and have unique titles
+  ✓ [phone-375] panel pages pass axe and have unique titles
+```
+
+Вход в тестах — волонтёр, перенесённый из старой базы этапом 1, со старым паролем и старым секретом TOTP (данные передаются через `E2E_*`, в репозитории их нет).
+
+Не проверено: настоящий перевод DeepL (нет ключа; проверено, что `/api/cron/translate` требует `CRON_SECRET` и отвечает полем `deepl`), Safari/iPhone (нет устройства), сброс кэша Cloudflare (только на хостинге).
+
+## Этап 3. Фото и превью
+
+Сделано как раньше: браузер готовит три файла (`src/lib/resizeImage.ts`: 1600 px, карточка 800 px, превью для ссылок 1200×630 JPEG до 200 КБ), сервер только проверяет заголовок файла, размер, формат и отсутствие EXIF/XMP (`src/lib/checkPhoto.ts`) и кладёт их в хранилище. Новые пути: `animals/<id>/photo.webp`, `animals/<id>/<uuid>.webp` при замене, `projects/<uuid>.webp`. `sharp` в коде сайта запрещён правилом ESLint.
+
+```
+$ npx playwright test e2e/photos.spec.ts --project=desktop
+  ✓ the server accepts only photos prepared in the browser
+    (отклонены: оригинал с EXIF, фото больше 1600, превью не JPEG, не картинка;
+     принят подготовленный набор; форма с чужим Origin → 403)
+$ npx playwright test e2e/panel.spec.ts -g "animal"
+  ✓ … загружено через браузер: 1600 / 800 / 1200×630, без EXIF, og:image = -og.jpg
+$ grep -rl '"sharp"' dist/server --include=*.mjs | wc -l
+0
+$ npx eslint src/lib/zz-sharp-probe.ts     # пробный файл с import sharp
+  error  'sharp' import is restricted from being used …  no-restricted-imports
+```
