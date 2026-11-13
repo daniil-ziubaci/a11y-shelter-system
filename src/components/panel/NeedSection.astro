@@ -113,7 +113,7 @@ const here = Astro.url.pathname + Astro.url.search;
                       <a
                         href={`/volunteer/needs/${item.id}/edit?from=${kind}`}
                         aria-label={`Редактировать: ${item.name}`}
-                        class="flex h-10 w-full items-center justify-center rounded-lg border border-(--border-strong) bg-(--surface) px-3 text-sm font-medium"
+                        class="flex h-10 w-full items-center justify-center rounded-lg border border-(--border-strong) bg-(--surface) px-3 text-control font-medium"
                       >
                         Редактировать
                       </a>
@@ -126,7 +126,7 @@ const here = Astro.url.pathname + Astro.url.search;
                           <button
                             type="submit"
                             aria-label={`${archived ? "Вернуть в список" : "Убрать из списка"}: ${item.name}`}
-                            class="h-10 w-full cursor-pointer rounded-lg px-3 text-sm font-medium text-(--muted) underline"
+                            class="h-10 w-full cursor-pointer rounded-lg px-3 text-control font-medium text-(--muted) underline"
                           >
                             {archived ? "Вернуть в список" : "Убрать из списка"}
                           </button>

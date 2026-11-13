@@ -55,7 +55,7 @@ const here = Astro.url.pathname + Astro.url.search;
 const title = showArchived ? "Убранные проекты" : "Проекты приюта";
 const card = "flex flex-col gap-3 rounded-2xl border border-(--border-strong) bg-(--surface) p-3 shadow-md";
 const smallButton = "h-10 cursor-pointer rounded-lg border border-(--border-strong) bg-(--surface) px-4 font-medium";
-const archiveButton = "h-10 w-full cursor-pointer rounded-lg px-3 text-sm font-medium text-(--muted) underline";
+const archiveButton = "h-10 w-full cursor-pointer rounded-lg px-3 text-control font-medium text-(--muted) underline";
 ---
 
 <PanelLayout title={title}>
@@ -174,7 +174,7 @@ const archiveButton = "h-10 w-full cursor-pointer rounded-lg px-3 text-sm font-m
                           <a
                             href={`/volunteer/projects/${project.id}/edit`}
                             aria-label={`Редактировать: ${project.title}`}
-                            class="flex h-10 w-full items-center justify-center rounded-lg border border-(--border-strong) bg-(--surface) px-3 text-sm font-medium"
+                            class="flex h-10 w-full items-center justify-center rounded-lg border border-(--border-strong) bg-(--surface) px-3 text-control font-medium"
                           >
                             Редактировать
                           </a>
