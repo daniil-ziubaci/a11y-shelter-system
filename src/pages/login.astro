@@ -24,7 +24,7 @@ if (isPost(Astro)) {
 const inviteExpired = Astro.url.searchParams.get("error") === "invite";
 ---
 
-<PanelLayout title="Вход для волонтёров">
+<PanelLayout title="Вход для волонтёров" header={false}>
   <AuthPage title="Вход для волонтёров">
     {
       inviteExpired && (

@@ -4,9 +4,10 @@ import { loadShelterRow } from "@/lib/shelter";
 
 interface Props {
   title: string;
+  header?: boolean;
 }
 
-const { title } = Astro.props;
+const { title, header = true } = Astro.props;
 const claims = Astro.locals.claims;
 const showNav = claims?.aal === "aal2";
 const account = claims?.email?.split("@")[0] ?? "";
@@ -27,66 +28,72 @@ const showSections = showNav && !path.startsWith("/volunteer/2fa");
 ---
 
 <Base title={title} noindex>
-  <a href="#volunteer-content" class="sr-only focus:not-sr-only focus:inline-block focus:p-2 focus:underline">Перейти к содержимому</a>
-  <header class="sticky top-0 z-30 w-full bg-(--background) shadow-md">
-    <div class="mx-auto flex max-w-5xl flex-col gap-1 px-4 pt-1.5 pb-3">
-      <div class="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
-        {
-          shelterName && (
-            <a
-              href="/ru"
-              aria-label={`${shelterName}: страница приюта на сайте, откроется в новой вкладке`}
-              target="_blank"
-              rel="noopener noreferrer"
-              class="order-1 min-w-0 truncate text-base font-bold hover:underline"
-            >
-              {shelterName}
-            </a>
-          )
-        }
-        {
-          claims && (
-            <details class="relative order-2 ml-auto" data-dismissable>
-              <summary class="flex h-9 cursor-pointer items-center gap-1 px-2 text-(--muted)">
-                <span>Аккаунт</span>
-                <span aria-hidden="true">▾</span>
-              </summary>
-              <div class="absolute top-full right-0 mt-1 min-w-48 rounded-xl border border-(--border) bg-(--surface) p-2 shadow-md">
-                {account && <p class="truncate px-2 py-1 text-sm text-(--muted)">{account}</p>}
-                <form method="post" action="/volunteer/logout">
-                  <button type="submit" class="h-10 w-full cursor-pointer rounded-lg px-2 text-left font-medium hover:bg-(--hover)">
-                    Выйти
-                  </button>
-                </form>
-              </div>
-            </details>
-          )
-        }
-      </div>
-      {
-        showSections && (
-          <nav aria-label="Разделы панели волонтёра">
-            <ul class="grid grid-cols-3 gap-2">
-              {sections.map((link) => (
-                <li>
+  {
+    header && (
+      <Fragment>
+        <a href="#volunteer-content" class="sr-only focus:not-sr-only focus:inline-block focus:p-2 focus:underline">Перейти к содержимому</a>
+        <header class="sticky top-0 z-30 w-full bg-(--background) shadow-md">
+          <div class="mx-auto flex max-w-5xl flex-col gap-1 px-4 pt-1.5 pb-3">
+            <div class="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
+              {
+                shelterName && (
                   <a
-                    href={link.href}
-                    aria-current={path === link.href ? "page" : link.inSection ? "true" : undefined}
-                    class:list={[
-                      "flex min-h-10 items-center justify-center rounded-lg border px-2 text-center font-medium",
-                      link.inSection ? "border-transparent bg-(--accent) text-white" : "border-(--border-strong) bg-(--surface)",
-                    ]}
+                    href="/ru"
+                    aria-label={`${shelterName}: страница приюта на сайте, откроется в новой вкладке`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="order-1 min-w-0 truncate text-base font-bold hover:underline"
                   >
-                    {link.label}
+                    {shelterName}
                   </a>
-                </li>
-              ))}
-            </ul>
-          </nav>
-        )
-      }
-    </div>
-  </header>
+                )
+              }
+              {
+                claims && (
+                  <details class="relative order-2 ml-auto" data-dismissable>
+                    <summary class="flex h-9 cursor-pointer items-center gap-1 px-2 text-(--muted)">
+                      <span>Аккаунт</span>
+                      <span aria-hidden="true">▾</span>
+                    </summary>
+                    <div class="absolute top-full right-0 mt-1 min-w-48 rounded-xl border border-(--border) bg-(--surface) p-2 shadow-md">
+                      {account && <p class="truncate px-2 py-1 text-sm text-(--muted)">{account}</p>}
+                      <form method="post" action="/volunteer/logout">
+                        <button type="submit" class="h-10 w-full cursor-pointer rounded-lg px-2 text-left font-medium hover:bg-(--hover)">
+                          Выйти
+                        </button>
+                      </form>
+                    </div>
+                  </details>
+                )
+              }
+            </div>
+            {
+              showSections && (
+                <nav aria-label="Разделы панели волонтёра">
+                  <ul class="grid grid-cols-3 gap-2">
+                    {sections.map((link) => (
+                      <li>
+                        <a
+                          href={link.href}
+                          aria-current={path === link.href ? "page" : link.inSection ? "true" : undefined}
+                          class:list={[
+                            "flex min-h-10 items-center justify-center rounded-lg border px-2 text-center font-medium",
+                            link.inSection ? "border-transparent bg-(--accent) text-white" : "border-(--border-strong) bg-(--surface)",
+                          ]}
+                        >
+                          {link.label}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </nav>
+              )
+            }
+          </div>
+        </header>
+      </Fragment>
+    )
+  }
   {
     showSections && backHref && (
       <div class="mx-auto w-full max-w-5xl px-4 pt-4">
