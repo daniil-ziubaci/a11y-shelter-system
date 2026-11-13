@@ -97,3 +97,18 @@ test("gallery serves a smaller photo to phones and switches photos", async ({ pa
   await expect(main).toHaveAttribute("alt", "Фото приюта 02");
   await expect(page.getByText("Фото 2 из 6")).toBeAttached();
 });
+
+test("a missing card photo falls back to the full photo, a missing photo leaves a plain tile", async ({ page }) => {
+  await page.route(/-card\.(webp|jpg)$/, (route) => route.fulfill({ status: 404, body: "" }));
+  await page.goto("/ru/catalog");
+  const first = page.locator("article img").first();
+  await expect(first).toHaveAttribute("src", /\/photo\.(webp|jpg)$|\/[0-9a-f-]{36}\.(webp|jpg)$/);
+  await expect.poll(() => first.evaluate((image: HTMLImageElement) => image.complete && image.naturalWidth > 0)).toBe(true);
+
+  await page.route(/\/storage\/v1\/object\/public\//, (route) => route.fulfill({ status: 404, body: "" }));
+  await page.goto("/ru/catalog");
+  const broken = page.locator("article img").first();
+  await expect(broken).toHaveAttribute("data-broken", "");
+  await expect(broken).toHaveCSS("opacity", "0");
+  await expect(broken).toHaveAttribute("alt", /.+/);
+});
