@@ -1,5 +1,5 @@
 ---
-import ShelterLayout from "@/layouts/ShelterLayout.astro";
+import Base from "@/layouts/Base.astro";
 import { getTranslator } from "@/lib/i18n";
 import { loadPublicPage } from "@/lib/page";
 
@@ -10,7 +10,7 @@ const t = getTranslator(locale, "Privacy");
 const sections = ["data", "cookies", "recipients", "operator", "retention", "rights"];
 ---
 
-<ShelterLayout locale={locale} shelter={shelter} title={t("title")} description={t("description")} path="/privacy" image={null}>
+<Base title={t("title")} description={t("description")} locale={locale} path="/privacy" siteName={shelter.name} brandPath={shelter.brand_path}>
   <main class="mx-auto flex w-full max-w-3xl flex-col gap-6 px-4 pt-4 pb-10">
     <h1 class="text-2xl font-bold wrap-break-word sm:text-3xl">{t("heading")}</h1>
     <p>{t("intro")}</p>
@@ -26,4 +26,4 @@ const sections = ["data", "cookies", "recipients", "operator", "retention", "rig
       ))
     }
   </main>
-</ShelterLayout>
+</Base>
