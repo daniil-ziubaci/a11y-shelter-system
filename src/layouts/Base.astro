@@ -1,6 +1,8 @@
 ---
 import { SITE_URL } from "astro:env/server";
 import "@/styles/global.css";
+import nunitoCyrillic from "@/assets/fonts/nunito-cyrillic.woff2?url";
+import nunitoLatin from "@/assets/fonts/nunito-latin.woff2?url";
 import { DEFAULT_LOCALE, LOCALES, type Locale } from "@/lib/i18n";
 import { publicPhotoUrl } from "@/lib/supabase";
 
@@ -26,6 +28,8 @@ const brand = (file: string) => (brandPath ? publicPhotoUrl(`${brandPath}/${file
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="preload" href={nunitoCyrillic} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={nunitoLatin} as="font" type="font/woff2" crossorigin />
     <title>{title}</title>
     {description && <meta name="description" content={description} />}
     {noindex && <meta name="robots" content="noindex" />}

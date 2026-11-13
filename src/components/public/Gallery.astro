@@ -30,7 +30,7 @@ const counter = (index: number) => t("counter", { current: index + 1, total });
       data-counter={t("counter", { current: "{current}", total })}
     >
       <div class="relative aspect-4/3 touch-pan-y overflow-hidden rounded-2xl border border-(--border-strong) bg-neutral-900 shadow-md sm:aspect-video" data-stage>
-        <img src={first.src} alt="" aria-hidden="true" class="absolute inset-0 size-full scale-125 object-cover blur-2xl brightness-50" data-backdrop />
+        <img src={first.thumbSrc} alt="" aria-hidden="true" class="absolute inset-0 size-full scale-125 object-cover blur-2xl brightness-50" data-backdrop />
         <img src={first.src} alt={first.alt} fetchpriority="high" class="absolute inset-0 size-full object-contain" data-main />
         {total > 1 && (
           <>
@@ -63,6 +63,7 @@ const counter = (index: number) => t("counter", { current: index + 1, total });
                     aria-current={i === 0 ? "true" : undefined}
                     data-index={i}
                     data-src={photo.src}
+                    data-thumb={photo.thumbSrc}
                     data-alt={photo.alt}
                     class:list={[
                       "relative block size-22 cursor-pointer overflow-hidden rounded-lg border-2 transition-opacity duration-200 motion-reduce:transition-none",
@@ -113,7 +114,7 @@ const counter = (index: number) => t("counter", { current: index + 1, total });
       const thumb = thumbs[index];
       main.src = thumb.dataset.src ?? "";
       main.alt = thumb.dataset.alt ?? "";
-      backdrop.src = main.src;
+      backdrop.src = thumb.dataset.thumb ?? main.src;
       position.textContent = `${index + 1} / ${thumbs.length}`;
       spoken.textContent = template.replace("{current}", String(index + 1));
       thumbs.forEach((item, i) => (i === index ? item.setAttribute("aria-current", "true") : item.removeAttribute("aria-current")));
