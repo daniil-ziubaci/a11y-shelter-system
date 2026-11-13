@@ -24,7 +24,7 @@ test("the server accepts only photos prepared in the browser", async ({ page, ba
   await expect(page).toHaveURL(/\/volunteer\/needs$/);
 
   const fields = {
-    name: "Неподготовленное фото",
+    name: `Фото-проверка ${Date.now() % 100000}`,
     species: "кошка",
     sex: "девочка",
     ageYears: "1",

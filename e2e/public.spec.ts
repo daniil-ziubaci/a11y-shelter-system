@@ -44,11 +44,18 @@ test("external links open in a new tab and say so", async ({ page }) => {
   }
 });
 
-test("repeated links and buttons have distinct accessible names", async ({ page }) => {
+test("repeated links name the animal of their card", async ({ page }) => {
   await page.goto("/ru/catalog");
-  const names = await page.locator('a:has-text("Подробнее")').evaluateAll((links) => links.map((l) => l.getAttribute("aria-label")));
-  expect(names.length).toBeGreaterThan(1);
-  expect(new Set(names).size).toBe(names.length);
+  const cards = await page.locator("article").evaluateAll((items) =>
+    items.map((item) => ({
+      name: item.querySelector("h2, h3")?.textContent?.trim() ?? "",
+      label: item.querySelector("a")?.getAttribute("aria-label") ?? "",
+    })),
+  );
+  expect(cards.length).toBeGreaterThan(1);
+  for (const card of cards) {
+    expect(card.label).toBe(`Подробнее: ${card.name}`);
+  }
 });
 
 test("old addresses with the shelter slug redirect permanently", async ({ request }) => {
