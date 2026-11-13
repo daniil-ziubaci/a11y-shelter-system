@@ -185,11 +185,12 @@ const fact = "rounded-lg border border-(--border) bg-(--surface) px-4 py-3";
         </section>
       )
     }
-  </main>
-  {
-    others.length > 0 && (
-      <section aria-labelledby="other-pets-heading" class="bg-(--accent-soft)">
-        <div class="mx-auto flex w-full max-w-5xl flex-col gap-6 px-4 pt-6 pb-10">
+    {
+      others.length > 0 && (
+        <section
+          aria-labelledby="other-pets-heading"
+          class="bleed-accent-soft mt-3.75 -mb-4 flex flex-col gap-6.5 bg-(--accent-soft) pt-6.25 pb-10"
+        >
           <div class="flex flex-wrap items-baseline justify-between gap-x-4">
             <h2 id="other-pets-heading" class="text-2xl font-bold">
               {showTreatmentBlock ? t("otherTreatmentHeading") : t("otherHeading")}
@@ -209,8 +210,8 @@ const fact = "rounded-lg border border-(--border) bg-(--surface) px-4 py-3";
               <PetCard locale={locale} pet={other} headingLevel="h3" />
             ))}
           </div>
-        </div>
-      </section>
-    )
-  }
+        </section>
+      )
+    }
+  </main>
 </ShelterLayout>

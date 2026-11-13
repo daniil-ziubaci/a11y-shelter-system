@@ -112,3 +112,8 @@ summary {
     linear-gradient(to bottom, transparent 55%, var(--background)),
     linear-gradient(to bottom right, color-mix(in srgb, var(--accent-wash) 60%, transparent), color-mix(in srgb, var(--accent-soft) 60%, transparent), transparent);
 }
+
+@utility bleed-accent-soft {
+  box-shadow: 0 0 0 100vmax var(--accent-soft);
+  clip-path: inset(0 -100vmax);
+}
