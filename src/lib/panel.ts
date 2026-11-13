@@ -1,8 +1,6 @@
 import type { AstroGlobal } from "astro";
 import type { Supabase } from "@/lib/supabase";
 
-export type FormState = { error: string; values: Record<string, string> } | null;
-
 export function formValues(formData: FormData): Record<string, string> {
   const values: Record<string, string> = {};
   for (const [key, value] of formData.entries()) {
