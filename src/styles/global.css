@@ -32,6 +32,7 @@
   --text-xs: 0.875rem;
   --text-sm: 1rem;
   --text-base: 1.125rem;
+  --tracking-code: 0.3em;
 }
 
 :root {

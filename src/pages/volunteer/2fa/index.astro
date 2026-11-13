@@ -76,7 +76,7 @@ const isEnabled = (factors?.totp.length ?? 0) > 0;
             <input type="hidden" name="secret" value={enrollment.secret} />
             <div class="flex flex-col gap-1">
               <label for="code" class="font-medium">Код из приложения</label>
-              <input id="code" name="code" type="text" inputmode="numeric" autocomplete="one-time-code" required class="h-12 w-full rounded-lg border border-(--accent) bg-(--accent-soft) px-3 text-center text-2xl tracking-widest" />
+              <input id="code" name="code" type="text" inputmode="numeric" autocomplete="one-time-code" required class="h-12 w-full rounded-lg border border-(--accent) bg-(--accent-soft) px-3 text-center text-2xl tracking-code" />
             </div>
             <button type="submit" class={primaryButtonClass} data-pending="Проверяем…">Подтвердить</button>
           </form>

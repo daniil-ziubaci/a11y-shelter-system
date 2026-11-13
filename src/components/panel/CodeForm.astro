@@ -16,7 +16,7 @@ const { factorId, error, action } = Astro.props;
   <input type="hidden" name="factorId" value={factorId} />
   <div class="flex flex-col gap-1">
     <label for="code" class={labelClass}>Код из приложения</label>
-    <input id="code" name="code" type="text" inputmode="numeric" autocomplete="one-time-code" required class={`${fieldClass} text-center text-2xl tracking-widest`} />
+    <input id="code" name="code" type="text" inputmode="numeric" autocomplete="one-time-code" required class={`${fieldClass} text-center text-2xl tracking-code`} />
   </div>
   <button type="submit" class={primaryButtonClass} data-pending="Проверяем…">Подтвердить</button>
 </form>
