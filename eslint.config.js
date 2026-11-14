@@ -1,10 +1,11 @@
 import js from "@eslint/js";
+import { defineConfig } from "eslint/config";
 import astro from "eslint-plugin-astro";
 import globals from "globals";
 import jsxA11y from "eslint-plugin-jsx-a11y-x";
 import tseslint from "typescript-eslint";
 
-export default tseslint.config(
+export default defineConfig(
   {
     ignores: ["dist/", ".astro/", ".wrangler/", "node_modules/", "worker-configuration.d.ts", "src/lib/database.ts", "scripts/data/", "public/", "test-results/", "playwright-report/"],
   },
