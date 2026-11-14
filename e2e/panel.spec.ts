@@ -27,6 +27,19 @@ test("wrong password and wrong code are refused with an alert", async ({ page })
   await expect(page.getByRole("alert").filter({ hasText: "Неверный код" })).toBeVisible();
 });
 
+test("a volunteer can sign out before entering the code", async ({ page }) => {
+  await page.goto("/login");
+  await page.getByLabel("Почта").fill(EMAIL);
+  await page.getByLabel("Пароль").fill(PASSWORD);
+  await page.getByRole("button", { name: "Войти" }).click();
+  await expect(page).toHaveURL(/\/volunteer\/2fa\/verify$/);
+  await page.getByText("Аккаунт").click();
+  await page.getByRole("button", { name: "Выйти" }).click();
+  await expect(page).toHaveURL(/\/login$/);
+  await page.goto("/volunteer/2fa/verify");
+  await expect(page).toHaveURL(/\/login$/);
+});
+
 test("a volunteer without a second factor sets one up", async ({ page }) => {
   test.skip(!NEW_EMAIL, "E2E_NEW_EMAIL is not set");
   await page.goto("/login");
