@@ -98,3 +98,26 @@ test.describe("when deleting the old photo fails", () => {
     await expectKept(page, copiesOf(before));
   });
 });
+
+test("replacing a photo never deletes the shelter's brand icons", async ({ page }) => {
+  test.skip(!SUPABASE_URL || !SERVICE_KEY, "E2E_SUPABASE_URL and E2E_SERVICE_ROLE_KEY are not set");
+  const admin = createClient(SUPABASE_URL, SERVICE_KEY, { auth: { persistSession: false } });
+  const name = `Значок${Date.now() % 100000}`;
+  const { data: shelter } = await admin.from("shelter").select("brand_path").single();
+  const folder = `brand/e2e-${crypto.randomUUID()}`;
+  const iconPath = `${folder}/icon-32.webp`;
+  const icon = await photo("#224466");
+  expect((await admin.storage.from("pet-photos").upload(iconPath, icon.buffer, { contentType: "image/webp" })).error).toBeNull();
+  const iconUrl = admin.storage.from("pet-photos").getPublicUrl(iconPath).data.publicUrl;
+  try {
+    expect((await admin.from("shelter").update({ brand_path: folder }).eq("id", true)).error).toBeNull();
+    await signIn(page);
+    await addAnimal(page, name);
+    expect((await admin.from("pets").update({ photo_url: iconUrl }).eq("name", name)).error).toBeNull();
+    await replacePhoto(page, name);
+    await expectKept(page, [iconUrl]);
+  } finally {
+    await admin.from("shelter").update({ brand_path: shelter?.brand_path ?? null }).eq("id", true);
+    await admin.storage.from("pet-photos").remove([iconPath]);
+  }
+});

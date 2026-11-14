@@ -61,12 +61,18 @@ export function storagePathOf(url: string): string | null {
 
 async function isPhotoInUse(admin: Supabase, path: string): Promise<boolean> {
   const urlPattern = `%${BUCKET_PATH}${path.replace(/[\\%_]/g, "\\$&")}`;
-  const counts = await Promise.all([
+  const [brand, ...counts] = await Promise.all([
+    admin.from("shelter").select("brand_path").maybeSingle(),
     admin.from("pets").select("id", { count: "exact", head: true }).like("photo_url", urlPattern),
     admin.from("projects").select("id", { count: "exact", head: true }).eq("photo_path", path),
     admin.from("shelter").select("id", { count: "exact", head: true }).eq("photo_path", path),
   ]);
-  return counts.some(({ count, error }) => error !== null || count === null || count > 0);
+  const brandPath = brand.data?.brand_path;
+  return (
+    brand.error !== null ||
+    Boolean(brandPath && path.startsWith(`${brandPath}/`)) ||
+    counts.some(({ count, error }) => error !== null || count === null || count > 0)
+  );
 }
 
 function removeFiles(astro: AstroGlobal, mainPath: string, paths: string[]): void {
