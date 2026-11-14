@@ -84,6 +84,7 @@ Settings → **Runtime variables and secrets** → **+ Add variable** (вкла�
 2. Сброс кэша — измените что-нибудь в панели (например, количество в нуждах) и обновите `/ru/needs`: изменение видно через несколько секунд, а не через 1–2 минуты. В Worker → Logs не должно быть `background task failed … cache.purge`.
 3. Переход по языку — `curl -sI -H 'Accept-Language: ro' https://<адрес сайта>/`: `location: /ro`, `cache-control: no-store`, `vary: Accept-Language`.
 4. Приватные страницы — `curl -sI https://<адрес сайта>/login`: `cache-control: no-store`, никогда `cf-cache-status: HIT`.
+5. Защитные заголовки — в ответе того же `curl -sI https://<адрес сайта>/login` и любой публичной страницы: `x-content-type-options: nosniff`, `x-frame-options: DENY`, `content-security-policy: frame-ancestors 'none'`, `referrer-policy: strict-origin-when-cross-origin`. Это проверяет и `e2e/cache-headers.spec.ts`.
 
 ## Откат
 
