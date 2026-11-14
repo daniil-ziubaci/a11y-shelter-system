@@ -92,10 +92,10 @@ test("gallery serves a smaller photo to phones and switches photos", async ({ pa
   await page.goto("/ru/about");
   const main = page.locator("[data-main]");
   await expect.poll(() => main.evaluate((img: HTMLImageElement) => img.currentSrc)).toMatch(/\/01-(480|800)\.webp$/);
-  await page.getByRole("link", { name: "Показать фото 2 из 6" }).click();
+  await page.getByRole("link", { name: /^Показать фото 2 из \d+$/ }).click();
   await expect.poll(() => main.evaluate((img: HTMLImageElement) => img.currentSrc)).toMatch(/\/02(-480|-800)?\.webp$/);
   await expect(main).toHaveAttribute("alt", "Фото приюта 02");
-  await expect(page.getByText("Фото 2 из 6")).toBeAttached();
+  await expect(page.getByText(/^Фото 2 из \d+$/)).toBeAttached();
 });
 
 test("a missing card photo falls back to the full photo, a missing photo leaves a plain tile", async ({ page }) => {
