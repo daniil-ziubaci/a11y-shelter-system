@@ -32,3 +32,13 @@ test("public pages are cached for a minute under the public tag", async ({ reque
     expect(response.headers()["set-cookie"], path).toBeUndefined();
   }
 });
+
+test("pages forbid framing and content sniffing", async ({ request }) => {
+  for (const path of ["/", "/ru", "/ru/catalog", "/login", "/volunteer", "/api/health", "/ru/no-such-page"]) {
+    const response = await request.get(path, { maxRedirects: 0 });
+    expect(response.headers()["x-content-type-options"], path).toBe("nosniff");
+    expect(response.headers()["x-frame-options"], path).toBe("DENY");
+    expect(response.headers()["content-security-policy"], path).toBe("frame-ancestors 'none'");
+    expect(response.headers()["referrer-policy"], path).toBe("strict-origin-when-cross-origin");
+  }
+});

@@ -6,7 +6,13 @@ import { createSessionClient } from "@/lib/supabase";
 
 const SESSION_PATHS = /^\/(volunteer|login|auth)(\/|$)/;
 const PRIVATE_PATHS = /^\/(volunteer|login|auth|api)(\/|$)/;
-const TWO_FACTOR_PATHS = new Set(["/volunteer/2fa", "/volunteer/2fa/verify", "/volunteer/logout"]);
+const SECURITY_HEADERS = [
+  ["X-Content-Type-Options", "nosniff"],
+  ["X-Frame-Options", "DENY"],
+  ["Content-Security-Policy", "frame-ancestors 'none'"],
+  ["Referrer-Policy", "strict-origin-when-cross-origin"],
+] as const;
+const TWO_FACTOR_PATHS =new Set(["/volunteer/2fa", "/volunteer/2fa/verify", "/volunteer/logout"]);
 
 function redirect(location: string, status: 301 | 302 | 303 | 307 | 308) {
   return new Response(null, { status, headers: { Location: location } });
@@ -98,6 +104,9 @@ function withHeaders(response: Response, extra: Headers, noStore = false): Respo
     }
   };
   for (const [name, value] of extra) {
+    set(name, value);
+  }
+  for (const [name, value] of SECURITY_HEADERS) {
     set(name, value);
   }
   if (noStore) {
