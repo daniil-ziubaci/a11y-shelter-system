@@ -37,6 +37,8 @@ export function createSessionClient(request: Request, cookies: AstroCookies, res
         for (const { name, value, options } of cookiesToSet) {
           cookies.set(name, value, {
             ...options,
+            httpOnly: true,
+            secure: true,
             sameSite: options.sameSite === true ? "strict" : options.sameSite === false ? undefined : options.sameSite,
           });
         }

@@ -40,6 +40,17 @@ test("a volunteer can sign out before entering the code", async ({ page }) => {
   await expect(page).toHaveURL(/\/login$/);
 });
 
+test("the session cookie is hidden from page scripts and sent only over HTTPS", async ({ page }) => {
+  await signIn(page);
+  const session = (await page.context().cookies()).filter((cookie) => cookie.name.includes("auth-token"));
+  expect(session.length).toBeGreaterThan(0);
+  for (const cookie of session) {
+    expect(cookie.httpOnly, cookie.name).toBe(true);
+    expect(cookie.secure, cookie.name).toBe(true);
+  }
+  expect(await page.evaluate(() => document.cookie)).not.toContain("auth-token");
+});
+
 test("a volunteer without a second factor sets one up", async ({ page }) => {
   test.skip(!NEW_EMAIL, "E2E_NEW_EMAIL is not set");
   await page.goto("/login");
