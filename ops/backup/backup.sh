@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Daily backup of the Supabase project: database and photos.
 #
-# Runs in the private backups repository (see ops/backup/README.md), never in
+# Runs in the private backups repository, never in
 # the public site repository: the database holds volunteers' e-mails and
 # password hashes.
 #

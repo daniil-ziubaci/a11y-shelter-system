@@ -1,5 +1,5 @@
 # Copy this file to .github/workflows/backup.yml in the PRIVATE backups
-# repository, together with backup.sh. See ops/backup/README.md.
+# repository, together with backup.sh.
 name: backup
 
 on:
