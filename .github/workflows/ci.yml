@@ -1,0 +1,73 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    env:
+      NO_PROXY: localhost,127.0.0.1
+      WRANGLER_SEND_METRICS: "false"
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Types, lint and Astro check
+        run: |
+          npx astro sync
+          npx tsc --noEmit -p .
+          npm run lint
+          npx astro check
+
+      - name: Start local Supabase with two-factor sign-in
+        run: |
+          sed -i '/^\[auth.mfa.totp\]/,/^$/ s/= false/= true/' supabase/config.toml
+          grep -A2 '^\[auth.mfa.totp\]' supabase/config.toml
+          npx -y supabase@2.122.0 start -x studio,imgproxy,realtime,edge-runtime,logflare,vector,supavisor
+
+      - name: Database tests (pgTAP)
+        run: npx -y supabase@2.122.0 test db
+
+      - name: Local variables and test data
+        run: |
+          eval "$(npx -y supabase@2.122.0 status -o env | grep -E '^(API_URL|ANON_KEY|SERVICE_ROLE_KEY)=')"
+          {
+            echo "SUPABASE_URL=$API_URL"
+            echo "SUPABASE_ANON_KEY=$ANON_KEY"
+            echo "SUPABASE_SERVICE_ROLE_KEY=$SERVICE_ROLE_KEY"
+            echo "SITE_URL=http://localhost:8788"
+            echo "CRON_SECRET=$(openssl rand -hex 24)"
+            echo "ALLOW_INDEXING=false"
+          } > .dev.vars
+          node --env-file=.dev.vars scripts/seed-local.ts
+          node --env-file=.dev.vars e2e/local-env.ts >> "$GITHUB_ENV"
+
+      - name: Build and start the site
+        run: |
+          npm run build
+          nohup npx wrangler dev --port 8788 > wrangler.log 2>&1 &
+          for i in $(seq 1 60); do
+            if curl -fsS http://127.0.0.1:8788/api/health > /dev/null; then exit 0; fi
+            sleep 2
+          done
+          cat wrangler.log
+          exit 1
+
+      - name: Install Chromium for Playwright
+        run: npx playwright install --with-deps chromium
+
+      - name: End-to-end tests (Playwright)
+        run: npx playwright test --trace off
