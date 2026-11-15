@@ -3,7 +3,7 @@ import { afterResponse, formValues, refreshPublicPages } from "@/lib/panel";
 import { parsePetFields } from "@/lib/parsePetFields";
 import { PET_STATUS_TREATMENT } from "@/lib/petStatuses";
 import { hasFile, removeReplacedPetPhoto, uploadPetPhoto } from "@/lib/photos";
-import type { Supabase } from "@/lib/supabase";
+import { getAdminClient, type Supabase } from "@/lib/supabase";
 import { translatePet } from "@/lib/translate";
 
 export type PetSaveResult = { ok: true } | { ok: false; error: string; values: Record<string, string> };
@@ -71,7 +71,7 @@ export async function savePet(
     if (error) return fail("Не удалось сохранить животное. Попробуйте ещё раз.");
   }
 
-  afterResponse(astro, () => translatePet(supabase, petId));
+  afterResponse(astro, async () => translatePet(getAdminClient(), petId));
   refreshPublicPages(astro);
 
   if ((existingId || fields.enclosure) && !(await saveEnclosure(supabase, petId, fields.enclosure))) {

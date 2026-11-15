@@ -68,27 +68,39 @@ select lives_ok(
   'items: valid object is accepted'
 );
 
+insert into public.pets (
+  id, name, species, sex, birth_date, is_age_approximate, health, description, photo_url, photo_alt
+) values (
+  'dddddddd-dddd-dddd-dddd-dddddddddddd',
+  'Test', 'кошка', 'мальчик', '2024-01-01', false, 'здоров', 'тест', '/test.jpg', 'тест'
+);
+
 set local role authenticated;
 set local request.jwt.claims to '{"sub": "11111111-1111-1111-1111-111111111111", "aal": "aal2"}';
 
-select lives_ok(
+select throws_ok(
   $$
-    insert into public.pets (id, name, species, sex, birth_date, is_age_approximate, health, description, photo_url, photo_alt, translations)
-    values ('dddddddd-dddd-dddd-dddd-dddddddddddd', 'Test', 'кошка', 'мальчик', '2024-01-01', false, 'здоров', 'тест', '/test.jpg', 'тест',
+    insert into public.pets (name, species, sex, birth_date, is_age_approximate, health, description, photo_url, photo_alt, translations)
+    values ('Test', 'кошка', 'мальчик', '2024-01-01', false, 'здоров', 'тест', '/test.jpg', 'тест',
       '{"description": {"en": {"text": "Hi", "hash": "x"}}}'::jsonb)
   $$,
-  'volunteer inserts a pet with translations'
+  '42501', null, 'volunteer cannot insert a pet with translations'
 );
 
-select lives_ok(
+select throws_ok(
   $$ update public.pets set translations = '{"description": {"ro": {"text": "Salut", "hash": "def"}}}'::jsonb where id = 'dddddddd-dddd-dddd-dddd-dddddddddddd' $$,
-  'volunteer updates translations of a pet'
+  '42501', null, 'volunteer cannot update translations of a pet'
 );
+
+set local role service_role;
+update public.pets set translations = '{"description": {"ro": {"text": "Salut", "hash": "def"}}}'::jsonb
+  where id = 'dddddddd-dddd-dddd-dddd-dddddddddddd';
+set local role authenticated;
 
 select is(
   (select translations #>> '{description,ro,text}' from public.pets where id = 'dddddddd-dddd-dddd-dddd-dddddddddddd'),
   'Salut',
-  'volunteer reads the pet translation'
+  'volunteer reads the pet translation written with the service key'
 );
 
 select lives_ok(
@@ -125,9 +137,9 @@ select is(
 
 set local request.jwt.claims to '{"sub": "33333333-3333-3333-3333-333333333333", "aal": "aal2"}';
 
-select lives_ok(
+select throws_ok(
   $$ update public.pets set translations = '{"hacked": {}}'::jsonb where id = 'cccccccc-cccc-cccc-cccc-cccccccccccc' $$,
-  'pet translation update by a non-volunteer runs without error'
+  '42501', null, 'pet translation update by a non-volunteer is refused'
 );
 select lives_ok(
   $$ update public.projects set translations = '{"hacked": {}}'::jsonb where id = 'cccccccc-cccc-cccc-cccc-cccccccccccc' $$,
