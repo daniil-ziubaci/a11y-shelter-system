@@ -18,7 +18,7 @@ node --env-file=.env.coordinator scripts/<скрипт>.ts …
 | `create-project.ts --title "…" --description "…" [--help things,money]` | новый проект без фото (фото добавит волонтёр в панели). В `--description` `\n` — новая строка, строки с `- ` — список |
 | `edit-project.ts "текущее название" […]` | правки проекта: `--title`, `--description`, `--photo-alt`, `--progress "5/20 будок"` / `--no-progress`, `--to-top` (первым среди незакреплённых), `--pin` / `--unpin` (постоянная программа: только координатор), `--fix-translation ro\|en "было" "стало"` (исправить фразу в автоматическом переводе; нельзя вместе с правкой текста) |
 | `load-needs.ts файл.jsonl` | загружает список нужд (строки JSON: `name`, `category`, `unit`, `quantity`, `urgent`, `note`); существующие по названию обновляет |
-| `load-gallery.ts папка` | галерея «О приюте»: из `папка/alts.jsonl` (`file`, `alt`, `alt_en`, `alt_ro`) и снимков делает файлы в `public/shelters/live-life/gallery` и строки `gallery_photos`; лишние удаляет |
+| `load-gallery.ts папка` | галерея «О приюте»: из `папка/alts.jsonl` (`file`, `alt`, `alt_en`, `alt_ro`) и снимков делает файлы в `public/gallery` и строки `gallery_photos`; лишние удаляет |
 | `set-shelter-brand.ts значок.png` | логотип и значки сайта (`brand/<uuid>/…`), старые файлы удаляет |
 | `upload-shelter-photo.ts путь "описание"` | фото приюта и превью для ссылок |
 | `add-card-copies.ts` | досоздаёт карточки 800 px к фото животных, где их нет |

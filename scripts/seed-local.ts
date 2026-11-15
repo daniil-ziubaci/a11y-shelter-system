@@ -5,7 +5,7 @@ import type { Database } from "../src/lib/database.ts";
 
 const url = process.env.SUPABASE_URL ?? "";
 const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY ?? "";
-const GALLERY = "public/shelters/live-life/gallery";
+const GALLERY = "public/gallery";
 const VOLUNTEER_EMAIL = "volunteer@example.org";
 const VOLUNTEER_PASSWORD = "local-test-password";
 
@@ -93,8 +93,8 @@ must(
       const number = file.replace(".webp", "");
       return {
         source_name: `${number}.jpg`,
-        path: `/shelters/live-life/gallery/${file}`,
-        thumb_path: `/shelters/live-life/gallery/${number}-thumb.webp`,
+        path: `/gallery/${file}`,
+        thumb_path: `/gallery/${number}-thumb.webp`,
         alt: `Фото приюта ${number}`,
         position,
       };

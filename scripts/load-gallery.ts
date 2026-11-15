@@ -7,7 +7,7 @@ import { connect, splitArgs, stopUnlessApply } from "./lib/connect.ts";
 
 const { apply, args } = splitArgs(process.argv.slice(2));
 const [folder] = args;
-const GALLERY = "/shelters/live-life/gallery";
+const GALLERY = "/gallery";
 
 if (!folder) {
   console.error("Использование: node --env-file=.env.coordinator scripts/load-gallery.ts папка [--apply]");
