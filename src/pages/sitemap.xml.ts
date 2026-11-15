@@ -4,6 +4,7 @@ import { LOCALES } from "@/lib/i18n";
 import { PUBLIC_PET_STATUSES } from "@/lib/petStatuses";
 import { fetchAll } from "@/lib/supabase/fetchAll";
 import { getPublicClient } from "@/lib/supabase";
+import { methodNotAllowed } from "@/lib/methods";
 
 const escape = (text: string) => text.replace(/&/g, "&amp;").replace(/</g, "&lt;");
 
@@ -31,3 +32,7 @@ export const GET: APIRoute = async () => {
   const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">${urls.join("")}</urlset>\n`;
   return new Response(xml, { headers: { "Content-Type": "application/xml; charset=utf-8" } });
 };
+
+export const HEAD = GET;
+
+export const ALL = methodNotAllowed("GET, HEAD");

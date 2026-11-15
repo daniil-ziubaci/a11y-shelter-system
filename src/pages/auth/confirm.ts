@@ -1,4 +1,5 @@
 import type { APIRoute } from "astro";
+import { methodNotAllowed } from "@/lib/methods";
 
 const LINK_TYPES = ["invite", "recovery"] as const;
 
@@ -11,3 +12,5 @@ export const GET: APIRoute = async ({ url, locals, redirect }) => {
   const { error } = await locals.supabase.auth.verifyOtp({ type, token_hash: tokenHash });
   return redirect(error ? "/login?error=invite" : "/auth/set-password", 303);
 };
+
+export const ALL = methodNotAllowed("GET");

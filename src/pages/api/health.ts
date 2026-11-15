@@ -1,5 +1,6 @@
 import type { APIRoute } from "astro";
 import { getPublicClient } from "@/lib/supabase";
+import { methodNotAllowed } from "@/lib/methods";
 
 const noStore = { "Cache-Control": "no-store" };
 
@@ -14,3 +15,7 @@ export const GET: APIRoute = async () => {
   }
   return Response.json({ status: "ok" }, { headers: noStore });
 };
+
+export const HEAD = GET;
+
+export const ALL = methodNotAllowed("GET, HEAD");

@@ -2,6 +2,7 @@ import { createHash, timingSafeEqual } from "node:crypto";
 import type { APIRoute } from "astro";
 import { CRON_SECRET } from "astro:env/server";
 import { translateStale } from "@/lib/translateStale";
+import { methodNotAllowed } from "@/lib/methods";
 
 function sameSecret(received: string, expected: string): boolean {
   const digest = (text: string) => createHash("sha256").update(text).digest();
@@ -15,3 +16,7 @@ export const GET: APIRoute = async ({ request }) => {
   const report = await translateStale(Date.now() + 45_000);
   return Response.json(report, { headers: { "Cache-Control": "no-store" } });
 };
+
+export const HEAD = GET;
+
+export const ALL = methodNotAllowed("GET, HEAD");
