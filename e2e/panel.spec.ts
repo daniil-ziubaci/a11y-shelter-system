@@ -1,10 +1,13 @@
 import AxeBuilder from "@axe-core/playwright";
-import { expect, test } from "@playwright/test";
+import { createClient } from "@supabase/supabase-js";
+import { expect, test, type Page } from "@playwright/test";
 import sharp from "sharp";
 import { EMAIL, PASSWORD, photo, SECRET, signIn } from "./support";
 import { totp } from "./totp";
 
-const NEW_EMAIL = process.env.E2E_NEW_EMAIL ?? "";
+const SUPABASE_URL = process.env.E2E_SUPABASE_URL ?? "";
+const SERVICE_KEY = process.env.E2E_SERVICE_ROLE_KEY ?? "";
+const LOCAL_DATABASE = URL.canParse(SUPABASE_URL) && ["127.0.0.1", "localhost"].includes(new URL(SUPABASE_URL).hostname);
 const CRON_SECRET = process.env.E2E_CRON_SECRET ?? "";
 
 test.describe.configure({ mode: "serial" });
@@ -52,14 +55,25 @@ test("the session cookie is hidden from page scripts and sent only over HTTPS", 
 });
 
 test("a volunteer without a second factor sets one up", async ({ page }) => {
-  test.skip(!NEW_EMAIL, "E2E_NEW_EMAIL is not set");
+  test.skip(!SERVICE_KEY || !LOCAL_DATABASE, "E2E_SUPABASE_URL must point to a local database and E2E_SERVICE_ROLE_KEY must be set");
+  const admin = createClient(SUPABASE_URL, SERVICE_KEY, { auth: { persistSession: false } });
+  const email = `new-${Date.now()}-${Math.random().toString(36).slice(2, 8)}@example.org`;
+  const { data: created, error } = await admin.auth.admin.createUser({ email, password: PASSWORD, email_confirm: true });
+  expect(error).toBeNull();
+  const userId = created.user?.id ?? "";
+  try {
+    expect((await admin.from("volunteers").insert({ user_id: userId })).error).toBeNull();
+    await setUpSecondFactor(page, email);
+  } finally {
+    await admin.auth.admin.deleteUser(userId);
+  }
+});
+
+async function setUpSecondFactor(page: Page, email: string) {
   await page.goto("/login");
-  await page.getByLabel("Почта").fill(NEW_EMAIL);
+  await page.getByLabel("Почта").fill(email);
   await page.getByLabel("Пароль").fill(PASSWORD);
   await page.getByRole("button", { name: "Войти" }).click();
-  if (page.url().endsWith("/volunteer/2fa/verify")) {
-    test.skip(true, "this volunteer already has a second factor");
-  }
   await expect(page).toHaveURL(/\/volunteer\/2fa$/);
   await page.getByRole("button", { name: "Начать настройку" }).click();
   await expect(page.getByRole("img", { name: /QR-код/ })).toBeVisible();
@@ -73,7 +87,7 @@ test("a volunteer without a second factor sets one up", async ({ page }) => {
   await expect(page).toHaveURL(/\/volunteer\/needs$/);
   await page.goto("/volunteer/2fa");
   await expect(page.getByText("Двухфакторный вход уже настроен.")).toBeVisible();
-});
+}
 
 test("a volunteer adds and edits an animal with a photo", async ({ page }) => {
   const name = `Тестик${Date.now() % 100000}`;
