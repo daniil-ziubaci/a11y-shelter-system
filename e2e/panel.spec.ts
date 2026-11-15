@@ -256,7 +256,7 @@ test("the nightly translation needs the cron secret and reports DeepL", async ({
   const response = await request.get("/api/cron/translate", { headers: { Authorization: `Bearer ${CRON_SECRET}` } });
   expect(response.status()).toBe(200);
   const report = await response.json();
-  expect(Object.keys(report).sort()).toEqual(["cleared", "deepl", "items", "pets", "projects", "shelters"]);
+  expect(Object.keys(report).sort()).toEqual(["cleared", "deepl", "items", "pets", "projects", "shelter"]);
   expect(typeof report.deepl).toBe("string");
 });
 

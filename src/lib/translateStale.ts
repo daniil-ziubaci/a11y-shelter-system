@@ -37,7 +37,7 @@ async function refresh<T extends Row>(
 }
 
 export type TranslateReport = {
-  shelters: number;
+  shelter: number;
   items: number;
   projects: number;
   pets: number;
@@ -49,7 +49,7 @@ export async function translateStale(deadline: number): Promise<TranslateReport>
   const status = await getDeeplStatus();
   const deepl = status.ok ? `ok, до порога 95% осталось ${status.remaining} символов` : status.reason;
   const supabase = getAdminClient();
-  const report: TranslateReport = { shelters: 0, items: 0, projects: 0, pets: 0, cleared: 0, deepl };
+  const report: TranslateReport = { shelter: 0, items: 0, projects: 0, pets: 0, cleared: 0, deepl };
 
   const { data: shelter } = await supabase
     .from("shelter")
@@ -68,7 +68,7 @@ export async function translateStale(deadline: number): Promise<TranslateReport>
       if (error) {
         console.error("translate shelter failed", error.message);
       } else if (countNewEntries(translations, previous) > 0) {
-        report.shelters = 1;
+        report.shelter = 1;
       } else {
         report.cleared += 1;
       }

@@ -62,7 +62,7 @@ Settings → **Runtime variables and secrets** → **+ Add variable** (вкла�
 ## Что работает само
 
 - **Расписания** (`triggers` в `wrangler.jsonc`, обработчик `src/worker.ts`): в 02:00 UTC ночной перевод `/api/cron/translate` (с `CRON_SECRET`), в 14:00 UTC запрос к базе `/api/health`, чтобы бесплатный Supabase не уснул. Журнал: Worker → **Observability**.
-- **Перевод вручную**, не дожидаясь ночи: `curl -H "Authorization: Bearer <CRON_SECRET>" <адрес сайта>/api/cron/translate`. Ответ — сколько записей переведено, например `{"shelters":0,"items":0,"projects":1,"pets":0}`.
+- **Перевод вручную**, не дожидаясь ночи: `curl -H "Authorization: Bearer <CRON_SECRET>" <адрес сайта>/api/cron/translate`. Ответ — сколько записей переведено, например `{"shelter":0,"items":0,"projects":1,"pets":0}`.
 - **Картинки** отдаются из хранилища как есть (`imageService: "passthrough"` в `astro.config.mjs`): у Workers нет бесплатного оптимизатора, а фото и так уменьшены при загрузке.
 - **Кэш страниц**: публичные страницы помечены для кэша Worker на 60 с (`Cloudflare-CDN-Cache-Control: public, max-age=60, stale-while-revalidate=60`, тег `public`); любое сохранение в панели сбрасывает тег (`Astro.cache.invalidate`, внутри адаптер вызывает `cache.purge` из `cloudflare:workers`). В локальном `wrangler dev` функции `cache.purge` нет, поэтому там в журнале строка `background task failed … cache.purge is not a function` — на сохранение она не влияет. Работает ли кэш и его сброс на `*.workers.dev`, не проверено.
 - **Не кэшируются никогда** (`Cache-Control: no-store`): переход по языку на `/` (ещё `Vary: Accept-Language`), панель `/volunteer`, вход `/login`, `/auth`, `/api`. Это проверяет `e2e/cache-headers.spec.ts`.
