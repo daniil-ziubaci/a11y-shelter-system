@@ -36,7 +36,7 @@ Result: PASS
 
 Сделано:
 
-- Одна начальная миграция `supabase/migrations/20261113000000_single_shelter.sql`, старые 13 миграций и `supabase/down` удалены из ветки.
+- Одна начальная миграция `supabase/migrations/20261113000000_single_shelter.sql` (15.11.2026 вместе с миграциями раунда 2 объединена в `20261113000000_initial_schema.sql`), старые 13 миграций и `supabase/down` удалены из ветки.
 - `shelter` — одна строка (`id boolean primary key default true`, `check (id)`): название, реквизиты, контакты, город, язык контента, переводы, `is_published`. Slug нет.
 - `volunteers(user_id)` вместо `shelter_members`; `shelter_photos` → `gallery_photos`; ни в одной таблице нет `shelter_id` (это проверяет тест).
 - Права заново: аноним читает только опубликованное и только пока приют опубликован; волонтёр читает всё без 2FA, пишет только с `aal2` (теперь и вольеры: в старой схеме вольеры можно было менять без второго фактора); запас меняют только `receive_purchase` / `record_consumption` / `undo_purchase`; строку приюта, список волонтёров, галерею и закрепление проектов меняет только service role. Новые фото — в папки `animals/` и `projects/`, старые файлы сохраняют пути.

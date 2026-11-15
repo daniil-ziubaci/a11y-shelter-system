@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Moves ONE shelter from the old multi-shelter site (schema of the main
 # branch) into a new project with the single-shelter schema
-# (supabase/migrations/20261113000000_single_shelter.sql).
+# (supabase/migrations/20261113000000_initial_schema.sql).
 #
 # Without --apply it only shows the plan and changes nothing. With --apply it
 # copies, in one transaction, the shelter, its volunteers with their sign-in

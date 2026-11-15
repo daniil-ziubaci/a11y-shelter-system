@@ -88,7 +88,7 @@
 
 1. `npm ci`
 2. `npx -y supabase@2.122.0 start` поднимает локальный Supabase в Docker.
-3. `npx -y supabase@2.122.0 db reset --local` применяет все миграции из `supabase/migrations` по порядку: схему одного приюта `20261113000000_single_shelter.sql`, затем пределы длины текстов животных, права волонтёра на столбцы `pets` и индексы (`20261114000000`–`20261114000002`).
+3. `npx -y supabase@2.122.0 db reset --local` применяет схему из `supabase/migrations` (одна миграция `20261113000000_initial_schema.sql`: таблицы с пределами длины и индексами, права и правила доступа).
 4. `cp .env.example .dev.vars`, затем впишите в `SUPABASE_ANON_KEY` и `SUPABASE_SERVICE_ROLE_KEY` ключи из вывода `supabase status` (файл `.dev.vars` в git не попадает).
 5. `node --env-file=.dev.vars scripts/seed-local.ts` заполняет базу тестовыми данными и создаёт тестового волонтёра `volunteer@example.org` (пароль скрипт печатает в конце). Скрипт работает только с локальной базой.
 6. `npm run preview`: сборка и запуск в среде Cloudflare Workers, как на хостинге (`wrangler dev`, адрес печатается в консоли). Для быстрой правки вёрстки есть `npm run dev`. Расписания проверяются через `npx wrangler dev --test-scheduled` и адрес `/cdn-cgi/handler/scheduled?cron=0+2+*+*+*`.

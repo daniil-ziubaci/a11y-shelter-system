@@ -1,25 +1,8 @@
--- Initial schema of the site of ONE shelter (Live Life).
---
--- The shelter's own data lives in public.shelter, a table that can hold only
--- one row. Volunteers are listed in public.volunteers. No other table refers
--- to a shelter.
---
--- Access rules:
---   * anonymous visitors only read what is published, and only while the
---     shelter itself is published (shelter.is_published);
---   * volunteers read everything of the shelter, and change data only with a
---     second factor (aal2 in the session);
---   * stock of needs changes only through receive_purchase, record_consumption
---     and undo_purchase; nobody but the service role edits the shelter row,
---     the volunteer list, the gallery or pinned projects.
-
 set check_function_bodies = false;
 
 alter default privileges for role postgres in schema public revoke all on tables from postgres, anon, authenticated, service_role;
 alter default privileges for role postgres in schema public revoke all on functions from postgres, anon, authenticated, service_role, public;
 alter default privileges for role postgres in schema public revoke all on sequences from postgres, anon, authenticated, service_role;
-
--- Shelter (one row) ---------------------------------------------------------
 
 create table public.shelter (
   id boolean primary key default true,
@@ -103,8 +86,6 @@ create table public.volunteers (
   created_at timestamptz not null default now()
 );
 
--- Helpers used by the access rules -----------------------------------------
-
 create function public.is_volunteer() returns boolean
   language sql stable security definer
   set search_path = ''
@@ -152,8 +133,6 @@ create function public.translit_ru(input text) returns text
     ) as m(cyrillic, latin) on m.cyrillic = c.letter
   $$;
 
--- Animals ------------------------------------------------------------------
-
 create table public.pets (
   id uuid primary key default gen_random_uuid(),
   name text not null,
@@ -190,10 +169,23 @@ create table public.pets (
   ),
   constraint pets_translations_check check (
     jsonb_typeof(translations) = 'object' and octet_length(translations::text) <= 20000
+  ),
+  constraint pets_name_length check (
+    char_length(name) between 1 and 50 and name !~ '^\s' and name !~ '\s$'
+  ),
+  constraint pets_photo_alt_length check (
+    char_length(photo_alt) between 1 and 300 and photo_alt !~ '^\s' and photo_alt !~ '\s$'
+  ),
+  constraint pets_health_length check (
+    char_length(health) between 1 and 500 and health !~ '^\s' and health !~ '\s$'
+  ),
+  constraint pets_description_length check (
+    char_length(description) between 1 and 3000 and description !~ '^\s' and description !~ '\s$'
   )
 );
 
 create index pets_catalog_order_idx on public.pets (status_rank, created_at desc, name);
+create index pets_status_idx on public.pets (status);
 
 create table public.pet_internal (
   pet_id uuid primary key references public.pets (id) on delete cascade,
@@ -268,8 +260,6 @@ create view public.volunteer_pets with (security_invoker = true) as
     end as review_rank
   from public.pets as p
   left join public.pet_internal as i on i.pet_id = p.id;
-
--- Projects -----------------------------------------------------------------
 
 create table public.projects (
   id uuid primary key default gen_random_uuid(),
@@ -352,8 +342,6 @@ create trigger projects_set_updated_at
   before update on public.projects
   for each row execute function public.projects_set_updated_at();
 
--- Needs (purchase plan) ----------------------------------------------------
-
 create table public.purchase_items (
   id uuid primary key default gen_random_uuid(),
   name text not null,
@@ -386,6 +374,7 @@ create table public.purchase_log (
 );
 
 create index purchase_log_created_at_idx on public.purchase_log (created_at desc);
+create index purchase_log_item_id_idx on public.purchase_log (item_id);
 
 create function public.receive_purchase(p_item_id uuid, p_amount numeric) returns numeric
   language plpgsql security definer
@@ -481,8 +470,6 @@ create function public.undo_purchase(p_log_id uuid) returns numeric
   end;
   $$;
 
--- Gallery of the About page ------------------------------------------------
-
 create table public.gallery_photos (
   id uuid primary key default gen_random_uuid(),
   source_name text not null,
@@ -504,8 +491,6 @@ create table public.gallery_photos (
 );
 
 create index gallery_photos_position_idx on public.gallery_photos (position);
-
--- Row level security -------------------------------------------------------
 
 alter table public.shelter enable row level security;
 alter table public.volunteers enable row level security;
@@ -650,8 +635,6 @@ create policy "Anyone can read the gallery of the published shelter"
   on public.gallery_photos for select to anon, authenticated
   using ((select public.is_site_published()) or (select public.is_volunteer()));
 
--- Privileges ---------------------------------------------------------------
-
 grant usage on schema public to anon, authenticated, service_role;
 
 grant all on table public.shelter, public.volunteers, public.pets, public.pet_internal,
@@ -663,7 +646,13 @@ grant select on table public.shelter to anon, authenticated;
 grant select on table public.volunteers to authenticated;
 
 grant select on table public.pets to anon;
-grant select, insert, update on table public.pets to authenticated;
+grant select on table public.pets to authenticated;
+grant insert (id, name, species, sex, birth_date, is_age_approximate, size, health, description,
+  photo_url, photo_alt, status, needs_treatment_since)
+  on table public.pets to authenticated;
+grant update (name, species, sex, birth_date, is_age_approximate, size, health, description,
+  photo_url, photo_alt, status, needs_treatment_since)
+  on table public.pets to authenticated;
 
 grant select, insert, update, delete on table public.pet_internal to authenticated;
 
@@ -709,12 +698,6 @@ grant execute on function public.projects_set_updated_at() to service_role;
 grant execute on function public.receive_purchase(uuid, numeric) to authenticated, service_role;
 grant execute on function public.record_consumption(uuid, numeric) to authenticated, service_role;
 grant execute on function public.undo_purchase(uuid) to authenticated, service_role;
-
--- Photo storage ------------------------------------------------------------
--- Public bucket: anyone can download a photo by its address. Volunteers with
--- a second factor upload new files into animals/... and projects/...; nobody
--- but the service role renames, overwrites or deletes files. Files of the old
--- multi-shelter site keep their paths (<old shelter id>/...).
 
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 values ('pet-photos', 'pet-photos', true, 5242880, array['image/jpeg', 'image/png', 'image/webp'])
