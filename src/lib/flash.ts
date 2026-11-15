@@ -4,8 +4,14 @@ export type Flash = { key: string; ok: boolean; message: string; value?: string 
 
 const NAME = "panel-flash";
 
+export const INVALID_RECORD = "Запись не найдена. Обновите страницу и попробуйте ещё раз.";
+
 export function setFlash(cookies: AstroCookies, flash: Flash): void {
   cookies.set(NAME, JSON.stringify(flash), { path: "/volunteer", httpOnly: true, sameSite: "lax", secure: true, maxAge: 60 });
+}
+
+export function setInvalidRecord(cookies: AstroCookies): void {
+  setFlash(cookies, { key: "invalid", ok: false, message: INVALID_RECORD });
 }
 
 export function takeFlash(cookies: AstroCookies): Flash | null {

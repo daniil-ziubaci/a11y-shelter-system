@@ -1,4 +1,5 @@
 ---
+import InvalidRecord from "@/components/panel/InvalidRecord.astro";
 import NeedsNav from "@/components/panel/NeedsNav.astro";
 import PanelLayout from "@/layouts/PanelLayout.astro";
 import type { Flash } from "@/lib/flash";
@@ -37,6 +38,7 @@ const here = Astro.url.pathname + Astro.url.search;
 <PanelLayout title={heading}>
   <main class="mx-auto flex w-full max-w-5xl flex-col gap-4 px-4 pt-4 pb-6">
     <h1 class="text-3xl font-bold sm:text-center">{heading}</h1>
+    <InvalidRecord flash={flash} />
     {
       !volunteer ? (
         <p>{NOT_A_VOLUNTEER}</p>

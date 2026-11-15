@@ -1,10 +1,12 @@
 ---
+import InvalidRecord from "@/components/panel/InvalidRecord.astro";
 import PanelLayout from "@/layouts/PanelLayout.astro";
+import { setInvalidRecord, takeFlash } from "@/lib/flash";
 import { getTranslator } from "@/lib/i18n";
 import { formatAge } from "@/lib/formatAge";
 import { hintClass } from "@/lib/formClasses";
 import { monthsSince } from "@/lib/monthsSince";
-import { isPost, isVolunteer, NOT_A_VOLUNTEER, readForm, refreshPublicPages, text } from "@/lib/panel";
+import { isPost, isUuid, isVolunteer, NOT_A_VOLUNTEER, readForm, refreshPublicPages, text } from "@/lib/panel";
 import { parsePage, VOLUNTEER_PAGE_SIZE } from "@/lib/parsePage";
 import { parseVolunteerSort } from "@/lib/parseVolunteerSort";
 import { parseVolunteerStatus, VOLUNTEER_STATUS_FILTERS } from "@/lib/parseVolunteerStatus";
@@ -24,6 +26,10 @@ if (volunteer && isPost(Astro)) {
   const status = form ? text(form, "status") : "";
   const back = form ? text(form, "back") : "";
   const backTo = back.startsWith("/volunteer") ? back : "/volunteer";
+  if (petId && !isUuid(petId)) {
+    setInvalidRecord(Astro.cookies);
+    return Astro.redirect(backTo, 303);
+  }
   if (petId && (PET_STATUSES as readonly string[]).includes(status)) {
     if (status === PET_STATUS_TREATMENT) {
       const { data: current } = await supabase.from("pets").select("status").eq("id", petId).maybeSingle();
@@ -38,6 +44,7 @@ if (volunteer && isPost(Astro)) {
   return Astro.redirect(backTo, 303);
 }
 
+const flash = takeFlash(Astro.cookies);
 const params = Astro.url.searchParams;
 const search = params.get("q")?.trim() ?? "";
 const statusFilter = parseVolunteerStatus(params.get("status") ?? undefined);
@@ -133,6 +140,7 @@ const statusOptions: [string | undefined, string][] = [
 <PanelLayout title="Животные приюта">
   <main class="mx-auto flex w-full max-w-5xl flex-col gap-4 p-4 pt-4">
     <h1 class="text-3xl font-bold sm:text-center">Животные приюта</h1>
+    <InvalidRecord flash={flash} />
     {
       !volunteer ? (
         <p>{NOT_A_VOLUNTEER}</p>

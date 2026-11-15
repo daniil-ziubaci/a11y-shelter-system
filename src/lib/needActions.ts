@@ -1,7 +1,7 @@
 import type { AstroGlobal } from "astro";
-import { setFlash } from "@/lib/flash";
+import { setFlash, setInvalidRecord } from "@/lib/flash";
 import { formatRemaining } from "@/lib/formatRemaining";
-import { readForm, refreshPublicPages, text } from "@/lib/panel";
+import { isUuid, readForm, refreshPublicPages, text } from "@/lib/panel";
 
 function parseAmount(value: string): number {
   return Number(value.replace(",", "."));
@@ -21,6 +21,11 @@ export async function handleNeedPost(astro: AstroGlobal): Promise<Response> {
   const itemId = text(form, "itemId");
   const amountText = text(form, "amount");
   const amount = parseAmount(amountText);
+  const logId = text(form, "logId");
+  if ((itemId && !isUuid(itemId)) || (logId && !isUuid(logId))) {
+    setInvalidRecord(astro.cookies);
+    return astro.redirect(backTo, 303);
+  }
 
   if (intent === "receive" || intent === "consume") {
     const key = intent === "receive" ? "receive" : `consume-${itemId}`;
@@ -60,7 +65,6 @@ export async function handleNeedPost(astro: AstroGlobal): Promise<Response> {
   }
 
   if (intent === "undo") {
-    const logId = text(form, "logId");
     let message: string;
     let ok = false;
     if (!logId) {

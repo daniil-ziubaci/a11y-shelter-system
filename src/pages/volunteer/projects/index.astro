@@ -1,6 +1,8 @@
 ---
+import InvalidRecord from "@/components/panel/InvalidRecord.astro";
 import PanelLayout from "@/layouts/PanelLayout.astro";
-import { isPost, isVolunteer, NOT_A_VOLUNTEER, readForm, refreshPublicPages, text } from "@/lib/panel";
+import { setInvalidRecord, takeFlash } from "@/lib/flash";
+import { isPost, isUuid, isVolunteer, NOT_A_VOLUNTEER, readForm, refreshPublicPages, text } from "@/lib/panel";
 import { isProjectStale, PROJECT_REVIEW_DAYS } from "@/lib/projectReview";
 import { PROJECT_STATUS_COMPLETED, PROJECT_STATUS_ONGOING, PROJECT_STATUSES } from "@/lib/projectStages";
 
@@ -12,6 +14,11 @@ if (volunteer && isPost(Astro)) {
   const intent = form ? text(form, "intent") : "";
   const projectId = form ? text(form, "projectId") : "";
   const back = form ? text(form, "back") : "";
+  const backTo = back.startsWith("/volunteer/projects") ? back : "/volunteer/projects";
+  if (projectId && !isUuid(projectId)) {
+    setInvalidRecord(Astro.cookies);
+    return Astro.redirect(backTo, 303);
+  }
   if (form && projectId) {
     if (intent === "status") {
       const status = text(form, "status");
@@ -35,9 +42,10 @@ if (volunteer && isPost(Astro)) {
     }
     refreshPublicPages(Astro);
   }
-  return Astro.redirect(back.startsWith("/volunteer/projects") ? back : "/volunteer/projects", 303);
+  return Astro.redirect(backTo, 303);
 }
 
+const flash = takeFlash(Astro.cookies);
 const showArchived = Astro.url.searchParams.get("archived") === "1";
 const { data, error } = volunteer
   ? await supabase
@@ -61,6 +69,7 @@ const archiveButton = "h-10 w-full cursor-pointer rounded-lg px-3 text-control f
 <PanelLayout title={title}>
   <main class="mx-auto flex w-full max-w-5xl flex-col gap-4 px-4 pt-4 pb-6">
     <h1 class="text-3xl font-bold sm:text-center">{title}</h1>
+    <InvalidRecord flash={flash} />
     {
       !volunteer ? (
         <p>{NOT_A_VOLUNTEER}</p>

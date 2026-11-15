@@ -23,6 +23,12 @@ export async function readForm(astro: AstroGlobal): Promise<FormData | null> {
   }
 }
 
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+export function isUuid(value: string): boolean {
+  return UUID.test(value);
+}
+
 export function text(formData: FormData, key: string): string {
   const value = formData.get(key);
   return typeof value === "string" ? value.trim() : "";
