@@ -29,6 +29,7 @@
 
 
 @theme {
+  --breakpoint-wide: 56.25rem;
   --text-xs: 0.875rem;
   --text-sm: 1rem;
   --text-base: 1.125rem;
@@ -132,6 +133,10 @@ summary {
 
 @utility w-half-gap {
   width: calc(50% - 0.5rem);
+}
+
+@utility max-w-pet-name {
+  max-width: calc(100% - 2.5rem);
 }
 
 @utility max-h-menu {

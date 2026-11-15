@@ -233,7 +233,7 @@ const statusOptions: [string | undefined, string][] = [
                   </a>
                 </p>
               )}
-              <ul class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <ul class="grid grid-cols-1 gap-4 wide:grid-cols-2">
                 {pets.map((pet) => (
                   <li class="flex flex-col gap-2 rounded-2xl border border-(--border) bg-(--surface) p-3 shadow-md">
                     <div class="flex flex-col gap-3 sm:flex-row">
@@ -242,7 +242,7 @@ const statusOptions: [string | undefined, string][] = [
                       </div>
                       <div class="flex min-w-0 flex-1 flex-col gap-2">
                         <div class="flex items-start gap-3">
-                          <h2 class="shrink-0 text-pet-name leading-tight font-bold whitespace-nowrap">{pet.name}</h2>
+                          <h2 class="max-w-pet-name shrink-0 text-pet-name leading-tight font-bold wrap-break-word">{pet.name}</h2>
                           <a
                             href={`/volunteer/pets/${pet.id}/edit`}
                             aria-label={`Редактировать: ${pet.name}`}
