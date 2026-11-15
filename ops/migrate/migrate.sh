@@ -144,7 +144,10 @@ create temp view m_purchase_items as
 create temp view m_purchase_log as
   select id, item_id, amount, created_at from public.purchase_log where shelter_id = '$shelter_id';
 create temp view m_gallery_photos as
-  select id, source_name, path, thumb_path, alt, alt_en, alt_ro, position, created_at
+  select id, source_name,
+    regexp_replace(path, '^/shelters/[^/]+/gallery/', '/gallery/') as path,
+    regexp_replace(thumb_path, '^/shelters/[^/]+/gallery/', '/gallery/') as thumb_path,
+    alt, alt_en, alt_ro, position, created_at
   from public.shelter_photos where shelter_id = '$shelter_id';
 create temp view m_objects as
   select o.name, coalesce(o.metadata ->> 'mimetype', 'application/octet-stream') as type,
@@ -188,6 +191,7 @@ done
 printf '  %-16s %s (with password and %s verified second factors)\n' "sign-in users" "$users" "$factors"
 printf '  %-16s %s\n' "photos" "$objects"
 echo "  pet photo addresses are rewritten to the new project"
+echo "  gallery addresses /shelters/<old address>/gallery/... become /gallery/..."
 echo "Left in the source: $other_shelters other shelter(s), $other_users sign-in user(s) without this shelter"
 echo "Target now: $target_rows site rows, $target_users sign-in users, $target_objects photos"
 
@@ -321,6 +325,10 @@ while IFS= read -r url; do
   [ "$code" = 200 ] || broken=$((broken + 1))
 done < <(dst -c "select photo_url from public.pets")
 check "$([ "$broken" = 0 ] && echo ok)" "every animal photo opens at its new address ($broken broken)"
+
+gallery_total="$(dst -c "select count(*) from public.gallery_photos")"
+gallery_moved="$(dst -c "select count(*) from public.gallery_photos where path like '/gallery/%' and thumb_path like '/gallery/%'")"
+check "$([ "$gallery_moved" = "$gallery_total" ] && echo ok)" "gallery addresses under /gallery/: $gallery_moved of $gallery_total"
 
 if [ "$problems" -ne 0 ]; then
   echo "MIGRATION CHECK FAILED: $problems problem(s). The target is not ready; start again with a new empty project." >&2
