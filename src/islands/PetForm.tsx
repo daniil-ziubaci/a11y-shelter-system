@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { PhotoField } from "@/islands/PhotoField";
 import { fieldClass, hintClass, labelClass, primaryButtonClass, radioRowClass, textareaClass } from "@/lib/formClasses";
+import { PET_LIMITS } from "@/lib/parsePetFields";
 import { PET_SIZES } from "@/lib/petSizes";
 
 const CONTACTS_HINT =
@@ -55,7 +56,7 @@ export function PetForm({
         <label htmlFor="name" className={labelClass}>
           Кличка
         </label>
-        <input className={fieldClass} id="name" name="name" type="text" autoComplete="off" defaultValue={initial.name} required />
+        <input className={fieldClass} id="name" name="name" type="text" maxLength={PET_LIMITS.name} autoComplete="off" defaultValue={initial.name} required />
       </div>
 
       <div className="flex flex-col gap-1">
@@ -67,7 +68,7 @@ export function PetForm({
           id="enclosure"
           name="enclosure"
           type="text"
-          maxLength={40}
+          maxLength={PET_LIMITS.enclosure}
           autoComplete="off"
           aria-describedby="enclosure-hint"
           defaultValue={initial.enclosure}
@@ -168,7 +169,7 @@ export function PetForm({
         <label htmlFor="photoAlt" className={labelClass}>
           Описание фото
         </label>
-        <textarea className={textareaClass} id="photoAlt" name="photoAlt" rows={2} aria-describedby="photo-alt-hint" defaultValue={initial.photoAlt} required />
+        <textarea className={textareaClass} id="photoAlt" name="photoAlt" rows={2} maxLength={PET_LIMITS.photoAlt} aria-describedby="photo-alt-hint" defaultValue={initial.photoAlt} required />
         <p id="photo-alt-hint" className={hintClass}>
           {mode === "new"
             ? "Опишите, что на фото, для человека, который его не видит. Например: «Рыжая собака среднего размера»."
@@ -180,7 +181,7 @@ export function PetForm({
         <label htmlFor="health" className={labelClass}>
           Здоровье
         </label>
-        <textarea className={textareaClass} id="health" name="health" rows={3} aria-describedby="text-hint" defaultValue={initial.health} required />
+        <textarea className={textareaClass} id="health" name="health" rows={3} maxLength={PET_LIMITS.health} aria-describedby="text-hint" defaultValue={initial.health} required />
       </div>
 
       <div className="flex flex-col gap-3">
@@ -223,7 +224,7 @@ export function PetForm({
         <label htmlFor="description" className={labelClass}>
           Описание, характер, история
         </label>
-        <textarea className={textareaClass} id="description" name="description" rows={5} aria-describedby="text-hint" defaultValue={initial.description} required />
+        <textarea className={textareaClass} id="description" name="description" rows={5} maxLength={PET_LIMITS.description} aria-describedby="text-hint" defaultValue={initial.description} required />
         <p id="text-hint" className={hintClass}>
           {CONTACTS_HINT}
         </p>

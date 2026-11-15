@@ -2,6 +2,14 @@ import { birthDateFromAge } from "@/lib/birthDateFromAge";
 import { findContactError } from "@/lib/findContactError";
 import { PET_SIZES } from "@/lib/petSizes";
 
+export const PET_LIMITS = {
+  name: 50,
+  photoAlt: 300,
+  health: 500,
+  description: 3000,
+  enclosure: 40,
+} as const;
+
 type PetFields = {
   name: string;
   species: string;
@@ -37,8 +45,17 @@ export function parsePetFields(formData: FormData): ParsePetFieldsResult {
     return { ok: false, error: "Заполните все обязательные поля." };
   }
 
-  if (enclosure.length > 40) {
-    return { ok: false, error: "Вольер: не больше 40 знаков." };
+  const tooLong = (
+    [
+      ["Кличка", name, PET_LIMITS.name],
+      ["Вольер", enclosure, PET_LIMITS.enclosure],
+      ["Описание фото", photoAlt, PET_LIMITS.photoAlt],
+      ["Здоровье", health, PET_LIMITS.health],
+      ["Описание", description, PET_LIMITS.description],
+    ] as const
+  ).find(([, value, limit]) => value.length > limit);
+  if (tooLong) {
+    return { ok: false, error: `${tooLong[0]}: не больше ${tooLong[2]} знаков.` };
   }
 
   const contactProblem = findContactError([
